@@ -1,7 +1,7 @@
 /*****************************************************************************
  *
- * tgeo_parser.h
- *    Functions for parsing temporal geometries.
+ * quaternion.c
+ *    Quaternion library functions.
  *
  * Portions Copyright (c) 2019, Maxime Schoemans, Esteban Zimanyi,
  *    Universite Libre de Bruxelles
@@ -10,20 +10,23 @@
  *
  *****************************************************************************/
 
-#ifndef __TGEO_PARSER_H__
-#define __TGEO_PARSER_H__
+#include "quaternion.h"
 
-#include "temporal.h"
-#include "tgeo.h"
-#include "rtransform.h"
+#include <math.h>
+#include <float.h>
 
 /*****************************************************************************/
 
-extern RTransform2D *rtransform2d_parse(char **str);
-extern RTransform3D *rtransform3d_parse(char **str);
+double
+quaternion_norm(Quaternion quat)
+{
+  return quat.W*quat.W + quat.X*quat.X + quat.Y*quat.Y + quat.Z*quat.Z;
+}
 
-extern Temporal *tgeo_parse(char **str, Oid basetype);
+Quaternion
+quaternion_negate(Quaternion quat)
+{
+  return (Quaternion) {-quat.W, -quat.X, -quat.Y, -quat.Z};
+}
 
 /*****************************************************************************/
-
-#endif

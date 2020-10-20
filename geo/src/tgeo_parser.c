@@ -16,10 +16,85 @@
 #include "oidcache.h"
 #include "temporal_parser.h"
 #include "tgeo.h"
+#include "rtransform.h"
+#include "quaternion.h"
 #include "tpoint_spatialfuncs.h"
 #include "tgeo_spatialfuncs.h"
 
 /*****************************************************************************/
+
+RTransform2D *
+rtransform2d_parse(char **str)
+{
+    p_whitespace(str);
+
+    if (strncasecmp(*str,"RTRANSFORM2D",12) != 0)
+        ereport(ERROR,
+            (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+            errmsg("Could not parse rigidbody transformation")));
+
+    *str += 12;
+    p_whitespace(str);
+
+    int delim = 0;
+    while ((*str)[delim] != ')' && (*str)[delim] != '\0')
+        delim++;
+    if ((*str)[delim] == '\0')
+        ereport(ERROR,
+            (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+            errmsg("Could not parse rigidbody transformation")));
+
+    double theta;
+    double dx;
+    double dy;
+    if (sscanf(*str, "( %lf , %lf , %lf )", &theta, &dx, &dy) != 3)
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+                        errmsg("Could not parse rigidbody transformation")));
+
+    *str += delim + 1;
+
+    return rtransform_make_2d(theta, (double2) {dx, dx});
+}
+
+RTransform3D *
+rtransform3d_parse(char **str)
+{
+    p_whitespace(str);
+
+    if (strncasecmp(*str,"RTRANSFORM3D",12) != 0)
+        ereport(ERROR,
+            (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+            errmsg("Could not parse rigidbody transformation")));
+
+    *str += 12;
+    p_whitespace(str);
+
+    int delim = 0;
+    while ((*str)[delim] != ')' && (*str)[delim] != '\0')
+        delim++;
+    if ((*str)[delim] == '\0')
+        ereport(ERROR,
+            (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+            errmsg("Could not parse rigidbody transformation")));
+
+    double W;
+    double X;
+    double Y;
+    double Z;
+    double dx;
+    double dy;
+    double dz;
+    if (sscanf(*str, "( %lf , %lf , %lf, %lf , %lf , %lf, %lf )", &W, &X, &Y, &Z, &dx, &dy, &dz) != 7)
+        ereport(ERROR,
+                (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+                        errmsg("Could not parse rigidbody transformation")));
+
+    *str += delim + 1;
+
+    return rtransform_make_3d((Quaternion) {W, X, Y, Z}, (double3) {dx, dy, dz});
+}
+
 
 /**
  * Parse a temporal geometry value of instant duration from the buffer
