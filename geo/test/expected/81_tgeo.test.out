@@ -1,0 +1,69 @@
+SELECT asText(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2012-01-01 08:00:00');
+                        astext                         
+-------------------------------------------------------
+ POLYGON((0 0,1 0,1 1,0 1,0 0))@2012-01-01 08:00:00+00
+(1 row)
+
+SELECT asText(tgeometry 'Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2012-01-01 08:00:00');
+                                                                            astext                                                                            
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+ POLYHEDRALSURFACE Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2012-01-01 08:00:00+00
+(1 row)
+
+SELECT asText(tgeometry '  Polygon((0 0, 2 0, 2 2, 0 2, 0 0))@2012-01-01 08:00:00  ');
+                        astext                         
+-------------------------------------------------------
+ POLYGON((0 0,2 0,2 2,0 2,0 0))@2012-01-01 08:00:00+00
+(1 row)
+
+SELECT asText(tgeometry '  Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2012-01-01 08:00:00  ');
+                                                                            astext                                                                            
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+ POLYHEDRALSURFACE Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2012-01-01 08:00:00+00
+(1 row)
+
+/* Errors */
+SELECT tgeometry 'TRUE@2012-01-01 08:00:00';
+ERROR:  parse error - invalid geometry
+LINE 2: SELECT tgeometry 'TRUE@2012-01-01 08:00:00';
+                         ^
+HINT:  "TR" <-- parse error at position 2 within geometry
+SELECT tgeometry 'Polygon empty@2000-01-01 00:00:00+01';
+ERROR:  Only non-empty geometries accepted
+LINE 1: SELECT tgeometry 'Polygon empty@2000-01-01 00:00:00+01';
+                         ^
+SELECT tgeometry 'Polyhedralsurface Z empty@2012-01-01 08:00:00';
+ERROR:  Only non-empty geometries accepted
+LINE 1: SELECT tgeometry 'Polyhedralsurface Z empty@2012-01-01 08:00...
+                         ^
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01 00:00:00+01 ,';
+ERROR:  Could not parse temporal value
+LINE 1: SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01...
+                         ^
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2012-01-01 08:00:00 ,';
+ERROR:  Could not parse temporal value
+LINE 1: SELECT tgeometry 'Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0...
+                         ^
+SELECT asText(tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'));
+                      astext                       
+---------------------------------------------------
+ POLYGON((0 0,1 0,0 1,0 0))@2012-01-01 08:00:00+00
+(1 row)
+
+SELECT asText(tgeometryinst('Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))'::geometry, '2012-01-01 08:00:00'));
+                                                                            astext                                                                            
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+ POLYHEDRALSURFACE Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2012-01-01 08:00:00+00
+(1 row)
+
+SELECT asText(tgeometryinst(NULL, '2012-01-01 08:00:00'));
+ astext 
+--------
+ 
+(1 row)
+
+/* Errors */
+SELECT tgeometryinst(geometry 'Polygon empty', timestamptz '2000-01-01');
+ERROR:  Only non-empty geometries accepted
+SELECT tgeometryinst(geometry 'Polyhedralsurface Z empty', timestamptz '2000-01-01');
+ERROR:  Only non-empty geometries accepted
