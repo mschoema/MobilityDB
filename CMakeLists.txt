@@ -163,6 +163,7 @@ endif ()
 
 include("test/scripts/test.cmake")
 include("point/point.cmake")
+include("geo/geo.cmake")
 
 find_library(HAS_GSLCBLAS gslcblas)
 find_library(HAS_GSL gsl)
