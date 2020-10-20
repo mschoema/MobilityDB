@@ -19,6 +19,8 @@
 #include "oidcache.h"
 #include "temporal_util.h"
 #include "tgeo_parser.h"
+#include "tpoint_spatialfuncs.h"
+#include "tgeo_spatialfuncs.h"
 
 /*****************************************************************************
  * Input function
