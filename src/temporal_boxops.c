@@ -58,6 +58,8 @@
 #include "tpoint.h"
 #include "stbox.h"
 #include "tpoint_boxops.h"
+#include "tgeo_boxops.h"
+#include "tgeo_spatialfuncs.h"
 
 /*****************************************************************************
  * Functions on generic bounding boxes of temporal types
@@ -225,8 +227,13 @@ tinstantset_make_bbox(void *box, const TInstant **instants, int count)
   else if (tnumber_base_type(instants[0]->basetypid))
     tnumberinstarr_to_tbox((TBOX *) box, instants, count);
   else if (tgeo_base_type(instants[0]->basetypid))
-    tpointinstarr_to_stbox((STBOX *) box, instants, count);
-  else 
+  {
+    if (tgeo_rigid_body_instant(instants[0]))
+      tgeoinstarr_to_stbox((STBOX *)box, instants, count);
+    else
+      tpointinstarr_to_stbox((STBOX *)box, instants, count);
+  }
+  else
     elog(ERROR, "unknown bounding box function for base type: %d",
       instants[0]->basetypid);
   return;
@@ -257,7 +264,7 @@ tsequence_make_bbox(void *box, const TInstant **instants, int count,
    * here in case this is no longer the case
   else if (tgeo_base_type(instants[0]->basetypid))
     tpointinstarr_to_stbox((STBOX *) box, instants, count); */
-  else 
+  else
     elog(ERROR, "unknown bounding box function for base type: %d",
       instants[0]->basetypid);
   return;
@@ -313,7 +320,7 @@ tsequenceset_make_bbox(void *box, const TSequence **sequences, int count)
     tnumberseqarr_to_tbox_internal((TBOX *) box, sequences, count);
   else if (tgeo_base_type(sequences[0]->basetypid))
     tpointseqarr_to_stbox((STBOX *) box, sequences, count);
-  else 
+  else
     elog(ERROR, "unknown bounding box function for base type: %d",
       sequences[0]->basetypid);
   return;

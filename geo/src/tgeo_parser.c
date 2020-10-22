@@ -13,7 +13,8 @@
 #include "tgeo_parser.h"
 
 #include "temporaltypes.h"
-#include "oidcache.h"
+#include "tempcache.h"
+#include "temporal_util.h"
 #include "temporal_parser.h"
 #include "tgeo.h"
 #include "rtransform.h"
@@ -180,7 +181,7 @@ tgeoinstset_parse(char **str, Oid basetype, int *tgeo_srid)
     instants[i] = tgeoinst_parse(str, basetype, false, true, tgeo_srid);
   }
   p_cbrace(str);
-  return tinstantset_make_free(instants, count);
+  return tinstantset_make_free(instants, count, MERGE_NO);
 }
 
 /**
@@ -318,7 +319,7 @@ tgeo_parse(char **str, Oid basetype)
     srid_is_latlong(fcinfo, tgeo_srid);
    */
 
-  bool linear = linear_interpolation(basetype);
+  bool linear = base_type_continuous(basetype);
   /* Starts with "Interp=Stepwise" */
   if (strncasecmp(*str,"Interp=Stepwise;",16) == 0)
   {

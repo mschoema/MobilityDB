@@ -16,6 +16,8 @@
 #include <postgres.h>
 #include <catalog/pg_type.h>
 
+#include "temporal.h"
+
 /*****************************************************************************
  * Struct definitions
  *****************************************************************************/
@@ -32,9 +34,18 @@ typedef struct
 
 /*****************************************************************************/
 
+/* Constructor functions */
+
+extern Quaternion quaternion_from_axis_angle(double3 axis, double theta);
+
+/* Math functions */
+
 extern double quaternion_norm(Quaternion quat);
 
+extern Quaternion quaternion_normalize(Quaternion quat);
 extern Quaternion quaternion_negate(Quaternion quat);
+
+extern Quaternion quaternion_multiply(Quaternion q1, Quaternion q2);
 
 /*****************************************************************************/
 

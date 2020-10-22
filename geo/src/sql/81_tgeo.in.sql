@@ -12,7 +12,8 @@
 
 CREATE TYPE tgeometry;
 
-SELECT register_temporal('tgeometry', 'geometry');
+/* temporal, base, contbase, box */
+SELECT register_temporal_type('tgeometry', 'geometry', true, 'stbox');
 
 /******************************************************************************
  * Input/Output
@@ -42,6 +43,11 @@ CREATE TYPE tgeometry (
 CREATE FUNCTION tgeometryinst(geometry, timestamptz)
   RETURNS tgeometry
   AS 'MODULE_PATHNAME', 'tgeoinst_constructor'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION tgeometryi(tgeometry[])
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'tinstantset_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 /******************************************************************************/

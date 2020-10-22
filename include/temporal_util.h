@@ -63,6 +63,8 @@ extern bool tspatial_type(Oid temptypid);
 extern bool tspatial_base_type(Oid basetypid);
 extern bool tgeo_base_type(Oid basetypid);
 extern void ensure_tgeo_base_type(Oid basetypid);
+extern bool tgeo_rtransform_base_type(Oid basetypid);
+extern void ensure_tgeo_rtransform_base_type(Oid basetypid);
 extern bool type_has_precomputed_trajectory(Oid basetypid);
 extern size_t temporal_bbox_size(Oid basetypid);
 

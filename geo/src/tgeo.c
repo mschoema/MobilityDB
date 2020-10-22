@@ -16,7 +16,7 @@
 #include <utils/timestamp.h>
 
 #include "temporaltypes.h"
-#include "oidcache.h"
+#include "tempcache.h"
 #include "temporal_util.h"
 #include "tgeo_parser.h"
 #include "tpoint_spatialfuncs.h"
@@ -33,8 +33,8 @@ tgeo_in(PG_FUNCTION_ARGS)
 {
   char *input = PG_GETARG_CSTRING(0);
   Oid temptypid = PG_GETARG_OID(1);
-  Oid valuetypid = temporal_valuetypid(temptypid);
-  Temporal *result = tgeo_parse(&input, valuetypid);
+  Oid basetypid = temporal_basetypid(temptypid);
+  Temporal *result = tgeo_parse(&input, basetypid);
   if (result == 0)
     PG_RETURN_NULL();
   PG_RETURN_POINTER(result);
@@ -56,9 +56,9 @@ tgeoinst_constructor(PG_FUNCTION_ARGS)
   ensure_non_empty(gs);
   ensure_has_not_M_gs(gs);
   TimestampTz t = PG_GETARG_TIMESTAMPTZ(1);
-  Oid valuetypid = get_fn_expr_argtype(fcinfo->flinfo, 0);
+  Oid basetypid = get_fn_expr_argtype(fcinfo->flinfo, 0);
   Temporal *result = (Temporal *)tinstant_make(PointerGetDatum(gs),
-    t, valuetypid);
+    t, basetypid);
   PG_FREE_IF_COPY(gs, 0);
   PG_RETURN_POINTER(result);
 }

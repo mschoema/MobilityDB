@@ -1,7 +1,7 @@
 /*****************************************************************************
  *
- * tgeo_spatialfuncs.c
- *    Geospatial functions for temporal geometries.
+ * tgeo_boxops.h
+ *    Bounding box operators for temporal geometries.
  *
  * Portions Copyright (c) 2019, Maxime Schoemans, Esteban Zimanyi,
  *    Universite Libre de Bruxelles
@@ -10,24 +10,21 @@
  *
  *****************************************************************************/
 
-#ifndef __TGEO_SPATIALFUNCS_H__
-#define __TGEO_SPATIALFUNCS_H__
+#ifndef __TGEO_BOXOPS_H__
+#define __TGEO_BOXOPS_H__
 
 #include <postgres.h>
-#include <liblwgeom.h>
 #include <catalog/pg_type.h>
 
 #include "temporal.h"
+#include "stbox.h"
 
 /*****************************************************************************/
 
-extern bool tgeo_rigid_body_instant(const TInstant *inst);
-extern bool tgeo_3d_inst(const TInstant *inst);
+/* Functions computing the bounding box at the creation of the temporal geometry */
 
-extern void ensure_geo_type(const GSERIALIZED *gs);
-extern void ensure_similar_geo(const TInstant *inst1, const TInstant *inst2);
-extern void ensure_rigid_body(const Datum geom1_datum, const Datum geom2_datum);
+extern void tgeoinstarr_to_stbox(STBOX *box, TInstant **inst, int count);
 
 /*****************************************************************************/
 
-#endif
+#endif /* __TGEO_BOXOPS_H__ */

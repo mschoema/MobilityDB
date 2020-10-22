@@ -16,8 +16,8 @@
 #include <postgres.h>
 #include <catalog/pg_type.h>
 
-#include "quaternion.h"
 #include "temporal.h"
+#include "quaternion.h"
 
 /*****************************************************************************
  * Struct definitions
@@ -67,6 +67,14 @@ extern Datum rtransform_out_3d(PG_FUNCTION_ARGS);
 
 extern RTransform2D *rtransform_make_2d(double theta, double2 translation);
 extern RTransform3D *rtransform_make_3d(Quaternion quat, double3 translation);
+
+/*****************************************************************************
+ * Transformation functions
+ *****************************************************************************/
+
+extern Datum rtransform_compute_datum(const Datum geom1, const Datum geom2, Oid valuetypid);
+extern Datum rtransform_apply_datum(const Datum rt, const Datum geom, Oid valuetypid);
+extern Datum rtransform_combine_datum(const Datum rt1, const Datum rt2, Oid valuetypid);
 
 /*****************************************************************************/
 

@@ -50,6 +50,8 @@
 
 #include "tpoint.h"
 #include "tpoint_spatialfuncs.h"
+#include "tgeo_transform.h"
+#include "tgeo_spatialfuncs.h"
 
 /*****************************************************************************
  * General functions
@@ -106,6 +108,14 @@ tinstantset_make_valid(const TInstant **instants, int count, bool merge)
 TInstantSet *
 tinstantset_make1(const TInstant **instants, int count)
 {
+  bool isRb = tgeo_rigid_body_instant(instants[0]);
+  /*
+   * Transform the instants into rtransforms (keep the first instant as a geometry)
+   * This creates a new array of instants
+   */
+  if (count > 1 && isRb)
+    instants = tgeo_instarr_to_rtransform(instants, count);
+
   /* Get the bounding box size */
   size_t bboxsize = temporal_bbox_size(instants[0]->basetypid);
   size_t memsize = double_pad(bboxsize);
@@ -150,6 +160,14 @@ tinstantset_make1(const TInstant **instants, int count)
     void *bbox = ((char *) result) + pdata + pos;
     tinstantset_make_bbox(bbox, instants, count);
     result->offsets[count] = pos;
+  }
+
+  /* Free the created instants (only for geometries) */
+  if (count > 1 && isRb)
+  {
+    for (int i = 0; i < count; ++i)
+      pfree(instants[i]);
+    pfree(instants);
   }
   return result;
 }

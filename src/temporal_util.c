@@ -134,7 +134,7 @@ base_type_length(Oid basetypid)
   ensure_temporal_base_type(basetypid);
   if (basetypid == type_oid(T_DOUBLE2))
     return 16;
-  if (basetypid == type_oid(T_DOUBLE3))
+  if (basetypid == type_oid(T_DOUBLE3) || basetypid == type_oid(T_RTRANSFORM2D))
     return 24;
   if (basetypid == type_oid(T_DOUBLE4))
     return 32;
@@ -142,6 +142,8 @@ base_type_length(Oid basetypid)
     return -1;
   if (basetypid == type_oid(T_GEOMETRY) || basetypid == type_oid(T_GEOGRAPHY))
     return -1;
+  if (basetypid == type_oid(T_RTRANSFORM3D))
+    return 56;
   elog(ERROR, "unknown base_type_length function for base type: %d", basetypid);
 }
 
@@ -268,6 +270,28 @@ ensure_tgeo_base_type(Oid basetypid)
 }
 
 /**
+ * Returns true if the Oid is an rtransform base type supported by MobilityDB
+ */
+bool
+tgeo_rtransform_base_type(Oid typid)
+{
+  if (typid == type_oid(T_RTRANSFORM2D) || typid == type_oid(T_RTRANSFORM3D))
+    return true;
+  return false;
+}
+
+/**
+ * Ensures that the Oid is an rtransform base type supported by MobilityDB
+ */
+void
+ensure_tgeo_rtransform_base_type(Oid basetypid)
+{
+  if (! tgeo_rtransform_base_type(basetypid))
+    elog(ERROR, "unknown rigid transformation base type: %d", basetypid);
+  return;
+}
+
+/**
  * Returns true if the temporal type corresponding to the Oid of the
  * base type has its trajectory precomputed
  */
@@ -317,7 +341,7 @@ temporal_bbox_size(Oid basetypid)
 
 /**
  * Returns the Oid of the range type corresponding to the Oid of the
- * base type 
+ * base type
  */
 Oid
 range_oid_from_base(Oid basetypid)

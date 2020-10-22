@@ -405,4 +405,54 @@ tdouble4_in(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(NULL);
 }
 
+/*****************************************************************************
+ * 3D Vector Functions
+ *****************************************************************************/
+
+double
+vec3_norm(double3 v)
+{
+  return sqrt(v.a * v.a + v.b * v.b + v.c * v.c);
+}
+
+double
+vec3_dot(double3 v1, double3 v2)
+{
+  return v1.a * v2.a + v1.b * v2.b + v1.c * v2.c;
+}
+
+double3
+vec3_normalize(double3 v)
+{
+  double norm = vec3_norm(v);
+  return (double3) {v.a / norm, v.b / norm, v.c / norm};
+}
+
+double3
+vec3_mult(double3 v, double s)
+{
+  return (double3) {v.a * s, v.b * s, v.c * s};
+}
+
+double3
+vec3_add(double3 v1, double3 v2)
+{
+  return (double3) {v1.a + v2.a, v1.b + v2.b, v1.c + v2.c};
+}
+
+double3
+vec3_diff(double3 v1, double3 v2)
+{
+  return (double3) {v1.a - v2.a, v1.b - v2.b, v1.c - v2.c};
+}
+
+double3
+vec3_cross(double3 v1, double3 v2)
+{
+  double a = v1.b * v2.c - v1.c * v2.b;
+  double b = v1.c * v2.a - v1.a * v2.c;
+  double c = v1.a * v2.b - v1.b * v2.a;
+  return (double3) {a, b, c};
+}
+
 /*****************************************************************************/

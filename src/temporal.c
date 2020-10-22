@@ -58,6 +58,7 @@
 #include "rangetypes_ext.h"
 
 #include "tpoint_spatialfuncs.h"
+#include "tgeo_spatialfuncs.h"
 
 /*
  * This is required in a SINGLE file for builds against pgsql
@@ -348,6 +349,7 @@ ensure_valid_tinstantarr(const TInstant **instants, int count, bool merge,
     ensure_same_interpolation((Temporal *) instants[i - 1], (Temporal *) instants[i]);
     ensure_increasing_timestamps(instants[i - 1], instants[i], merge);
     ensure_spatial_validity((Temporal *) instants[i - 1], (Temporal *) instants[i]);
+    ensure_similar_geo(instants[0], instants[i]);
   }
   return;
 }
@@ -755,7 +757,7 @@ temporal_typmod_in(PG_FUNCTION_ARGS)
   if (strlen(s) == 0)
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
       errmsg("Empty temporal type modifier")));
-    
+
   int16 subtype = ANYTEMPSUBTYPE;
   if (!tempsubtype_from_string(s, &subtype))
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -1242,7 +1244,7 @@ temporal_from_base(const Temporal *temp, Datum value, Oid basetypid,
   else if (temp->subtype == SEQUENCE)
   {
     TSequence *seq = (TSequence *) temp;
-    result = (Temporal *) tsequence_from_base_internal(value, basetypid, 
+    result = (Temporal *) tsequence_from_base_internal(value, basetypid,
       &seq->period, linear);
   }
   else /* temp->subtype == SEQUENCESET */
@@ -1252,7 +1254,7 @@ temporal_from_base(const Temporal *temp, Datum value, Oid basetypid,
     for (int i = 0; i < ts->count; i++)
     {
       const TSequence *seq = tsequenceset_seq_n(ts, i);
-      sequences[i] = tsequence_from_base_internal(value, basetypid, 
+      sequences[i] = tsequence_from_base_internal(value, basetypid,
         &seq->period, linear);
     }
     result = (Temporal *) tsequenceset_make_free(sequences, ts->count,
@@ -3848,7 +3850,7 @@ tnumber_at_tbox_internal(const Temporal *temp, const TBOX *box)
     Period p;
     period_set(&p, box->tmin, box->tmax, true, true);
     temp1 = temporal_at_period_internal(temp, &p);
-    /* Despite the bounding box test above, temp1 may be NULL due to 
+    /* Despite the bounding box test above, temp1 may be NULL due to
      * exclusive bounds */
     if (temp1 == NULL)
       return NULL;
