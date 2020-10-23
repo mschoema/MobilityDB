@@ -44,6 +44,59 @@ SELECT tgeometry 'Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0
 ERROR:  Could not parse temporal value
 LINE 1: SELECT tgeometry 'Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0...
                          ^
+SELECT asText(tgeometry ' { Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00 , Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00 , Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00 } ');
+                                                                                      astext                                                                                      
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {POLYGON((0 0,1 0,1 1,0 1,0 0))@2001-01-01 08:00:00+00, RTransform2D(1.5707963267949, 0, 0)@2001-01-01 08:05:00+00, RTransform2D(3.14159265358979, 0, 0)@2001-01-01 08:06:00+00}
+(1 row)
+
+SELECT asText(tgeometry ' { Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2001-01-01 08:00:00 , Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2001-01-01 08:05:00 , Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2001-01-01 08:06:00 } ');
+                                                                                                                                                                     astext                                                                                                                                                                     
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {POLYHEDRALSURFACE Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2001-01-01 08:00:00+00, RTransform3D(0.707106781186548, 0.707106781186547, 0, 0, 0, -0.5, 0)@2001-01-01 08:05:00+00, RTransform3D(7.45058065815617e-09, 1, 0, 0, 0, -0.5, -0.5)@2001-01-01 08:06:00+00}
+(1 row)
+
+SELECT asText(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00}');
+                                                                                      astext                                                                                      
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {POLYGON((0 0,1 0,1 1,0 1,0 0))@2001-01-01 08:00:00+00, RTransform2D(1.5707963267949, 0, 0)@2001-01-01 08:05:00+00, RTransform2D(3.14159265358979, 0, 0)@2001-01-01 08:06:00+00}
+(1 row)
+
+SELECT asText(tgeometry '{Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2001-01-01 08:00:00,Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2001-01-01 08:05:00,Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2001-01-01 08:06:00}');
+                                                                                                                                                                     astext                                                                                                                                                                     
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {POLYHEDRALSURFACE Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2001-01-01 08:00:00+00, RTransform3D(0.707106781186548, 0.707106781186547, 0, 0, 0, -0.5, 0)@2001-01-01 08:05:00+00, RTransform3D(7.45058065815617e-09, 1, 0, 0, 0, -0.5, -0.5)@2001-01-01 08:06:00+00}
+(1 row)
+
+/* Errors */
+SELECT asText(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((0 0, 2 0, 2 2, 0 2, 0 0))@2001-01-01 08:05:00,Polygon((0 0, 3 0, 3 3, 0 3, 0 0))@2001-01-01 08:06:00}');
+ERROR:  All geometries must be congruent
+LINE 2: SELECT asText(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))...
+                                ^
+SELECT asText(tgeometry '{Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2001-01-01 08:00:00,Polyhedralsurface Z (((1 0 0, 1 0 1, 1 1 0, 1 0 0)),((1 0 0, 1 1 0, 2 0 0, 1 0 0)),((1 0 0, 2 0 0, 1 0 1, 1 0 0)),((2 0 0, 1 1 0, 1 0 1, 2 0 0)))@2001-01-01 08:05:00,Polyhedralsurface Z (((0 0 0, 0 0 2, 0 2 0, 0 0 0)),((0 0 0, 0 2 0, 2 0 0, 0 0 0)),((0 0 0, 2 0 0, 0 0 2, 0 0 0)),((2 0 0, 0 2 0, 0 0 2, 2 0 0)))@2001-01-01 08:06:00}');
+ERROR:  All geometries must be congruent
+LINE 1: SELECT asText(tgeometry '{Polyhedralsurface Z (((0 0 0, 0 0 ...
+                                ^
+SELECT tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon empty@2001-01-01 08:05:00,Polygon((0 0, 3 0, 3 3, 0 3, 0 0))@2001-01-01 08:06:00}';
+ERROR:  Only non-empty geometries accepted
+LINE 1: SELECT tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-0...
+                         ^
+SELECT tgeometry '{Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2001-01-01 08:00:00,Polyhedralsurface Z empty@2001-01-01 08:05:00,Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2001-01-01 08:06:00}';
+ERROR:  Only non-empty geometries accepted
+LINE 1: SELECT tgeometry '{Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 ...
+                         ^
+SELECT tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((0 0 0, 2 0 0, 2 2 0, 0 2 0, 0 0 0))@2001-01-01 08:05:00,Polygon((0 0, 3 0, 3 3, 0 3, 0 0))@2001-01-01 08:06:00}';
+ERROR:  Only 2D polygons or 3D polyhedral surfaces accepted
+LINE 1: SELECT tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-0...
+                         ^
+SELECT tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((0 0, 2 0, 2 2, 0 2, 0 0))@2001-01-01 08:05:00,Polygon((0 0, 3 0, 3 3, 0 3, 0 0))@2001-01-01 08:06:00]';
+ERROR:  Could not parse temporal value
+LINE 1: SELECT tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-0...
+                         ^
+SELECT asText(tgeometry '{Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2001-01-01 08:00:00,Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2001-01-01 08:05:00,Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2001-01-01 08:06:00]');
+ERROR:  Could not parse temporal value
+LINE 1: SELECT asText(tgeometry '{Polyhedralsurface Z (((0 0 0, 0 0 ...
+                                ^
 SELECT asText(tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'));
                       astext                       
 ---------------------------------------------------
@@ -67,3 +120,61 @@ SELECT tgeometryinst(geometry 'Polygon empty', timestamptz '2000-01-01');
 ERROR:  Only non-empty geometries accepted
 SELECT tgeometryinst(geometry 'Polyhedralsurface Z empty', timestamptz '2000-01-01');
 ERROR:  Only non-empty geometries accepted
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(1 0, 2 0, 1 1, 1 0)'::geometry), '2012-01-01 08:10:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00')
+]));
+                                                                     asewkt                                                                      
+-------------------------------------------------------------------------------------------------------------------------------------------------
+ {POLYGON((0 0,1 0,0 1,0 0))@2012-01-01 08:00:00+00, RTransform2D(0, 1, 0)@2012-01-01 08:10:00+00, RTransform2D(0, 0, 0)@2012-01-01 08:20:00+00}
+(1 row)
+
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:00:00'),
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))'::geometry, '2012-01-01 08:10:00'),
+tgeometryinst('Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))'::geometry, '2012-01-01 08:20:00')
+]));
+                                                                                                                                                        asewkt                                                                                                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {POLYHEDRALSURFACE Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2012-01-01 08:00:00+00, RTransform3D(0.707106781186548, 0.707106781186547, 0, 0, 0, -0.5, 0)@2012-01-01 08:10:00+00, RTransform3D(1, 0, 0, 0, 0, 0, 0)@2012-01-01 08:20:00+00}
+(1 row)
+
+/* Errors */
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 1 1, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00')
+]));
+ERROR:  Corresponding rings in each polygon must contain the same number of points
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:00:00'),
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)),((0 0 0,0 0 1,0 1 0,0 0 0)))'::geometry, '2012-01-01 08:20:00')
+]));
+ERROR:  All polyhedral surfaces must contain the same number of faces
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:00:00'),
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:20:00')
+]));
+ERROR:  Corresponding rings in each polygon must contain the same number of points
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0 0, 1 0 0, 0 1 0, 0 0 0)'::geometry), '2012-01-01 08:20:00')
+]));
+ERROR:  Only 2D polygons or 3D polyhedral surfaces accepted
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:20:00')
+]));
+ERROR:  The temporal points must be of the same dimensionality
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 2 0, 0 2, 0 0)'::geometry), '2012-01-01 08:10:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00')
+]));
+ERROR:  All geometries must be congruent
+SELECT asewkt(tgeometryi(ARRAY[
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:00:00'),
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 2,0 2 0,0 0 0)),((0 0 0,0 2 0,2 0 0,0 0 0)),((0 0 0,2 0 0,0 0 2,0 0 0)),((2 0 0,0 2 0,0 0 2,2 0 0)))'::geometry, '2012-01-01 08:10:00'),
+tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:20:00')
+]));
+ERROR:  All geometries must be congruent
