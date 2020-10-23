@@ -375,6 +375,7 @@ ensure_valid_tsequencearr(const TSequence **sequences, int count)
         errmsg("Timestamps for temporal value must be increasing: %s, %s", t1, t2)));
     }
     ensure_spatial_validity((Temporal *)sequences[i - 1], (Temporal *)sequences[i]);
+    ensure_similar_geo(tsequence_inst_n(sequences[0], 0), tsequence_inst_n(sequences[i], 0));
   }
   return;
 }

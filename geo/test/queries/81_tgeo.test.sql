@@ -50,6 +50,28 @@ SELECT tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygo
 SELECT tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((0 0, 2 0, 2 2, 0 2, 0 0))@2001-01-01 08:05:00,Polygon((0 0, 3 0, 3 3, 0 3, 0 0))@2001-01-01 08:06:00}';
 SELECT tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((0 0, 2 0, 2 2, 0 2, 0 0))@2001-01-01 08:05:00,Polygon((0 0, 3 0, 3 3, 0 3, 0 0))@2001-01-01 08:06:00] xxx';
 
+-------------------------------------------------------------------------------
+
+-- Temporal sequence set
+
+SELECT asText(tgeometry '  { [ Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00 , Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00 , Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00 ],
+ [ Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00 , Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00 , Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00 ] } ');
+SELECT asText(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00],
+ [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}');
+SELECT asText(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2001-01-01 08:00:00,Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2001-01-01 08:05:00,Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2001-01-01 08:06:00],
+ [Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2001-01-01 09:00:00,Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2001-01-01 09:05:00,Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2001-01-01 09:06:00]}');
+
+/* Errors */
+SELECT asText(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((0 0, 2 0, 2 2, 0 2, 0 0))@2001-01-01 08:05:00,Polygon((0 0, 3 0, 3 3, 0 3, 0 0))@2001-01-01 08:06:00],
+ [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((0 0, 2 0, 2 2, 0 2, 0 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}');
+SELECT asText(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2001-01-01 08:00:00,Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2001-01-01 08:05:00,Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2001-01-01 08:06:00],
+ [Polyhedralsurface Z (((0 0 0,0 0 2,0 2 0,0 0 0)),((0 0 0,0 2 0,2 0 0,0 0 0)),((0 0 0,2 0 0,0 0 2,0 0 0)),((2 0 0,0 2 0,0 0 2,2 0 0)))@2001-01-01 09:00:00,Polyhedralsurface Z (((0 0 0,0 0 2,0 2 0,0 0 0)),((0 0 0,0 2 0,2 0 0,0 0 0)),((0 0 0,2 0 0,0 0 2,0 0 0)),((2 0 0,0 2 0,0 0 2,2 0 0)))@2001-01-01 09:05:00]}');
+SELECT tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00, Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00],
+ [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00, Polygon empty@2001-01-01 09:05:00, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}';
+SELECT tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00],[Polygon((0 0 0, 1 0 0, 1 1 0, 0 1 0, 0 0 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]}';
+SELECT tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00],[Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]';
+SELECT tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00],[Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]} xxx';
+
 
 -------------------------------------------------------------------------------
 -- Constructor functions
@@ -149,5 +171,93 @@ tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0
 tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 2,0 2 0,0 0 0)),((0 0 0,0 2 0,2 0 0,0 0 0)),((0 0 0,2 0 0,0 0 2,0 0 0)),((2 0 0,0 2 0,0 0 2,2 0 0)))', '2012-01-01 08:10:00'),
 tgeometryinst(geometry 'Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))', '2012-01-01 08:20:00')
 ]));
+
+-------------------------------------------------------------------------------
+
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(1 0, 2 0, 1 1, 1 0)'::geometry), '2012-01-01 08:10:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 09:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(1 0, 2 0, 1 1, 1 0)'::geometry), '2012-01-01 09:10:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 09:20:00')
+])]));
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:00:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))', '2012-01-01 08:10:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 09:00:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))', '2012-01-01 09:10:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 09:20:00')
+])]));
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(1 0, 2 0, 1 1, 1 0)'::geometry), '2012-01-01 08:10:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00'),
+tgeometryinst(ST_MakePolygon('LineString(1 0, 2 0, 1 1, 1 0)'::geometry), '2012-01-01 08:30:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:40:00')
+], FALSE, TRUE)]));
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:00:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))', '2012-01-01 08:10:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:20:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))', '2012-01-01 08:30:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:40:00')
+], FALSE, TRUE)]));
+
+/* Errors */
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 1 1, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 09:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 1 1, 0 1, 0 0)'::geometry), '2012-01-01 09:20:00')
+])]));
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:00:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))', '2012-01-01 08:10:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))', '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,1 0 1,0 0 1,0 0 0)),((1 1 0,1 1 1,1 0 1,1 0 0,1 1 0)),((0 1 0,0 1 1,1 1 1,1 1 0,0 1 0)),((0 0 1,1 0 1,1 1 1,0 1 1,0 0 1)))', '2012-01-01 09:00:00'),
+tgeometryinst(geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,1 0 1,0 0 1,0 0 0)),((1 1 0,1 1 1,1 0 1,1 0 0,1 1 0)),((0 1 0,0 1 1,1 1 1,1 1 0,0 1 0)),((0 0 1,1 0 1,1 1 1,0 1 1,0 0 1)))', '2012-01-01 09:10:00')
+])]));
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0 0, 1 0 0, 0 1 0, 0 0 0)'::geometry), '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 09:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0 0, 1 0 0, 0 1 0, 0 0 0)'::geometry), '2012-01-01 09:20:00')
+])]));
+SELECT asewkt(tgeometrys(ARRAY[
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(1 0, 2 0, 1 1, 1 0)'::geometry), '2012-01-01 08:10:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:20:00')
+]),
+tgeometryseq(ARRAY[
+tgeometryinst(ST_MakePolygon('LineString(0 0, 2 0, 0 2, 0 0)'::geometry), '2012-01-01 09:00:00'),
+tgeometryinst(ST_MakePolygon('LineString(1 0, 3 0, 1 2, 1 0)'::geometry), '2012-01-01 09:10:00'),
+tgeometryinst(ST_MakePolygon('LineString(0 0, 2 0, 0 2, 0 0)'::geometry), '2012-01-01 09:20:00')
+])]));
 
 -------------------------------------------------------------------------------

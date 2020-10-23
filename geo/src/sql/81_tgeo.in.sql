@@ -56,5 +56,10 @@ CREATE FUNCTION tgeometryseq(tgeometry[], lower_inc boolean DEFAULT true,
   AS 'MODULE_PATHNAME', 'tlinearseq_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION tgeometrys(tgeometry[])
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'tsequenceset_constructor'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/
 

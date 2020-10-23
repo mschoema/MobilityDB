@@ -827,6 +827,11 @@ static TSequence *
 tsequence_join(const TSequence *seq1, const TSequence *seq2,
   bool removelast, bool removefirst)
 {
+  bool isRb = tgeo_rigid_body_instant(tsequence_inst_n(seq1, 0));
+  TInstant *inst1;
+  if (isRb)
+    inst1 = tgeoinst_geometry_to_rtransform(tsequence_inst_n(seq2, 0),
+      tsequence_inst_n(seq1, 0));
   int count1 = removelast ? seq1->count - 1 : seq1->count;
   int start2 = removefirst ? 1 : 0;
   int count = count1 + (seq2->count - start2);
@@ -835,10 +840,20 @@ tsequence_join(const TSequence *seq1, const TSequence *seq2,
   for (int i = 0; i < count1; i++)
     instants[k++] = tsequence_inst_n(seq1, i);
   for (int i = start2; i < seq2->count; i++)
-    instants[k++] = tsequence_inst_n(seq2, i);
+  {
+    TInstant *inst = tsequence_inst_n(seq2, i);
+    if (isRb && i == 0)
+      inst = inst1;
+    else if (isRb)
+      inst = tgeoinst_rtransform_combine(inst, inst1);
+    instants[k++] = inst;
+  }
   TSequence *result = tsequence_make1(instants, count,
     seq1->period.lower_inc, seq2->period.upper_inc,
     MOBDB_FLAGS_GET_LINEAR(seq1->flags), NORMALIZE_NO);
+  if (isRb)
+    for (int i = count1 + 1 - start2; i < count; ++i)
+      pfree(instants[i]);
   pfree(instants);
   return result;
 }
@@ -871,6 +886,14 @@ tsequencearr_normalize(const TSequence **sequences, int count, int *newcount)
   bool linear = MOBDB_FLAGS_GET_LINEAR(seq1->flags);
   bool isnew = false;
   int k = 0;
+  bool isRb = tgeo_rigid_body_instant((TInstant *) tsequence_inst_n(seq1, 0));
+  Datum zero_rt;
+  if (isRb)
+  {
+    bool is3d = tgeo_3d_inst((TInstant *) tsequence_inst_n(seq1, 0));
+    valuetypid = is3d ? type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
+    zero_rt = rtransform_zero_datum(valuetypid);
+  }
   for (int i = 1; i < count; i++)
   {
     TSequence *seq2 = (TSequence *) sequences[i];
@@ -886,6 +909,19 @@ tsequencearr_normalize(const TSequence **sequences, int count, int *newcount)
       (TInstant *) tsequence_inst_n(seq2, 1);
     Datum first2value = (seq2->count == 1) ? 0 :
       tinstant_value(first2);
+    if (isRb)
+    {
+      if (seq1->count == 1)
+        last1value = zero_rt;
+      else if (seq1->count == 2)
+        last2value = zero_rt;
+      first1 = tgeoinst_geometry_to_rtransform(first1, (TInstant *) tsequence_inst_n(seq1, 0));
+      first1value = tinstant_value(first1);
+      first2 = (seq2->count == 1) ? NULL :
+        tgeoinst_rtransform_combine(first2, first1);
+      first2value = (seq2->count == 1) ? 0 :
+        tinstant_value(first2);
+    }
     bool adjacent = seq1->period.upper == seq2->period.lower &&
       (seq1->period.upper_inc || seq2->period.lower_inc);
     /* If they are adjacent and not instantaneous */
