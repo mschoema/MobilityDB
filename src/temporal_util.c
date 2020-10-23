@@ -46,6 +46,7 @@
 
 #include "tpoint.h"
 #include "tpoint_spatialfuncs.h"
+#include "rtransform.h"
 
 /*****************************************************************************
  * Temporal/base types tests
@@ -76,7 +77,8 @@ ensure_temporal_base_type(Oid basetypid)
     basetypid != FLOAT8OID && basetypid != TEXTOID &&
     basetypid != type_oid(T_DOUBLE2) && basetypid != type_oid(T_DOUBLE3) &&
     basetypid != type_oid(T_DOUBLE4) &&
-    basetypid != type_oid(T_GEOMETRY) && basetypid != type_oid(T_GEOGRAPHY))
+    basetypid != type_oid(T_GEOMETRY) && basetypid != type_oid(T_GEOGRAPHY) &&
+    basetypid != type_oid(T_RTRANSFORM2D) && basetypid != type_oid(T_RTRANSFORM3D))
     elog(ERROR, "unknown base type: %d", basetypid);
   return;
 }
@@ -504,6 +506,8 @@ datum_eq2(Datum l, Datum r, Oid typel, Oid typer)
   if (typel == type_oid(T_GEOGRAPHY) && typel == typer)
     //  return DatumGetBool(call_function2(geography_eq, l, r));
     return datum_point_eq(l, r);
+  if (tgeo_rtransform_base_type(typel) && typel == typer)
+    return rtransform_eq_datum(l, r, typel);
   elog(ERROR, "unknown datum_eq2 function for base type: %d", typel);
 }
 

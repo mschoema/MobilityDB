@@ -87,6 +87,15 @@ tgeoinst_rtransform_to_geometry(const TInstant *inst, const TInstant *ref_inst)
  *****************************************************************************/
 
 TInstant *
+tgeoinst_rtransform_zero(TimestampTz t, Oid valuetypid)
+{
+    Datum result_datum = rtransform_zero_datum(valuetypid);
+    TInstant *result = tinstant_make(result_datum, t, valuetypid);
+    pfree((void *) result_datum);
+    return result;
+}
+
+TInstant *
 tgeoinst_rtransform_combine(const TInstant *inst, const TInstant *ref_inst)
 {
     Datum rt1 = tinstant_value(inst);

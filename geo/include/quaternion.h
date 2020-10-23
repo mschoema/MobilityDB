@@ -45,7 +45,10 @@ extern double quaternion_norm(Quaternion quat);
 extern Quaternion quaternion_normalize(Quaternion quat);
 extern Quaternion quaternion_negate(Quaternion quat);
 
+extern bool quaternion_eq(Quaternion q1, Quaternion q2);
+
 extern Quaternion quaternion_multiply(Quaternion q1, Quaternion q2);
+extern Quaternion quaternion_slerp(Quaternion q1, Quaternion q2, double ratio);
 
 /*****************************************************************************/
 

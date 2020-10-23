@@ -50,5 +50,11 @@ CREATE FUNCTION tgeometryi(tgeometry[])
   AS 'MODULE_PATHNAME', 'tinstantset_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION tgeometryseq(tgeometry[], lower_inc boolean DEFAULT true,
+  upper_inc boolean DEFAULT true, linear boolean DEFAULT true)
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'tlinearseq_constructor'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/
 

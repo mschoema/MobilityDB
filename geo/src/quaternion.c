@@ -61,6 +61,36 @@ quaternion_negate(Quaternion quat)
   return (Quaternion) {-quat.W, -quat.X, -quat.Y, -quat.Z};
 }
 
+static Quaternion
+quaternion_multiply_scalar(Quaternion quat, double s)
+{
+  return (Quaternion) {quat.W * s, quat.X *s, quat.Y * s, quat.Z * s};
+}
+
+static double
+quaternion_dot(Quaternion q1, Quaternion q2)
+{
+  return q1.W*q2.W + q1.X*q2.X + q1.Y*q2.Y + q1.Z*q2.Z;
+}
+
+bool
+quaternion_eq(Quaternion q1, Quaternion q2)
+{
+  return (q1.W == q2.W && q1.X == q2.X && q1.Y == q2.Y && q1.Z == q2.Z);
+}
+
+static Quaternion
+quaternion_add(Quaternion q1, Quaternion q2)
+{
+  return (Quaternion) {q1.W + q2.W, q1.X + q2.X, q1.Y +q2.Y, q1.Z + q2.Z};
+}
+
+static Quaternion
+quaternion_diff(Quaternion q1, Quaternion q2)
+{
+  return (Quaternion) {q1.W - q2.W, q1.X - q2.X, q1.Y - q2.Y, q1.Z - q2.Z};
+}
+
 Quaternion
 quaternion_multiply(Quaternion q1, Quaternion q2)
 {
@@ -69,6 +99,43 @@ quaternion_multiply(Quaternion q1, Quaternion q2)
   double Y = q1.W * q2.Y - q1.X * q2.Z + q1.Y * q2.W + q1.Z * q2.X;
   double Z = q1.W * q2.Z + q1.X * q2.Y - q1.Y * q2.X + q1.Z * q2.W;
   return (Quaternion) {W, X, Y, Z};
+}
+
+Quaternion
+quaternion_slerp(Quaternion q1, Quaternion q2, double ratio)
+{
+  q1 = quaternion_normalize(q1);
+  q2 = quaternion_normalize(q2);
+
+  double dot = quaternion_dot(q1, q2);
+
+  if (dot < 0.0f)
+  {
+    q2 = quaternion_negate(q2);
+    dot = -dot;
+  }
+
+  const double DOT_THRESHOLD = 0.9995;
+  if (dot > DOT_THRESHOLD)
+  {
+    Quaternion result = quaternion_add(q1,
+      quaternion_multiply_scalar(quaternion_diff(q2, q1), ratio));
+    return quaternion_normalize(result);
+  }
+
+  double theta_0 = acos(dot);
+  double theta = theta_0*ratio;
+  double sin_theta = sin(theta);
+  double sin_theta_0 = sin(theta_0);
+
+  double s1 = cos(theta) - dot * sin_theta / sin_theta_0;
+  double s2 = sin_theta / sin_theta_0;
+
+  Quaternion result = quaternion_add(
+    quaternion_multiply_scalar(q1, s1),
+    quaternion_multiply_scalar(q2, s2)
+  );
+  return quaternion_normalize(result);
 }
 
 /*****************************************************************************/

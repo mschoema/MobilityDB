@@ -12,6 +12,7 @@
 
 #include "rtransform.h"
 
+#include <assert.h>
 #include <libpq/pqformat.h>
 #include <executor/spi.h>
 #include <liblwgeom.h>
@@ -136,6 +137,46 @@ rtransform_make_3d(Quaternion quat, double3 translation)
     result->quat = quat;
     result->translation = translation;
     return result;
+}
+
+Datum
+rtransform_zero_datum(Oid basetypid)
+{
+  Datum result;
+  if (basetypid == type_oid(T_RTRANSFORM2D))
+  {
+    RTransform2D *rt = rtransform_make_2d(0, (double2) {0, 0});
+    result = RTransform2DGetDatum(rt);
+  }
+  else if (basetypid == type_oid(T_RTRANSFORM3D))
+  {
+    RTransform3D *rt = rtransform_make_3d((Quaternion) {1, 0, 0, 0}, (double3) {0, 0, 0});
+    result = RTransform3DGetDatum(rt);
+  }
+  return result;
+}
+
+/*****************************************************************************
+ * Comparison functions
+ *****************************************************************************/
+
+bool
+rtransform_eq_datum(const Datum rt1_datum, const Datum rt2_datum, Oid basetypid)
+{
+  bool result;
+  if (basetypid == type_oid(T_RTRANSFORM2D))
+  {
+    RTransform2D *rt1 = DatumGetRTransform2D(rt1_datum);
+    RTransform2D *rt2 = DatumGetRTransform2D(rt2_datum);
+    result = (rt1->theta == rt2->theta && double2_eq(&rt1->translation, &rt2->translation));
+  }
+  else if (basetypid == type_oid(T_RTRANSFORM3D))
+  {
+    RTransform3D *rt1 = DatumGetRTransform3D(rt1_datum);
+    RTransform3D *rt2 = DatumGetRTransform3D(rt2_datum);
+    result = (quaternion_eq(rt1->quat, rt2->quat) && double3_eq(&rt1->translation, &rt2->translation));
+  }
+  return result;
 }
 
 /*****************************************************************************
@@ -419,6 +460,70 @@ rtransform_combine_datum(const Datum rt1_datum, const Datum rt2_datum, Oid baset
     RTransform3D *rt1 = DatumGetRTransform3D(rt1_datum);
     RTransform3D *rt2 = DatumGetRTransform3D(rt2_datum);
     RTransform3D *rt = rtransform_combine_3d(rt1, rt2);
+    result = RTransform3DGetDatum(rt);
+  }
+  return result;
+}
+
+/*****************************************************************************
+ * Combine functions
+ *****************************************************************************/
+
+static RTransform2D *
+rtransform_interpolate_2d(const RTransform2D *rt1, const RTransform2D *rt2,
+  double ratio)
+{
+  /* If fabs(theta_delta) == M_PI: Always turn counter-clockwise */
+  double theta;
+  double theta_delta = rt2->theta - rt1->theta;
+  if (fabs(theta_delta) < EPSILON)
+      theta = rt1->theta;
+  else if (theta_delta > 0 && fabs(theta_delta) <= M_PI)
+      theta = rt1->theta + theta_delta*ratio;
+  else if (theta_delta > 0 && fabs(theta_delta) > M_PI)
+      theta = rt2->theta + (2*M_PI - theta_delta)*(1 - ratio);
+  else if (theta_delta < 0 && fabs(theta_delta) < M_PI)
+      theta = rt1->theta + theta_delta*ratio;
+  else /* (theta_delta < 0 && fabs(theta_delta) >= M_PI) */
+      theta = rt1->theta + (2*M_PI + theta_delta)*ratio;
+
+  if (theta > M_PI)
+      theta = theta - 2*M_PI;
+
+  double dx = rt1->translation.a * (1 - ratio) + rt2->translation.a * ratio;
+  double dy = rt1->translation.b * (1 - ratio) + rt2->translation.b * ratio;
+  return rtransform_make_2d(theta, (double2) {dx, dy});
+}
+
+static RTransform3D *
+rtransform_interpolate_3d(const RTransform3D *rt1, const RTransform3D *rt2,
+  double ratio)
+{
+  Quaternion quat = quaternion_slerp(rt1->quat, rt2->quat, ratio);
+  double dx = rt1->translation.a * (1 - ratio) + rt2->translation.a * ratio;
+  double dy = rt1->translation.b * (1 - ratio) + rt2->translation.b * ratio;
+  double dz = rt1->translation.c * (1 - ratio) + rt2->translation.c * ratio;
+  return rtransform_make_3d(quat, (double3) {dx, dy, dz});
+}
+
+Datum
+rtransform_interpolate_datum(const Datum rt1_datum, const Datum rt2_datum,
+  double ratio, Oid basetypid)
+{
+  assert(0 < ratio && ratio < 1);
+  Datum result;
+  if (basetypid == type_oid(T_RTRANSFORM2D))
+  {
+    RTransform2D *rt1 = DatumGetRTransform2D(rt1_datum);
+    RTransform2D *rt2 = DatumGetRTransform2D(rt2_datum);
+    RTransform2D *rt = rtransform_interpolate_2d(rt1, rt2, ratio);
+    result = RTransform2DGetDatum(rt);
+  }
+  else if (basetypid == type_oid(T_RTRANSFORM3D))
+  {
+    RTransform3D *rt1 = DatumGetRTransform3D(rt1_datum);
+    RTransform3D *rt2 = DatumGetRTransform3D(rt2_datum);
+    RTransform3D *rt = rtransform_interpolate_3d(rt1, rt2, ratio);
     result = RTransform3DGetDatum(rt);
   }
   return result;

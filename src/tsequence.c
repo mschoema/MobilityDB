@@ -54,6 +54,10 @@
 #include "tpoint_boxops.h"
 #include "tpoint_spatialfuncs.h"
 
+#include "rtransform.h"
+#include "tgeo_transform.h"
+#include "tgeo_spatialfuncs.h"
+
 /*****************************************************************************
  * Compute the intersection, if any, of a segment of a temporal sequence and
  * a value. The functions only return true when there is an intersection at
@@ -135,7 +139,7 @@ tlinearseq_intersection_value(const TInstant *inst1, const TInstant *inst2,
   else
     elog(ERROR, "unknown intersection function for continuous base type: %d",
       inst1->basetypid);
-    
+
   if (result && inter != NULL)
     /* We are sure it is linear interpolation */
     *inter = tsequence_value_at_timestamp1(inst1, inst2, LINEAR, *t);
@@ -366,6 +370,45 @@ double4_collinear(const double4 *x1, const double4 *x2, const double4 *x3,
  * Returns true if the three values are collinear
  *
  * @param[in] basetypid Oid of the base type
+ * @param[in] x1,x2,x3 Input values
+ * @param[in] ratio Value in [0,1] representing the duration of the
+ * timestamps associated to `x1` and `x2` divided by the duration
+ * of the timestamps associated to `x1` and `x3`
+ */
+static bool
+rtransform_collinear(const Datum rt1_datum, const Datum rt2_datum,
+  const Datum rt3_datum, double ratio, Oid basetypid)
+{
+  bool result;
+  Datum rt_datum = rtransform_interpolate_datum(rt1_datum, rt3_datum,
+    ratio, basetypid);
+  if (basetypid == type_oid(T_RTRANSFORM2D))
+  {
+    RTransform2D *rt = DatumGetRTransform2D(rt_datum);
+    RTransform2D *rt2 = DatumGetRTransform2D(rt2_datum);
+    result = (fabs(rt->theta - rt2->theta) <= EPSILON
+      && fabs(rt->translation.a - rt2->translation.a) <= EPSILON
+      && fabs(rt->translation.b - rt2->translation.b) <= EPSILON);
+  }
+  else if (basetypid == type_oid(T_RTRANSFORM3D))
+  {
+    RTransform3D *rt = DatumGetRTransform3D(rt_datum);
+    RTransform3D *rt2 = DatumGetRTransform3D(rt2_datum);
+    result = (fabs(rt->quat.W - rt2->quat.W) <= EPSILON
+      && fabs(rt->quat.X - rt2->quat.X) <= EPSILON
+      && fabs(rt->quat.Y - rt2->quat.Y) <= EPSILON
+      && fabs(rt->quat.Z - rt2->quat.Z) <= EPSILON
+      && fabs(rt->translation.a - rt2->translation.a) <= EPSILON
+      && fabs(rt->translation.b - rt2->translation.b) <= EPSILON
+      && fabs(rt->translation.c - rt2->translation.c) <= EPSILON);
+  }
+  return result;
+}
+
+/**
+ * Returns true if the three values are collinear
+ *
+ * @param[in] basetypid Oid of the base type
  * @param[in] value1,value2,value3 Input values
  * @param[in] t1,t2,t3 Input timestamps
  */
@@ -395,6 +438,8 @@ datum_collinear(Oid basetypid, Datum value1, Datum value2, Datum value3,
   if (basetypid == type_oid(T_DOUBLE4))
     return double4_collinear(DatumGetDouble4P(value1), DatumGetDouble4P(value2),
       DatumGetDouble4P(value3), ratio);
+  if (tgeo_rtransform_base_type(basetypid))
+    return rtransform_collinear(value1, value2, value3, ratio, basetypid);
   elog(ERROR, "unknown collinear operation for base type: %d", basetypid);
 }
 
@@ -419,7 +464,7 @@ tinstantarr_normalize(const TInstant **instants, bool linear, int count,
   int *newcount)
 {
   assert(count > 1);
-  Oid basetypid = instants[0]->basetypid;
+  Oid basetypid = instants[1]->basetypid;
   const TInstant **result = palloc(sizeof(TInstant *) * count);
   /* Remove redundant instants */
   const TInstant *inst1 = instants[0];
@@ -428,6 +473,14 @@ tinstantarr_normalize(const TInstant **instants, bool linear, int count,
   Datum value2 = tinstant_value(inst2);
   result[0] = inst1;
   int k = 1;
+  TInstant *tofree;
+  bool isRb = tgeo_rtransform_base_type(basetypid);
+  if (isRb)
+  {
+    inst1 = tgeoinst_rtransform_zero(instants[0]->t, basetypid);
+    value1 = tinstant_value(inst1);
+    tofree = inst1;
+  }
   for (int i = 2; i < count; i++)
   {
     const TInstant *inst3 = instants[i];
@@ -458,6 +511,8 @@ tinstantarr_normalize(const TInstant **instants, bool linear, int count,
       inst2 = inst3; value2 = value3;
     }
   }
+  if (isRb)
+    pfree(tofree);
   result[k++] = inst2;
   *newcount = k;
   return result;
@@ -545,6 +600,14 @@ TSequence *
 tsequence_make1(const TInstant **instants, int count, bool lower_inc,
   bool upper_inc, bool linear, bool normalize)
 {
+  bool isRb = tgeo_rigid_body_instant(instants[0]);
+  /*
+   * Transform the instants into rtransforms (keep the first instant as a geometry)
+   * This creates a new array of instants
+   */
+  if (count > 1 && isRb)
+    instants = tgeo_instarr_to_rtransform(instants, count);
+
   /* Normalize the array of instants */
   const TInstant **norminsts = instants;
   int newcount = count;
@@ -559,7 +622,7 @@ tsequence_make1(const TInstant **instants, int count, bool lower_inc,
   bool hastraj = false; /* keep compiler quiet */
   Datum traj = 0; /* keep compiler quiet */
   bool isgeo = tgeo_base_type(instants[0]->basetypid);
-  if (isgeo)
+  if (isgeo && !isRb)
   {
     hastraj = type_has_precomputed_trajectory(instants[0]->basetypid);
     if (hastraj)
@@ -633,6 +696,13 @@ tsequence_make1(const TInstant **instants, int count, bool lower_inc,
 
   if (normalize && count > 2)
     pfree(norminsts);
+  /* Free the created instants (only for geometries) */
+  if (count > 1 && isRb)
+  {
+    for (int i = 0; i < count; ++i)
+      pfree(instants[i]);
+    pfree(instants);
+  }
   return result;
 }
 
@@ -840,7 +910,7 @@ tsequencearr_normalize(const TSequence **sequences, int count, int *newcount)
       /* If float/point sequences and collinear last/first segments having the same duration
          ..., 1@t1, 2@t2) [2@t2, 3@t3, ... -> ..., 1@t1, 3@t3, ...
       */
-      (base_type_continuous(basetypid) && datum_eq(last1value, first1value, basetypid) && 
+      (base_type_continuous(basetypid) && datum_eq(last1value, first1value, basetypid) &&
       datum_collinear(basetypid, last2value, first1value, first2value,
         last2->t, first1->t, first2->t))
       ))
@@ -3088,7 +3158,7 @@ tnumberseq_restrict_ranges1(TSequence **result, const TSequence *seq,
      * Compute first the tnumberseq_at_ranges, then compute its complement
      * Notice that in this case due to rounoff errors it may be the case
      * that temp is not equal to merge(atRanges(temp, .),minusRanges(temp, .),
-     * since we kept the range values instead of the projected values when 
+     * since we kept the range values instead of the projected values when
      * computing atRanges
      */
     TSequenceSet *ts = tnumberseq_restrict_ranges(seq, newranges, newcount,

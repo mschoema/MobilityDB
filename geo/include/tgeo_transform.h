@@ -22,7 +22,7 @@
  * Encoding functions
  *****************************************************************************/
 
-extern TInstant *tgeoinst_region_to_rtransform(const TInstant *inst, const TInstant *ref_region);
+extern TInstant *tgeoinst_geometry_to_rtransform(const TInstant *inst, const TInstant *ref_region);
 
 extern TInstant **tgeo_instarr_to_rtransform(TInstant **instants, int count);
 
@@ -36,6 +36,7 @@ extern TInstant *tgeoinst_rtransform_to_geometry(const TInstant *inst, const TIn
  * Other transformation functions
  *****************************************************************************/
 
+extern TInstant *tgeoinst_rtransform_zero(TimestampTz t, Oid valuetypid);
 extern TInstant *tgeoinst_rtransform_combine(const TInstant *inst, const TInstant *ref_rtransform);
 
 /*****************************************************************************/

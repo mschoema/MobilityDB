@@ -19,11 +19,15 @@
 #include "temporal.h"
 #include "stbox.h"
 
+/** Symbolic constants for temporal geometry bounding box computations */
+#define BBOX_ROTATING       true
+#define BBOX_ROTATING_NO    false
+
 /*****************************************************************************/
 
 /* Functions computing the bounding box at the creation of the temporal geometry */
 
-extern void tgeoinstarr_to_stbox(STBOX *box, TInstant **inst, int count);
+extern void tgeoinstarr_to_stbox(STBOX *box, TInstant **inst, int count, bool rotating);
 
 /*****************************************************************************/
 

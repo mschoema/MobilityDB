@@ -67,14 +67,26 @@ extern Datum rtransform_out_3d(PG_FUNCTION_ARGS);
 
 extern RTransform2D *rtransform_make_2d(double theta, double2 translation);
 extern RTransform3D *rtransform_make_3d(Quaternion quat, double3 translation);
+extern Datum rtransform_zero_datum(Oid basetypid);
+
+/*****************************************************************************
+ * Comparison functions
+ *****************************************************************************/
+
+extern bool rtransform_eq_datum(const Datum rt1_datum, const Datum rt2_datum, Oid basetypid);
 
 /*****************************************************************************
  * Transformation functions
  *****************************************************************************/
 
-extern Datum rtransform_compute_datum(const Datum geom1, const Datum geom2, Oid valuetypid);
-extern Datum rtransform_apply_datum(const Datum rt, const Datum geom, Oid valuetypid);
-extern Datum rtransform_combine_datum(const Datum rt1, const Datum rt2, Oid valuetypid);
+extern Datum rtransform_compute_datum(const Datum geom1_datum, const Datum geom2_datum,
+  Oid basetypid);
+extern Datum rtransform_apply_datum(const Datum rt_datum, const Datum geom_datum,
+  Oid basetypid);
+extern Datum rtransform_combine_datum(const Datum rt1_datum, const Datum rt2_datum,
+  Oid basetypid);
+extern Datum rtransform_interpolate_datum(const Datum rt1_datum, const Datum rt2_datum,
+  double ratio, Oid basetypid);
 
 /*****************************************************************************/
 

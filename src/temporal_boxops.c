@@ -229,7 +229,7 @@ tinstantset_make_bbox(void *box, const TInstant **instants, int count)
   else if (tgeo_base_type(instants[0]->basetypid))
   {
     if (tgeo_rigid_body_instant(instants[0]))
-      tgeoinstarr_to_stbox((STBOX *)box, instants, count);
+      tgeoinstarr_to_stbox((STBOX *)box, instants, count, BBOX_ROTATING_NO);
     else
       tpointinstarr_to_stbox((STBOX *)box, instants, count);
   }
@@ -259,11 +259,13 @@ tsequence_make_bbox(void *box, const TInstant **instants, int count,
       lower_inc, upper_inc);
   else if (tnumber_base_type(instants[0]->basetypid))
     tnumberinstarr_to_tbox((TBOX *) box, instants, count);
-  /* This case is currently not used since for temporal points the bounding
-   * box is computed from the trajectory for efficiency reasons. It is left
-   * here in case this is no longer the case
   else if (tgeo_base_type(instants[0]->basetypid))
-    tpointinstarr_to_stbox((STBOX *) box, instants, count); */
+  {
+    if (tgeo_rigid_body_instant(instants[0]))
+      tgeoinstarr_to_stbox((STBOX *)box, instants, count, BBOX_ROTATING);
+    else
+      tpointinstarr_to_stbox((STBOX *)box, instants, count);
+  }
   else
     elog(ERROR, "unknown bounding box function for base type: %d",
       instants[0]->basetypid);

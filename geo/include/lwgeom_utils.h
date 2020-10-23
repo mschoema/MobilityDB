@@ -38,6 +38,11 @@ extern void lwgeom_translate_3d(LWGEOM *geom,
 extern LWPOINT *lwpoly_centroid(const LWPOLY *poly);
 extern LWPOINT *lwpsurface_centroid(const LWPSURFACE *psurface);
 
+/* Distance Functions */
+
+extern double lwpoly_max_vertex_distance(const LWPOLY *poly, const LWPOINT *point);
+extern double lwpsurface_max_vertex_distance(const LWPSURFACE *psurface, const LWPOINT *point);
+
 /* Rigidity Testing */
 
 extern bool lwgeom_rigid(const LWGEOM *geom1, const LWGEOM *geom2);

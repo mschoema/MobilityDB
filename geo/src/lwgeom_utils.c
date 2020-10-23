@@ -130,6 +130,44 @@ lwpsurface_centroid(const LWPSURFACE *psurface)
 }
 
 /*****************************************************************************
+ * Distance Functions
+ *****************************************************************************/
+
+double
+lwpoly_max_vertex_distance(const LWPOLY *poly, const LWPOINT *point)
+{
+  POINT4D p;
+  double d = 0;
+  double x = lwpoint_get_x(point);
+  double y = lwpoint_get_y(point);
+  for (uint32_t i = 0; i < poly->rings[0]->npoints; ++i)
+  {
+    getPoint4d_p(poly->rings[0], i, &p);
+    d = Max(d, sqrt(pow(x - p.x, 2) + pow(y - p.y, 2)));
+  }
+  return d;
+}
+
+double
+lwpsurface_max_vertex_distance(const LWPSURFACE *psurface, const LWPOINT *point)
+{
+  POINT4D p;
+  double d = 0;
+  double x = lwpoint_get_x(point);
+  double y = lwpoint_get_y(point);
+  double z = lwpoint_get_z(point);
+  for (uint32_t i = 0; i < psurface->ngeoms; ++i)
+  {
+    for (uint32_t j = 0; j < psurface->geoms[i]->rings[0]->npoints - 1; ++j)
+    {
+      getPoint4d_p(psurface->geoms[i]->rings[0], j, &p);
+      d = Max(d, sqrt(pow(x - p.x, 2) + pow(y - p.y, 2) + pow(z - p.z, 2)));
+    }
+  }
+  return d;
+}
+
+/*****************************************************************************
  * Rigidity Testing
  *****************************************************************************/
 
