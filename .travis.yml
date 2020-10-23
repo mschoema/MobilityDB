@@ -24,12 +24,12 @@ before_script:
   - cd build
   - cmake -DWITH_COVERAGE=$COVERAGE ..
 
-script: 
+script:
   - export PATH="/usr/lib/postgresql/$PGMAJOR/bin:$PATH"
   - make && make test
 
 after_failure: ../test/scripts/print_fail.sh
 
 after_success: |
-   [ "$COVERAGE" == "1" ] && coveralls --exclude src/debug --exclude point/src/debug --exclude include --exclude point/include --exclude src/sql --exclude point/src/sql --exclude doc --exclude test --exclude point/test --gcov-options '\-lp' -r .. -b .
+   [ "$COVERAGE" == "1" ] && coveralls --exclude src/debug --exclude point/src/debug --exclude include --exclude point/include --exclude geo/include --exclude src/sql --exclude point/src/sql --exclude geo/src/sql --exclude doc --exclude test --exclude point/test --gcov-options '\-lp' -r .. -b .
 
