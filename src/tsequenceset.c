@@ -49,6 +49,7 @@
 
 #include "tpoint.h"
 #include "tpoint_spatialfuncs.h"
+#include "tgeo_transform.h"
 
 /*****************************************************************************
  * General functions
@@ -769,7 +770,12 @@ tinstantset_to_tsequenceset(const TInstantSet *ti, bool linear)
   for (int i = 0; i < ti->count; i++)
   {
     const TInstant *inst = tinstantset_inst_n(ti, i);
-    sequences[i] = tinstant_to_tsequence(inst, linear);
+    if (i > 0 && tgeo_rtransform_base_type(inst->basetypid)) {
+      TInstant *newinst = tgeoinst_rtransform_to_geometry(inst, tinstantset_inst_n(ti, 0));
+      sequences[i] = tinstant_to_tsequence(newinst, linear);
+      pfree(newinst);
+    } else
+      sequences[i] = tinstant_to_tsequence(inst, linear);
   }
   TSequenceSet *result = tsequenceset_make((const TSequence **) sequences,
     ti->count, NORMALIZE_NO);

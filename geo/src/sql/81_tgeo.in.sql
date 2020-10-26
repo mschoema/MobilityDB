@@ -61,5 +61,25 @@ CREATE FUNCTION tgeometrys(tgeometry[])
   AS 'MODULE_PATHNAME', 'tsequenceset_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+/******************************************************************************
+ * Transformations
+ ******************************************************************************/
+
+CREATE FUNCTION tgeometryinst(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tinstant'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION tgeometryi(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tinstantset'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION tgeometryseq(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tsequence'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION tgeometrys(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tsequenceset'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/
 
