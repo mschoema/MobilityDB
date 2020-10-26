@@ -292,3 +292,21 @@ SELECT asewkt(tgeometryseq(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-0
 SELECT asewkt(tgeometryseq(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}'));
 
 -------------------------------------------------------------------------------
+-- Accessor functions
+-------------------------------------------------------------------------------
+
+SELECT st_asewkt(getValue(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01'));
+SELECT st_asewkt(getValue(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01'));
+/* Errors */
+SELECT st_asewkt(getValue(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}'));
+SELECT st_asewkt(getValue(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]'));
+SELECT st_asewkt(getValue(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}'));
+
+SELECT getTimestamp(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
+SELECT getTimestamp(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01');
+/* Errors */
+SELECT getTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}');
+SELECT getTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]');
+SELECT getTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}');
+
+-------------------------------------------------------------------------------

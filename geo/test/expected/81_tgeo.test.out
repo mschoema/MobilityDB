@@ -572,3 +572,41 @@ SELECT asewkt(tgeometryseq(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-0
 ERROR:  Cannot transform input value to a temporal sequence
 SELECT asewkt(tgeometryseq(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}'));
 ERROR:  Cannot transform input to a temporal sequence
+SELECT st_asewkt(getValue(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01'));
+           st_asewkt            
+--------------------------------
+ POLYGON((0 0,1 0,1 1,0 1,0 0))
+(1 row)
+
+SELECT st_asewkt(getValue(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01'));
+                                                             st_asewkt                                                              
+------------------------------------------------------------------------------------------------------------------------------------
+ POLYHEDRALSURFACE(((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))
+(1 row)
+
+/* Errors */
+SELECT st_asewkt(getValue(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}'));
+ERROR:  Input must be a temporal instant
+SELECT st_asewkt(getValue(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]'));
+ERROR:  Input must be a temporal instant
+SELECT st_asewkt(getValue(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}'));
+ERROR:  Input must be a temporal instant
+SELECT getTimestamp(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
+      gettimestamp      
+------------------------
+ 2000-01-01 00:00:00+00
+(1 row)
+
+SELECT getTimestamp(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01');
+      gettimestamp      
+------------------------
+ 2000-01-01 00:00:00+00
+(1 row)
+
+/* Errors */
+SELECT getTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}');
+ERROR:  Input must be a temporal instant
+SELECT getTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]');
+ERROR:  Input must be a temporal instant
+SELECT getTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}');
+ERROR:  Input must be a temporal instant

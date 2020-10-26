@@ -81,5 +81,19 @@ CREATE FUNCTION tgeometrys(tgeometry)
   RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tsequenceset'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+/******************************************************************************
+ * Functions
+ ******************************************************************************/
+
+CREATE FUNCTION getValue(tgeometry)
+  RETURNS geometry
+  AS 'MODULE_PATHNAME', 'tinstant_get_value'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION getTimestamp(tgeometry)
+  RETURNS timestamptz
+  AS 'MODULE_PATHNAME', 'tinstant_timestamp'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/
 
