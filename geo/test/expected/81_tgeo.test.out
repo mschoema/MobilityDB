@@ -610,3 +610,51 @@ SELECT getTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, P
 ERROR:  Input must be a temporal instant
 SELECT getTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}');
 ERROR:  Input must be a temporal instant
+SELECT startTimestamp(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
+     starttimestamp     
+------------------------
+ 2000-01-01 00:00:00+00
+(1 row)
+
+SELECT startTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}');
+     starttimestamp     
+------------------------
+ 2000-01-01 00:00:00+00
+(1 row)
+
+SELECT startTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]');
+     starttimestamp     
+------------------------
+ 2000-01-01 00:00:00+00
+(1 row)
+
+SELECT startTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}');
+     starttimestamp     
+------------------------
+ 2000-01-01 00:00:00+00
+(1 row)
+
+SELECT endTimestamp(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
+      endtimestamp      
+------------------------
+ 2000-01-01 00:00:00+00
+(1 row)
+
+SELECT endTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}');
+      endtimestamp      
+------------------------
+ 2000-01-03 00:00:00+00
+(1 row)
+
+SELECT endTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]');
+      endtimestamp      
+------------------------
+ 2000-01-03 00:00:00+00
+(1 row)
+
+SELECT endTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}');
+      endtimestamp      
+------------------------
+ 2000-01-05 00:00:00+00
+(1 row)
+

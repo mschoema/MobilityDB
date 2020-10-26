@@ -95,5 +95,15 @@ CREATE FUNCTION getTimestamp(tgeometry)
   AS 'MODULE_PATHNAME', 'tinstant_timestamp'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION startTimestamp(tgeometry)
+  RETURNS timestamptz
+  AS 'MODULE_PATHNAME', 'temporal_start_timestamp'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION endTimestamp(tgeometry)
+  RETURNS timestamptz
+  AS 'MODULE_PATHNAME', 'temporal_end_timestamp'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/
 
