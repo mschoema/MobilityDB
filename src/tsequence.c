@@ -3337,6 +3337,8 @@ tsequence_value_at_timestamp1(const TInstant *inst1, const TInstant *inst2,
   {
     return geoseg_interpolate_point(value1, value2, ratio);
   }
+  if (tgeo_rtransform_base_type(basetypid))
+    return rtransform_interpolate_datum(value1, value2, ratio, basetypid);
   elog(ERROR, "unknown interpolation function for continuous base type: %d", basetypid);
 }
 
@@ -3370,8 +3372,18 @@ tsequence_value_at_timestamp(const TSequence *seq, TimestampTz t, Datum *result)
   else
   {
     const TInstant *inst2 = tsequence_inst_n(seq, n + 1);
-    *result = tsequence_value_at_timestamp1(inst1, inst2,
-      MOBDB_FLAGS_GET_LINEAR(seq->flags), t);
+    if (tgeo_rtransform_base_type(inst2->basetypid)) {
+      Datum rt_result = NULL;
+      if (n == 0) {
+        TInstant *newinst1 = tgeoinst_rtransform_zero(inst1->t, inst2->basetypid);
+        rt_result = tsequence_value_at_timestamp1(newinst1, inst2, MOBDB_FLAGS_GET_LINEAR(seq->flags), t);
+        pfree(newinst1);
+      } else
+        rt_result = tsequence_value_at_timestamp1(inst1, inst2, MOBDB_FLAGS_GET_LINEAR(seq->flags), t);
+      *result = rtransform_apply_datum(rt_result, tinstant_value(tsequence_inst_n(seq, 0)), inst2->basetypid);
+      pfree((void *) rt_result);
+    } else
+      *result = tsequence_value_at_timestamp1(inst1, inst2, MOBDB_FLAGS_GET_LINEAR(seq->flags), t);
   }
   return true;
 }

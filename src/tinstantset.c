@@ -69,6 +69,20 @@ tinstantset_inst_n(const TInstantSet *ti, int index)
 }
 
 /**
+ * Returns the n-th instant of the temporal value as a standalone instant
+ */
+TInstant *
+tinstantset_standalone_inst_n(const TInstantSet *ti, int index, bool *copy)
+{
+  TInstant *inst = (TInstant *) tinstantset_inst_n(ti, index);
+  *copy = tgeo_rtransform_base_type(inst->basetypid);
+  if (*copy)
+    return tgeoinst_rtransform_to_geometry(inst, tinstantset_inst_n(ti, 0));
+  else
+    return inst;
+}
+
+/**
  * Returns a pointer to the precomputed bounding box of the temporal value
  */
 void *
@@ -1262,8 +1276,11 @@ tinstantset_value_at_timestamp(const TInstantSet *ti, TimestampTz t, Datum *resu
   if (! tinstantset_find_timestamp(ti, t, &loc))
     return false;
 
-  const TInstant *inst = tinstantset_inst_n(ti, loc);
+  bool copy = false;
+  TInstant *inst = tinstantset_standalone_inst_n(ti, loc, &copy);
   *result = tinstant_value_copy(inst);
+  if (copy)
+    pfree(inst);
   return true;
 }
 

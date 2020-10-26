@@ -769,13 +769,11 @@ tinstantset_to_tsequenceset(const TInstantSet *ti, bool linear)
   TSequence **sequences = palloc(sizeof(TSequence *) * ti->count);
   for (int i = 0; i < ti->count; i++)
   {
-    const TInstant *inst = tinstantset_inst_n(ti, i);
-    if (i > 0 && tgeo_rtransform_base_type(inst->basetypid)) {
-      TInstant *newinst = tgeoinst_rtransform_to_geometry(inst, tinstantset_inst_n(ti, 0));
-      sequences[i] = tinstant_to_tsequence(newinst, linear);
-      pfree(newinst);
-    } else
-      sequences[i] = tinstant_to_tsequence(inst, linear);
+    bool copy;
+    TInstant *inst = tinstantset_standalone_inst_n(ti, i, &copy);
+    sequences[i] = tinstant_to_tsequence(inst, linear);
+    if (copy)
+      pfree(inst);
   }
   TSequenceSet *result = tsequenceset_make((const TSequence **) sequences,
     ti->count, NORMALIZE_NO);
@@ -884,7 +882,7 @@ tfloatseqset_to_range(const TSequenceSet *ts)
     pfree(normranges);
     return result;
   }
-  
+
   RangeType *start = normranges[0];
   RangeType *end = normranges[newcount - 1];
   result = range_make(lower_datum(start), upper_datum(end),

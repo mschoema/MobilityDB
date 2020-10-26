@@ -91,7 +91,8 @@ base_type_continuous(Oid basetypid)
 {
   if (basetypid == FLOAT8OID || basetypid == type_oid(T_DOUBLE2) ||
     basetypid == type_oid(T_DOUBLE3) || basetypid == type_oid(T_DOUBLE4) ||
-    basetypid == type_oid(T_GEOGRAPHY) || basetypid == type_oid(T_GEOMETRY))
+    basetypid == type_oid(T_GEOGRAPHY) || basetypid == type_oid(T_GEOMETRY) ||
+    basetypid == type_oid(T_RTRANSFORM2D) || basetypid == type_oid(T_RTRANSFORM3D))
     return true;
   return false;
 }
