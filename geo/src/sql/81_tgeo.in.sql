@@ -85,6 +85,21 @@ CREATE FUNCTION tgeometrys(tgeometry)
  * Functions
  ******************************************************************************/
 
+CREATE FUNCTION duration(tgeometry)
+  RETURNS text
+  AS 'MODULE_PATHNAME', 'temporal_duration'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION interpolation(tgeometry)
+  RETURNS text
+  AS 'MODULE_PATHNAME', 'temporal_interpolation'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION memSize(tgeometry)
+  RETURNS int
+  AS 'MODULE_PATHNAME', 'temporal_mem_size'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 CREATE FUNCTION getValue(tgeometry)
   RETURNS geometry
   AS 'MODULE_PATHNAME', 'tinstant_get_value'
