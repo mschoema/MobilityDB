@@ -532,6 +532,20 @@ tsequence_inst_n(const TSequence *seq, int index)
 }
 
 /**
+ * Returns the n-th instant of the temporal value as a standalone instant
+ */
+TInstant *
+tsequence_standalone_inst_n(const TSequence *seq, int index, bool *copy)
+{
+  TInstant *inst = (TInstant *) tsequence_inst_n(seq, index);
+  *copy = tgeo_rtransform_base_type(inst->basetypid);
+  if (*copy)
+    return tgeoinst_rtransform_to_geometry(inst, tsequence_inst_n(seq, 0));
+  else
+    return inst;
+}
+
+/**
  * Returns a pointer to the precomputed bounding box of the temporal value
  */
 void *

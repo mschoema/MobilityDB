@@ -42,6 +42,7 @@
 /*****************************************************************************/
 
 extern const TInstant *tsequence_inst_n(const TSequence *seq, int index);
+extern TInstant *tsequence_standalone_inst_n(const TSequence *seq, int index, bool *copy);
 extern TSequence *tsequence_make(const TInstant **instants,
   int count, bool lower_inc, bool upper_inc, bool linear, bool normalize);
 extern TSequence *tsequence_make_free(TInstant **instants,

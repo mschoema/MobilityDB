@@ -33,4 +33,17 @@ CREATE FUNCTION asEWKT(tgeometry[])
     AS 'MODULE_PATHNAME', 'tgeoarr_as_ewkt'
     LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+/******************************************************************************
+ * Output as rtransform
+ ******************************************************************************/
+
+CREATE FUNCTION asTransform(tgeometry)
+  RETURNS text
+  AS 'MODULE_PATHNAME', 'tgeo_as_transform'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION asTransform(tgeometry[])
+  RETURNS text[]
+  AS 'MODULE_PATHNAME', 'tgeoarr_as_transform'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /*****************************************************************************/
