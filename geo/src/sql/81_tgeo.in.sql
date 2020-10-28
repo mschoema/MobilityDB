@@ -85,9 +85,9 @@ CREATE FUNCTION tgeometrys(tgeometry)
  * Functions
  ******************************************************************************/
 
-CREATE FUNCTION duration(tgeometry)
+CREATE FUNCTION tempSubtype(tgeometry)
   RETURNS text
-  AS 'MODULE_PATHNAME', 'temporal_duration'
+  AS 'MODULE_PATHNAME', 'temporal_subtype'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 CREATE FUNCTION interpolation(tgeometry)
@@ -126,4 +126,3 @@ CREATE FUNCTION valueAtTimestamp(tgeometry, timestamptz)
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 /******************************************************************************/
-

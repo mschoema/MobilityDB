@@ -273,7 +273,7 @@ SELECT asewkt(tgeometryi(ARRAY[
 tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
 tgeometryinst('Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))'::geometry, '2012-01-01 08:20:00')
 ]));
-ERROR:  The temporal points must be of the same dimensionality
+ERROR:  The temporal values must be of the same dimensionality
 SELECT asewkt(tgeometryi(ARRAY[
 tgeometryinst(ST_MakePolygon('LineString(0 0, 1 0, 0 1, 0 0)'::geometry), '2012-01-01 08:00:00'),
 tgeometryinst(ST_MakePolygon('LineString(0 0, 2 0, 0 2, 0 0)'::geometry), '2012-01-01 08:10:00'),
@@ -572,50 +572,50 @@ SELECT asewkt(tgeometryseq(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-0
 ERROR:  Cannot transform input value to a temporal sequence
 SELECT asewkt(tgeometryseq(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}'));
 ERROR:  Cannot transform input to a temporal sequence
-SELECT duration(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
- duration 
-----------
+SELECT tempSubtype(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
+ tempsubtype 
+-------------
  Instant
 (1 row)
 
-SELECT duration(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01');
- duration 
-----------
+SELECT tempSubtype(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01');
+ tempsubtype 
+-------------
  Instant
 (1 row)
 
-SELECT duration(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}');
-  duration  
-------------
+SELECT tempSubtype(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}');
+ tempsubtype 
+-------------
  InstantSet
 (1 row)
 
-SELECT duration(tgeometry '{Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-03}');
-  duration  
-------------
+SELECT tempSubtype(tgeometry '{Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-03}');
+ tempsubtype 
+-------------
  InstantSet
 (1 row)
 
-SELECT duration(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]');
- duration 
-----------
+SELECT tempSubtype(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]');
+ tempsubtype 
+-------------
  Sequence
 (1 row)
 
-SELECT duration(tgeometry '[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-03]');
- duration 
-----------
+SELECT tempSubtype(tgeometry '[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-03]');
+ tempsubtype 
+-------------
  Sequence
 (1 row)
 
-SELECT duration(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}');
-  duration   
+SELECT tempSubtype(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((5 5, 6 5, 6 6, 5 6, 5 5))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}');
+ tempsubtype 
 -------------
  SequenceSet
 (1 row)
 
-SELECT duration(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-03],[Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-04, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-05]}');
-  duration   
+SELECT tempSubtype(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-03],[Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-04, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-05]}');
+ tempsubtype 
 -------------
  SequenceSet
 (1 row)

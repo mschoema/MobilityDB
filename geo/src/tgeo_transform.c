@@ -32,13 +32,13 @@
 TInstant *
 tgeoinst_geometry_to_rtransform(const TInstant *inst, const TInstant *ref_inst)
 {
-    Datum geom = tinstant_value(inst);
-    Datum ref_geom = tinstant_value(ref_inst);
-    Oid basetypid = tgeo_3d_inst(inst) ? type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
-    Datum result_datum = rtransform_compute_datum(ref_geom, geom, basetypid);
-    TInstant *result = tinstant_make(result_datum, inst->t, basetypid);
-    pfree((void *) result_datum);
-    return result;
+  Datum geom = tinstant_value(inst);
+  Datum ref_geom = tinstant_value(ref_inst);
+  Oid basetypid = tgeo_3d_inst(inst) ? type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
+  Datum result_datum = rtransform_compute_datum(ref_geom, geom, basetypid);
+  TInstant *result = tinstant_make(result_datum, inst->t, basetypid);
+  pfree((void *) result_datum);
+  return result;
 }
 
 /*
@@ -74,12 +74,12 @@ tgeo_instarr_to_rtransform(TInstant **instants, int count)
 TInstant *
 tgeoinst_rtransform_to_geometry(const TInstant *inst, const TInstant *ref_inst)
 {
-    Datum rt = tinstant_value(inst);
-    Datum geom = tinstant_value(ref_inst);
-    Datum result_datum = rtransform_apply_datum(rt, geom, inst->basetypid);
-    TInstant *result = tinstant_make(result_datum, inst->t, ref_inst->basetypid);
-    pfree((void *) result_datum);
-    return result;
+  Datum rt = tinstant_value(inst);
+  Datum geom = tinstant_value(ref_inst);
+  Datum result_datum = rtransform_apply_datum(rt, geom, inst->basetypid);
+  TInstant *result = tinstant_make(result_datum, inst->t, ref_inst->basetypid);
+  pfree((void *) result_datum);
+  return result;
 }
 
  /*****************************************************************************
@@ -87,23 +87,23 @@ tgeoinst_rtransform_to_geometry(const TInstant *inst, const TInstant *ref_inst)
  *****************************************************************************/
 
 TInstant *
-tgeoinst_rtransform_zero(TimestampTz t, Oid valuetypid)
+tgeoinst_rtransform_zero(TimestampTz t, Oid basetypid)
 {
-    Datum result_datum = rtransform_zero_datum(valuetypid);
-    TInstant *result = tinstant_make(result_datum, t, valuetypid);
-    pfree((void *) result_datum);
-    return result;
+  Datum result_datum = rtransform_zero_datum(basetypid);
+  TInstant *result = tinstant_make(result_datum, t, basetypid);
+  pfree((void *) result_datum);
+  return result;
 }
 
 TInstant *
 tgeoinst_rtransform_combine(const TInstant *inst, const TInstant *ref_inst)
 {
-    Datum rt1 = tinstant_value(inst);
-    Datum rt2 = tinstant_value(ref_inst);
-    Datum result_datum = rtransform_combine_datum(rt2, rt1, inst->basetypid);
-    TInstant *result = tinstant_make(result_datum, inst->t, inst->basetypid);
-    pfree((void *) result_datum);
-    return result;
+  Datum rt1 = tinstant_value(inst);
+  Datum rt2 = tinstant_value(ref_inst);
+  Datum result_datum = rtransform_combine_datum(rt2, rt1, inst->basetypid);
+  TInstant *result = tinstant_make(result_datum, inst->t, inst->basetypid);
+  pfree((void *) result_datum);
+  return result;
 }
 
 /*****************************************************************************/
