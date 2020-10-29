@@ -32,74 +32,52 @@
  * Input/Output functions for RTransform2D and RTransform3D
  *****************************************************************************/
 
-/*
- * Input function.
- * Example of input:
- *      (1.1, 1.2, 3.5)
- *      (theta, dx, dy)
- */
 PG_FUNCTION_INFO_V1(rtransform_in_2d);
-
+/**
+ * Input function for 2D rtransform values (stub only)
+ */
 PGDLLEXPORT Datum
 rtransform_in_2d(PG_FUNCTION_ARGS)
 {
-    char *str = PG_GETARG_CSTRING(0);
-    RTransform2D *result = rtransform2d_parse(&str);
-    if (result == NULL)
-        PG_RETURN_NULL();
-    PG_RETURN_POINTER(result);
+  ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+    errmsg("function rtransform_in_2d not implemented")));
+  PG_RETURN_POINTER(NULL);
 }
 
-/* Output function */
-
 PG_FUNCTION_INFO_V1(rtransform_out_2d);
-
+/**
+ * Output function for 2D rtransform values (stub only)
+ */
 PGDLLEXPORT Datum
 rtransform_out_2d(PG_FUNCTION_ARGS)
 {
-    RTransform2D *rt = PG_GETARG_RTRANSFORM2D(0);
-    char *result = psprintf("RTransform2D(%.*g, %.*g, %.*g)",
-            DBL_DIG, rt->theta,
-            DBL_DIG, rt->translation.a,
-            DBL_DIG, rt->translation.b);
-    PG_RETURN_CSTRING(result);
+  ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+    errmsg("function rtransform_out_2d not implemented")));
+  PG_RETURN_POINTER(NULL);
 }
 
-/*
- * Input function.
- * Example of input:
- *      (1, 0, 0, 0, 1.2, 3.5, -2.4)
- *      (W, X, Y, Z, dx, dy, dz)
- */
 PG_FUNCTION_INFO_V1(rtransform_in_3d);
-
+/**
+ * Input function for 3D rtransform values (stub only)
+ */
 PGDLLEXPORT Datum
 rtransform_in_3d(PG_FUNCTION_ARGS)
 {
-    char *str = PG_GETARG_CSTRING(0);
-    RTransform3D *result = rtransform3d_parse(&str);
-    if (result == NULL)
-        PG_RETURN_NULL();
-    PG_RETURN_POINTER(result);
+  ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+    errmsg("function rtransform_in_3d not implemented")));
+  PG_RETURN_POINTER(NULL);
 }
 
-/* Output function */
-
 PG_FUNCTION_INFO_V1(rtransform_out_3d);
-
+/**
+ * Output function for 3D rtransform values (stub only)
+ */
 PGDLLEXPORT Datum
 rtransform_out_3d(PG_FUNCTION_ARGS)
 {
-    RTransform3D *rt = PG_GETARG_RTRANSFORM3D(0);
-    char *result = psprintf("RTransform3D(%.*g, %.*g, %.*g, %.*g, %.*g, %.*g, %.*g)",
-            DBL_DIG, rt->quat.W,
-            DBL_DIG, rt->quat.X,
-            DBL_DIG, rt->quat.Y,
-            DBL_DIG, rt->quat.Z,
-            DBL_DIG, rt->translation.a,
-            DBL_DIG, rt->translation.b,
-            DBL_DIG, rt->translation.c);
-    PG_RETURN_CSTRING(result);
+  ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
+    errmsg("function rtransform_out_3d not implemented")));
+  PG_RETURN_POINTER(NULL);
 }
 
 /*****************************************************************************

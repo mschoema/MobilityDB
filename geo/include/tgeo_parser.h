@@ -19,9 +19,6 @@
 
 /*****************************************************************************/
 
-extern RTransform2D *rtransform2d_parse(char **str);
-extern RTransform3D *rtransform3d_parse(char **str);
-
 extern Temporal *tgeo_parse(char **str, Oid basetype);
 
 /*****************************************************************************/
