@@ -418,8 +418,6 @@ tgeo_trajectory(PG_FUNCTION_ARGS)
   Temporal *result = tgeo_trajectory_internal(temp, (TInstant *)tpoint, n);
   PG_FREE_IF_COPY(temp, 0);
   PG_FREE_IF_COPY(tpoint, 1);
-  if (!result)
-    PG_RETURN_NULL();
   PG_RETURN_POINTER(result);
 }
 

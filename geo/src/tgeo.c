@@ -35,8 +35,6 @@ tgeo_in(PG_FUNCTION_ARGS)
   Oid temptypid = PG_GETARG_OID(1);
   Oid basetypid = temporal_basetypid(temptypid);
   Temporal *result = tgeo_parse(&input, basetypid);
-  if (result == 0)
-    PG_RETURN_NULL();
   PG_RETURN_POINTER(result);
 }
 
