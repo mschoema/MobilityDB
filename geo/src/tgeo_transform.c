@@ -106,4 +106,34 @@ tgeoinst_rtransform_combine(const TInstant *inst, const TInstant *ref_inst)
   return result;
 }
 
+TInstant *
+tgeoinst_rtransform_apply_point(const TInstant *inst, const TInstant *point_inst, const TInstant *centroid_inst)
+{
+  Datum rt = tinstant_value(inst);
+  Datum point = tinstant_value(point_inst);
+  Datum centroid = PointerGetDatum(NULL);
+  if (centroid_inst)
+    centroid = tinstant_value(centroid_inst);
+  Datum result_datum = rtransform_apply_point_datum(rt, point, centroid, inst->basetypid);
+  TInstant *result = tinstant_make(result_datum, inst->t, point_inst->basetypid);
+  pfree((void *) result_datum);
+  return result;
+}
+
+TInstant *
+tgeoinst_rtransform_revert_point(const TInstant *inst, const TInstant *point_inst, const TInstant *centroid_inst)
+{
+  Datum rt = tinstant_value(inst);
+  Datum point = tinstant_value(point_inst);
+  Datum centroid = tinstant_value(centroid_inst);
+  Datum new_centroid = rtransform_apply_point_datum(rt, centroid, PointerGetDatum(NULL), inst->basetypid);
+  Datum rt_inverse = rtransform_invert_datum(rt, inst->basetypid);
+  Datum old_point = rtransform_apply_point_datum(rt_inverse, point, new_centroid, inst->basetypid);
+  TInstant *result = tinstant_make(old_point, centroid_inst->t, point_inst->basetypid);
+  pfree((void *) new_centroid);
+  pfree((void *) rt_inverse);
+  pfree((void *) old_point);
+  return result;
+}
+
 /*****************************************************************************/

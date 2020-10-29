@@ -30,4 +30,9 @@ extern void ensure_rigid_body(const Datum geom1_datum, const Datum geom2_datum);
 
 /*****************************************************************************/
 
+extern Datum tgeo_trajectory_centre(PG_FUNCTION_ARGS);
+extern Datum tgeo_trajectory(PG_FUNCTION_ARGS);
+
+/*****************************************************************************/
+
 #endif

@@ -38,6 +38,8 @@ extern TInstant *tgeoinst_rtransform_to_geometry(const TInstant *inst, const TIn
 
 extern TInstant *tgeoinst_rtransform_zero(TimestampTz t, Oid valuetypid);
 extern TInstant *tgeoinst_rtransform_combine(const TInstant *inst, const TInstant *ref_rtransform);
+extern TInstant *tgeoinst_rtransform_apply_point(const TInstant *inst, const TInstant *point_inst, const TInstant *centroid_inst);
+extern TInstant *tgeoinst_rtransform_revert_point(const TInstant *inst, const TInstant *point_inst, const TInstant *centroid_inst);
 
 /*****************************************************************************/
 

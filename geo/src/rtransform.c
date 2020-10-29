@@ -26,6 +26,7 @@
 #include "quaternion.h"
 #include "tgeo_parser.h"
 #include "tgeo_spatialfuncs.h"
+#include "tpoint_spatialfuncs.h"
 
 /*****************************************************************************
  * Input/Output functions for RTransform2D and RTransform3D
@@ -184,58 +185,64 @@ rtransform_eq_datum(const Datum rt1_datum, const Datum rt2_datum, Oid basetypid)
  *****************************************************************************/
 
 static void
-rtransform_apply_2d(const RTransform2D *rt, LWGEOM *geom)
+rtransform_apply_2d(const RTransform2D *rt, LWGEOM *geom, LWPOINT *centroid)
 {
-  LWPOINT *centroid = lwgeom_as_lwpoint(lwgeom_centroid(geom));
-  double x = lwpoint_get_x(centroid);
-  double y = lwpoint_get_y(centroid);
+  if (centroid)
+  {
+    double x = lwpoint_get_x(centroid);
+    double y = lwpoint_get_y(centroid);
 
-  double a = cos(rt->theta);
-  double b = sin(rt->theta);
+    double a = cos(rt->theta);
+    double b = sin(rt->theta);
+
+    /* Translate to have centroid at (0,0) */
+    lwgeom_translate_2d(geom, -x, -y);
+    /* Apply tranform */
+    lwgeom_rotate_2d(geom, a, -b, b, a);
+    /* Translate back */
+    lwgeom_translate_2d(geom, x, y);
+  }
 
   double dx = rt->translation.a;
   double dy = rt->translation.b;
-
-  /* Translate to have centroid at (0,0) */
-  lwgeom_translate_2d(geom, -x, -y);
-  /* Apply tranform */
-  lwgeom_rotate_2d(geom, a, -b, b, a);
-  /* Translate back */
-  lwgeom_translate_2d(geom, x + dx, y + dy);
+  lwgeom_translate_2d(geom, dx, dy);
   return;
 }
 
 static void
-rtransform_apply_3d(const RTransform3D *rt, LWGEOM *geom)
+rtransform_apply_3d(const RTransform3D *rt, LWGEOM *geom, LWPOINT *centroid)
 {
-  LWPOINT *centroid = lwpsurface_centroid((LWPSURFACE *) geom);
-  double x = lwpoint_get_x(centroid);
-  double y = lwpoint_get_y(centroid);
-  double z = lwpoint_get_z(centroid);
+  if (centroid)
+  {
+    double x = lwpoint_get_x(centroid);
+    double y = lwpoint_get_y(centroid);
+    double z = lwpoint_get_z(centroid);
 
-  double a = rt->quat.W*rt->quat.W + rt->quat.X*rt->quat.X
-  - rt->quat.Y*rt->quat.Y - rt->quat.Z*rt->quat.Z;
-  double b = 2*rt->quat.X*rt->quat.Y - 2*rt->quat.W*rt->quat.Z;
-  double c = 2*rt->quat.X*rt->quat.Z + 2*rt->quat.W*rt->quat.Y;
-  double d = 2*rt->quat.X*rt->quat.Y + 2*rt->quat.W*rt->quat.Z;
-  double e = rt->quat.W*rt->quat.W - rt->quat.X*rt->quat.X
-  + rt->quat.Y*rt->quat.Y - rt->quat.Z*rt->quat.Z;
-  double f = 2*rt->quat.Y*rt->quat.Z - 2*rt->quat.W*rt->quat.X;
-  double g = 2*rt->quat.X*rt->quat.Z - 2*rt->quat.W*rt->quat.Y;
-  double h = 2*rt->quat.Y*rt->quat.Z + 2*rt->quat.W*rt->quat.X;
-  double i = rt->quat.W*rt->quat.W - rt->quat.X*rt->quat.X
-  - rt->quat.Y*rt->quat.Y + rt->quat.Z*rt->quat.Z;
+    double a = rt->quat.W*rt->quat.W + rt->quat.X*rt->quat.X
+    - rt->quat.Y*rt->quat.Y - rt->quat.Z*rt->quat.Z;
+    double b = 2*rt->quat.X*rt->quat.Y - 2*rt->quat.W*rt->quat.Z;
+    double c = 2*rt->quat.X*rt->quat.Z + 2*rt->quat.W*rt->quat.Y;
+    double d = 2*rt->quat.X*rt->quat.Y + 2*rt->quat.W*rt->quat.Z;
+    double e = rt->quat.W*rt->quat.W - rt->quat.X*rt->quat.X
+    + rt->quat.Y*rt->quat.Y - rt->quat.Z*rt->quat.Z;
+    double f = 2*rt->quat.Y*rt->quat.Z - 2*rt->quat.W*rt->quat.X;
+    double g = 2*rt->quat.X*rt->quat.Z - 2*rt->quat.W*rt->quat.Y;
+    double h = 2*rt->quat.Y*rt->quat.Z + 2*rt->quat.W*rt->quat.X;
+    double i = rt->quat.W*rt->quat.W - rt->quat.X*rt->quat.X
+    - rt->quat.Y*rt->quat.Y + rt->quat.Z*rt->quat.Z;
+
+    /* Translate to have centroid at (0,0) */
+    lwgeom_translate_3d(geom, -x, -y, -z);
+    /* Apply tranform */
+    lwgeom_rotate_3d(geom, a, b, c, d, e, f, g, h, i);
+    /* Translate back */
+    lwgeom_translate_3d(geom, x, y , z);
+  }
 
   double dx = rt->translation.a;
   double dy = rt->translation.b;
   double dz = rt->translation.c;
-
-  /* Translate to have centroid at (0,0) */
-  lwgeom_translate_3d(geom, -x, -y, -z);
-  /* Apply tranform */
-  lwgeom_rotate_3d(geom, a, b, c, d, e, f, g, h, i);
-  /* Translate back */
-  lwgeom_translate_3d(geom, x + dx, y + dy, z + dz);
+  lwgeom_translate_3d(geom, dx, dy, dz);
   return;
 }
 
@@ -245,20 +252,56 @@ rtransform_apply_datum(const Datum rt_datum, const Datum geom_datum, Oid basetyp
   GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(geom_datum);
   LWGEOM *geom = lwgeom_from_gserialized(gs);
   LWGEOM *result_geom = lwgeom_clone_deep(geom);
+  LWPOINT *centroid;
   if (basetypid == type_oid(T_RTRANSFORM2D))
   {
     RTransform2D *rt = DatumGetRTransform2D(rt_datum);
-    rtransform_apply_2d(rt, result_geom);
+    centroid = lwgeom_as_lwpoint(lwgeom_centroid(geom));
+    rtransform_apply_2d(rt, result_geom, centroid);
   }
   else if (basetypid == type_oid(T_RTRANSFORM3D))
   {
     RTransform3D *rt = DatumGetRTransform3D(rt_datum);
-    rtransform_apply_3d(rt, result_geom);
+    centroid = lwpsurface_centroid((LWPSURFACE *) result_geom);
+    rtransform_apply_3d(rt, result_geom, centroid);
   }
   if (result_geom->bbox)
     lwgeom_refresh_bbox(result_geom);
   lwgeom_free(geom);
-  GSERIALIZED *result_gs = gserialized_from_lwgeom(result_geom, NULL);
+  lwpoint_free(centroid);
+  GSERIALIZED *result_gs = geo_serialize(result_geom);
+  lwgeom_free(result_geom);
+  Datum result = PointerGetDatum(result_gs);
+  return result;
+}
+
+Datum
+rtransform_apply_point_datum(const Datum rt_datum, const Datum point_datum, const Datum centroid_datum, Oid valuetypid)
+{
+  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(point_datum);
+  LWGEOM *point = lwgeom_from_gserialized(gs);
+  GSERIALIZED *centroid_gs = (GSERIALIZED *) DatumGetPointer(centroid_datum);
+  LWPOINT *centroid = NULL;
+  if (centroid_gs)
+    centroid = (LWPOINT *) lwgeom_from_gserialized(centroid_gs);
+  LWGEOM *result_point = lwgeom_clone_deep(point);
+  if (valuetypid == type_oid(T_RTRANSFORM2D))
+  {
+    RTransform2D *rt = DatumGetRTransform2D(rt_datum);
+    rtransform_apply_2d(rt, result_point, centroid);
+  }
+  else if (valuetypid == type_oid(T_RTRANSFORM3D))
+  {
+    RTransform3D *rt = DatumGetRTransform3D(rt_datum);
+    rtransform_apply_3d(rt, result_point, centroid);
+  }
+  if (result_point->bbox)
+    lwgeom_refresh_bbox(result_point);
+  lwgeom_free(point);
+  if (centroid)
+    lwpoint_free(centroid);
+  GSERIALIZED *result_gs = geo_serialize(result_point);
+  lwgeom_free(result_point);
   Datum result = PointerGetDatum(result_gs);
   return result;
 }
@@ -466,7 +509,7 @@ rtransform_combine_datum(const Datum rt1_datum, const Datum rt2_datum, Oid baset
 }
 
 /*****************************************************************************
- * Combine functions
+ * Interpolate functions
  *****************************************************************************/
 
 static RTransform2D *
@@ -525,6 +568,50 @@ rtransform_interpolate_datum(const Datum rt1_datum, const Datum rt2_datum,
     RTransform3D *rt2 = DatumGetRTransform3D(rt2_datum);
     RTransform3D *rt = rtransform_interpolate_3d(rt1, rt2, ratio);
     result = RTransform3DGetDatum(rt);
+  }
+  return result;
+}
+
+/*****************************************************************************
+ * Invert functions
+ *****************************************************************************/
+
+static RTransform2D *
+rtransform_invert_2d(const RTransform2D *rt)
+{
+  double theta = - rt->theta;
+  if (theta == -M_PI)
+      theta = M_PI;
+  double dx = - rt->translation.a;
+  double dy = - rt->translation.b;
+  return rtransform_make_2d(theta, (double2) {dx, dy});
+}
+
+static RTransform3D *
+rtransform_invert_3d(const RTransform3D *rt)
+{
+  Quaternion quat = quaternion_invert(rt->quat);
+  double dx = - rt->translation.a;
+  double dy = - rt->translation.b;
+  double dz = - rt->translation.c;
+  return rtransform_make_3d(quat, (double3) {dx, dy, dz});
+}
+
+Datum
+rtransform_invert_datum(const Datum rt_datum, Oid valuetypid)
+{
+  Datum result;
+  if (valuetypid == type_oid(T_RTRANSFORM2D))
+  {
+    RTransform2D *rt = DatumGetRTransform2D(rt_datum);
+    RTransform2D *rt_inverse = rtransform_invert_2d(rt);
+    result = RTransform2DGetDatum(rt_inverse);
+  }
+  else if (valuetypid == type_oid(T_RTRANSFORM3D))
+  {
+    RTransform3D *rt = DatumGetRTransform3D(rt_datum);
+    RTransform3D *rt_inverse = rtransform_invert_3d(rt);
+    result = RTransform3DGetDatum(rt_inverse);
   }
   return result;
 }

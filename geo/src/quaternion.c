@@ -61,6 +61,12 @@ quaternion_negate(Quaternion quat)
   return (Quaternion) {-quat.W, -quat.X, -quat.Y, -quat.Z};
 }
 
+Quaternion
+quaternion_invert(Quaternion quat)
+{
+  return (Quaternion) {quat.W, -quat.X, -quat.Y, -quat.Z};
+}
+
 static Quaternion
 quaternion_multiply_scalar(Quaternion quat, double s)
 {

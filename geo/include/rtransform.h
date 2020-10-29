@@ -83,10 +83,13 @@ extern Datum rtransform_compute_datum(const Datum geom1_datum, const Datum geom2
   Oid basetypid);
 extern Datum rtransform_apply_datum(const Datum rt_datum, const Datum geom_datum,
   Oid basetypid);
+extern Datum rtransform_apply_point_datum(const Datum rt_datum, const Datum point_datum,
+  const Datum centroid_datum, Oid valuetypid);
 extern Datum rtransform_combine_datum(const Datum rt1_datum, const Datum rt2_datum,
   Oid basetypid);
 extern Datum rtransform_interpolate_datum(const Datum rt1_datum, const Datum rt2_datum,
   double ratio, Oid basetypid);
+extern Datum rtransform_invert_datum(const Datum rt_datum, Oid valuetypid);
 
 /*****************************************************************************/
 
