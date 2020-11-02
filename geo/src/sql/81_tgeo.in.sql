@@ -33,7 +33,8 @@ CREATE TYPE tgeometry (
   input = tgeometry_in,
   output = temporal_out,
   storage = extended,
-  alignment = double
+  alignment = double,
+  analyze = tpoint_analyze
 );
 
 /******************************************************************************

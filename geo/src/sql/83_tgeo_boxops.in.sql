@@ -45,27 +45,32 @@ CREATE FUNCTION contains_bbox(tgeometry, tgeometry)
 CREATE OPERATOR @> (
   PROCEDURE = contains_bbox,
   LEFTARG = geometry, RIGHTARG = tgeometry,
-  COMMUTATOR = <@
+  COMMUTATOR = <@,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR @> (
   PROCEDURE = contains_bbox,
   LEFTARG = stbox, RIGHTARG = tgeometry,
-  COMMUTATOR = <@
+  COMMUTATOR = <@,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR @> (
   PROCEDURE = contains_bbox,
   LEFTARG = tgeometry, RIGHTARG = geometry,
-  COMMUTATOR = <@
+  COMMUTATOR = <@,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR @> (
   PROCEDURE = contains_bbox,
   LEFTARG = tgeometry, RIGHTARG = stbox,
-  COMMUTATOR = <@
+  COMMUTATOR = <@,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR @> (
   PROCEDURE = contains_bbox,
   LEFTARG = tgeometry, RIGHTARG = tgeometry,
-  COMMUTATOR = <@
+  COMMUTATOR = <@,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 
 /*****************************************************************************
@@ -96,27 +101,32 @@ CREATE FUNCTION contained_bbox(tgeometry, tgeometry)
 CREATE OPERATOR <@ (
   PROCEDURE = contained_bbox,
   LEFTARG = geometry, RIGHTARG = tgeometry,
-  COMMUTATOR = @>
+  COMMUTATOR = @>,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR <@ (
   PROCEDURE = contained_bbox,
   LEFTARG = stbox, RIGHTARG = tgeometry,
-  COMMUTATOR = @>
+  COMMUTATOR = @>,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR <@ (
   PROCEDURE = contained_bbox,
   LEFTARG = tgeometry, RIGHTARG = geometry,
-  COMMUTATOR = @>
+  COMMUTATOR = @>,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR <@ (
   PROCEDURE = contained_bbox,
   LEFTARG = tgeometry, RIGHTARG = stbox,
-  COMMUTATOR = @>
+  COMMUTATOR = @>,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR <@ (
   PROCEDURE = contained_bbox,
   LEFTARG = tgeometry, RIGHTARG = tgeometry,
-  COMMUTATOR = @>
+  COMMUTATOR = @>,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 
 /*****************************************************************************
@@ -147,27 +157,32 @@ CREATE FUNCTION overlaps_bbox(tgeometry, tgeometry)
 CREATE OPERATOR && (
   PROCEDURE = overlaps_bbox,
   LEFTARG = geometry, RIGHTARG = tgeometry,
-  COMMUTATOR = &&
+  COMMUTATOR = &&,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR && (
   PROCEDURE = overlaps_bbox,
   LEFTARG = stbox, RIGHTARG = tgeometry,
-  COMMUTATOR = &&
+  COMMUTATOR = &&,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR && (
   PROCEDURE = overlaps_bbox,
   LEFTARG = tgeometry, RIGHTARG = geometry,
-  COMMUTATOR = &&
+  COMMUTATOR = &&,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR && (
   PROCEDURE = overlaps_bbox,
   LEFTARG = tgeometry, RIGHTARG = stbox,
-  COMMUTATOR = &&
+  COMMUTATOR = &&,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR && (
   PROCEDURE = overlaps_bbox,
   LEFTARG = tgeometry, RIGHTARG = tgeometry,
-  COMMUTATOR = &&
+  COMMUTATOR = &&,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 
 /*****************************************************************************
@@ -198,27 +213,32 @@ CREATE FUNCTION same_bbox(tgeometry, tgeometry)
 CREATE OPERATOR ~= (
   PROCEDURE = same_bbox,
   LEFTARG = geometry, RIGHTARG = tgeometry,
-  COMMUTATOR = ~=
+  COMMUTATOR = ~=,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR ~= (
   PROCEDURE = same_bbox,
   LEFTARG = stbox, RIGHTARG = tgeometry,
-  COMMUTATOR = ~=
+  COMMUTATOR = ~=,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR ~= (
   PROCEDURE = same_bbox,
   LEFTARG = tgeometry, RIGHTARG = geometry,
-  COMMUTATOR = ~=
+  COMMUTATOR = ~=,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR ~= (
   PROCEDURE = same_bbox,
   LEFTARG = tgeometry, RIGHTARG = stbox,
-  COMMUTATOR = ~=
+  COMMUTATOR = ~=,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR ~= (
   PROCEDURE = same_bbox,
   LEFTARG = tgeometry, RIGHTARG = tgeometry,
-  COMMUTATOR = ~=
+  COMMUTATOR = ~=,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 
 /*****************************************************************************
@@ -249,27 +269,32 @@ CREATE FUNCTION adjacent_bbox(tgeometry, tgeometry)
 CREATE OPERATOR -|- (
   PROCEDURE = adjacent_bbox,
   LEFTARG = geometry, RIGHTARG = tgeometry,
-  COMMUTATOR = -|-
+  COMMUTATOR = -|-,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR -|- (
   PROCEDURE = adjacent_bbox,
   LEFTARG = stbox, RIGHTARG = tgeometry,
-  COMMUTATOR = -|-
+  COMMUTATOR = -|-,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR -|- (
   PROCEDURE = adjacent_bbox,
   LEFTARG = tgeometry, RIGHTARG = geometry,
-  COMMUTATOR = -|-
+  COMMUTATOR = -|-,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR -|- (
   PROCEDURE = adjacent_bbox,
   LEFTARG = tgeometry, RIGHTARG = stbox,
-  COMMUTATOR = -|-
+  COMMUTATOR = -|-,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 CREATE OPERATOR -|- (
   PROCEDURE = adjacent_bbox,
   LEFTARG = tgeometry, RIGHTARG = tgeometry,
-  COMMUTATOR = -|-
+  COMMUTATOR = -|-,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
 );
 
 /*****************************************************************************/

@@ -537,7 +537,12 @@ tpoint_cachedop(Oid operator, CachedOp *cachedOp)
       operator == oper_oid((CachedOp) i, T_STBOX, T_TGEOGPOINT) ||
       operator == oper_oid((CachedOp) i, T_TGEOGPOINT, T_GEOGRAPHY) ||
       operator == oper_oid((CachedOp) i, T_TGEOGPOINT, T_STBOX) ||
-      operator == oper_oid((CachedOp) i, T_TGEOGPOINT, T_TGEOGPOINT))
+      operator == oper_oid((CachedOp) i, T_TGEOGPOINT, T_TGEOGPOINT) ||
+      operator == oper_oid((CachedOp) i, T_GEOMETRY, T_TGEOMETRY) ||
+      operator == oper_oid((CachedOp) i, T_STBOX, T_TGEOMETRY) ||
+      operator == oper_oid((CachedOp) i, T_TGEOMETRY, T_GEOMETRY) ||
+      operator == oper_oid((CachedOp) i, T_TGEOMETRY, T_STBOX) ||
+      operator == oper_oid((CachedOp) i, T_TGEOMETRY, T_TGEOMETRY))
       {
         *cachedOp = (CachedOp) i;
         return true;
