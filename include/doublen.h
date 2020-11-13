@@ -75,6 +75,18 @@ extern Datum tdouble4_in(PG_FUNCTION_ARGS);
 
 /*****************************************************************************/
 
+/* 2D Vector Functions */
+
+extern bool vec2_eq(double2 v1, double2 v2);
+
+extern double vec2_norm(double2 v);
+extern double vec2_dist2(double2 v1, double2 v2);
+extern double vec2_dist(double2 v1, double2 v2);
+extern double vec2_dot(double2 v1, double2 v2);
+extern double vec2_angle(double2 p, double2 q, double2 r);
+
+extern double2 vec2_normalize(double2 v);
+
 /* 3D Vector Functions */
 
 extern double vec3_norm(double3 v);

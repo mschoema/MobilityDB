@@ -38,6 +38,10 @@ extern void lwgeom_translate_3d(LWGEOM *geom,
 extern LWPOINT *lwpoly_centroid(const LWPOLY *poly);
 extern LWPOINT *lwpsurface_centroid(const LWPSURFACE *psurface);
 
+/* Traversed Area Function */
+
+extern LWGEOM *lwgeom_traversed_area(const LWGEOM *geom1, const LWGEOM *geom2);
+
 /* Distance Functions */
 
 extern double lwpoly_max_vertex_distance(const LWPOLY *poly, const LWPOINT *point);

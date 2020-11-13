@@ -12,10 +12,13 @@
 
 #include "lwgeom_utils.h"
 
+#include <assert.h>
 #include <math.h>
 #include <float.h>
 
+#include "doublen.h"
 #include "temporal.h"
+#include "planar_graph.h"
 
 /*****************************************************************************
  * Affine Transformations
@@ -127,6 +130,46 @@ lwpsurface_centroid(const LWPSURFACE *psurface)
     }
   }
   return lwpoint_make3dz(psurface->srid, x / tot, y / tot, z / tot);
+}
+
+/*****************************************************************************
+ * Traversed Area Function
+ *****************************************************************************/
+
+LWGEOM *
+lwgeom_traversed_area(const LWGEOM *geom1, const LWGEOM *geom2)
+{
+  const LWPOLY *poly1 = (const LWPOLY *) geom1;
+  const LWPOLY *poly2 = (const LWPOLY *) geom2;
+  uint32_t n = poly1->rings[0]->npoints - 1;
+
+  /* Create array of segments */
+  Segment *segments = palloc(sizeof(Segment) * n * 3);
+  for (uint32_t i = 0; i < n; ++i)
+  {
+    POINT4D start1_p = getPoint4d(poly1->rings[0], i);
+    POINT4D end1_p = getPoint4d(poly1->rings[0], i + 1);
+    POINT4D start2_p = getPoint4d(poly2->rings[0], i);
+    POINT4D end2_p = getPoint4d(poly2->rings[0], i + 1);
+    double2 start1 = (double2) {start1_p.x, start1_p.y};
+    double2 end1 = (double2) {end1_p.x, end1_p.y};
+    double2 start2 = (double2) {start2_p.x, start2_p.y};
+    double2 end2 = (double2) {end2_p.x, end2_p.y};
+    segments[3*i] = make_segment(start1, end1);
+    segments[3*i + 1] = make_segment(start2, end2);
+    segments[3*i + 2] = make_segment(start1, start2);
+  }
+
+  /* Create graph from segments and compute the result */
+  Graph g;
+  init_graph(&g, 3 * n);
+  for (uint32_t i = 0; i < 3 * n; ++i)
+    add_segment_to_graph(&g, segments[i]);
+  POINTARRAY *poly_point_arr = get_cycle_from_graph(&g);
+  free_graph(&g);
+  LWPOLY *result = lwpoly_construct_empty(poly1->srid, false, false);
+  lwpoly_add_ring(result, poly_point_arr);
+  return (LWGEOM *) result;
 }
 
 /*****************************************************************************

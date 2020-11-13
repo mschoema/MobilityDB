@@ -20,4 +20,9 @@ CREATE FUNCTION trajectory(tgeometry, tgeompoint, integer DEFAULT 0)
   AS 'MODULE_PATHNAME', 'tgeo_trajectory'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION traversedArea(tgeometry)
+  RETURNS geometry
+  AS 'MODULE_PATHNAME', 'tgeo_traversed_area'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/

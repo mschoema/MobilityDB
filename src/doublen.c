@@ -43,6 +43,8 @@
 #include <libpq/pqformat.h>
 #include <utils/builtins.h>
 
+#include <math.h>
+
 #if MOBDB_PGSQL_VERSION >= 120000
 #include <utils/float.h>
 #endif
@@ -403,6 +405,58 @@ tdouble4_in(PG_FUNCTION_ARGS)
   ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
     errmsg("Type tdouble4 is an internal type")));
   PG_RETURN_POINTER(NULL);
+}
+
+/*****************************************************************************
+ * 2D Vector Functions
+ *****************************************************************************/
+
+bool
+vec2_eq(double2 v1, double2 v2)
+{
+  return v1.a == v2.a && v1.b == v2.b;
+}
+
+double
+vec2_norm(double2 v)
+{
+  return sqrt(v.a * v.a + v.b * v.b);
+}
+
+double
+vec2_dist2(double2 v1, double2 v2)
+{
+  return pow(v2.a - v1.a, 2) + pow(v2.b - v1.b, 2);
+}
+
+double
+vec2_dist(double2 v1, double2 v2)
+{
+  return sqrt(vec2_dist2(v1, v2));
+}
+
+double
+vec2_dot(double2 v1, double2 v2)
+{
+  return v1.a * v2.a + v1.b * v2.b;
+}
+
+double
+vec2_angle(double2 p, double2 q, double2 r)
+{
+  double2 qp = (double2) {p.a - q.a, p.b - q.b};
+  double2 qr = (double2) {r.a - q.a, r.b - q.b};
+  double angle = atan2(qp.a * qr.b - qp.b * qr.a, qp.a * qr.a + qp.b * qr.b);
+  if (angle < 0)
+    angle += 2 * M_PI;
+  return angle;
+}
+
+double2
+vec2_normalize(double2 v)
+{
+  double norm = vec2_norm(v);
+  return (double2) {v.a / norm, v.b / norm};
 }
 
 /*****************************************************************************

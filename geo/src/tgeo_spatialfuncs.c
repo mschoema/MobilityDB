@@ -62,6 +62,25 @@ tgeo_3d_inst(const TInstant *inst)
   return NULL;
 }
 
+static bool
+tgeo_3d(const Temporal *temp)
+{
+  bool result;
+  ensure_valid_duration(temp->duration);
+  if (temp->duration == INSTANT)
+    result = tgeo_3d_inst((TInstant *)temp);
+  else if (temp->duration == INSTANTSET)
+    result = tgeo_3d_inst(tinstantset_inst_n((TInstantSet *)temp, 0));
+  else if (temp->duration == SEQUENCE)
+    result = tgeo_3d_inst(tsequence_inst_n((TSequence *)temp, 0));
+  else /* temp->duration == SEQUENCESET */
+  {
+    TSequence *seq = tsequenceset_seq_n((TSequenceSet *)temp, 0);
+    result = tgeo_3d_inst(tsequence_inst_n(seq, 0));
+  }
+  return result;
+}
+
 void
 ensure_geo_type(const GSERIALIZED *gs)
 {
@@ -419,6 +438,196 @@ tgeo_trajectory(PG_FUNCTION_ARGS)
   PG_FREE_IF_COPY(temp, 0);
   PG_FREE_IF_COPY(tpoint, 1);
   PG_RETURN_POINTER(result);
+}
+
+/*****************************************************************************
+ * Traversed Area Functions
+ *****************************************************************************/
+
+static Datum
+lwgeom_simplify_and_free_to_datum(LWGEOM *lwgeom)
+{
+  lwgeom_simplify_in_place(lwgeom, EPSILON, LW_TRUE);
+  GSERIALIZED *gs = geo_serialize(lwgeom);
+  lwgeom_free(lwgeom);
+  return PointerGetDatum(gs);
+}
+
+static Datum
+tgeoi_traversed_area(const TInstantSet *ti)
+{
+  TInstant *inst = tinstantset_inst_n(ti, 0);
+
+  if (ti->count == 1)
+    return tinstant_value_copy(inst);
+
+  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst));
+  LWGEOM *lwgeom_result = lwgeom_from_gserialized(gs);
+  for (int i = 1; i < ti->count; ++i)
+  {
+    LWGEOM *geom1 = lwgeom_result;
+    bool copy;
+    TInstant *inst_i = tinstantset_standalone_inst_n(ti, i, &copy);
+    GSERIALIZED *gs_i = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst_i));
+    LWGEOM *geom2 = lwgeom_from_gserialized(gs_i);
+    lwgeom_result = lwgeom_union(geom1, geom2);
+    lwgeom_free(geom1);
+    lwgeom_free(geom2);
+    if (copy)
+      pfree(inst_i);
+  }
+  return lwgeom_simplify_and_free_to_datum(lwgeom_result);
+}
+
+static LWGEOM *
+tgeoseq_traversed_area1(const TSequence *seq)
+{
+  TInstant *inst = tsequence_inst_n(seq, 0);
+  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst));
+  LWGEOM *geom1 = lwgeom_from_gserialized(gs);
+  LWGEOM *geom2 = NULL;
+
+  if (seq->count == 1)
+    return geom1;
+
+  if (!MOBDB_FLAGS_GET_LINEAR(seq->flags))
+  {
+    for (int i = 1; i < seq->count; ++i)
+    {
+      bool copy;
+      TInstant *inst_i = tsequence_standalone_inst_n(seq, i, &copy);
+      GSERIALIZED *gs_i = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst_i));
+      geom2 = lwgeom_from_gserialized(gs_i);
+      LWGEOM *old_geom1 = geom1;
+      geom1 = lwgeom_union(old_geom1, geom2);
+      lwgeom_free(old_geom1);
+      lwgeom_free(geom2);
+      if (copy)
+        pfree(inst_i);
+    }
+    return geom1;
+  }
+
+  LWGEOM *lwgeom_result = lwgeom_construct_empty(POLYGONTYPE, tpointseq_srid(seq), false, false);
+  for (int i = 1; i < seq->count; ++i)
+  {
+    double theta;
+    if (i == 1)
+    {
+      RTransform2D *rt = DatumGetRTransform2D(tinstant_value(tsequence_inst_n(seq, i)));
+      theta = rt->theta;
+    }
+    else
+    {
+      TInstant *rt_inst = tsequence_inst_n(seq, i);
+      Datum value_prev = tinstant_value(tsequence_inst_n(seq, i - 1));
+      Datum value_prev_invert = rtransform_invert_datum(value_prev, rt_inst->valuetypid);
+      Datum value_i = tinstant_value(rt_inst);
+      Datum rt_value = rtransform_combine_datum(value_i, value_prev_invert, rt_inst->valuetypid);
+      RTransform2D *rt = DatumGetRTransform2D(rt_value);
+      theta = rt->theta;
+    }
+
+    int n = ceil(fabs(theta) / THETA_MAX) - 1;
+
+    for (int j = 1; j < n + 1; ++j)
+    {
+      TInstant *rt_inst_1 = tsequence_inst_n(seq, i - 1);
+      TInstant *rt_inst_2 = tsequence_inst_n(seq, i);
+      if (i == 1)
+        rt_inst_1 = tgeoinst_rtransform_zero(rt_inst_1->t, rt_inst_2->valuetypid);
+
+      double duration = (rt_inst_2->t - rt_inst_1->t);
+      double ratio = (double) j / (double) (n + 1);
+      TimestampTz tj = rt_inst_1->t + (long) (duration * ratio);
+      Datum rt = tsequence_value_at_timestamp1(rt_inst_1, rt_inst_2, MOBDB_FLAGS_GET_LINEAR(seq->flags), tj);
+      Datum new_value = rtransform_apply_datum(rt, tinstant_value(tsequence_inst_n(seq, 0)), rt_inst_2->valuetypid);
+      gs = (GSERIALIZED *) DatumGetPointer(new_value);
+      LWGEOM *geom2_clone = lwgeom_from_gserialized(gs);
+      geom2 = lwgeom_clone_deep(geom2_clone);
+      lwgeom_free(geom2_clone);
+      pfree(DatumGetPointer(new_value));
+      pfree(DatumGetPointer(rt));
+      if (i == 1)
+        pfree(rt_inst_1);
+
+      LWGEOM *old_result = lwgeom_result;
+      LWGEOM *partial_result = lwgeom_traversed_area(geom1, geom2);
+      lwgeom_result = lwgeom_union(old_result, partial_result);
+      lwgeom_free(old_result);
+      lwgeom_free(partial_result);
+      lwgeom_free(geom1);
+      geom1 = geom2;
+    }
+
+    bool copy;
+    inst = tsequence_standalone_inst_n(seq, i, &copy);
+    gs = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst));
+    LWGEOM *geom2_clone = lwgeom_from_gserialized(gs);
+    geom2 = lwgeom_clone_deep(geom2_clone);
+    lwgeom_free(geom2_clone);
+    pfree(inst);
+
+    LWGEOM *old_result = lwgeom_result;
+    LWGEOM *partial_result = lwgeom_traversed_area(geom1, geom2);
+    lwgeom_result = lwgeom_union(old_result, partial_result);
+    lwgeom_free(old_result);
+    lwgeom_free(partial_result);
+    lwgeom_free(geom1);
+    geom1 = geom2;
+  }
+  lwgeom_free(geom1);
+  return lwgeom_result;
+}
+
+static Datum
+tgeoseq_traversed_area(const TSequence *seq)
+{
+  if (seq->count == 1)
+    return tinstant_value_copy(tsequence_inst_n(seq, 0));
+
+  LWGEOM *lwgeom_result = tgeoseq_traversed_area1(seq);
+  return lwgeom_simplify_and_free_to_datum(lwgeom_result);
+}
+
+static Datum
+tgeos_traversed_area(const TSequenceSet *ts)
+{
+  TSequence *seq = tsequenceset_seq_n(ts, 0);
+  LWGEOM *lwgeom_result = tgeoseq_traversed_area1(seq);
+  for (int i = 1; i < ts->count; ++i)
+  {
+    LWGEOM *geom1 = lwgeom_result;
+    TSequence *seq_i = tsequenceset_seq_n(ts, i);
+    LWGEOM *geom2 = tgeoseq_traversed_area1(seq_i);
+    lwgeom_result = lwgeom_union(geom1, geom2);
+    lwgeom_free(geom1);
+    lwgeom_free(geom2);
+  }
+  return lwgeom_simplify_and_free_to_datum(lwgeom_result);
+}
+
+PG_FUNCTION_INFO_V1(tgeo_traversed_area);
+
+PGDLLEXPORT Datum
+tgeo_traversed_area(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL(0);
+  if (tgeo_3d(temp))
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot compute the traversed area of a 3D geometry")));
+  Datum result;
+  ensure_valid_duration(temp->duration);
+  if (temp->duration == INSTANT)
+    result = tinstant_value_copy((TInstant *)temp);
+  else if (temp->duration == INSTANTSET)
+    result = tgeoi_traversed_area((TInstantSet *)temp);
+  else if (temp->duration == SEQUENCE)
+    result = tgeoseq_traversed_area((TSequence *)temp);
+  else /* temp->duration == SEQUENCESET */
+    result = tgeos_traversed_area((TSequenceSet *)temp);
+  PG_FREE_IF_COPY(temp, 0);
+  PG_RETURN_DATUM(result);
 }
 
 /*****************************************************************************/

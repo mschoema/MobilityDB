@@ -13,11 +13,14 @@
 #ifndef __TGEO_SPATIALFUNCS_H__
 #define __TGEO_SPATIALFUNCS_H__
 
+#include <math.h>
 #include <postgres.h>
 #include <liblwgeom.h>
 #include <catalog/pg_type.h>
 
 #include "temporal.h"
+
+#define THETA_MAX  (M_PI / 16.0)
 
 /*****************************************************************************/
 
@@ -32,6 +35,8 @@ extern void ensure_rigid_body(const Datum geom1_datum, const Datum geom2_datum);
 
 extern Datum tgeo_trajectory_centre(PG_FUNCTION_ARGS);
 extern Datum tgeo_trajectory(PG_FUNCTION_ARGS);
+
+extern Datum tgeo_traversed_area(PG_FUNCTION_ARGS);
 
 /*****************************************************************************/
 
