@@ -11,7 +11,7 @@
  *****************************************************************************/
 
 CREATE FUNCTION round(float[], integer DEFAULT 0)
-RETURNS float[]
+RETURNS numeric[]
 LANGUAGE SQL
 AS $$
    SELECT array_agg(round(arr::numeric, $2))
