@@ -25,7 +25,6 @@
 /*****************************************************************************/
 
 extern bool tgeo_rigid_body_instant(const TInstant *inst);
-extern bool tgeo_3d_inst(const TInstant *inst);
 
 extern void ensure_geo_type(const GSERIALIZED *gs);
 extern void ensure_similar_geo(const TInstant *inst1, const TInstant *inst2);

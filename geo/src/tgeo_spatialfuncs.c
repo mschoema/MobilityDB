@@ -49,19 +49,6 @@ tgeo_rigid_body_instant(const TInstant *inst)
   return tgeo_rigid_body_gs(gs);
 }
 
-bool
-tgeo_3d_inst(const TInstant *inst)
-{
-  if (tgeo_base_type(inst->basetypid))
-  {
-    GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst));
-    return FLAGS_GET_Z(gs->flags);
-  }
-  else if (tgeo_rtransform_base_type(inst->basetypid))
-    return inst->basetypid == type_oid(T_RTRANSFORM3D);
-  return NULL;
-}
-
 void
 ensure_geo_type(const GSERIALIZED *gs)
 {
@@ -101,8 +88,7 @@ ensure_similar_geo(const TInstant *inst1, const TInstant *inst2)
   {
     GSERIALIZED *gs1 = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst1));
     GSERIALIZED *gs2 = (GSERIALIZED *) DatumGetPointer(tinstant_value(inst2));
-    bool is3d = tgeo_3d_inst(inst1);
-    if (!is3d)
+    if (!MOBDB_FLAGS_GET_Z(inst1->flags))
     {
       LWPOLY *poly1 = (LWPOLY *) lwgeom_from_gserialized(gs1);
       LWPOLY *poly2 = (LWPOLY *) lwgeom_from_gserialized(gs2);
@@ -502,9 +488,9 @@ tgeoseq_traversed_area1(const TSequence *seq)
     {
       TInstant *rt_inst = tsequence_inst_n(seq, i);
       Datum value_prev = tinstant_value(tsequence_inst_n(seq, i - 1));
-      Datum value_prev_invert = rtransform_invert_datum(value_prev, rt_inst->valuetypid);
+      Datum value_prev_invert = rtransform_invert_datum(value_prev, rt_inst->basetypid);
       Datum value_i = tinstant_value(rt_inst);
-      Datum rt_value = rtransform_combine_datum(value_i, value_prev_invert, rt_inst->valuetypid);
+      Datum rt_value = rtransform_combine_datum(value_i, value_prev_invert, rt_inst->basetypid);
       RTransform2D *rt = DatumGetRTransform2D(rt_value);
       theta = rt->theta;
     }
@@ -516,13 +502,13 @@ tgeoseq_traversed_area1(const TSequence *seq)
       TInstant *rt_inst_1 = tsequence_inst_n(seq, i - 1);
       TInstant *rt_inst_2 = tsequence_inst_n(seq, i);
       if (i == 1)
-        rt_inst_1 = tgeoinst_rtransform_zero(rt_inst_1->t, rt_inst_2->valuetypid);
+        rt_inst_1 = tgeoinst_rtransform_zero(rt_inst_1->t, rt_inst_2->basetypid);
 
       double duration = (rt_inst_2->t - rt_inst_1->t);
       double ratio = (double) j / (double) (n + 1);
       TimestampTz tj = rt_inst_1->t + (long) (duration * ratio);
       Datum rt = tsequence_value_at_timestamp1(rt_inst_1, rt_inst_2, MOBDB_FLAGS_GET_LINEAR(seq->flags), tj);
-      Datum new_value = rtransform_apply_datum(rt, tinstant_value(tsequence_inst_n(seq, 0)), rt_inst_2->valuetypid);
+      Datum new_value = rtransform_apply_datum(rt, tinstant_value(tsequence_inst_n(seq, 0)), rt_inst_2->basetypid);
       gs = (GSERIALIZED *) DatumGetPointer(new_value);
       LWGEOM *geom2_clone = lwgeom_from_gserialized(gs);
       geom2 = lwgeom_clone_deep(geom2_clone);
@@ -592,14 +578,14 @@ Datum
 tgeo_traversed_area_internal(Temporal *temp)
 {
   Datum result;
-  ensure_valid_duration(temp->duration);
-  if (temp->duration == INSTANT)
+  ensure_valid_tempsubtype(temp->subtype);
+  if (temp->subtype == INSTANT)
     result = tinstant_value_copy((TInstant *)temp);
-  else if (temp->duration == INSTANTSET)
+  else if (temp->subtype == INSTANTSET)
     result = tgeoi_traversed_area((TInstantSet *)temp);
-  else if (temp->duration == SEQUENCE)
+  else if (temp->subtype == SEQUENCE)
     result = tgeoseq_traversed_area((TSequence *)temp);
-  else /* temp->duration == SEQUENCESET */
+  else /* temp->subtype == SEQUENCESET */
     result = tgeos_traversed_area((TSequenceSet *)temp);
   return result;
 }

@@ -34,7 +34,7 @@ tgeoinst_geometry_to_rtransform(const TInstant *inst, const TInstant *ref_inst)
 {
   Datum geom = tinstant_value(inst);
   Datum ref_geom = tinstant_value(ref_inst);
-  Oid basetypid = tgeo_3d_inst(inst) ? type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
+  Oid basetypid = MOBDB_FLAGS_GET_Z(inst->flags) ? type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
   Datum result_datum = rtransform_compute_datum(ref_geom, geom, basetypid);
   TInstant *result = tinstant_make(result_datum, inst->t, basetypid);
   pfree((void *) result_datum);

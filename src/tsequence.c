@@ -904,8 +904,8 @@ tsequencearr_normalize(const TSequence **sequences, int count, int *newcount)
   Datum zero_rt;
   if (isRb)
   {
-    bool is3d = tgeo_3d_inst((TInstant *) tsequence_inst_n(seq1, 0));
-    basetypid = is3d ? type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
+    basetypid = MOBDB_FLAGS_GET_Z(seq1->flags) ?
+      type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
     zero_rt = rtransform_zero_datum(basetypid);
   }
   for (int i = 1; i < count; i++)

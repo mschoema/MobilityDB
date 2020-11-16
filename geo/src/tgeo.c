@@ -72,30 +72,30 @@ tgeoinst_constructor(PG_FUNCTION_ARGS)
  *****************************************************************************/
 
 static bool
-tgeoinst_rtransform_at_timestamp(const TInstant *inst, TimestampTz t, Oid valuetypid, Datum *result)
+tgeoinst_rtransform_at_timestamp(const TInstant *inst, TimestampTz t, Oid basetypid, Datum *result)
 {
   if (t != inst->t)
     return false;
-  *result = rtransform_zero_datum(valuetypid);
+  *result = rtransform_zero_datum(basetypid);
   return true;
 }
 
 static bool
-tgeoi_rtransform_at_timestamp(const TInstantSet *ti, TimestampTz t, Oid valuetypid, Datum *result)
+tgeoi_rtransform_at_timestamp(const TInstantSet *ti, TimestampTz t, Oid basetypid, Datum *result)
 {
   int loc;
   if (! tinstantset_find_timestamp(ti, t, &loc))
     return false;
 
   if (loc == 0)
-    *result = rtransform_zero_datum(valuetypid);
+    *result = rtransform_zero_datum(basetypid);
   else
     *result = tinstant_value_copy(tinstantset_inst_n(ti, loc));
   return true;
 }
 
 static bool
-tgeoseq_rtransform_at_timestamp(const TSequence *seq, TimestampTz t, Oid valuetypid, Datum *result)
+tgeoseq_rtransform_at_timestamp(const TSequence *seq, TimestampTz t, Oid basetypid, Datum *result)
 {
   /* Bounding box test */
   if (!contains_period_timestamp_internal(&seq->period, t))
@@ -104,7 +104,7 @@ tgeoseq_rtransform_at_timestamp(const TSequence *seq, TimestampTz t, Oid valuety
   /* Instantaneous sequence */
   if (seq->count == 1)
   {
-    *result = rtransform_zero_datum(valuetypid);
+    *result = rtransform_zero_datum(basetypid);
     return true;
   }
 
@@ -113,40 +113,40 @@ tgeoseq_rtransform_at_timestamp(const TSequence *seq, TimestampTz t, Oid valuety
   TInstant *inst1 = tsequence_inst_n(seq, n);
   TInstant *inst2 = tsequence_inst_n(seq, n + 1);
   if (n == 0)
-    inst1 = tgeoinst_rtransform_zero(inst1->t, inst2->valuetypid);
+    inst1 = tgeoinst_rtransform_zero(inst1->t, inst2->basetypid);
   *result = tsequence_value_at_timestamp1(inst1, inst2, MOBDB_FLAGS_GET_LINEAR(seq->flags), t);
   return true;
 }
 
 static bool
-tgeos_rtransform_at_timestamp(const TSequenceSet *ts, TimestampTz t, Oid valuetypid, Datum *result)
+tgeos_rtransform_at_timestamp(const TSequenceSet *ts, TimestampTz t, Oid basetypid, Datum *result)
 {
   /* Singleton sequence set */
   if (ts->count == 1)
-    return tgeoseq_rtransform_at_timestamp(tsequenceset_seq_n(ts, 0), t, valuetypid, result);
+    return tgeoseq_rtransform_at_timestamp(tsequenceset_seq_n(ts, 0), t, basetypid, result);
 
   /* General case */
   int loc;
   if (!tsequenceset_find_timestamp(ts, t, &loc))
     return false;
-  return tgeoseq_rtransform_at_timestamp(tsequenceset_seq_n(ts, loc), t, valuetypid, result);
+  return tgeoseq_rtransform_at_timestamp(tsequenceset_seq_n(ts, loc), t, basetypid, result);
 }
 
 static bool
 tgeo_rtransform_at_timestamp(const Temporal *temp, TimestampTz t, Datum *value)
 {
   bool result;
-  Oid valuetypid = MOBDB_FLAGS_GET_Z(temp->flags) ?
+  Oid basetypid = MOBDB_FLAGS_GET_Z(temp->flags) ?
     type_oid(T_RTRANSFORM3D) : type_oid(T_RTRANSFORM2D);
-  ensure_valid_duration(temp->duration);
-  if (temp->duration == INSTANT)
-    result = tgeoinst_rtransform_at_timestamp((TInstant *)temp, t, valuetypid, value);
-  else if (temp->duration == INSTANTSET)
-    result = tgeoi_rtransform_at_timestamp((TInstantSet *)temp, t, valuetypid, value);
-  else if (temp->duration == SEQUENCE)
-    result = tgeoseq_rtransform_at_timestamp((TSequence *)temp, t, valuetypid, value);
-  else /* temp->duration == SEQUENCESET */
-    result = tgeos_rtransform_at_timestamp((TSequenceSet *)temp, t, valuetypid, value);
+  ensure_valid_tempsubtype(temp->subtype);
+  if (temp->subtype == INSTANT)
+    result = tgeoinst_rtransform_at_timestamp((TInstant *)temp, t, basetypid, value);
+  else if (temp->subtype == INSTANTSET)
+    result = tgeoi_rtransform_at_timestamp((TInstantSet *)temp, t, basetypid, value);
+  else if (temp->subtype == SEQUENCE)
+    result = tgeoseq_rtransform_at_timestamp((TSequence *)temp, t, basetypid, value);
+  else /* temp->subtype == SEQUENCESET */
+    result = tgeos_rtransform_at_timestamp((TSequenceSet *)temp, t, basetypid, value);
   return result;
 }
 
