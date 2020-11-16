@@ -56,6 +56,7 @@ src/ttext_textfuncs.c
 set(SQL
 src/sql/00_catalog.in.sql
 src/sql/01_period.in.sql
+src/sql/02_array_utils.in.sql
 src/sql/03_timestampset.in.sql
 src/sql/05_periodset.in.sql
 src/sql/07_rangetypes_ext.in.sql

@@ -31,6 +31,13 @@ extern Datum tgeo_in(PG_FUNCTION_ARGS);
 
 extern Datum tgeoinst_constructor(PG_FUNCTION_ARGS);
 
+/* Rotation at timestamp functions */
+
+extern Datum tgeo_angle_at_timestamp(PG_FUNCTION_ARGS);
+extern Datum tgeo_quaternion_at_timestamp(PG_FUNCTION_ARGS);
+extern Datum tgeo_rot_matrix_2d_at_timestamp(PG_FUNCTION_ARGS);
+extern Datum tgeo_rot_matrix_3d_at_timestamp(PG_FUNCTION_ARGS);
+
 /*****************************************************************************/
 
 #endif

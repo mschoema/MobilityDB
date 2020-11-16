@@ -126,4 +126,31 @@ CREATE FUNCTION valueAtTimestamp(tgeometry, timestamptz)
   AS 'MODULE_PATHNAME', 'temporal_value_at_timestamp'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION angleAtTimestamp(tgeometry, timestamptz,
+  float default 0)
+  RETURNS float
+  AS 'MODULE_PATHNAME', 'tgeo_angle_at_timestamp'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION quaternionAtTimestamp(tgeometry, timestamptz,
+  float default 1, float default 0, float default 0, float default 0)
+  RETURNS float[]
+  AS 'MODULE_PATHNAME', 'tgeo_quaternion_at_timestamp'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+-- CREATE FUNCTION rotationMatrixAtTimestamp(tgeometry, timestamptz,
+--   float default 1, float default 0,
+--   float default 0, float default 1)
+--   RETURNS float[]
+--   AS 'MODULE_PATHNAME', 'tgeo_rot_matrix_2d_at_timestamp'
+--   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+-- CREATE FUNCTION rotationMatrixAtTimestamp(tgeometry, timestamptz,
+--   float default 1, float default 0, float default 0,
+--   float default 0, float default 1, float default 0,
+--   float default 0, float default 0, float default 1)
+--   RETURNS float[]
+--   AS 'MODULE_PATHNAME', 'tgeo_rot_matrix_3d_at_timestamp'
+--   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/

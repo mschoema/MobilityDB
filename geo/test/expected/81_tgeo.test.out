@@ -873,3 +873,139 @@ SELECT st_astext(valueAtTimestamp(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 
  POLYHEDRALSURFACE Z (((0.75 -0.010299025036549 -0.076640741219094,0.75 -0.392982457401639 0.847238791292193,0.75 0.913580507474737 0.306042691145996,0.75 -0.010299025036549 -0.076640741219094)),((0.75 -0.010299025036549 -0.076640741219094,0.75 0.913580507474737 0.306042691145996,1.75 -0.010299025036549 -0.076640741219094,0.75 -0.010299025036549 -0.076640741219094)),((0.75 -0.010299025036549 -0.076640741219094,1.75 -0.010299025036549 -0.076640741219094,0.75 -0.392982457401639 0.847238791292193,0.75 -0.010299025036549 -0.076640741219094)),((1.75 -0.010299025036549 -0.076640741219094,0.75 0.913580507474737 0.306042691145996,0.75 -0.392982457401639 0.847238791292193,1.75 -0.010299025036549 -0.076640741219094)))
 (1 row)
 
+SELECT round(angleAtTimestamp(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@@2000-01-01', timestamptz '2000-01-01')::numeric, 6);
+  round   
+----------
+ 0.000000
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01}', timestamptz '2000-01-01')::numeric, 6);
+  round   
+----------
+ 0.000000
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}', timestamptz '2000-01-02')::numeric, 6);
+  round   
+----------
+ 1.570796
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}', timestamptz '2000-01-04')::numeric, 6);
+ round 
+-------
+      
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01', timestamptz '2000-01-01')::numeric, 6);
+ERROR:  Could not parse temporal value
+LINE 1: SELECT round(angleAtTimestamp(tgeometry '[Polygon((0 0, 1 0,...
+                                                ^
+SELECT round(angleAtTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]', timestamptz '2000-01-01 12:00:00')::numeric, 6);
+  round   
+----------
+ 0.785398
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]', timestamptz '2000-01-04 12:00:00')::numeric, 6);
+ round 
+-------
+      
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]}', timestamptz '2000-01-02 18:00:00')::numeric, 6);
+  round   
+----------
+ 0.392699
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}', timestamptz '2000-01-02 18:00:00')::numeric, 6);
+  round   
+----------
+ 0.392699
+(1 row)
+
+SELECT round(angleAtTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}', timestamptz '2000-01-03 18:00:00')::numeric, 6);
+ round 
+-------
+      
+(1 row)
+
+/* Errors */
+SELECT angleAtTimestamp(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@@2000-01-01', timestamptz '2000-01-01');
+ERROR:  Cannot compute the rotation angle of a 3D geometry
+SELECT angleAtTimestamp(tgeometry '{Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-03}', timestamptz '2000-01-02');
+ERROR:  Cannot compute the rotation angle of a 3D geometry
+SELECT angleAtTimestamp(tgeometry '[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-03]', timestamptz '2000-01-01 12:00:00');
+ERROR:  Cannot compute the rotation angle of a 3D geometry
+SELECT angleAtTimestamp(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-03],[Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-04, Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-05]}', timestamptz '2000-01-02 18:00:00');
+ERROR:  Cannot compute the rotation angle of a 3D geometry
+SELECT round(quaternionAtTimestamp(tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@@2000-01-01', timestamptz '2000-01-01'), 6);
+   round   
+-----------
+ {1,0,0,0}
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '{Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01}', timestamptz '2000-01-01'), 6);
+   round   
+-----------
+ {1,0,0,0}
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '{Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-03}', timestamptz '2000-01-02'), 6);
+          round          
+-------------------------
+ {0.707107,0.707107,0,0}
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '{Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-03}', timestamptz '2000-01-04'), 6);
+ round 
+-------
+ 
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01]', timestamptz '2000-01-01'), 6);
+   round   
+-----------
+ {1,0,0,0}
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-03]', timestamptz '2000-01-01 12:00:00'), 6);
+         round          
+------------------------
+ {0.92388,0.382683,0,0}
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-03]', timestamptz '2000-01-03 12:00:00'), 6);
+ round 
+-------
+ 
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-03]}', timestamptz '2000-01-02 18:00:00'), 6);
+         round          
+------------------------
+ {0.980785,0.19509,0,0}
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-03],[Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-04, Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-05]}', timestamptz '2000-01-02 18:00:00'), 6);
+         round          
+------------------------
+ {0.980785,0.19509,0,0}
+(1 row)
+
+SELECT round(quaternionAtTimestamp(tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01, Polyhedralsurface Z (((0 0 0,0 -1 0,0 0 1,0 0 0)),((0 0 0,0 0 1,1 0 0,0 0 0)),((0 0 0,1 0 0,0 -1 0,0 0 0)),((1 0 0,0 0 1,0 -1 0,1 0 0)))@2000-01-02, Polyhedralsurface Z (((1 0 0,1 0 1,1 1 0,1 0 0)),((1 0 0,1 1 0,2 0 0,1 0 0)),((1 0 0,2 0 0,1 0 1,1 0 0)),((2 0 0,1 1 0,1 0 1,2 0 0)))@2000-01-03],[Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-04, Polyhedralsurface Z (((0 0 0,0 0 -1,0 -1 0,0 0 0)),((0 0 0,0 -1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 -1,0 0 0)),((1 0 0,0 -1 0,0 0 -1,1 0 0)))@2000-01-05]}', timestamptz '2000-01-03 18:00:00'), 6);
+ round 
+-------
+ 
+(1 row)
+
+/* Errors */
+SELECT quaternionAtTimestamp(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@@2000-01-01', timestamptz '2000-01-01');
+ERROR:  Cannot compute the rotation quaternion of a 2D geometry
+SELECT quaternionAtTimestamp(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03}', timestamptz '2000-01-02');
+ERROR:  Cannot compute the rotation quaternion of a 2D geometry
+SELECT quaternionAtTimestamp(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03]', timestamptz '2000-01-01 12:00:00');
+ERROR:  Cannot compute the rotation quaternion of a 2D geometry
+SELECT quaternionAtTimestamp(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01, Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2000-01-02, Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-03],[Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-04, Polygon((4 3, 4 4, 3 4, 3 3, 4 3))@2000-01-05]}', timestamptz '2000-01-02 18:00:00');
+ERROR:  Cannot compute the rotation quaternion of a 2D geometry
