@@ -62,25 +62,6 @@ tgeo_3d_inst(const TInstant *inst)
   return NULL;
 }
 
-static bool
-tgeo_3d(const Temporal *temp)
-{
-  bool result;
-  ensure_valid_duration(temp->duration);
-  if (temp->duration == INSTANT)
-    result = tgeo_3d_inst((TInstant *)temp);
-  else if (temp->duration == INSTANTSET)
-    result = tgeo_3d_inst(tinstantset_inst_n((TInstantSet *)temp, 0));
-  else if (temp->duration == SEQUENCE)
-    result = tgeo_3d_inst(tsequence_inst_n((TSequence *)temp, 0));
-  else /* temp->duration == SEQUENCESET */
-  {
-    TSequence *seq = tsequenceset_seq_n((TSequenceSet *)temp, 0);
-    result = tgeo_3d_inst(tsequence_inst_n(seq, 0));
-  }
-  return result;
-}
-
 void
 ensure_geo_type(const GSERIALIZED *gs)
 {
@@ -607,15 +588,9 @@ tgeos_traversed_area(const TSequenceSet *ts)
   return lwgeom_simplify_and_free_to_datum(lwgeom_result);
 }
 
-PG_FUNCTION_INFO_V1(tgeo_traversed_area);
-
-PGDLLEXPORT Datum
-tgeo_traversed_area(PG_FUNCTION_ARGS)
+Datum
+tgeo_traversed_area_internal(Temporal *temp)
 {
-  Temporal *temp = PG_GETARG_TEMPORAL(0);
-  if (tgeo_3d(temp))
-    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-      errmsg("Cannot compute the traversed area of a 3D geometry")));
   Datum result;
   ensure_valid_duration(temp->duration);
   if (temp->duration == INSTANT)
@@ -626,6 +601,19 @@ tgeo_traversed_area(PG_FUNCTION_ARGS)
     result = tgeoseq_traversed_area((TSequence *)temp);
   else /* temp->duration == SEQUENCESET */
     result = tgeos_traversed_area((TSequenceSet *)temp);
+  return result;
+}
+
+PG_FUNCTION_INFO_V1(tgeo_traversed_area);
+
+PGDLLEXPORT Datum
+tgeo_traversed_area(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL(0);
+  if (MOBDB_FLAGS_GET_Z(temp->flags))
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot compute the traversed area of a 3D geometry")));
+  Datum result = tgeo_traversed_area_internal(temp);
   PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_DATUM(result);
 }

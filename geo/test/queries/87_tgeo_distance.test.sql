@@ -1,0 +1,55 @@
+-------------------------------------------------------------------------------
+
+SELECT round(NearestApproachDistance(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01', geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}', geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]', geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}', geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry 'Interp=Stepwise;[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]', geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry 'Interp=Stepwise;{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}', geometry 'Linestring(0 3,3 3)')::numeric, 6);
+
+SELECT round(NearestApproachDistance(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01', geometry 'Linestring empty')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}', geometry 'Linestring empty')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]', geometry 'Linestring empty')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}', geometry 'Linestring empty')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry 'Interp=Stepwise;[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]', geometry 'Linestring empty')::numeric, 6);
+SELECT round(NearestApproachDistance(tgeometry 'Interp=Stepwise;{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}', geometry 'Linestring empty')::numeric, 6);
+
+SELECT round(NearestApproachDistance(geometry 'Linestring(0 3,3 3)', tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01')::numeric, 6);
+SELECT round(NearestApproachDistance(geometry 'Linestring(0 3,3 3)', tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}')::numeric, 6);
+SELECT round(NearestApproachDistance(geometry 'Linestring(0 3,3 3)', tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]')::numeric, 6);
+SELECT round(NearestApproachDistance(geometry 'Linestring(0 3,3 3)', tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}')::numeric, 6);
+
+SELECT round(NearestApproachDistance(geometry 'Linestring empty', tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01')::numeric, 6);
+SELECT round(NearestApproachDistance(geometry 'Linestring empty', tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}')::numeric, 6);
+SELECT round(NearestApproachDistance(geometry 'Linestring empty', tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]')::numeric, 6);
+SELECT round(NearestApproachDistance(geometry 'Linestring empty', tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}')::numeric, 6);
+
+SELECT round((tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' |=| geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round((tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}' |=| geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round((tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]' |=| geometry 'Linestring(0 3,3 3)')::numeric, 6);
+SELECT round((tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}' |=| geometry 'Linestring(0 3,3 3)')::numeric, 6);
+
+SELECT round((tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' |=| geometry 'Linestring empty')::numeric, 6);
+SELECT round((tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}' |=| geometry 'Linestring empty')::numeric, 6);
+SELECT round((tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]' |=| geometry 'Linestring empty')::numeric, 6);
+SELECT round((tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}' |=| geometry 'Linestring empty')::numeric, 6);
+
+SELECT round((geometry 'Linestring(0 3,3 3)' |=| tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01')::numeric, 6);
+SELECT round((geometry 'Linestring(0 3,3 3)' |=| tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}')::numeric, 6);
+SELECT round((geometry 'Linestring(0 3,3 3)' |=| tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]')::numeric, 6);
+SELECT round((geometry 'Linestring(0 3,3 3)' |=| tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}')::numeric, 6);
+
+SELECT round((geometry 'Linestring empty' |=| tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01')::numeric, 6);
+SELECT round((geometry 'Linestring empty' |=| tgeometry '{Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 0, 2 0, 2 1, 1 1, 1 0))@2001-01-01 08:06:00}')::numeric, 6);
+SELECT round((geometry 'Linestring empty' |=| tgeometry '[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00]')::numeric, 6);
+SELECT round((geometry 'Linestring empty' |=| tgeometry '{[Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 08:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 08:05:00,Polygon((1 1, 0 1, 0 0, 1 0, 1 1))@2001-01-01 08:06:00], [Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:00:00,Polygon((1 0, 1 1, 0 1, 0 0, 1 0))@2001-01-01 09:05:00,Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2001-01-01 09:06:00]}')::numeric, 6);
+
+/* Errors */
+SELECT NearestApproachDistance(tgeometry 'Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2000-01-01', geometry 'Linestring(0 0 0,3 3 3)');
+SELECT NearestApproachDistance(geometry 'Linestring(0 0 0,3 3 3)', tgeometry 'Polyhedralsurface Z (((0 0 0, 0 0 1, 0 1 0, 0 0 0)),((0 0 0, 0 1 0, 1 0 0, 0 0 0)),((0 0 0, 1 0 0, 0 0 1, 0 0 0)),((1 0 0, 0 1 0, 0 0 1, 1 0 0)))@2000-01-01');
+SELECT NearestApproachDistance(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01', geometry 'SRID=5676;Linestring(1 1,2 2)');
+SELECT NearestApproachDistance(tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01', geometry 'Linestring(1 1 1,2 2 2)');
+SELECT NearestApproachDistance(geometry 'SRID=5676;Linestring(1 1,2 2)', tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
+SELECT NearestApproachDistance(geometry 'Linestring(1 1 1,2 2 2)', tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01');
+
+-------------------------------------------------------------------------------

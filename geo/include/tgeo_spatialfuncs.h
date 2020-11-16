@@ -1,6 +1,6 @@
 /*****************************************************************************
  *
- * tgeo_spatialfuncs.c
+ * tgeo_spatialfuncs.h
  *    Geospatial functions for temporal geometries.
  *
  * Portions Copyright (c) 2019, Maxime Schoemans, Esteban Zimanyi,
@@ -36,6 +36,7 @@ extern void ensure_rigid_body(const Datum geom1_datum, const Datum geom2_datum);
 extern Datum tgeo_trajectory_centre(PG_FUNCTION_ARGS);
 extern Datum tgeo_trajectory(PG_FUNCTION_ARGS);
 
+extern Datum tgeo_traversed_area_internal(Temporal *temp);
 extern Datum tgeo_traversed_area(PG_FUNCTION_ARGS);
 
 /*****************************************************************************/
