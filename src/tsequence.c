@@ -400,6 +400,13 @@ rtransform_collinear(const Datum rt1_datum, const Datum rt2_datum,
       && fabs(rt->quat.Z - rt2->quat.Z) <= EPSILON
       && fabs(rt->translation.a - rt2->translation.a) <= EPSILON
       && fabs(rt->translation.b - rt2->translation.b) <= EPSILON
+      && fabs(rt->translation.c - rt2->translation.c) <= EPSILON)
+      || (fabs(rt->quat.W + rt2->quat.W) <= EPSILON
+      && fabs(rt->quat.X + rt2->quat.X) <= EPSILON
+      && fabs(rt->quat.Y + rt2->quat.Y) <= EPSILON
+      && fabs(rt->quat.Z + rt2->quat.Z) <= EPSILON
+      && fabs(rt->translation.a - rt2->translation.a) <= EPSILON
+      && fabs(rt->translation.b - rt2->translation.b) <= EPSILON
       && fabs(rt->translation.c - rt2->translation.c) <= EPSILON);
   }
   return result;

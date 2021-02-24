@@ -357,10 +357,13 @@ rtransform_compute_3d(const LWPSURFACE *psurface1, const LWPSURFACE *psurface2)
     p11 = getPoint3dz(point_arr_1, 2);
     p21 = getPoint3dz(point_arr_2, 2);
   }
-  else if (fabs(p12.x) < EPSILON && fabs(p12.y) < EPSILON && fabs(p12.z) < EPSILON)
+  int i = 2;
+  while ((fabs(p12.x) < EPSILON && fabs(p12.y) < EPSILON && fabs(p12.z) < EPSILON)
+    || (fabs(p12.x - p11.x) < EPSILON && fabs(p12.y - p11.y) < EPSILON && fabs(p12.z - p11.z) < EPSILON))
   {
-    p12 = getPoint3dz(point_arr_1, 2);
-    p22 = getPoint3dz(point_arr_2, 2);
+    p12 = getPoint3dz(point_arr_1, i);
+    p22 = getPoint3dz(point_arr_2, i);
+    i++;
   }
 
   double3 P = (double3) {p11.x - cx1, p11.y - cy1, p11.z - cz1};

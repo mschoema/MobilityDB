@@ -153,4 +153,9 @@ CREATE FUNCTION quaternionAtTimestamp(tgeometry, timestamptz,
 --   AS 'MODULE_PATHNAME', 'tgeo_rot_matrix_3d_at_timestamp'
 --   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION numInstants(tgeometry)
+  RETURNS integer
+  AS 'MODULE_PATHNAME', 'temporal_num_instants'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/
