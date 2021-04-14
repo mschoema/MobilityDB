@@ -25,6 +25,7 @@
 #include "lwgeom_utils.h"
 #include "quaternion.h"
 #include "tgeo_parser.h"
+#include "tgeo_out.h"
 #include "tgeo_spatialfuncs.h"
 #include "tpoint_spatialfuncs.h"
 
@@ -51,9 +52,12 @@ PG_FUNCTION_INFO_V1(rtransform_out_2d);
 PGDLLEXPORT Datum
 rtransform_out_2d(PG_FUNCTION_ARGS)
 {
-  ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-    errmsg("function rtransform_out_2d not implemented")));
-  PG_RETURN_POINTER(NULL);
+  RTransform2D *rt = PG_GETARG_RTRANSFORM2D(0);
+  char *result = psprintf("RTransform2D(%.*g, %.*g, %.*g)",
+      DBL_DIG, rt->theta,
+      DBL_DIG, rt->translation.a,
+      DBL_DIG, rt->translation.b);
+  PG_RETURN_CSTRING(result);
 }
 
 PG_FUNCTION_INFO_V1(rtransform_in_3d);
@@ -75,9 +79,16 @@ PG_FUNCTION_INFO_V1(rtransform_out_3d);
 PGDLLEXPORT Datum
 rtransform_out_3d(PG_FUNCTION_ARGS)
 {
-  ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-    errmsg("function rtransform_out_3d not implemented")));
-  PG_RETURN_POINTER(NULL);
+  RTransform3D *rt = PG_GETARG_RTRANSFORM3D(0);
+  char *result = psprintf("RTransform3D(%.*g, %.*g, %.*g, %.*g, %.*g, %.*g, %.*g)",
+      DBL_DIG, rt->quat.W,
+      DBL_DIG, rt->quat.X,
+      DBL_DIG, rt->quat.Y,
+      DBL_DIG, rt->quat.Z,
+      DBL_DIG, rt->translation.a,
+      DBL_DIG, rt->translation.b,
+      DBL_DIG, rt->translation.c);
+  PG_RETURN_CSTRING(result);
 }
 
 /*****************************************************************************

@@ -158,4 +158,9 @@ CREATE FUNCTION numInstants(tgeometry)
   AS 'MODULE_PATHNAME', 'temporal_num_instants'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION instants(tgeometry)
+  RETURNS tgeometry[]
+  AS 'MODULE_PATHNAME', 'temporal_instants'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/

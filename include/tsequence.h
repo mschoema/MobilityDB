@@ -129,6 +129,7 @@ extern Datum tsequence_duration(const TSequence *seq);
 extern ArrayType *tsequence_segments_array(const TSequence *seq);
 extern int tsequence_segments(TSequence **result, const TSequence *seq);
 extern const TInstant **tsequence_instants(const TSequence *seq);
+extern TInstant **tsequence_standalone_instants(const TSequence *seq, bool *copy);
 extern ArrayType *tsequence_instants_array(const TSequence *seq);
 extern TimestampTz tsequence_start_timestamp(const TSequence *seq);
 extern TimestampTz tsequence_end_timestamp(const TSequence *seq);

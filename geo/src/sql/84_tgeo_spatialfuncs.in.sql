@@ -10,6 +10,11 @@
  *
  *****************************************************************************/
 
+CREATE FUNCTION SRID(tgeometry)
+  RETURNS integer
+  AS 'MODULE_PATHNAME', 'tpoint_srid'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 CREATE FUNCTION trajectory(tgeometry)
   RETURNS tgeompoint
   AS 'MODULE_PATHNAME', 'tgeo_trajectory_centre'

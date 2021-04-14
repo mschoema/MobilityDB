@@ -846,11 +846,14 @@ tinstantset_instants(const TInstantSet *ti)
 ArrayType *
 tinstantset_instants_array(const TInstantSet *ti)
 {
-  const TInstant **instants = palloc(sizeof(TInstant *) * ti->count);
+  TInstant **instants = palloc(sizeof(TInstant *) * ti->count);
+  bool copy;
   for (int i = 0; i < ti->count; i++)
-    instants[i] = tinstantset_inst_n(ti, i);
-  ArrayType *result = temporalarr_to_array((const Temporal **) instants,
-    ti->count);
+    instants[i] = tinstantset_standalone_inst_n(ti, i, &copy);
+  ArrayType *result = temporalarr_to_array((const Temporal **)instants, ti->count);
+  if (copy)
+    for (int i = 1; i < ti->count; i++)
+      pfree(instants[i]);
   pfree(instants);
   return result;
 }

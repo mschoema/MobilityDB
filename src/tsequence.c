@@ -2060,13 +2060,29 @@ tsequence_instants(const TSequence *seq)
 }
 
 /**
+ * Returns the distinct instants of the temporal value as a C array
+ */
+TInstant **
+tsequence_standalone_instants(const TSequence *seq, bool *copy)
+{
+  TInstant **result = palloc(sizeof(TInstant *) * seq->count);
+  for (int i = 0; i < seq->count; i++)
+    result[i] = tsequence_standalone_inst_n(seq, i, copy);
+  return result;
+}
+
+/**
  * Returns the distinct instants of the temporal value as a PostgreSQL array
  */
 ArrayType *
 tsequence_instants_array(const TSequence *seq)
 {
-  const TInstant **instants = tsequence_instants(seq);
-  ArrayType *result = temporalarr_to_array((const Temporal **) instants, seq->count);
+  bool copy;
+  TInstant **instants = tsequence_standalone_instants(seq, &copy);
+  ArrayType *result = temporalarr_to_array((const Temporal **)instants, seq->count);
+  if (copy)
+    for (int i = 1; i < seq->count; i++)
+      pfree(instants[i]);
   pfree(instants);
   return result;
 }
