@@ -325,8 +325,11 @@ tfunc_tinstantset_base(const TInstantSet *ti, Datum value, Oid basetypid,
   TInstant **instants = palloc(sizeof(TInstant *) * ti->count);
   for (int i = 0; i < ti->count; i++)
   {
-    const TInstant *inst = tinstantset_inst_n(ti, i);
+    bool copy;
+    TInstant *inst = tinstantset_standalone_inst_n(ti, i, &copy);
     instants[i] = tfunc_tinstant_base(inst, value, basetypid, param, lfinfo);
+    if (copy)
+      pfree(inst);
   }
   return tinstantset_make_free(instants, ti->count, MERGE_NO);
 }

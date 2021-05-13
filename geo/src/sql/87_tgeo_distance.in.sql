@@ -11,6 +11,57 @@
  *****************************************************************************/
 
 /*****************************************************************************
+ * Distance functions
+ *****************************************************************************/
+
+CREATE FUNCTION distance(geometry, tgeometry)
+  RETURNS tfloat
+  AS 'MODULE_PATHNAME', 'distance_geo_tgeo'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION distance(tgeometry, geometry)
+  RETURNS tfloat
+  AS 'MODULE_PATHNAME', 'distance_tgeo_geo'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION distance(tgeompoint, tgeometry)
+  RETURNS tfloat
+  AS 'MODULE_PATHNAME', 'distance_tpoint_tgeo'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION distance(tgeometry, tgeompoint)
+  RETURNS tfloat
+  AS 'MODULE_PATHNAME', 'distance_tgeo_tpoint'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION distance(tgeometry, tgeometry)
+  RETURNS tfloat
+  AS 'MODULE_PATHNAME', 'distance_tgeo_tgeo'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE OPERATOR <-> (
+  PROCEDURE = distance,
+  LEFTARG = geometry, RIGHTARG = tgeometry,
+  COMMUTATOR = <->
+);
+CREATE OPERATOR <-> (
+  PROCEDURE = distance,
+  LEFTARG = tgeometry, RIGHTARG = geometry,
+  COMMUTATOR = <->
+);
+CREATE OPERATOR <-> (
+  PROCEDURE = distance,
+  LEFTARG = tgeompoint, RIGHTARG = tgeometry,
+  COMMUTATOR = <->
+);
+CREATE OPERATOR <-> (
+  PROCEDURE = distance,
+  LEFTARG = tgeometry, RIGHTARG = tgeompoint,
+  COMMUTATOR = <->
+);
+CREATE OPERATOR <-> (
+  PROCEDURE = distance,
+  LEFTARG = tgeometry, RIGHTARG = tgeometry,
+  COMMUTATOR = <->
+);
+
+/*****************************************************************************
  * Nearest approach distance functions
  *****************************************************************************/
 
