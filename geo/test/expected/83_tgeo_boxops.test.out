@@ -912,31 +912,55 @@ SELECT tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1
  t
 (1 row)
 
+SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' @> tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' @> tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' @> geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' @> geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' @> tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' @> tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
 /* Errors */
 SELECT geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' @> tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' @> tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' @> tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' @> tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' @> geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' @> geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' @> geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' @> geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' @> tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' @> tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' @> tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' @> tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' <@ tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
  ?column? 
 ----------
@@ -1801,31 +1825,55 @@ SELECT tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1
  t
 (1 row)
 
+SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' <@ tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' <@ tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' <@ geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' <@ geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' <@ tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' <@ tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
 /* Errors */
 SELECT geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' <@ tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' <@ tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' <@ tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' <@ tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' <@ geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' <@ geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' <@ geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' <@ geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' <@ tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' <@ tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' <@ tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' <@ tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' && tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
  ?column? 
 ----------
@@ -2690,31 +2738,55 @@ SELECT tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1
  t
 (1 row)
 
+SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' && tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' && tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' && geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' && geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' && tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' && tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
 /* Errors */
 SELECT geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' && tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' && tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' && tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' && tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' && geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' && geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' && geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' && geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' && tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' && tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' && tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' && tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' ~= tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
  ?column? 
 ----------
@@ -3579,31 +3651,55 @@ SELECT tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1
  t
 (1 row)
 
+SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' ~= tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' ~= tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' ~= geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' ~= geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' ~= tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' ~= tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
 /* Errors */
 SELECT geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' ~= tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' ~= tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' ~= tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' ~= tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' ~= geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' ~= geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' ~= geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' ~= geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' ~= tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' ~= tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' ~= tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' ~= tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' -|- tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
  ?column? 
 ----------
@@ -4468,28 +4564,52 @@ SELECT tgeometry '{[Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1
  f
 (1 row)
 
+SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' -|- tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' -|- tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' -|- geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' -|- geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' -|- tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' -|- tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
+ ?column? 
+----------
+ t
+(1 row)
+
 /* Errors */
 SELECT geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' -|- tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' -|- tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))' -|- tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))' -|- tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' -|- geometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' -|- geometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' -|- geometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' -|- geometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' -|- tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
+ERROR:  Operation on mixed SRID
 SELECT tgeometry 'SRID=5676;Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' -|- tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The boxes must be in the same SRID
-SELECT tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01' -|- tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
-SELECT tgeometry 'Polygon((0 0, 1 0, 1 1, 0 1, 0 0))@2000-01-01' -|- tgeometry 'Polyhedralsurface Z (((0 0 0,0 0 1,0 1 0,0 0 0)),((0 0 0,0 1 0,1 0 0,0 0 0)),((0 0 0,1 0 0,0 0 1,0 0 0)),((1 0 0,0 1 0,0 0 1,1 0 0)))@2000-01-01';
-ERROR:  The bounding boxes must be of the same spatial dimensionality
+ERROR:  Operation on mixed SRID

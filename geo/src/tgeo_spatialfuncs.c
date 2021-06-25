@@ -129,7 +129,7 @@ ensure_rigid_body(const Datum geom1_datum, const Datum geom2_datum)
  *****************************************************************************/
 
 static TInstant *
-tgeoinst_trajectory_centre(TInstant *inst)
+tgeoinst_trajectory_centre(const TInstant *inst)
 {
   Datum value = tinstant_value(inst);
   GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(value);
@@ -149,7 +149,7 @@ tgeoinst_trajectory_centre(TInstant *inst)
 }
 
 static TInstantSet *
-tgeoi_trajectory_centre(TInstantSet *ti)
+tgeoi_trajectory_centre(const TInstantSet *ti)
 {
   TInstant **instants = palloc(sizeof(TInstant *) * ti->count);
   instants[0] = tgeoinst_trajectory_centre(tinstantset_inst_n(ti, 0));
@@ -160,7 +160,7 @@ tgeoi_trajectory_centre(TInstantSet *ti)
 }
 
 static TSequence *
-tgeoseq_trajectory_centre(TSequence *seq)
+tgeoseq_trajectory_centre(const TSequence *seq)
 {
   TInstant **instants = palloc(sizeof(TInstant *) * seq->count);
   instants[0] = tgeoinst_trajectory_centre(tsequence_inst_n(seq, 0));
@@ -172,7 +172,7 @@ tgeoseq_trajectory_centre(TSequence *seq)
 }
 
 static TSequenceSet *
-tgeos_trajectory_centre(TSequenceSet *ts)
+tgeos_trajectory_centre(const TSequenceSet *ts)
 {
   TSequence **sequences = palloc(sizeof(TSequence *) * ts->count);
   for (int i = 0; i < ts->count; i++)
@@ -208,7 +208,7 @@ tgeo_trajectory_centre(PG_FUNCTION_ARGS)
 }
 
 static TInstant *
-tgeoinst_trajectory(TInstant *inst, TInstant *tpoint)
+tgeoinst_trajectory(const TInstant *inst, TInstant *tpoint)
 {
   if (inst->t != tpoint->t)
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -239,7 +239,7 @@ tgeoinst_trajectory(TInstant *inst, TInstant *tpoint)
 }
 
 static TInstantSet *
-tgeoi_trajectory(TInstantSet *ti, TInstant *tpoint)
+tgeoi_trajectory(const TInstantSet *ti, TInstant *tpoint)
 {
   int loc;
   if (!tinstantset_find_timestamp(ti, tpoint->t, &loc))
@@ -251,7 +251,7 @@ tgeoi_trajectory(TInstantSet *ti, TInstant *tpoint)
   TInstant *centroid = tgeoinst_trajectory_centre(tinstantset_inst_n(ti, 0));
   if (loc != 0)
   {
-    TInstant *rt_inst = tinstantset_inst_n(ti, loc);
+    const TInstant *rt_inst = tinstantset_inst_n(ti, loc);
     start_tpoint = tgeoinst_rtransform_revert_point(rt_inst, tpoint, centroid);
   }
 
@@ -265,7 +265,7 @@ tgeoi_trajectory(TInstantSet *ti, TInstant *tpoint)
 }
 
 static TSequence *
-tgeoseq_trajectory(TSequence *seq, TInstant *tpoint, int32 n)
+tgeoseq_trajectory(const TSequence *seq, TInstant *tpoint, int32 n)
 {
   /* Bounding box test */
   if (!contains_period_timestamp_internal(&seq->period, tpoint->t))
@@ -331,7 +331,7 @@ tgeoseq_trajectory(TSequence *seq, TInstant *tpoint, int32 n)
 }
 
 static TSequenceSet *
-tgeos_trajectory(TSequenceSet *ts, TInstant *tpoint, int32 n)
+tgeos_trajectory(const TSequenceSet *ts, TInstant *tpoint, int32 n)
 {
   /* Singleton sequence set */
   if (ts->count == 1)
@@ -348,7 +348,7 @@ tgeos_trajectory(TSequenceSet *ts, TInstant *tpoint, int32 n)
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
       errmsg("The temporal point is not part of the temporal geometry")));
 
-  TSequence *loc_seq = tsequenceset_seq_n(ts, loc);
+  const TSequence *loc_seq = tsequenceset_seq_n(ts, loc);
   TSequence *loc_point_seq = tgeoseq_trajectory(loc_seq, tpoint, n);
   TSequence **sequences = palloc(sizeof(TSequence *) * ts->count);
   for (int i = 0; i < ts->count; i++)
@@ -357,7 +357,7 @@ tgeos_trajectory(TSequenceSet *ts, TInstant *tpoint, int32 n)
       sequences[i] = loc_point_seq;
     else
     {
-      TSequence *seq = tsequenceset_seq_n(ts, i);
+      const TSequence *seq = tsequenceset_seq_n(ts, i);
       TInstant *centroid = tgeoinst_trajectory_centre(tsequence_inst_n(seq, 0));
       TInstant *rt_inst = tgeoinst_geometry_to_rtransform(tsequence_inst_n(loc_seq, 0), tsequence_inst_n(seq, 0));
       TInstant *tpoint_i = tgeoinst_rtransform_revert_point(rt_inst, tsequence_inst_n(loc_point_seq, 0), centroid);
@@ -423,7 +423,7 @@ lwgeom_simplify_and_free_to_datum(LWGEOM *lwgeom)
 static Datum
 tgeoi_traversed_area(const TInstantSet *ti)
 {
-  TInstant *inst = tinstantset_inst_n(ti, 0);
+  const TInstant *inst = tinstantset_inst_n(ti, 0);
 
   if (ti->count == 1)
     return tinstant_value_copy(inst);
@@ -486,7 +486,7 @@ tgeoseq_traversed_area1(const TSequence *seq)
     }
     else
     {
-      TInstant *rt_inst = tsequence_inst_n(seq, i);
+      const TInstant *rt_inst = tsequence_inst_n(seq, i);
       Datum value_prev = tinstant_value(tsequence_inst_n(seq, i - 1));
       Datum value_prev_invert = rtransform_invert_datum(value_prev, rt_inst->basetypid);
       Datum value_i = tinstant_value(rt_inst);
@@ -560,12 +560,12 @@ tgeoseq_traversed_area(const TSequence *seq)
 static Datum
 tgeos_traversed_area(const TSequenceSet *ts)
 {
-  TSequence *seq = tsequenceset_seq_n(ts, 0);
+  const TSequence *seq = tsequenceset_seq_n(ts, 0);
   LWGEOM *lwgeom_result = tgeoseq_traversed_area1(seq);
   for (int i = 1; i < ts->count; ++i)
   {
     LWGEOM *geom1 = lwgeom_result;
-    TSequence *seq_i = tsequenceset_seq_n(ts, i);
+    const TSequence *seq_i = tsequenceset_seq_n(ts, i);
     LWGEOM *geom2 = tgeoseq_traversed_area1(seq_i);
     lwgeom_result = lwgeom_union(geom1, geom2);
     lwgeom_free(geom1);
