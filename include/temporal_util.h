@@ -68,11 +68,16 @@ extern void ensure_tgeo_rtransform_base_type(Oid basetypid);
 extern bool type_has_precomputed_trajectory(Oid basetypid);
 extern size_t temporal_bbox_size(Oid basetypid);
 
+extern bool delta_base_type(Oid basetypid);
+extern void ensure_delta_base_type(Oid basetypid);
+
 /* Oid functions */
 
 extern Oid range_oid_from_base(Oid basetypid);
 extern Oid temporal_oid_from_base(Oid basetypid);
 extern Oid base_oid_from_temporal(Oid temptypid);
+
+extern Oid ref_oid_from_delta(Oid basetypid);
 
 /* Miscellaneous functions */
 

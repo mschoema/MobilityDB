@@ -41,7 +41,7 @@ CREATE TYPE tgeometry (
  * Constructors
  ******************************************************************************/
 
-CREATE FUNCTION tgeometryinst(geometry, timestamptz)
+CREATE FUNCTION tgeometryinst(geometry, pose, timestamptz)
   RETURNS tgeometry
   AS 'MODULE_PATHNAME', 'tgeoinst_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;

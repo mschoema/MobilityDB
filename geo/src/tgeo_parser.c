@@ -25,6 +25,64 @@
 /*****************************************************************************/
 
 /**
+ * Input a pose value from the buffer
+ *
+ * @param[inout] str Pointer to the current position of the input buffer
+ */
+
+Pose *
+pose_parse(char **str)
+{
+  p_whitespace(str);
+
+  if (strncasecmp(*str,"POSE",4) != 0)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+      errmsg("Could not parse pose value")));
+
+  *str += 4;
+  p_whitespace(str);
+
+  int delim = 0;
+  int params = 1;
+  while ((*str)[delim] != ')' && (*str)[delim] != '\0')
+  {
+    delim++;
+    if ((*str)[delim] == ',')
+      params += 1;
+  }
+  if ((*str)[delim] == '\0')
+    ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+      errmsg("Could not parse pose value")));
+
+  Pose *result;
+  (*str)[delim] = '\0';
+  if (params == 3) /* 2D Pose value */
+  {
+    double x, y, theta;
+    if (sscanf(*str, "( %lf , %lf , %lf )", &x, &y, &theta) != 3)
+      ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+          errmsg("Could not parse pose value")));
+    result = pose_make_2d(x, y, theta);
+  }
+  else if (params == 7) /* 3D Pose value */
+  {
+    double x, y, z, W, X, Y, Z;
+    if (sscanf(*str, "( %lf , %lf , %lf , %lf , %lf , %lf , %lf )", &x, &y, &z, &W, &X, &Y, &Z) != 7)
+      ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+          errmsg("Could not parse pose value")));
+    result = pose_make_3d(x, y, z, W, X, Y, Z);
+  }
+  else
+    ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+      errmsg("Could not parse pose value")));
+  (*str)[delim] = ')';
+
+  *str += delim + 1;
+
+  return result;
+}
+
+/**
  * Parse a temporal geometry value of instant duration from the buffer
  *
  * @param[in] str Input string

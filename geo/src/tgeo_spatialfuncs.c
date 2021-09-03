@@ -39,6 +39,18 @@ tgeo_rigid_body_gs(const GSERIALIZED *gs)
   );
 }
 
+static bool
+tgeo_rigid_body_2d_gs(const GSERIALIZED *gs)
+{
+  return (gserialized_get_type(gs) == POLYGONTYPE && !FLAGS_GET_Z(gs->flags));
+}
+
+static bool
+tgeo_rigid_body_3d_gs(const GSERIALIZED *gs)
+{
+  return (gserialized_get_type(gs) == POLYHEDRALSURFACETYPE && FLAGS_GET_Z(gs->flags));
+}
+
 bool
 tgeo_rigid_body_instant(const TInstant *inst)
 {
@@ -55,6 +67,22 @@ ensure_geo_type(const GSERIALIZED *gs)
   if (!tgeo_rigid_body_gs(gs))
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
       errmsg("Only 2D polygons or 3D polyhedral surfaces accepted")));
+}
+
+void
+ensure_geo_2d_type(const GSERIALIZED *gs)
+{
+  if (!tgeo_rigid_body_2d_gs(gs))
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Only 2D polygons accepted")));
+}
+
+void
+ensure_geo_3d_type(const GSERIALIZED *gs)
+{
+  if (!tgeo_rigid_body_3d_gs(gs))
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Only 3D polyhedral surfaces accepted")));
 }
 
 static void

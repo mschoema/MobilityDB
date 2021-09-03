@@ -59,12 +59,79 @@ tgeoinst_constructor(PG_FUNCTION_ARGS)
   ensure_geo_type(gs);
   ensure_non_empty(gs);
   ensure_has_not_M_gs(gs);
-  TimestampTz t = PG_GETARG_TIMESTAMPTZ(1);
+  Pose *p = PG_GETARG_POSE(1);
+  /* Check that dimension of pose and geom correspond */
+  TimestampTz t = PG_GETARG_TIMESTAMPTZ(2);
   Oid basetypid = get_fn_expr_argtype(fcinfo->flinfo, 0);
-  Temporal *result = (Temporal *)tinstant_make(PointerGetDatum(gs),
-    t, basetypid);
+  Temporal *result = (Temporal *)tgeoinst_make(PointerGetDatum(gs),
+    PoseGetDatum(p), t, basetypid);
   PG_FREE_IF_COPY(gs, 0);
   PG_RETURN_POINTER(result);
+}
+
+/**
+ * Construct a temporal instant value from the arguments
+ *
+ * The memory structure of a temporal instant value is as follows
+ * @code
+ * ----------------------------------
+ * ( TInstant )_X | ( Value )_X |
+ * ----------------------------------
+ * @endcode
+ * where the `_X` are unused bytes added for double padding.
+ *
+ * @param value Base value
+ * @param t Timestamp
+ * @param basetypid Oid of the base type
+ */
+TInstant *
+tgeoinst_make(Datum geom, Datum value, TimestampTz t, Oid basetypid)
+{
+  size_t value_offset = double_pad(sizeof(TInstant));
+  size_t size = value_offset;
+  /* Create the temporal value */
+  TInstant *result;
+  size_t value_size;
+  void *value_from;
+  /* Copy value */
+  bool typbyval = base_type_byvalue(basetypid);
+  if (typbyval)
+  {
+    /* For base types passed by value */
+    value_size = double_pad(sizeof(Datum));
+    value_from = &value;
+  }
+  else
+  {
+    /* For base types passed by reference */
+    value_from = DatumGetPointer(value);
+    int16 typlen = base_type_length(basetypid);
+    value_size = (typlen != -1) ? double_pad((unsigned int) typlen) :
+      double_pad(VARSIZE(value_from));
+  }
+  size += value_size;
+  result = palloc0(size);
+  void *value_to = ((char *) result) + value_offset;
+  memcpy(value_to, value_from, value_size);
+  /* Initialize fixed-size values */
+  result->subtype = INSTANT;
+  result->basetypid = basetypid;
+  result->t = t;
+  SET_VARSIZE(result, size);
+  MOBDB_FLAGS_SET_BYVAL(result->flags, typbyval);
+  bool continuous = base_type_continuous(basetypid);
+  MOBDB_FLAGS_SET_CONTINUOUS(result->flags, continuous);
+  MOBDB_FLAGS_SET_LINEAR(result->flags, continuous);
+  MOBDB_FLAGS_SET_X(result->flags, true);
+  MOBDB_FLAGS_SET_T(result->flags, true);
+  if (tgeo_base_type(basetypid))
+  {
+    GSERIALIZED *gs = (GSERIALIZED *) PG_DETOAST_DATUM(value);
+    MOBDB_FLAGS_SET_Z(result->flags, FLAGS_GET_Z(gs->flags));
+    MOBDB_FLAGS_SET_GEODETIC(result->flags, FLAGS_GET_GEODETIC(gs->flags));
+    POSTGIS_FREE_IF_COPY_P(gs, DatumGetPointer(value));
+  }
+  return result;
 }
 
 /*****************************************************************************

@@ -91,8 +91,7 @@ typedef enum
   T_GEOGRAPHY,
   T_TGEOMPOINT,
   T_TGEOGPOINT,
-  T_RTRANSFORM2D,
-  T_RTRANSFORM3D,
+  T_POSE,
   T_TGEOMETRY,
 } CachedType;
 

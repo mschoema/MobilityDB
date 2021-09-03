@@ -62,7 +62,8 @@ temporal_type(Oid temptypid)
 {
   if (temptypid == type_oid(T_TBOOL) || temptypid == type_oid(T_TINT) ||
     temptypid == type_oid(T_TFLOAT) || temptypid == type_oid(T_TTEXT) ||
-    temptypid == type_oid(T_TGEOMPOINT) || temptypid == type_oid(T_TGEOGPOINT))
+    temptypid == type_oid(T_TGEOMPOINT) || temptypid == type_oid(T_TGEOGPOINT) ||
+    temptypid == type_oid(T_TGEOMETRY))
     return true;
   return false;
 }
@@ -78,7 +79,7 @@ ensure_temporal_base_type(Oid basetypid)
     basetypid != type_oid(T_DOUBLE2) && basetypid != type_oid(T_DOUBLE3) &&
     basetypid != type_oid(T_DOUBLE4) &&
     basetypid != type_oid(T_GEOMETRY) && basetypid != type_oid(T_GEOGRAPHY) &&
-    basetypid != type_oid(T_RTRANSFORM2D) && basetypid != type_oid(T_RTRANSFORM3D))
+    basetypid != type_oid(T_POSE))
     elog(ERROR, "unknown base type: %d", basetypid);
   return;
 }
@@ -92,7 +93,7 @@ base_type_continuous(Oid basetypid)
   if (basetypid == FLOAT8OID || basetypid == type_oid(T_DOUBLE2) ||
     basetypid == type_oid(T_DOUBLE3) || basetypid == type_oid(T_DOUBLE4) ||
     basetypid == type_oid(T_GEOGRAPHY) || basetypid == type_oid(T_GEOMETRY) ||
-    basetypid == type_oid(T_RTRANSFORM2D) || basetypid == type_oid(T_RTRANSFORM3D))
+    basetypid == type_oid(T_POSE))
     return true;
   return false;
 }
@@ -137,7 +138,7 @@ base_type_length(Oid basetypid)
   ensure_temporal_base_type(basetypid);
   if (basetypid == type_oid(T_DOUBLE2))
     return 16;
-  if (basetypid == type_oid(T_DOUBLE3) || basetypid == type_oid(T_RTRANSFORM2D))
+  if (basetypid == type_oid(T_DOUBLE3))
     return 24;
   if (basetypid == type_oid(T_DOUBLE4))
     return 32;
@@ -145,8 +146,8 @@ base_type_length(Oid basetypid)
     return -1;
   if (basetypid == type_oid(T_GEOMETRY) || basetypid == type_oid(T_GEOGRAPHY))
     return -1;
-  if (basetypid == type_oid(T_RTRANSFORM3D))
-    return 56;
+  if (basetypid == type_oid(T_POSE))
+    return -1;
   elog(ERROR, "unknown base_type_length function for base type: %d", basetypid);
 }
 
@@ -231,7 +232,9 @@ ensure_tnumber_range_type(Oid rangetypid)
 bool
 tspatial_type(Oid temptypid)
 {
-  if (temptypid == type_oid(T_TGEOMPOINT) || temptypid == type_oid(T_TGEOGPOINT))
+  if (temptypid == type_oid(T_TGEOMPOINT) ||
+    temptypid == type_oid(T_TGEOGPOINT) ||
+    temptypid == type_oid(T_TGEOMETRY))
     return true;
   return false;
 }
@@ -245,7 +248,9 @@ tspatial_type(Oid temptypid)
 bool
 tspatial_base_type(Oid basetypid)
 {
-  if (basetypid == type_oid(T_GEOMETRY) || basetypid == type_oid(T_GEOGRAPHY))
+  if (basetypid == type_oid(T_GEOMETRY) ||
+    basetypid == type_oid(T_GEOGRAPHY) ||
+    basetypid == type_oid(T_POSE))
     return true;
   return false;
 }
@@ -273,12 +278,12 @@ ensure_tgeo_base_type(Oid basetypid)
 }
 
 /**
- * Returns true if the Oid is an rtransform base type supported by MobilityDB
+ * Returns true if the Oid is a pose base type supported by MobilityDB
  */
 bool
-tgeo_rtransform_base_type(Oid typid)
+tpose_base_type(Oid typid)
 {
-  if (typid == type_oid(T_RTRANSFORM2D) || typid == type_oid(T_RTRANSFORM3D))
+  if (typid == type_oid(T_POSE))
     return true;
   return false;
 }
@@ -287,10 +292,10 @@ tgeo_rtransform_base_type(Oid typid)
  * Ensures that the Oid is an rtransform base type supported by MobilityDB
  */
 void
-ensure_tgeo_rtransform_base_type(Oid basetypid)
+ensure_tpose_base_type(Oid basetypid)
 {
-  if (! tgeo_rtransform_base_type(basetypid))
-    elog(ERROR, "unknown rigid transformation base type: %d", basetypid);
+  if (! tpose_base_type(basetypid))
+    elog(ERROR, "unknown pose base type: %d", basetypid);
   return;
 }
 
@@ -338,6 +343,23 @@ temporal_bbox_size(Oid basetypid)
   elog(ERROR, "unknown temporal_bbox_size function for base type: %d", basetypid);
 }
 
+bool
+pose_base_type(Oid basetypid)
+{
+  ensure_temporal_base_type(basetypid);
+  if (basetypid == T_POSE)
+    return true;
+  return false;
+}
+
+void
+ensure_pose_base_type(Oid basetypid)
+{
+  if (! pose_base_type(basetypid))
+    elog(ERROR, "unknown pose base type: %d", basetypid);
+  return;
+}
+
 /*****************************************************************************
  * Oid functions
  *****************************************************************************/
@@ -377,6 +399,8 @@ temporal_oid_from_base(Oid basetypid)
     return type_oid(T_TGEOMPOINT);
   if (basetypid == type_oid(T_GEOGRAPHY))
     return type_oid(T_TGEOGPOINT);
+  if (basetypid == type_oid(T_POSE))
+    return type_oid(T_TGEOMETRY);
   elog(ERROR, "unknown temporal type for base type: %d", basetypid);
 }
 
@@ -400,6 +424,8 @@ base_oid_from_temporal(Oid temptypid)
     return type_oid(T_GEOMETRY);
   if (temptypid == type_oid(T_TGEOGPOINT))
     return type_oid(T_GEOGRAPHY);
+  if (temptypid == type_oid(T_TGEOMETRY))
+    return type_oid(T_POSE);
   elog(ERROR, "unknown base type for temporal type: %d", temptypid);
 }
 
@@ -507,8 +533,8 @@ datum_eq2(Datum l, Datum r, Oid typel, Oid typer)
   if (typel == type_oid(T_GEOGRAPHY) && typel == typer)
     //  return DatumGetBool(call_function2(geography_eq, l, r));
     return datum_point_eq(l, r);
-  if (tgeo_rtransform_base_type(typel) && typel == typer)
-    return rtransform_eq_datum(l, r, typel);
+  if (typel == type_oid(T_POSE) && typel == typer)
+    return datum_pose_eq(l, r);
   elog(ERROR, "unknown datum_eq2 function for base type: %d", typel);
 }
 

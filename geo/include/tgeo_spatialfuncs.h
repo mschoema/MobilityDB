@@ -27,6 +27,8 @@
 extern bool tgeo_rigid_body_instant(const TInstant *inst);
 
 extern void ensure_geo_type(const GSERIALIZED *gs);
+extern void ensure_geo_2d_type(const GSERIALIZED *gs);
+extern void ensure_geo_3d_type(const GSERIALIZED *gs);
 extern void ensure_similar_geo(const TInstant *inst1, const TInstant *inst2);
 extern void ensure_rigid_body(const Datum geom1_datum, const Datum geom2_datum);
 

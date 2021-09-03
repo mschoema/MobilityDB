@@ -92,8 +92,7 @@ const char *_type_names[] =
   "geography",
   "tgeompoint",
   "tgeogpoint",
-  "rtransform2d",
-  "rtransform3d",
+  "pose",
   "tgeometry"
 };
 
