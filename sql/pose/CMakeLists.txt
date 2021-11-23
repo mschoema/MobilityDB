@@ -1,7 +1,7 @@
 # No Postgres version dependant files
 
 SET(LOCAL_FILES
-  78_pose
+  100_pose
   )
 
 foreach (f ${LOCAL_FILES})
