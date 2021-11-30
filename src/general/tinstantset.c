@@ -54,6 +54,8 @@
 #include "point/tpoint.h"
 #include "point/tpoint_spatialfuncs.h"
 
+#include "geometry/tgeometry_inst.h"
+
 /*****************************************************************************
  * General functions
  *****************************************************************************/
@@ -97,7 +99,7 @@ tinstantset_inst_n(const TInstantSet *ti, int index)
   return (TInstant *)(
     /* start of data */
     ((char *)ti) + double_pad(sizeof(TInstantSet)) + ti->bboxsize +
-      ti->count * sizeof(size_t) +
+      (ti->count + 1) * sizeof(size_t) +
       /* offset */
       (tinstantset_offsets_ptr(ti))[index]);
 }
@@ -129,9 +131,16 @@ tinstantset_make1(const TInstant **instants, int count)
   size_t memsize = bboxsize;
   /* Size of composing instants */
   for (int i = 0; i < count; i++)
-    memsize += double_pad(VARSIZE(instants[i]));
+  {
+    if (instants[0]->basetypid != type_oid(T_POSE))
+      memsize += double_pad(VARSIZE(instants[i]));
+    else
+      memsize += double_pad(tgeometryinst_varsize(instants[i], GEOMBYREF));
+  }
   /* Size of the struct and the offset array */
-  memsize +=  double_pad(sizeof(TInstantSet)) + count * sizeof(size_t);
+  memsize +=  double_pad(sizeof(TInstantSet)) + (count + 1) * sizeof(size_t);
+  if (instants[0]->basetypid == type_oid(T_POSE))
+    memsize += double_pad(VARSIZE(tgeometryinst_geom_ptr(instants[0])));
   /* Create the TInstantSet */
   TInstantSet *result = palloc0(memsize);
   SET_VARSIZE(result, memsize);
@@ -161,15 +170,28 @@ tinstantset_make1(const TInstant **instants, int count)
   }
   /* Store the composing instants */
   size_t pdata = double_pad(sizeof(TInstantSet)) + double_pad(bboxsize) +
-    count * sizeof(size_t);
+    (count + 1) * sizeof(size_t);
   size_t pos = 0;
   for (int i = 0; i < count; i++)
   {
-    memcpy(((char *)result) + pdata + pos, instants[i], VARSIZE(instants[i]));
+    size_t inst_size = VARSIZE(instants[i]);
+    if (instants[0]->basetypid == type_oid(T_POSE))
+      inst_size = tgeometryinst_varsize(instants[i], GEOMBYREF);
+    memcpy(((char *)result) + pdata + pos, instants[i], inst_size);
     (tinstantset_offsets_ptr(result))[i] = pos;
-    pos += double_pad(VARSIZE(instants[i]));
+    pos += double_pad(inst_size);
   }
-
+  if (instants[0]->basetypid == type_oid(T_POSE))
+  {
+    void *geom_to = ((char *) result) + pdata + pos;
+    void *geom_from = DatumGetPointer(tgeometryinst_geom(instants[0]));
+    size_t geom_size = VARSIZE(geom_from);
+    memcpy(geom_to, geom_from, geom_size);
+    (tinstantset_offsets_ptr(result))[count] = pos;
+    Datum geom = PointerGetDatum(geom_to);
+    for (int i = 0; i < count; i++)
+      tgeometryinst_set_geom((TInstant *)tinstantset_inst_n(result, i), geom, GEOMBYREF);
+  }
   return result;
 }
 

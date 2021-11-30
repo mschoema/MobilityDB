@@ -58,10 +58,14 @@
 #include "general/temporal_util.h"
 #include "general/rangetypes_ext.h"
 #include "general/tbox.h"
+
 #include "point/tpoint.h"
 #include "point/stbox.h"
 #include "point/tpoint_boxops.h"
+
 #include "npoint/tnpoint_boxops.h"
+
+#include "geometry/tgeometry_boxops.h"
 
 /*****************************************************************************
  * Functions on generic bounding boxes of temporal types
@@ -211,6 +215,8 @@ tinstant_make_bbox(const TInstant *inst, void *box)
     tpointinst_stbox(inst, (STBOX *) box);
   else if (inst->basetypid == type_oid(T_NPOINT))
     tnpointinst_make_stbox(inst, (STBOX *) box);
+  else if (inst->basetypid == type_oid(T_POSE))
+    tgeometryinst_make_stbox_step(inst, (STBOX *) box);
   else
     elog(ERROR, "unknown bounding box function for base type: %d",
       inst->basetypid);
@@ -259,6 +265,8 @@ tinstantset_make_bbox(const TInstant **instants, int count, void *box)
     tpointinstarr_stbox(instants, count, (STBOX *) box);
   else if (instants[0]->basetypid == type_oid(T_NPOINT))
     tnpointinstarr_step_to_stbox(instants, count, (STBOX *) box);
+  else if (instants[0]->basetypid == type_oid(T_POSE))
+    tgeometryinstarr_step_to_stbox(instants, count, (STBOX *) box);
   else
     elog(ERROR, "unknown bounding box function for base type: %d",
       instants[0]->basetypid);

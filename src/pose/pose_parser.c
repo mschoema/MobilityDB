@@ -52,15 +52,17 @@ pose_parse(char **str)
 
   if (strncasecmp(*str,"POSE",4) != 0)
     ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-      errmsg("Could not parse network point")));
+      errmsg("Could not parse pose value: %s", *str)));
 
   *str += 4;
   p_whitespace(str);
 
-  if (strncasecmp(*str,"Z",1) != 0)
+  if (strncasecmp(*str,"Z",1) == 0)
+  {
     hasZ = true;
+    *str += 1;
+  }
 
-  *str += 1;
   p_whitespace(str);
 
   int delim = 0;
@@ -68,7 +70,7 @@ pose_parse(char **str)
     delim++;
   if ((*str)[delim] == '\0')
     ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-      errmsg("Could not parse network point")));
+      errmsg("Could not parse pose value: %s", *str)));
 
   pose *result;
   if (!hasZ)
@@ -76,7 +78,7 @@ pose_parse(char **str)
     double x, y, theta;
     if (sscanf(*str, "( %lf , %lf , %lf )", &x, &y, &theta) != 3)
       ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-          errmsg("Could not parse pose value")));
+          errmsg("Could not parse pose value: %s", *str)));
     result = pose_make_2d(x, y, theta);
   }
   else
@@ -84,7 +86,7 @@ pose_parse(char **str)
     double x, y, z, W, X, Y, Z;
     if (sscanf(*str, "( %lf , %lf , %lf , %lf , %lf , %lf , %lf )", &x, &y, &z, &W, &X, &Y, &Z) != 7)
       ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-          errmsg("Could not parse pose value")));
+          errmsg("Could not parse pose value: %s", *str)));
     result = pose_make_3d(x, y, z, W, X, Y, Z);
   }
 

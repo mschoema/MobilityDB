@@ -1,12 +1,13 @@
 /*****************************************************************************
  *
  * This MobilityDB code is provided under The PostgreSQL License.
- * Copyright (c) 2016-2022, Université libre de Bruxelles and MobilityDB
+ *
+ * Copyright (c) 2016-2021, Université libre de Bruxelles and MobilityDB
  * contributors
  *
  * MobilityDB includes portions of PostGIS version 3 source code released
  * under the GNU General Public License (GPLv2 or later).
- * Copyright (c) 2001-2022, PostGIS contributors
+ * Copyright (c) 2001-2021, PostGIS contributors
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without a written
@@ -28,32 +29,36 @@
  *****************************************************************************/
 
 /**
- * @file tpoint_out.h
- * Output of temporal points in WKT, EWKT and MF-JSON format
+ * @file tgeometry_inst.h
+ * Functions for rigid temporal instant geometries.
  */
 
-#ifndef __TPOINT_OUT_H__
-#define __TPOINT_OUT_H__
+#ifndef __TGEOMETRY_INST_H__
+#define __TGEOMETRY_INST_H__
 
 #include <postgres.h>
-#include <fmgr.h>
 #include <catalog/pg_type.h>
 
-/*****************************************************************************/
+#include "general/temporal.h"
 
-extern Datum tpoint_as_text(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_ewkt(PG_FUNCTION_ARGS);
-extern Datum geoarr_as_text(PG_FUNCTION_ARGS);
-extern Datum geoarr_as_ewkt(PG_FUNCTION_ARGS);
-extern Datum tpointarr_as_text(PG_FUNCTION_ARGS);
-extern Datum tpointarr_as_ewkt(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_mfjson(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_binary(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_ewkb(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_hexewkb(PG_FUNCTION_ARGS);
+/** Symbolic constants for the temporal instant geometry constuctor */
+#define GEOMBYVAL       true
+#define GEOMBYREF       false
 
-extern char *wkt_out(Oid type, Datum value);
-extern char *ewkt_out(Oid type, Datum value);
+/*****************************************************************************
+ * General functions
+ *****************************************************************************/
+
+extern Datum *tgeometryinst_geom_ptr(const TInstant *inst);
+extern Datum tgeometryinst_geom(const TInstant *inst);
+extern Datum tgeometryinst_geom_copy(const TInstant *inst);
+
+extern size_t tgeometryinst_varsize(const TInstant *inst, bool geombyval);
+
+extern TInstant *tgeometryinst_make(Datum geom, Datum value,
+  TimestampTz t, Oid basetypid, bool geombyval);
+extern void tgeometryinst_set_geom(TInstant *inst, Datum geom, bool geombyval);
+extern TInstant *tgeometryinst_copy(const TInstant *inst, bool geombyval);
 
 /*****************************************************************************/
 

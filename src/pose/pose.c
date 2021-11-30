@@ -82,7 +82,7 @@ pose_out(PG_FUNCTION_ARGS)
   char *result = (char *) palloc(size);
   pose *p = PG_GETARG_POSE(0);
 
-  if (!POSE_FLAGS_GET_3D(p->flags))
+  if (!MOBDB_FLAGS_GET_Z(p->flags))
   {
     char *x = call_output(FLOAT8OID, Float8GetDatum(p->data[0]));
     char *y = call_output(FLOAT8OID, Float8GetDatum(p->data[1]));
@@ -126,7 +126,7 @@ pose_make_2d(double x, double y, double theta)
   size_t memsize = double_pad(sizeof(pose)) + 2 * sizeof(double);
   pose *result = palloc0(memsize);
   SET_VARSIZE(result, memsize);
-  POSE_FLAGS_SET_3D(result->flags, false);
+  MOBDB_FLAGS_SET_Z(result->flags, false);
   result->data[0] = x;
   result->data[1] = y;
   result->data[2] = theta;
@@ -156,7 +156,7 @@ pose_make_3d(double x, double y, double z,
   size_t memsize = double_pad(sizeof(pose)) + 6 * sizeof(double);
   pose *result = palloc0(memsize);
   SET_VARSIZE(result, memsize);
-  POSE_FLAGS_SET_3D(result->flags, true);
+  MOBDB_FLAGS_SET_Z(result->flags, true);
   result->data[0] = x;
   result->data[1] = y;
   result->data[2] = z;

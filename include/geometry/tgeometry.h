@@ -1,12 +1,13 @@
 /*****************************************************************************
  *
  * This MobilityDB code is provided under The PostgreSQL License.
- * Copyright (c) 2016-2022, Université libre de Bruxelles and MobilityDB
+ *
+ * Copyright (c) 2016-2021, Université libre de Bruxelles and MobilityDB
  * contributors
  *
  * MobilityDB includes portions of PostGIS version 3 source code released
  * under the GNU General Public License (GPLv2 or later).
- * Copyright (c) 2001-2022, PostGIS contributors
+ * Copyright (c) 2001-2021, PostGIS contributors
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without a written
@@ -28,32 +29,32 @@
  *****************************************************************************/
 
 /**
- * @file tpoint_out.h
- * Output of temporal points in WKT, EWKT and MF-JSON format
+ * @file tgeometry.h
+ * Functions for rigid temporal geometries.
  */
 
-#ifndef __TPOINT_OUT_H__
-#define __TPOINT_OUT_H__
+#ifndef __TGEOMETRY_H__
+#define __TGEOMETRY_H__
 
 #include <postgres.h>
-#include <fmgr.h>
 #include <catalog/pg_type.h>
 
-/*****************************************************************************/
+#include "general/temporal.h"
 
-extern Datum tpoint_as_text(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_ewkt(PG_FUNCTION_ARGS);
-extern Datum geoarr_as_text(PG_FUNCTION_ARGS);
-extern Datum geoarr_as_ewkt(PG_FUNCTION_ARGS);
-extern Datum tpointarr_as_text(PG_FUNCTION_ARGS);
-extern Datum tpointarr_as_ewkt(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_mfjson(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_binary(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_ewkb(PG_FUNCTION_ARGS);
-extern Datum tpoint_as_hexewkb(PG_FUNCTION_ARGS);
+/*****************************************************************************
+ * Miscellaneous functions defined in tgeometry.c
+ *****************************************************************************/
 
-extern char *wkt_out(Oid type, Datum value);
-extern char *ewkt_out(Oid type, Datum value);
+extern Datum tgeometry_geom(const Temporal *temp);
+
+/* Input/output functions */
+
+extern Datum tgeometry_in(PG_FUNCTION_ARGS);
+extern Datum tgeometry_out(PG_FUNCTION_ARGS);
+
+/* Constructor functions */
+
+extern Datum tgeometryinst_constructor(PG_FUNCTION_ARGS);
 
 /*****************************************************************************/
 

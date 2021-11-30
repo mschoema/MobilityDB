@@ -45,6 +45,7 @@
 extern void ensure_end_input(char **str, bool end);
 
 extern void p_whitespace(char **str);
+extern bool p_char(char **str, char c);
 extern bool p_obrace(char **str);
 extern bool p_cbrace(char **str);
 extern bool p_obracket(char **str);

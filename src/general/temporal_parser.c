@@ -73,6 +73,21 @@ ensure_end_input(char **str, bool end)
 }
 
 /**
+ * Input a char from the buffer
+ */
+bool
+p_char(char **str, char c)
+{
+  p_whitespace(str);
+  if (**str == c)
+  {
+    *str += 1;
+    return true;
+  }
+  return false;
+}
+
+/**
  * Input an opening brace from the buffer
  */
 bool

@@ -29,20 +29,56 @@
  *****************************************************************************/
 
 /**
- * @file pose_parser.h
- * Functions for parsing static and temporal network points.
+ * tgeometry.sql
+ * Basic functions for rigid temporal geometries.
  */
 
-#ifndef __POSE_PARSER_H__
-#define __POSE_PARSER_H__
+CREATE TYPE tgeometry;
 
-#include "general/temporal.h"
-#include "pose.h"
+/* temporal, base, contbase, box */
+SELECT register_temporal_type('tgeometry', 'pose', true, 'stbox');
 
-/*****************************************************************************/
+/******************************************************************************
+ * Input/Output
+ ******************************************************************************/
 
-extern pose *pose_parse(char **str);
+CREATE FUNCTION tgeometry_in(cstring, oid, integer)
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME'
+  LANGUAGE C IMMUTABLE STRICT;
 
-/*****************************************************************************/
+CREATE FUNCTION tgeometry_out(tgeometry)
+  RETURNS cstring
+  AS 'MODULE_PATHNAME'
+  LANGUAGE C IMMUTABLE STRICT;
 
-#endif /* __POSE_PARSER_H__ */
+/*CREATE FUNCTION tgeometry_recv(internal)
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME'
+  LANGUAGE C IMMUTABLE STRICT;*/
+
+/*CREATE FUNCTION tgeometry_send(tgeometry)
+  RETURNS bytea
+  AS 'MODULE_PATHNAME'
+  LANGUAGE C IMMUTABLE STRICT;*/
+
+CREATE TYPE tgeometry (
+  internallength = variable,
+  input = tgeometry_in,
+  output = tgeometry_out,
+--receive = tgeometry_recv,
+--send = tgeometry_send,
+  storage = extended,
+  alignment = double
+);
+
+/******************************************************************************
+ * Constructors
+ ******************************************************************************/
+
+CREATE FUNCTION tgeometry_inst(geometry, pose, timestamptz)
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'tgeometryinst_constructor'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+/******************************************************************************/

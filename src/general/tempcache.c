@@ -97,7 +97,8 @@ const char *_type_names[] =
   [T_TGEOGPOINT] = "tgeogpoint",
   [T_NPOINT] = "npoint",
   [T_NSEGMENT] = "nsegment",
-  [T_TNPOINT] = "tnpoint"
+  [T_TNPOINT] = "tnpoint",
+  [T_POSE] = "pose"
 };
 
 /**

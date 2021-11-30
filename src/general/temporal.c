@@ -852,7 +852,7 @@ temporal_in(PG_FUNCTION_ARGS)
  * @param[in] value_out Function called to output the base value
  * depending on its Oid
  */
-static char *
+char *
 temporal_to_string(const Temporal *temp, char *(*value_out)(Oid, Datum))
 {
   char *result;

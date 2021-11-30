@@ -83,7 +83,7 @@ ensure_temporal_base_type(Oid basetypid)
     basetypid != type_oid(T_DOUBLE2) && basetypid != type_oid(T_DOUBLE3) &&
     basetypid != type_oid(T_DOUBLE4) &&
     basetypid != type_oid(T_GEOMETRY) && basetypid != type_oid(T_GEOGRAPHY) &&
-    basetypid != type_oid(T_NPOINT))
+    basetypid != type_oid(T_NPOINT) && basetypid != type_oid(T_POSE))
     elog(ERROR, "unknown base type: %d", basetypid);
   return;
 }
@@ -97,7 +97,7 @@ base_type_continuous(Oid basetypid)
   if (basetypid == FLOAT8OID || basetypid == type_oid(T_DOUBLE2) ||
     basetypid == type_oid(T_DOUBLE3) || basetypid == type_oid(T_DOUBLE4) ||
     basetypid == type_oid(T_GEOGRAPHY) || basetypid == type_oid(T_GEOMETRY) ||
-    basetypid == type_oid(T_NPOINT))
+    basetypid == type_oid(T_NPOINT) || basetypid == type_oid(T_POSE))
     return true;
   return false;
 }
@@ -152,6 +152,8 @@ base_type_length(Oid basetypid)
     return -1;
   if (basetypid == type_oid(T_NPOINT))
     return 16;
+  if (basetypid == type_oid(T_POSE))
+    return -1;
   elog(ERROR, "unknown base_type_length function for base type: %d", basetypid);
 }
 
@@ -252,7 +254,7 @@ bool
 tspatial_base_type(Oid basetypid)
 {
   if (basetypid == type_oid(T_GEOMETRY) || basetypid == type_oid(T_GEOGRAPHY) ||
-    basetypid == type_oid(T_NPOINT))
+    basetypid == type_oid(T_NPOINT) || basetypid == type_oid(T_POSE))
     return true;
   return false;
 }
