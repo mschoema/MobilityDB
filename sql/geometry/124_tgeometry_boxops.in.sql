@@ -28,28 +28,20 @@
  *
  *****************************************************************************/
 
-/**
- * @file tgeometry_boxops.h
- * Bounding box operators for rigid temporal geometriess.
+/*
+ * tgeometry_boxops.sql
+ * Bounding box operators for rigid temporal geometries.
  */
 
-#ifndef __TGEOMETRY_BOXOPS_H__
-#define __TGEOMETRY_BOXOPS_H__
+/*****************************************************************************
+ * Casting
+ *****************************************************************************/
 
-#include <postgres.h>
-#include <catalog/pg_type.h>
+CREATE FUNCTION stbox(tgeometry)
+  RETURNS stbox
+  AS 'MODULE_PATHNAME', 'tpoint_to_stbox'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
-#include "general/temporal.h"
-
-#include "point/stbox.h"
-
-/*****************************************************************************/
-
-/* Functions computing the bounding box at the creation of the temporal point */
-
-extern void tgeometryinst_make_stbox(const TInstant *inst, STBOX *box);
-extern void tgeometryinstarr_step_to_stbox(const TInstant **inst, int count, STBOX *box);
+CREATE CAST (tgeometry AS stbox) WITH FUNCTION stbox(tgeometry) AS IMPLICIT;
 
 /*****************************************************************************/
-
-#endif /* __TGEOMETRY_BOXOPS_H__ */

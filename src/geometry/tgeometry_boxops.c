@@ -129,8 +129,8 @@ lwgeom_apply_pose(LWGEOM *geom, pose *p)
  * @param[out] box Spatiotemporal box
  * @param[in] inst Temporal network point
  */
-bool
-tgeometryinst_make_stbox_step(const TInstant *inst, STBOX *box)
+void
+tgeometryinst_make_stbox(const TInstant *inst, STBOX *box)
 {
   pose *p = DatumGetPose(tinstant_value(inst));
   GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(
@@ -149,7 +149,7 @@ tgeometryinst_make_stbox_step(const TInstant *inst, STBOX *box)
     MOBDB_FLAGS_SET_X(box->flags, false);
     MOBDB_FLAGS_SET_Z(box->flags, false);
     MOBDB_FLAGS_SET_T(box->flags, false);
-    return false;
+    return;
   }
   box->xmin = gbox.xmin;
   box->xmax = gbox.xmax;
@@ -167,12 +167,13 @@ tgeometryinst_make_stbox_step(const TInstant *inst, STBOX *box)
     box->zmin = gbox.zmin;
     box->zmax = gbox.zmax;
   }
+  box->tmin = box->tmax = inst->t;
   box->srid = gserialized_get_srid(gs);
   MOBDB_FLAGS_SET_X(box->flags, true);
   MOBDB_FLAGS_SET_Z(box->flags, hasz);
-  MOBDB_FLAGS_SET_T(box->flags, false);
+  MOBDB_FLAGS_SET_T(box->flags, true);
   MOBDB_FLAGS_SET_GEODETIC(box->flags, geodetic);
-  return true;
+  return;
 }
 
 /**
@@ -185,12 +186,12 @@ tgeometryinst_make_stbox_step(const TInstant *inst, STBOX *box)
 void
 tgeometryinstarr_step_to_stbox(const TInstant **instants, int count, STBOX *box)
 {
-  tgeometryinst_make_stbox_step(instants[0], box);
+  tgeometryinst_make_stbox(instants[0], box);
   for (int i = 1; i < count; i++)
   {
     STBOX box1;
     memset(&box1, 0, sizeof(STBOX));
-    tgeometryinst_make_stbox_step(instants[i], &box1);
+    tgeometryinst_make_stbox(instants[i], &box1);
     stbox_expand(box, &box1);
   }
 }

@@ -2,6 +2,7 @@
 
 SET(LOCAL_FILES
   120_tgeometry
+  124_tgeometry_boxops
   )
 
 foreach (f ${LOCAL_FILES})

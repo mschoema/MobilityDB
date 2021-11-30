@@ -216,7 +216,7 @@ tinstant_make_bbox(const TInstant *inst, void *box)
   else if (inst->basetypid == type_oid(T_NPOINT))
     tnpointinst_make_stbox(inst, (STBOX *) box);
   else if (inst->basetypid == type_oid(T_POSE))
-    tgeometryinst_make_stbox_step(inst, (STBOX *) box);
+    tgeometryinst_make_stbox(inst, (STBOX *) box);
   else
     elog(ERROR, "unknown bounding box function for base type: %d",
       inst->basetypid);

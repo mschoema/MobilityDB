@@ -29,8 +29,8 @@
  *****************************************************************************/
 
 /**
- * @file tpoint.c
- * Basic functions for temporal points.
+ * @file tgeometry.c
+ * Basic functions for rigid temporal geometries.
  */
 
 #include "geometry/tgeometry.h"
