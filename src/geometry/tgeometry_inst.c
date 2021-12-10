@@ -107,6 +107,8 @@ tgeometryinst_varsize(const TInstant *inst, bool geombyval)
   return result;
 }
 
+/*****************************************************************************/
+
 /**
  * Ensure the validity of the arguments when creating a temporal value
  */

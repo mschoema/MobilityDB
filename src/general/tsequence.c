@@ -59,6 +59,10 @@
 
 #include "npoint/tnpoint_spatialfuncs.h"
 
+#include "pose/pose.h"
+
+#include "geometry/tgeometry_inst.h"
+
 /*****************************************************************************
  * Collinear functions
  * Are the three temporal instant values collinear?
@@ -159,6 +163,23 @@ npoint_collinear(npoint *np1, npoint *np2, npoint *np3, double ratio)
 /**
  * Returns true if the three values are collinear
  *
+ * @param[in] p1,p2,p3 Input values
+ * @param[in] ratio Value in [0,1] representing the duration of the
+ * timestamps associated to `p1` and `p2` divided by the duration
+ * of the timestamps associated to `p1` and `p3`
+ */
+static bool
+pose_collinear(pose *p1, pose *p2, pose *p3, double ratio)
+{
+  pose *p2_interpolated = pose_interpolate(p1, p3, ratio);
+  bool result = pose_eq_internal(p2, p2_interpolated);
+  pfree(p2_interpolated);
+  return result;
+}
+
+/**
+ * Returns true if the three values are collinear
+ *
  * @param[in] basetypid Oid of the base type
  * @param[in] value1,value2,value3 Input values
  * @param[in] t1,t2,t3 Input timestamps
@@ -192,6 +213,9 @@ datum_collinear(Oid basetypid, Datum value1, Datum value2, Datum value3,
   if (basetypid == type_oid(T_NPOINT))
     return npoint_collinear(DatumGetNpoint(value1), DatumGetNpoint(value2),
       DatumGetNpoint(value3), ratio);
+  if (basetypid == type_oid(T_POSE))
+    return pose_collinear(DatumGetPose(value1), DatumGetPose(value2),
+      DatumGetPose(value3), ratio);
   elog(ERROR, "unknown collinear operation for base type: %d", basetypid);
 }
 
@@ -238,7 +262,7 @@ tsequence_inst_n(const TSequence *seq, int index)
   return (TInstant *)(
     /* start of data */
     ((char *)seq) + double_pad(sizeof(TSequence)) + seq->bboxsize +
-      seq->count * sizeof(size_t) +
+      (seq->count + 1) * sizeof(size_t) +
       /* offset */
       (tsequence_offsets_ptr(seq))[index]);
 }
@@ -368,7 +392,8 @@ tsequence_make1(const TInstant **instants, int count, bool lower_inc,
 
   /* Precompute the trajectory, if any */
   size_t trajsize = 0;
-  bool isgeo = tgeo_base_type(instants[0]->basetypid);
+  bool isgeo = (tgeo_base_type(instants[0]->basetypid) ||
+    tpose_base_type(instants[0]->basetypid));
 
   /* Get the bounding box size */
   size_t bboxsize = double_pad(temporal_bbox_size(instants[0]->basetypid));
@@ -378,11 +403,18 @@ tsequence_make1(const TInstant **instants, int count, bool lower_inc,
   size_t memsize = bboxsize;
   /* Size of composing instants */
   for (int i = 0; i < count; i++)
-    memsize += double_pad(VARSIZE(instants[i]));
+  {
+    if (instants[0]->basetypid != type_oid(T_POSE))
+      memsize += double_pad(VARSIZE(instants[i]));
+    else
+      memsize += double_pad(tgeometryinst_varsize(instants[i], GEOMBYREF));
+  }
   /* Trajectory size */
   memsize += trajsize;
   /* Size of the struct and the offset array */
-  memsize += double_pad(sizeof(TSequence)) + count * sizeof(size_t);
+  memsize += double_pad(sizeof(TSequence)) + (newcount + 1) * sizeof(size_t);
+  if (instants[0]->basetypid == type_oid(T_POSE))
+    memsize += double_pad(VARSIZE(tgeometryinst_geom_ptr(instants[0])));
   /* Create the temporal sequence */
   TSequence *result = palloc0(memsize);
   SET_VARSIZE(result, memsize);
@@ -400,8 +432,7 @@ tsequence_make1(const TInstant **instants, int count, bool lower_inc,
   if (isgeo)
   {
     MOBDB_FLAGS_SET_Z(result->flags, MOBDB_FLAGS_GET_Z(instants[0]->flags));
-    MOBDB_FLAGS_SET_GEODETIC(result->flags,
-      MOBDB_FLAGS_GET_GEODETIC(instants[0]->flags));
+    MOBDB_FLAGS_SET_GEODETIC(result->flags, MOBDB_FLAGS_GET_GEODETIC(instants[0]->flags));
   }
   /* Initialization of the variable-length part */
   /*
@@ -416,14 +447,27 @@ tsequence_make1(const TInstant **instants, int count, bool lower_inc,
   }
   /* Store the composing instants */
   size_t pdata = double_pad(sizeof(TSequence)) + double_pad(bboxsize) +
-    newcount * sizeof(size_t);
+    (newcount + 1) * sizeof(size_t);
   size_t pos = 0;
   for (int i = 0; i < newcount; i++)
   {
-    memcpy(((char *)result) + pdata + pos, norminsts[i],
-      VARSIZE(norminsts[i]));
+    size_t inst_size = VARSIZE(norminsts[i]);
+    if (instants[0]->basetypid == type_oid(T_POSE))
+      inst_size = tgeometryinst_varsize(norminsts[i], GEOMBYREF);
+    memcpy(((char *)result) + pdata + pos, norminsts[i], inst_size);
     (tsequence_offsets_ptr(result))[i] = pos;
-    pos += double_pad(VARSIZE(norminsts[i]));
+    pos += double_pad(inst_size);
+  }
+  if (instants[0]->basetypid == type_oid(T_POSE))
+  {
+    void *geom_to = ((char *) result) + pdata + pos;
+    void *geom_from = DatumGetPointer(tgeometryinst_geom(norminsts[0]));
+    size_t geom_size = VARSIZE(geom_from);
+    memcpy(geom_to, geom_from, geom_size);
+    (tsequence_offsets_ptr(result))[count] = pos;
+    Datum geom = PointerGetDatum(geom_to);
+    for (int i = 0; i < newcount; i++)
+      tgeometryinst_set_geom((TInstant *)tsequence_inst_n(result, i), geom, GEOMBYREF);
   }
   if (normalize && count > 1)
     pfree(norminsts);

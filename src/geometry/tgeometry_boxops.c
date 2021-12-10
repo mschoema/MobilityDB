@@ -124,7 +124,7 @@ lwgeom_apply_pose(LWGEOM *geom, pose *p)
 }
 
 /**
- * Set the spatiotemporal box from the network point value
+ * Set the spatiotemporal box from the geometry value
  *
  * @param[out] box Spatiotemporal box
  * @param[in] inst Temporal network point
@@ -194,6 +194,79 @@ tgeometryinstarr_step_to_stbox(const TInstant **instants, int count, STBOX *box)
     tgeometryinst_make_stbox(instants[i], &box1);
     stbox_expand(box, &box1);
   }
+}
+
+/**
+ * Set the spatiotemporal box from the pose value
+ *
+ * @param[out] box Spatiotemporal box
+ * @param[in] inst Temporal network point
+ */
+void
+tgeometryinst_pose_make_stbox(const TInstant *inst, STBOX *box)
+{
+  pose *p = DatumGetPose(tinstant_value(inst));
+  box->xmin = box->xmax = p->data[0];
+  box->ymin = box->ymax = p->data[1];
+  if (MOBDB_FLAGS_GET_Z(p->flags))
+    box->zmin = box->zmax = p->data[2];
+  box->tmin = box->tmax = inst->t;
+  MOBDB_FLAGS_SET_X(box->flags, true);
+  MOBDB_FLAGS_SET_Z(box->flags, MOBDB_FLAGS_GET_Z(p->flags));
+  MOBDB_FLAGS_SET_T(box->flags, true);
+  return;
+}
+
+static double
+geom_radius(Datum geom_datum)
+{
+  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(geom_datum);
+  LWGEOM *geom = lwgeom_from_gserialized(gs);
+  LWPOINTITERATOR *it = lwpointiterator_create(geom);
+  double r = 0;
+  POINT4D p;
+  while (lwpointiterator_next(it, &p))
+  {
+    if (FLAGS_GET_Z(geom->flags))
+      r = fmax(r, sqrt(pow(p.x, 2) + pow(p.y, 2) + pow(p.z, 2)));
+    else
+      r = fmax(r, sqrt(pow(p.x, 2) + pow(p.y, 2)));
+  }
+  lwpointiterator_destroy(it);
+  lwgeom_free(geom);
+  return r;
+}
+
+/**
+ * Set the spatiotemporal box from the array of rigid temporal geometry values
+ *
+ * @param[out] box Spatiotemporal box
+ * @param[in] instants Temporal geometry values
+ * @param[in] count Number of elements in the array
+ */
+void
+tgeometryinstarr_linear_to_stbox(const TInstant **instants, int count, STBOX *box)
+{
+  Datum geom = tgeometryinst_geom(instants[0]);
+  double r = geom_radius(geom);
+  tgeometryinst_pose_make_stbox(instants[0], box);
+  for (int i = 1; i < count; i++)
+  {
+    STBOX box1;
+    memset(&box1, 0, sizeof(STBOX));
+    tgeometryinst_pose_make_stbox(instants[i], &box1);
+    stbox_expand(box, &box1);
+  }
+  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(geom);
+  box->xmin -= r;
+  box->xmax += r;
+  box->ymin -= r;
+  box->ymax += r;
+  box->zmin -= r;
+  box->zmax += r;
+  box->srid = gserialized_get_srid(gs);
+  MOBDB_FLAGS_SET_GEODETIC(box->flags, false);
+  return;
 }
 
 /*****************************************************************************/

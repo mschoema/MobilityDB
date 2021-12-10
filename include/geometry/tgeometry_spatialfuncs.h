@@ -1,4 +1,4 @@
-/*****************************************************************************
+/***********************************************************************
  *
  * This MobilityDB code is provided under The PostgreSQL License.
  *
@@ -29,28 +29,27 @@
  *****************************************************************************/
 
 /**
- * @file tgeometry_boxops.h
- * Bounding box operators for rigid temporal geometriess.
+ * @file tgeometry_spatialfuncs.h
+ * Spatial functions for rigid temporal geometries.
  */
 
-#ifndef __TGEOMETRY_BOXOPS_H__
-#define __TGEOMETRY_BOXOPS_H__
+#ifndef __TGEOMETRY_SPATIALFUNCS_H__
+#define __TGEOMETRY_SPATIALFUNCS_H__
 
 #include <postgres.h>
-#include <catalog/pg_type.h>
 
 #include "general/temporal.h"
 
-#include "point/stbox.h"
+/*****************************************************************************/
+
+extern void ensure_same_geom_tgeometryinst(const TInstant *inst1, const TInstant *inst2);
+
+/* Functions for spatial reference systems */
+
+extern int tgeometryinst_srid(const TInstant *inst);
+extern int tgeometry_srid_internal(const Temporal *temp);
+extern Datum tgeometry_srid(PG_FUNCTION_ARGS);
 
 /*****************************************************************************/
 
-/* Functions computing the bounding box at the creation of the temporal point */
-
-extern void tgeometryinst_make_stbox(const TInstant *inst, STBOX *box);
-extern void tgeometryinstarr_step_to_stbox(const TInstant **inst, int count, STBOX *box);
-extern void tgeometryinstarr_linear_to_stbox(const TInstant **inst, int count, STBOX *box);
-
-/*****************************************************************************/
-
-#endif /* __TGEOMETRY_BOXOPS_H__ */
+#endif

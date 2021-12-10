@@ -76,11 +76,15 @@ typedef struct
 extern Datum pose_in(PG_FUNCTION_ARGS);
 extern Datum pose_out(PG_FUNCTION_ARGS);
 
-extern Datum pose_constructor(PG_FUNCTION_ARGS);
-
 extern pose *pose_make_2d(double x, double y, double theta);
 extern pose *pose_make_3d(double x, double y, double z,
   double W, double X, double Y, double Z);
+
+extern Datum pose_constructor(PG_FUNCTION_ARGS);
+
+extern bool pose_eq_internal(const pose *p1, const pose *p2);
+
+extern pose *pose_interpolate(const pose *p1, const pose *p2, double ratio);
 
 /*****************************************************************************/
 

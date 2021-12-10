@@ -62,8 +62,11 @@
 #include "general/tnumber_distance.h"
 
 #include "point/tpoint_spatialfuncs.h"
+
 #include "npoint/tnpoint_static.h"
 #include "npoint/tnpoint_spatialfuncs.h"
+
+#include "geometry/tgeometry_spatialfuncs.h"
 
 /*
  * This is required in a SINGLE file for builds against pgsql
@@ -429,6 +432,8 @@ ensure_valid_tinstarr1(const TInstant *inst1, const TInstant *inst2,
   ensure_spatial_validity((Temporal *) inst1, (Temporal *) inst2);
   if (subtype == SEQUENCE && inst1->basetypid == type_oid(T_NPOINT))
     ensure_same_rid_tnpointinst(inst1, inst2);
+  if (inst1->basetypid == type_oid(T_POSE))
+    ensure_same_geom_tgeometryinst(inst1, inst2);
   return;
 }
 

@@ -42,6 +42,7 @@
 #include <libpq/pqformat.h>
 #include <executor/spi.h>
 #include <liblwgeom.h>
+#include <math.h>
 
 #include "general/temporaltypes.h"
 #include "general/tempcache.h"
@@ -200,6 +201,106 @@ pose_constructor(PG_FUNCTION_ARGS)
   }
 
   PG_RETURN_POINTER(result);
+}
+
+/*****************************************************************************
+ * Functions for defining B-tree index
+ *****************************************************************************/
+
+/**
+ * Returns true if the first pose is equal to the second one
+ */
+bool
+pose_eq_internal(const pose *p1, const pose *p2)
+{
+  if (MOBDB_FLAGS_GET_Z(p1->flags) != MOBDB_FLAGS_GET_Z(p2->flags))
+    return false;
+  bool result = (fabs(p1->data[0] - p2->data[0]) < MOBDB_EPSILON &&
+    fabs(p1->data[1] - p2->data[1]) < MOBDB_EPSILON &&
+    fabs(p1->data[2] - p2->data[2]) < MOBDB_EPSILON);
+  if (MOBDB_FLAGS_GET_Z(p1->flags))
+    result &= (fabs(p1->data[3] - p2->data[3]) < MOBDB_EPSILON &&
+    fabs(p1->data[4] - p2->data[4]) < MOBDB_EPSILON &&
+    fabs(p1->data[5] - p2->data[5]) < MOBDB_EPSILON &&
+    fabs(p1->data[6] - p2->data[6]) < MOBDB_EPSILON);
+  return result;
+}
+
+/*****************************************************************************/
+
+pose *
+pose_interpolate(const pose *p1, const pose *p2, double ratio)
+{
+  pose *result;
+  if (!MOBDB_FLAGS_GET_Z(p1->flags))
+  {
+    double x = p1->data[0] * (1 - ratio) + p2->data[0] * ratio;
+    double y = p1->data[1] * (1 - ratio) + p2->data[1] * ratio;
+    double theta;
+    double theta_delta = p2->data[2] - p1->data[2];
+    /* If fabs(theta_delta) == M_PI: Always turn counter-clockwise */
+    if (fabs(theta_delta) < MOBDB_EPSILON)
+        theta = p1->data[2];
+    else if (theta_delta > 0 && fabs(theta_delta) <= M_PI)
+        theta = p1->data[2] + theta_delta*ratio;
+    else if (theta_delta > 0 && fabs(theta_delta) > M_PI)
+        theta = p2->data[2] + (2*M_PI - theta_delta)*(1 - ratio);
+    else if (theta_delta < 0 && fabs(theta_delta) < M_PI)
+        theta = p1->data[2] + theta_delta*ratio;
+    else /* (theta_delta < 0 && fabs(theta_delta) >= M_PI) */
+        theta = p1->data[2] + (2*M_PI + theta_delta)*ratio;
+    if (theta > M_PI)
+        theta = theta - 2*M_PI;
+    result = pose_make_2d(x, y, theta);
+  }
+  else
+  {
+    double x = p1->data[0] * (1 - ratio) + p2->data[0] * ratio;
+    double y = p1->data[1] * (1 - ratio) + p2->data[1] * ratio;
+    double z = p1->data[2] * (1 - ratio) + p2->data[2] * ratio;
+    double W, X, Y, Z;
+    double W1 = p1->data[0], X1 = p1->data[1];
+    double Y1 = p1->data[2], Z1 = p1->data[3];
+    double W2 = p2->data[0], X2 = p2->data[1];
+    double Y2 = p2->data[2], Z2 = p2->data[3];
+    double dot =  W1*W2 + X1*X2 + Y1*Y2 + Z1*Z2;
+    if (dot < 0.0f)
+    {
+      W2 = -W2;
+      X2 = -X2;
+      Y2 = -Y2;
+      Z2 = -Z2;
+      dot = -dot;
+    }
+    const double DOT_THRESHOLD = 0.9995;
+    if (dot > DOT_THRESHOLD)
+    {
+      W = W1 + (W2 - W1)*ratio;
+      X = X1 + (X2 - X1)*ratio;
+      Y = Y1 + (Y2 - Y1)*ratio;
+      Z = Z1 + (Z2 - Z1)*ratio;
+    }
+    else
+    {
+      double theta_0 = acos(dot);
+      double theta = theta_0*ratio;
+      double sin_theta = sin(theta);
+      double sin_theta_0 = sin(theta_0);
+      double s1 = cos(theta) - dot * sin_theta / sin_theta_0;
+      double s2 = sin_theta / sin_theta_0;
+      W = W1*s1 + W2*s2;
+      X = X1*s1 + X2*s2;
+      Y = Y1*s1 + Y2*s2;
+      Z = Z1*s1 + Z2*s2;
+    }
+    double norm = W*W + X*X + Y*Y + Z*Z;
+    W /= norm;
+    X /= norm;
+    Y /= norm;
+    Z /= norm;
+    result = pose_make_3d(x, y, z, W, X, Y, Z);
+  }
+  return result;
 }
 
 /*****************************************************************************/

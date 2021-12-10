@@ -304,7 +304,14 @@ tsequence_make_bbox(const TInstant **instants, int count, bool lower_inc,
     else
       tnpointinstarr_step_to_stbox(instants, count, (STBOX *) box);
   }
-  else
+  else if (instants[0]->basetypid == type_oid(T_POSE))
+  {
+    if (MOBDB_FLAGS_GET_LINEAR(instants[0]->flags))
+      tgeometryinstarr_linear_to_stbox(instants, count, (STBOX *) box);
+    else
+      tgeometryinstarr_step_to_stbox(instants, count, (STBOX *) box);
+  }
+  else 
     elog(ERROR, "unknown bounding box function for base type: %d",
       instants[0]->basetypid);
   return;

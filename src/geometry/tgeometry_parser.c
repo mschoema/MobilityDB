@@ -73,7 +73,7 @@ tgeometryinst_parse(char **str, Oid basetype, bool end, bool make, Datum geom)
 }
 
 /**
- * Parse a temporal point value of instant set type from the buffer
+ * Parse a rigid temporal geometry value of instant set type from the buffer
  *
  * @param[in] str Input string
  * @param[in] basetype Oid of the base type
@@ -114,7 +114,7 @@ tgeometryinstset_parse(char **str, Oid basetype, Datum geom)
 }
 
 /**
- * Parse a temporal point value of sequence type from the buffer
+ * Parse a rigid temporal geometry value of sequence type from the buffer
  *
  * @param[in] str Input string
  * @param[in] basetype Oid of the base type
@@ -127,13 +127,51 @@ tgeometryinstset_parse(char **str, Oid basetype, Datum geom)
 static TSequence *
 tgeometryseq_parse(char **str, Oid basetype, bool linear, bool end, bool make, Datum geom)
 {
-  ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-      errmsg("TODO")));
-  return NULL;
+  p_whitespace(str);
+  bool lower_inc = false, upper_inc = false;
+  /* We are sure to find an opening bracket or parenthesis because that was the
+   * condition to call this function in the dispatch function tgeometry_parse */
+  if (p_obracket(str))
+    lower_inc = true;
+  else if (p_oparen(str))
+    lower_inc = false;
+
+  /* First parsing */
+  char *bak = *str;
+  tgeometryinst_parse(str, basetype, false, false, geom);
+  int count = 1;
+  while (p_comma(str))
+  {
+    count++;
+    tgeometryinst_parse(str, basetype, false, false, geom);
+  }
+  if (p_cbracket(str))
+    upper_inc = true;
+  else if (p_cparen(str))
+    upper_inc = false;
+  else
+    ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+      errmsg("Could not parse temporal value")));
+  ensure_end_input(str, end);
+  if (! make)
+    return NULL;
+
+  /* Second parsing */
+  *str = bak;
+  TInstant **instants = palloc(sizeof(TInstant *) * count);
+  for (int i = 0; i < count; i++)
+  {
+    p_comma(str);
+    instants[i] = tgeometryinst_parse(str, basetype, false, true, geom);
+  }
+  p_cbracket(str);
+  p_cparen(str);
+  return tsequence_make_free(instants, count, lower_inc, upper_inc,
+    linear, NORMALIZE);
 }
 
 /**
- * Parse a temporal point value of sequence set type from the buffer
+ * Parse a temporal geometry value of sequence set type from the buffer
  *
  * @param[in] str Input string
  * @param[in] basetype Oid of the base type
@@ -143,9 +181,41 @@ tgeometryseq_parse(char **str, Oid basetype, bool linear, bool end, bool make, D
 static TSequenceSet *
 tgeometryseqset_parse(char **str, Oid basetype, bool linear, Datum geom)
 {
+
+  /* TODO */
   ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-      errmsg("TODO")));
-  return NULL;
+      errmsg("Tgeometryseqset_parse not implemented yet")));
+
+  p_whitespace(str);
+  /* We are sure to find an opening brace because that was the condition
+   * to call this function in the dispatch function tpoint_parse */
+  p_obrace(str);
+
+  /* First parsing */
+  char *bak = *str;
+  tgeometryseq_parse(str, basetype, linear, false, false, geom);
+  int count = 1;
+  while (p_comma(str))
+  {
+    count++;
+    tgeometryseq_parse(str, basetype, linear, false, false, geom);
+  }
+  if (!p_cbrace(str))
+    ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
+      errmsg("Could not parse temporal value")));
+  ensure_end_input(str, true);
+
+  /* Second parsing */
+  *str = bak;
+  TSequence **sequences = palloc(sizeof(TSequence *) * count);
+  for (int i = 0; i < count; i++)
+  {
+    p_comma(str);
+    sequences[i] = tgeometryseq_parse(str, basetype, linear, false, true,
+      geom);
+  }
+  p_cbrace(str);
+  return tsequenceset_make_free(sequences, count, NORMALIZE);
 }
 
 /**

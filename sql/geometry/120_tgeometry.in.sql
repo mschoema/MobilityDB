@@ -81,4 +81,15 @@ CREATE FUNCTION tgeometry_inst(geometry, pose, timestamptz)
   AS 'MODULE_PATHNAME', 'tgeometryinst_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION tgeometry_instset(tgeometry[])
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'tinstantset_constructor'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION tgeometry_seq(tgeometry[], lower_inc boolean DEFAULT true,
+    upper_inc boolean DEFAULT true, linear boolean DEFAULT true)
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'tlinearseq_constructor'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/

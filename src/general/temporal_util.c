@@ -52,6 +52,8 @@
 
 #include "npoint/tnpoint_static.h"
 
+#include "pose/pose.h"
+
 /*****************************************************************************
  * Temporal/base types tests
  *****************************************************************************/
@@ -281,6 +283,28 @@ ensure_tgeo_base_type(Oid basetypid)
   return;
 }
 
+/**
+ * Returns true if the Oid is a point base type supported by MobilityDB
+ */
+bool
+tpose_base_type(Oid basetypid)
+{
+  if (basetypid == type_oid(T_POSE))
+    return true;
+  return false;
+}
+
+/**
+ * Ensures that the Oid is a point base type supported by MobilityDB
+ */
+void
+ensure_tpose_base_type(Oid basetypid)
+{
+  if (! tpose_base_type(basetypid))
+    elog(ERROR, "unknown pose base type: %d", basetypid);
+  return;
+}
+
 /*****************************************************************************
  * Oid functions
  *****************************************************************************/
@@ -456,6 +480,8 @@ datum_eq2(Datum l, Datum r, Oid typel, Oid typer)
     return datum_point_eq(l, r);
   if (typel == type_oid(T_NPOINT) && typel == typer)
     return npoint_eq_internal(DatumGetNpoint(l), DatumGetNpoint(r));
+  if (typel == type_oid(T_POSE) && typel == typer)
+    return pose_eq_internal(DatumGetPose(l), DatumGetPose(r));
   elog(ERROR, "unknown datum_eq2 function for base type: %d", typel);
 }
 

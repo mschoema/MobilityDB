@@ -64,6 +64,8 @@
 #include "point/tpoint_distance.h"
 #include "point/tpoint_spatialrels.h"
 
+#include "geometry/tgeometry_spatialfuncs.h"
+
 /*****************************************************************************
  * PostGIS cache functions
  *****************************************************************************/
@@ -396,9 +398,12 @@ geom_intersection2d(Datum geom1, Datum geom2)
 void
 ensure_spatial_validity(const Temporal *temp1, const Temporal *temp2)
 {
-  if (tgeo_base_type(temp1->basetypid))
+  if (tgeo_base_type(temp1->basetypid) || tpose_base_type(temp1->basetypid))
   {
-    ensure_same_srid(tpoint_srid_internal(temp1), tpoint_srid_internal(temp2));
+    if (tgeo_base_type(temp1->basetypid))
+      ensure_same_srid(tpoint_srid_internal(temp1), tpoint_srid_internal(temp2));
+    else
+      ensure_same_srid(tgeometry_srid_internal(temp1), tgeometry_srid_internal(temp2));
     ensure_same_dimensionality(temp1->flags, temp2->flags);
   }
   return;
