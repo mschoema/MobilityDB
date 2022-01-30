@@ -98,6 +98,7 @@ typedef enum
   T_NSEGMENT,
   T_TNPOINT,
   T_POSE,
+  T_TGEOMETRY,
 } CachedType;
 
 /**

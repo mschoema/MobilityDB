@@ -45,8 +45,6 @@
  * Miscellaneous functions defined in tgeometry.c
  *****************************************************************************/
 
-extern Datum tgeometry_geom(const Temporal *temp);
-
 /* Input/output functions */
 
 extern Datum tgeometry_in(PG_FUNCTION_ARGS);

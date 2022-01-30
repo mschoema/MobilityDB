@@ -103,10 +103,8 @@ same_lwgeom(const LWGEOM *geom1, const LWGEOM *geom2)
  * Ensure that the rigid temporal geometry instants have the same reference geometry
  */
 void
-ensure_same_geom_tgeometryinst(const TInstant *inst1, const TInstant *inst2)
+ensure_same_geom(Datum geom_datum1, Datum geom_datum2)
 {
-  Datum geom_datum1 = tgeometryinst_geom(inst1);
-  Datum geom_datum2 = tgeometryinst_geom(inst2);
   if (geom_datum1 == geom_datum2)
     return;
 
@@ -120,7 +118,7 @@ ensure_same_geom_tgeometryinst(const TInstant *inst1, const TInstant *inst2)
   LWGEOM *geom1 = lwgeom_from_gserialized(gs1);
   LWGEOM *geom2 = lwgeom_from_gserialized(gs2);
 
-  if (!MOBDB_FLAGS_GET_Z(inst1->flags))
+  if (gserialized_get_type(gs1) == POLYGONTYPE)
     ensure_same_rings_lwpoly((LWPOLY *) geom1, (LWPOLY *) geom2);
   else
     ensure_same_geoms_lwpsurface((LWPSURFACE *) geom1, (LWPSURFACE *) geom2);

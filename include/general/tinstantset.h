@@ -46,6 +46,7 @@
 
 /* General functions */
 
+extern size_t *tinstantset_offsets_ptr(const TInstantSet *ti);
 extern const TInstant *tinstantset_inst_n(const TInstantSet *ti, int index);
 extern void *tinstantset_bbox_ptr(const TInstantSet *ti);
 extern void tinstantset_bbox(const TInstantSet *ti, void *box);

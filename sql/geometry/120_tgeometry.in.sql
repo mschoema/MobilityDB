@@ -92,4 +92,9 @@ CREATE FUNCTION tgeometry_seq(tgeometry[], lower_inc boolean DEFAULT true,
   AS 'MODULE_PATHNAME', 'tlinearseq_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION tgeometry_seqset(tgeometry[])
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'tsequenceset_constructor'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /******************************************************************************/

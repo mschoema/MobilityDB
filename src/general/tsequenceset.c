@@ -53,6 +53,8 @@
 #include "point/tpoint.h"
 #include "point/tpoint_spatialfuncs.h"
 
+#include "geometry/tgeometry_inst.h"
+
 /*****************************************************************************
  * General functions
  *****************************************************************************/
@@ -80,7 +82,7 @@ tsequenceset_bbox(const TSequenceSet *ts, void *box)
 /**
  * Returns a pointer to the offsets array of the temporal value
  */
-static size_t *
+size_t *
 tsequenceset_offsets_ptr(const TSequenceSet *ts)
 {
   return (size_t *)(((char *)ts) + double_pad(sizeof(TSequenceSet)) +
@@ -96,7 +98,7 @@ tsequenceset_seq_n(const TSequenceSet *ts, int index)
   return (TSequence *)(
     /* start of data */
     ((char *)ts) + double_pad(sizeof(TSequenceSet)) + ts->bboxsize +
-      ts->count * sizeof(size_t) +
+      (ts->count + 1) * sizeof(size_t) +
       /* offset */
       (tsequenceset_offsets_ptr(ts))[index]);
 }
@@ -148,10 +150,16 @@ tsequenceset_make(const TSequence **sequences, int count, bool normalize)
   for (int i = 0; i < newcount; i++)
   {
     totalcount += normseqs[i]->count;
-    memsize += double_pad(VARSIZE(normseqs[i]));
+    if (tpose_base_type(normseqs[0]->basetypid))
+      memsize += double_pad(tgeometryseq_elem_varsize(normseqs[i]));
+    else
+      memsize += double_pad(VARSIZE(normseqs[i]));
   }
   /* Size of the struct and the offset array */
-  memsize += double_pad(sizeof(TSequenceSet)) + newcount * sizeof(size_t);
+  memsize += double_pad(sizeof(TSequenceSet)) + (newcount + 1) * sizeof(size_t);
+  if (tpose_base_type(normseqs[0]->basetypid))
+    memsize += double_pad(VARSIZE(DatumGetPointer(
+      tgeometryseq_geom(normseqs[0]))));
   /* Create the temporal sequence set */
   TSequenceSet *result = palloc0(memsize);
   SET_VARSIZE(result, memsize);
@@ -166,12 +174,14 @@ tsequenceset_make(const TSequence **sequences, int count, bool normalize)
     MOBDB_FLAGS_GET_LINEAR(sequences[0]->flags));
   MOBDB_FLAGS_SET_X(result->flags, true);
   MOBDB_FLAGS_SET_T(result->flags, true);
-  if (tgeo_base_type(sequences[0]->basetypid))
+  if (tgeo_base_type(sequences[0]->basetypid) || tpose_base_type(sequences[0]->basetypid))
   {
     MOBDB_FLAGS_SET_Z(result->flags,
       MOBDB_FLAGS_GET_Z(sequences[0]->flags));
     MOBDB_FLAGS_SET_GEODETIC(result->flags,
       MOBDB_FLAGS_GET_GEODETIC(sequences[0]->flags));
+    MOBDB_FLAGS_SET_GEOM(result->flags,
+      tpose_base_type(sequences[0]->basetypid));
   }
   /* Initialization of the variable-length part */
   /*
@@ -186,16 +196,25 @@ tsequenceset_make(const TSequence **sequences, int count, bool normalize)
   }
   /* Store the composing instants */
   size_t pdata = double_pad(sizeof(TSequenceSet)) + double_pad(bboxsize) +
-    newcount * sizeof(size_t);
+    (newcount + 1) * sizeof(size_t);
   size_t pos = 0;
   for (int i = 0; i < newcount; i++)
   {
-    memcpy(((char *) result) + pdata + pos, normseqs[i],
-      VARSIZE(normseqs[i]));
+    size_t seq_size = VARSIZE(normseqs[i]);
+    if (tpose_base_type(normseqs[0]->basetypid))
+      seq_size = tgeometryseq_elem_varsize(normseqs[i]);
+    memcpy(((char *) result) + pdata + pos, normseqs[i], seq_size);
     (tsequenceset_offsets_ptr(result))[i] = pos;
-    pos += double_pad(VARSIZE(normseqs[i]));
+    if (tpose_base_type(normseqs[0]->basetypid))
+      tgeometryseq_set_elem((TSequence *) (((char *)result) + pdata + pos));
+    pos += double_pad(seq_size);
   }
-
+  if (tpose_base_type(normseqs[0]->basetypid))
+  {
+    void *geom_from = DatumGetPointer(tgeometryseq_geom(normseqs[0]));
+    memcpy(((char *) result) + pdata + pos, geom_from, VARSIZE(geom_from));
+    (tsequenceset_offsets_ptr(result))[newcount] = pos;
+  }
   if (normalize && count > 1)
     pfree_array((void **) normseqs, newcount);
   return result;

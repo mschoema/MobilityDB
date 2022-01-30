@@ -368,7 +368,7 @@ tsequenceset_make_bbox(const TSequence **sequences, int count, void *box)
     tseqarr_to_period_internal(sequences, count, (Period *) box);
   else if (tnumber_base_type(sequences[0]->basetypid))
     tnumberseqarr_to_tbox_internal(sequences, count, (TBOX *) box);
-  else if (tgeo_base_type(sequences[0]->basetypid))
+  else if (tgeo_base_type(sequences[0]->basetypid) || tpose_base_type(sequences[0]->basetypid))
     tpointseqarr_stbox(sequences, count, (STBOX *) box);
   else if (sequences[0]->basetypid == type_oid(T_NPOINT))
     tnpointseqarr_to_stbox(sequences, count, (STBOX *) box);

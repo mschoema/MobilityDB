@@ -51,33 +51,6 @@
 #include "geometry/tgeometry_parser.h"
 
 /*****************************************************************************
- * Utility functions
- *****************************************************************************/
-
-/**
- * Returns the base geometry of the rigid temporal geometry value
- */
-Datum
-tgeometry_geom(const Temporal *temp)
-{
-  Datum result;
-  ensure_valid_tempsubtype(temp->subtype);
-  if (temp->subtype == INSTANT)
-    result = tgeometryinst_geom((const TInstant *) temp);
-  else if (temp->subtype == INSTANTSET)
-    result = tgeometryinst_geom(
-      tinstantset_inst_n((const TInstantSet *) temp, 0));
-  else if (temp->subtype == SEQUENCE)
-    result = tgeometryinst_geom(
-      tsequence_inst_n((const TSequence *) temp, 0));
-  else /* temp->subtype == SEQUENCESET */
-    result = tgeometryinst_geom(tsequence_inst_n(
-      tsequenceset_seq_n((const TSequenceSet *) temp, 0), 0));
-  return result;
-}
-
-
-/*****************************************************************************
  * Input/output functions
  *****************************************************************************/
 
@@ -162,8 +135,8 @@ tgeometryinst_constructor(PG_FUNCTION_ARGS)
   ensure_has_not_M_gs(gs);
   TimestampTz t = PG_GETARG_TIMESTAMPTZ(2);
   Oid basetypid = get_fn_expr_argtype(fcinfo->flinfo, 1);
-  Temporal *result = (Temporal *) tgeometryinst_make(PointerGetDatum(gs),
-    PointerGetDatum(p), t, basetypid, GEOMBYVAL);
+  Temporal *result = (Temporal *) tgeometryinst_make(
+    PointerGetDatum(p), t, basetypid, WITH_GEOM, PointerGetDatum(gs));
   PG_FREE_IF_COPY(gs, 0);
   PG_RETURN_POINTER(result);
 }

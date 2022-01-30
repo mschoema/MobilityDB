@@ -83,7 +83,7 @@ tinstantset_bbox(const TInstantSet *ti, void *box)
 /**
  * Returns a pointer to the offsets array of the temporal value
  */
-static size_t *
+size_t *
 tinstantset_offsets_ptr(const TInstantSet *ti)
 {
   return (size_t *)(((char *)ti) + double_pad(sizeof(TInstantSet)) +
@@ -132,14 +132,14 @@ tinstantset_make1(const TInstant **instants, int count)
   /* Size of composing instants */
   for (int i = 0; i < count; i++)
   {
-    if (instants[0]->basetypid != type_oid(T_POSE))
-      memsize += double_pad(VARSIZE(instants[i]));
+    if (tpose_base_type(instants[0]->basetypid))
+      memsize += double_pad(tgeometryinst_elem_varsize(instants[i]));
     else
-      memsize += double_pad(tgeometryinst_varsize(instants[i], GEOMBYREF));
+      memsize += double_pad(VARSIZE(instants[i]));
   }
   /* Size of the struct and the offset array */
   memsize +=  double_pad(sizeof(TInstantSet)) + (count + 1) * sizeof(size_t);
-  if (instants[0]->basetypid == type_oid(T_POSE))
+  if (tpose_base_type(instants[0]->basetypid))
     memsize += double_pad(VARSIZE(tgeometryinst_geom_ptr(instants[0])));
   /* Create the TInstantSet */
   TInstantSet *result = palloc0(memsize);
@@ -158,6 +158,7 @@ tinstantset_make1(const TInstant **instants, int count)
   {
     MOBDB_FLAGS_SET_Z(result->flags, MOBDB_FLAGS_GET_Z(instants[0]->flags));
     MOBDB_FLAGS_SET_GEODETIC(result->flags, MOBDB_FLAGS_GET_GEODETIC(instants[0]->flags));
+    MOBDB_FLAGS_SET_GEOM(result->flags, tpose_base_type(instants[0]->basetypid));
   }
   /* Initialization of the variable-length part */
   /*
@@ -176,22 +177,19 @@ tinstantset_make1(const TInstant **instants, int count)
   for (int i = 0; i < count; i++)
   {
     size_t inst_size = VARSIZE(instants[i]);
-    if (instants[0]->basetypid == type_oid(T_POSE))
-      inst_size = tgeometryinst_varsize(instants[i], GEOMBYREF);
+    if (tpose_base_type(instants[0]->basetypid))
+      inst_size = tgeometryinst_elem_varsize(instants[i]);
     memcpy(((char *)result) + pdata + pos, instants[i], inst_size);
     (tinstantset_offsets_ptr(result))[i] = pos;
+    if (tpose_base_type(instants[0]->basetypid))
+      tgeometryinst_set_elem((TInstant *)(((char *)result) + pdata + pos));
     pos += double_pad(inst_size);
   }
-  if (instants[0]->basetypid == type_oid(T_POSE))
+  if (tpose_base_type(instants[0]->basetypid))
   {
-    void *geom_to = ((char *) result) + pdata + pos;
-    void *geom_from = DatumGetPointer(tgeometryinst_geom(instants[0]));
-    size_t geom_size = VARSIZE(geom_from);
-    memcpy(geom_to, geom_from, geom_size);
+    void *geom_from = tgeometryinst_geom_ptr(instants[0]);
+    memcpy(((char *) result) + pdata + pos, geom_from, VARSIZE(geom_from));
     (tinstantset_offsets_ptr(result))[count] = pos;
-    Datum geom = PointerGetDatum(geom_to);
-    for (int i = 0; i < count; i++)
-      tgeometryinst_set_geom((TInstant *)tinstantset_inst_n(result, i), geom, GEOMBYREF);
   }
   return result;
 }

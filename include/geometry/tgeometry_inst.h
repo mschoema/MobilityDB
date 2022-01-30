@@ -42,8 +42,8 @@
 #include "general/temporal.h"
 
 /** Symbolic constants for the temporal instant geometry constuctor */
-#define GEOMBYVAL       true
-#define GEOMBYREF       false
+#define WITH_GEOM       true
+#define NO_GEOM         false
 
 /*****************************************************************************
  * General functions
@@ -51,14 +51,19 @@
 
 extern Datum *tgeometryinst_geom_ptr(const TInstant *inst);
 extern Datum tgeometryinst_geom(const TInstant *inst);
-extern Datum tgeometryinst_geom_copy(const TInstant *inst);
+extern Datum tgeometryinstset_geom(const TInstantSet *ti);
+extern Datum tgeometryseq_geom(const TSequence *seq);
+extern Datum tgeometryseqset_geom(const TSequenceSet *ts);
+extern Datum tgeometry_geom(const Temporal *temp);
 
-extern size_t tgeometryinst_varsize(const TInstant *inst, bool geombyval);
+extern size_t tgeometryinst_elem_varsize(const TInstant *inst);
+extern void tgeometryinst_set_elem(TInstant *inst);
+extern size_t tgeometryseq_elem_varsize(const TSequence *seq);
+extern void tgeometryseq_set_elem(TSequence *seq);
 
-extern TInstant *tgeometryinst_make(Datum geom, Datum value,
-  TimestampTz t, Oid basetypid, bool geombyval);
-extern void tgeometryinst_set_geom(TInstant *inst, Datum geom, bool geombyval);
-extern TInstant *tgeometryinst_copy(const TInstant *inst, bool geombyval);
+
+extern TInstant *tgeometryinst_make(Datum value,
+  TimestampTz t, Oid basetypid, bool hasgeom, Datum geom);
 
 /*****************************************************************************/
 

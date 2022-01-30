@@ -66,6 +66,7 @@
 #include "npoint/tnpoint_static.h"
 #include "npoint/tnpoint_spatialfuncs.h"
 
+#include "geometry/tgeometry_inst.h"
 #include "geometry/tgeometry_spatialfuncs.h"
 
 /*
@@ -432,8 +433,8 @@ ensure_valid_tinstarr1(const TInstant *inst1, const TInstant *inst2,
   ensure_spatial_validity((Temporal *) inst1, (Temporal *) inst2);
   if (subtype == SEQUENCE && inst1->basetypid == type_oid(T_NPOINT))
     ensure_same_rid_tnpointinst(inst1, inst2);
-  if (inst1->basetypid == type_oid(T_POSE))
-    ensure_same_geom_tgeometryinst(inst1, inst2);
+  if (tpose_base_type(inst1->basetypid))
+      ensure_same_geom(tgeometryinst_geom(inst1), tgeometryinst_geom(inst2));
   return;
 }
 
@@ -552,6 +553,8 @@ ensure_valid_tseqarr(const TSequence **sequences, int count)
         errmsg("Timestamps for temporal value must be increasing: %s, %s", t1, t2)));
     }
     ensure_spatial_validity((Temporal *)sequences[i - 1], (Temporal *)sequences[i]);
+    if (tpose_base_type(sequences[0]->basetypid))
+      ensure_same_geom(tgeometryseq_geom(sequences[0]), tgeometryseq_geom(sequences[i]));
   }
   return;
 }

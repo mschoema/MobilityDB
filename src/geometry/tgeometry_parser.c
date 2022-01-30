@@ -69,7 +69,7 @@ tgeometryinst_parse(char **str, Oid basetype, bool end, bool make, Datum geom)
   ensure_end_input(str, end);
   if (! make)
     return NULL;
-  return tgeometryinst_make(geom, value, t, basetype, GEOMBYVAL);
+  return tgeometryinst_make(value, t, basetype, WITH_GEOM, geom);
 }
 
 /**
@@ -181,11 +181,6 @@ tgeometryseq_parse(char **str, Oid basetype, bool linear, bool end, bool make, D
 static TSequenceSet *
 tgeometryseqset_parse(char **str, Oid basetype, bool linear, Datum geom)
 {
-
-  /* TODO */
-  ereport(ERROR, (errcode(ERRCODE_INVALID_TEXT_REPRESENTATION),
-      errmsg("Tgeometryseqset_parse not implemented yet")));
-
   p_whitespace(str);
   /* We are sure to find an opening brace because that was the condition
    * to call this function in the dispatch function tpoint_parse */

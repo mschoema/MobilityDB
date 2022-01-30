@@ -168,7 +168,7 @@ struct tempsubtype_struct
 #define MOBDB_FLAGS_GET_Z(flags)          ((bool) (((flags) & 0x10)>>4))
 #define MOBDB_FLAGS_GET_T(flags)          ((bool) (((flags) & 0x20)>>5))
 #define MOBDB_FLAGS_GET_GEODETIC(flags)   ((bool) (((flags) & 0x40)>>6))
-#define MOBDB_FLAGS_GET_GEOMBYVAL(flags)  ((bool) (((flags) & 0x80)>>7))
+#define MOBDB_FLAGS_GET_GEOM(flags)       ((bool) (((flags) & 0x80)>>7))
 
 /* The following flag is only used for TInstant */
 #define MOBDB_FLAGS_SET_BYVAL(flags, value) \
@@ -185,7 +185,7 @@ struct tempsubtype_struct
   ((flags) = (value) ? ((flags) | 0x20) : ((flags) & 0xDF))
 #define MOBDB_FLAGS_SET_GEODETIC(flags, value) \
   ((flags) = (value) ? ((flags) | 0x40) : ((flags) & 0xBF))
-#define MOBDB_FLAGS_SET_GEOMBYVAL(flags, value) \
+#define MOBDB_FLAGS_SET_GEOM(flags, value) \
   ((flags) = (value) ? ((flags) | 0x80) : ((flags) & 0x7F))
 
 /*****************************************************************************

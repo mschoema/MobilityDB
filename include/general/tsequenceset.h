@@ -46,6 +46,7 @@
 
 /* General functions */
 
+extern size_t *tsequenceset_offsets_ptr(const TSequenceSet *ts);
 extern const TSequence *tsequenceset_seq_n(const TSequenceSet *ts, int index);
 extern void *tsequenceset_bbox_ptr(const TSequenceSet *ts);
 extern void tsequenceset_bbox(const TSequenceSet *ts, void *box);

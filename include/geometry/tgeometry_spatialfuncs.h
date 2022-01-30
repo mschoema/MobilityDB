@@ -42,7 +42,7 @@
 
 /*****************************************************************************/
 
-extern void ensure_same_geom_tgeometryinst(const TInstant *inst1, const TInstant *inst2);
+extern void ensure_same_geom(Datum geom_datum1, Datum geom_datum2);
 
 /* Functions for spatial reference systems */
 
