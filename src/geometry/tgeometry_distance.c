@@ -170,9 +170,17 @@ append_tdist_elem(tdist_array *tda, tdist_elem td)
  *****************************************************************************/
 
 static inline uint32_t
-uint_mod(uint8_t i, uint32_t n)
+uint_mod_add(uint32_t i, uint32_t j, uint32_t n)
 {
-  return (i % n + n) % n;
+  return (i + j) % n;
+}
+
+// Handle negative values correctly
+// Requirement: j < n
+static inline uint32_t
+uint_mod_sub(uint32_t i, uint32_t j, uint32_t n)
+{
+  return (i + n - j) % n;
 }
 
 static void
@@ -208,7 +216,6 @@ compute_dist2(POINT4D p, POINT4D q, POINT4D r)
 static cfp_elem
 v_clip_tpoly_point_internal(cfp_elem prev_cfp)
 {
-  /* TODO: maybe check if poly, point and pose pointers are the same. */
   cfp_elem cfp = prev_cfp;
   LWPOLY *poly = (LWPOLY *)cfp.geom_1;
   LWPOINT *point = (LWPOINT *)cfp.geom_2;
@@ -223,22 +230,22 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
     uint32_t v = cfp.cf_1 / 2;
     getPoint4d_p(poly->rings[0], v, &r);
     apply_pose_point4d(&r, poly_pose);
-    getPoint4d_p(poly->rings[0], uint_mod(v + 1, n), &r_next);
+    getPoint4d_p(poly->rings[0], uint_mod_add(v, 1, n), &r_next);
     apply_pose_point4d(&r_next, poly_pose);
     double s_r_rnext = compute_s(p, r, r_next);
     if (cfp.cf_1 % 2 == 0)
     {
-      getPoint4d_p(poly->rings[0], uint_mod(v - 1, n), &r_prev);
+      getPoint4d_p(poly->rings[0], uint_mod_sub(v, 1, n), &r_prev);
       apply_pose_point4d(&r_prev, poly_pose);
       double s_rprev_r = compute_s(p, r_prev, r);
       if (s_rprev_r < 1)
-        cfp.cf_1 = uint_mod(cfp.cf_1 - 1, 2 * n);
+        cfp.cf_1 = uint_mod_sub(cfp.cf_1, 1, 2 * n);
       else if (s_r_rnext > 0)
         cfp.cf_1 = cfp.cf_1 + 1;
       else if (fabs(s_rprev_r - 1) < MOBDB_EPSILON && fabs(s_r_rnext) < MOBDB_EPSILON)
       {
         ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-          errmsg("Intersection detected.")));
+          errmsg("Intersection detected. #1")));
         break;
       }
       else
@@ -249,16 +256,16 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
       if (s_r_rnext <= 0)
         cfp.cf_1 = cfp.cf_1 - 1;
       else if (s_r_rnext >= 1)
-        cfp.cf_1 = uint_mod(cfp.cf_1 + 1, 2 * n);
+        cfp.cf_1 = uint_mod_add(cfp.cf_1, 1, 2 * n);
       else if (compute_angle(p, r, r_next) <= MOBDB_EPSILON)
       {
         double dmax = -1;
         for (uint32_t i = 0; i < n - 1; ++i)
         {
-          v = uint_mod(v + 1, n);
+          v = uint_mod_add(v, 1, n);
           getPoint4d_p(poly->rings[0], v, &r);
           apply_pose_point4d(&r, poly_pose);
-          getPoint4d_p(poly->rings[0], uint_mod(v + 1, n), &r_next);
+          getPoint4d_p(poly->rings[0], uint_mod_add(v, 1, n), &r_next);
           apply_pose_point4d(&r_next, poly_pose);
           double d = compute_dist2(p, r, r_next);
           if (compute_angle(p, r, r_next) > MOBDB_EPSILON)
@@ -266,14 +273,14 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
             if (d > dmax)
             {
               dmax = d;
-              cfp.cf_1 = uint_mod(cfp.cf_1 + 2 * i, 2 * n);
+              cfp.cf_1 = uint_mod_add(cfp.cf_1, 2 * i, 2 * n);
             }
           }
         }
         if (dmax == -1)
         {
           ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-            errmsg("Intersection detected.")));
+            errmsg("Intersection detected. #2")));
           break;
         }
       }
@@ -281,8 +288,8 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
         break;
     }
   }
-  printf("V-clip iterations: %d\n", i);
-  fflush(stdout);
+  /*printf("V-clip iterations: %d\n", i);
+  fflush(stdout);*/
   return cfp;
 }
 
@@ -355,6 +362,25 @@ pose_interpolate_2d(pose *p1, pose *p2, double ratio, double *x, double *y, doub
       *theta = *theta - 2*M_PI;
 }
 
+static void
+pose_diff_2d(pose *p1, pose *p2, double *x, double *y, double *theta)
+{
+  *x = p2->data[0] - p1->data[0];
+  *y = p2->data[1] - p1->data[1];
+  double theta_delta = p2->data[2] - p1->data[2];
+  /* If fabs(theta_delta) == M_PI: Always turn counter-clockwise */
+  if (fabs(theta_delta) < MOBDB_EPSILON)
+      *theta = theta_delta;
+  else if (theta_delta > 0 && fabs(theta_delta) <= M_PI)
+      *theta = theta_delta;
+  else if (theta_delta > 0 && fabs(theta_delta) > M_PI)
+      *theta = 2*M_PI - theta_delta;
+  else if (theta_delta < 0 && fabs(theta_delta) < M_PI)
+      *theta = theta_delta;
+  else /* (theta_delta < 0 && fabs(theta_delta) >= M_PI) */
+      *theta = 2*M_PI + theta_delta;
+}
+
 static double
 f_tpoint_poly(POINT4D p, POINT4D q, POINT4D r,
   pose *poly_pose_s, pose *poly_pose_e, double ratio,
@@ -383,7 +409,19 @@ solve_s_tpoly_point(LWPOLY *poly, LWPOINT *point, pose *poly_pose_s, pose *poly_
   POINT4D p, q, r;
   lwpoint_getPoint4d_p(point, &p);
   getPoint4d_p(poly->rings[0], poly_v, &q);
-  getPoint4d_p(poly->rings[0], uint_mod(poly_v + 1, n), &r);
+  getPoint4d_p(poly->rings[0], uint_mod_add(poly_v, 1, n), &r);
+
+  if (solution_kind)
+    printf("s(t) = 0; p = (%lf, %lf), q = (%lf, %lf), r = (%lf, %lf), \npose_1 = (%lf, %lf, %lf), pose_2 = (%lf, %lf, %lf)\n",
+      p.x, p.y, q.x, q.y, r.x, r.y,
+      poly_pose_s->data[0], poly_pose_s->data[1], poly_pose_s->data[2],
+      poly_pose_e->data[0], poly_pose_e->data[1], poly_pose_e->data[2]);
+  else
+    printf("s(t) = 1; p = (%lf, %lf), q = (%lf, %lf), r = (%lf, %lf), \npose_1 = (%lf, %lf, %lf), pose_2 = (%lf, %lf, %lf)\n",
+      p.x, p.y, q.x, q.y, r.x, r.y,
+      poly_pose_s->data[0], poly_pose_s->data[1], poly_pose_s->data[2],
+      poly_pose_e->data[0], poly_pose_e->data[1], poly_pose_e->data[2]);
+  fflush(stdout);
 
   if (fabs(poly_pose_s->data[2] - poly_pose_e->data[2]) < MOBDB_EPSILON)
   {
@@ -465,13 +503,13 @@ compute_dist_tpoly_point(cfp_elem *cfp, tdist_array *tda)
     dist = sqrt(pow(p.x - q.x, 2) + pow(p.y - q.y, 2));
   else /* cfp->cf_1 % 2 == 1 */
   {
-    getPoint4d_p(poly->rings[0], uint_mod(v + 1, n), &r);
+    getPoint4d_p(poly->rings[0], uint_mod_add(v, 1, n), &r);
     apply_pose_point4d(&r, cfp->pose_1);
     double s = ((p.x - q.x) * (r.x - q.x)
       + (p.y - q.y) * (r.y - q.y)) / (pow(r.x - q.x, 2) + pow(r.y - q.y, 2));
     if (s <= 0 || s >= 1)
     {
-      printf("Problem: s = %lf\n", s);
+      printf("Problem, s should be between 0 and 1: s = %lf\n", s);
       fflush(stdout);
     }
     double x = q.x  + (r.x - q.x) * s;
@@ -482,6 +520,57 @@ compute_dist_tpoly_point(cfp_elem *cfp, tdist_array *tda)
   append_tdist_elem(tda, td);
 }
 
+static double
+f_turnpoints_v_v_tpoint_poly(POINT4D p, POINT4D q,
+  pose *poly_pose_s, pose *poly_pose_e, double ratio)
+{
+  double tx, ty, ttheta;
+  double dx, dy, dtheta;
+  double co, si, qx, qy, qx_, qy_;
+  pose_interpolate_2d(poly_pose_s, poly_pose_e, ratio, &tx, &ty, &ttheta);
+  pose_diff_2d(poly_pose_s, poly_pose_e, &dx, &dy, &dtheta);
+  co = cos(ttheta);
+  si = sin(ttheta);
+  qx = q.x * co - q.y * si + tx;
+  qy = q.x * si + q.y * co + ty;
+  qx_ = - q.x * si * dtheta - q.y * co * dtheta + dx;
+  qy_ = q.x * co * dtheta - q.y * si * dtheta + dy;
+  return 2 * ((p.x - qx) * qx_ + (p.y - qy) * qy_);
+}
+
+static double
+f_turnpoints_v_e_tpoint_poly(POINT4D p, POINT4D q, POINT4D r,
+  pose *poly_pose_s, pose *poly_pose_e, double ratio)
+{
+  double tx, ty, ttheta;
+  double dx, dy, dtheta;
+  double co, si;
+  double s, s_;
+  double qx, qy, qx_, qy_;
+  double rx, ry, rx_, ry_;
+  double x, y, x_, y_;
+  double l2 = pow(q.x - r.x, 2) + pow(q.y - r.y, 2);
+  pose_interpolate_2d(poly_pose_s, poly_pose_e, ratio, &tx, &ty, &ttheta);
+  pose_diff_2d(poly_pose_s, poly_pose_e, &dx, &dy, &dtheta);
+  co = cos(ttheta);
+  si = sin(ttheta);
+  qx = q.x * co - q.y * si + tx;
+  qy = q.x * si + q.y * co + ty;
+  qx_ = - q.x * si * dtheta - q.y * co * dtheta + dx;
+  qy_ = q.x * co * dtheta - q.y * si * dtheta + dy;
+  rx = r.x * co - r.y * si + tx;
+  ry = r.x * si + r.y * co + ty;
+  rx_ = - r.x * si * dtheta - r.y * co * dtheta + dx;
+  ry_ = r.x * co * dtheta - r.y * si * dtheta + dy;
+  s = ((p.x - qx) * (rx - qx) + (p.y - qy) * (ry - qy)) / l2;
+  s_ = (- qx_ * (rx - qx) + (p.x - qx) * (rx_ - qx_) - qy_ * (ry - qy) + (p.y - qy) * (ry_ - qy_)) / l2;
+  x = qx + (rx - qx) * s;
+  y = qy + (ry - qy) * s;
+  x_ = (qx_ + (rx_ - qx_) * s) + (rx - qx) * s_;
+  y_ = (qy_ + (ry_ - qy_) * s) + (ry - qy) * s_;
+  return 2 * ((p.x - x) * x_ + (p.y - y) * y_);
+}
+
 static void
 compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *tda)
 {
@@ -490,17 +579,21 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
       fabs(cfp_s->pose_1->data[2] - cfp_e->pose_1->data[2]) < MOBDB_EPSILON)
       return;
 
+  double dist;
+  POINT4D p, q, r;
+  LWPOLY *poly = (LWPOLY *)cfp_s->geom_1;
+  LWPOINT *point = (LWPOINT *)cfp_s->geom_2;
+  uint32_t v = cfp_s->cf_1 / 2;
+  uint32_t n = poly->rings[0]->npoints - 1;
+  lwpoint_getPoint4d_p(point, &p);
+  getPoint4d_p(poly->rings[0], v, &q);
+  getPoint4d_p(poly->rings[0], uint_mod_add(v, 1, n), &r);
+
   if (fabs(cfp_s->pose_1->data[2] - cfp_e->pose_1->data[2]) < MOBDB_EPSILON)
   {
-    double ratio, dist;
-    POINT4D p, q, r;
-    LWPOLY *poly = (LWPOLY *)cfp_s->geom_1;
-    LWPOINT *point = (LWPOINT *)cfp_s->geom_2;
-    uint32_t n = poly->rings[0]->npoints - 1;
-    uint32_t v = cfp_s->cf_1 / 2;
-    lwpoint_getPoint4d_p(point, &p);
-    getPoint4d_p(poly->rings[0], v, &q);
+    double ratio;
     apply_pose_point4d(&q, cfp_s->pose_1);
+    apply_pose_point4d(&r, cfp_s->pose_1);
     double dx = cfp_s->pose_1->data[0] - cfp_e->pose_1->data[0];
     double dy = cfp_s->pose_1->data[1] - cfp_e->pose_1->data[1];
     if (cfp_s->cf_1 % 2 == 0)
@@ -520,8 +613,6 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
     else /* cfp_s->cf_1 % 2 == 1 */
     {
       /* TODO: Maybe remove, since we never have turnpoints here */
-      getPoint4d_p(poly->rings[0], uint_mod(v + 1, n), &r);
-      apply_pose_point4d(&r, cfp_s->pose_1);
       double det = dx * (r.y - q.y) - dy * (r.x - q.x);
       /* TODO: Check if we have to return ratio = 0 and ratio = 1, or nothing*/
       if (fabs(det) < MOBDB_EPSILON)
@@ -532,13 +623,13 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
         pose *pose_at_ratio = pose_interpolate(cfp_s->pose_1, cfp_e->pose_1, ratio);
         getPoint4d_p(poly->rings[0], v, &q);
         apply_pose_point4d(&q, pose_at_ratio);
-        getPoint4d_p(poly->rings[0], uint_mod(v + 1, n), &r);
+        getPoint4d_p(poly->rings[0], uint_mod_add(v, 1, n), &r);
         apply_pose_point4d(&r, pose_at_ratio);
         double s = ((p.x - q.x) * (r.x - q.x)
           + (p.y - q.y) * (r.y - q.y)) / (pow(r.x - q.x, 2) + pow(r.y - q.y, 2));
         if (s <= 0 || s >= 1)
         {
-          printf("Problem: s = %lf\n", s);
+          printf("Problem, s should be between 0 and 1: s = %lf\n", s);
           fflush(stdout);
         }
         double x = q.x  + (r.x - q.x) * s;
@@ -551,7 +642,70 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
     }
     return;
   }
-  /* TODO: Handle rotating case */
+
+  for (double i = 0; i < 4; ++i)
+  {
+    double tl = i / 4, tr = (i + 1) / 4, t0 = -1;
+    double vl, vr, v0;
+    if (cfp_s->cf_1 % 2 == 0)
+    {
+      vl = f_turnpoints_v_v_tpoint_poly(p, q, cfp_s->pose_1, cfp_e->pose_1, tl);
+      vr = f_turnpoints_v_v_tpoint_poly(p, q, cfp_s->pose_1, cfp_e->pose_1, tr);
+    }
+    else /* cfp_s->cf_1 % 2 == 1 */
+    {
+      vl = f_turnpoints_v_e_tpoint_poly(p, q, r, cfp_s->pose_1, cfp_e->pose_1, tl);
+      vr = f_turnpoints_v_e_tpoint_poly(p, q, r, cfp_s->pose_1, cfp_e->pose_1, tr);
+    }
+    if (fabs(vr) < MOBDB_EPSILON && i != 3)
+      t0 = tr;
+    else if (fabs(vl) > MOBDB_EPSILON && fabs(vr) > MOBDB_EPSILON && vl * vr < 0)
+    {
+      while(fabs(tr - tl) >= MOBDB_EPSILON)
+      {
+        t0 = tr - vr * (tr - tl) / (vr - vl);
+        if (cfp_s->cf_1 % 2 == 0)
+          v0 = f_turnpoints_v_v_tpoint_poly(p, q, cfp_s->pose_1, cfp_e->pose_1, t0);
+        else /* cfp_s->cf_1 % 2 == 1 */
+          v0 = f_turnpoints_v_e_tpoint_poly(p, q, r, cfp_s->pose_1, cfp_e->pose_1, t0);
+        if (fabs(v0) < MOBDB_EPSILON)
+          break;
+        if (vl * v0 <= 0)
+          tr = t0, vr = v0;
+        else
+          tl = t0, vl = v0;
+      }
+    }
+    if (t0 != -1)
+    {
+      double dx, dy, theta;
+      pose_interpolate_2d(cfp_s->pose_1, cfp_e->pose_1, t0, &dx, &dy, &theta);
+      double co = cos(theta);
+      double si = sin(theta);
+      double qx = q.x * co - q.y * si + dx;
+      double qy = q.x * si + q.y * co + dy;
+      if (cfp_s->cf_1 % 2 == 0)
+      {
+        dist = sqrt(pow(p.x - qx, 2) + pow(p.y - qy, 2));
+      }
+      else /* cfp_s->cf_1 % 2 == 1 */
+      {
+        double rx = r.x * co - r.y * si + dx;
+        double ry = r.x * si + r.y * co + dy;
+        double s = ((p.x - qx) * (rx - qx) + (p.y - qy) * (ry - qy)) / (pow(rx - qx, 2) + pow(ry - qy, 2));
+        if (s <= 0 || s >= 1)
+        {
+          printf("Problem, s should be between 0 and 1: s = %lf\n", s);
+          fflush(stdout);
+        }
+        double x = qx  + (rx - qx) * s;
+        double y = qy  + (ry - qy) * s;
+        dist = sqrt(pow(p.x - x, 2) + pow(p.y - y, 2));
+      }
+      tdist_elem td = tdist_make(dist, cfp_s->t + (cfp_e->t - cfp_s->t) * t0);
+      append_tdist_elem(tda, td);
+    }
+  }
   return;
 }
 
@@ -581,6 +735,8 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
   uint32_t n = poly->rings[0]->npoints - 1;
   for (int i = 0; i < seq->count - 1; ++i)
   {
+    printf("-----------------\n");
+    fflush(stdout);
     /* TODO: optimise using simple checks, such as:
      * 1) cfp(0) == cfp(0.5) == cfp(1) -> no change in cf
      */
@@ -589,58 +745,138 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
     p1 = DatumGetPose(tinstant_value(inst1));
     p2 = DatumGetPose(tinstant_value(inst2));
     double r_prev = 0;
+    uint32_t prev_cf = 2*n;
     double r_1, r_2, r_inter;
-    cfp.store = MOBDB_CFP_STORE_NO;
     while (true)
     {
       uint32_t v = cfp.cf_1 / 2;
+      r_1 = 2, r_2 = 2, r_inter = 2;
+      printf("prev_cf: %d, current_cf: %d\n", prev_cf, cfp.cf_1);
+      if (cfp.cf_1 % 2 == 0)
+      {
+        if (prev_cf == 2*n || uint_mod_add(prev_cf, 1, 2*n) == cfp.cf_1)
+          r_1 = solve_s_tpoly_point(poly, point, p1, p2,
+            v, r_prev, MOBDB_SOLVE_0);
+        if (prev_cf == 2*n || uint_mod_sub(prev_cf, 1, 2*n) == cfp.cf_1)
+          r_2 = solve_s_tpoly_point(poly, point, p1, p2,
+            uint_mod_sub(v, 1, n), r_prev, MOBDB_SOLVE_1);
+        printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
+        fflush(stdout);
+      }
+      else // if (cfp.cf_1 % 2 == 1)
+      {
+        if (prev_cf == 2*n || uint_mod_add(prev_cf, 1, 2*n) == cfp.cf_1)
+          r_1 = solve_s_tpoly_point(poly, point, p1, p2,
+            v, r_prev, MOBDB_SOLVE_1);
+        if (prev_cf == 2*n || uint_mod_sub(prev_cf, 1, 2*n) == cfp.cf_1)
+          r_2 = solve_s_tpoly_point(poly, point, p1, p2,
+            v, r_prev, MOBDB_SOLVE_0);
+        r_inter = solve_angle_0_tpoly_point(poly, point, p1, p2, v, r_prev);
+        printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
+        fflush(stdout);
+      }
+
+      prev_cf = cfp.cf_1;
+
+/*
       if (cfp.cf_1 % 2 == 0)
       {
         r_1 = solve_s_tpoly_point(poly, point, p1, p2,
           v, r_prev, MOBDB_SOLVE_0);
         r_2 = solve_s_tpoly_point(poly, point, p1, p2,
-          uint_mod(v - 1, n), r_prev, MOBDB_SOLVE_1);
-        printf("r_1: %lf, r_2: %lf\n", r_1, r_2);
+          uint_mod_sub(v, 1, n), r_prev, MOBDB_SOLVE_1);
+        r_inter = 2;
+        printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
         fflush(stdout);
       }
-      else /* cfp.cf_1 % 2 == 1 */
+      else // cfp.cf_1 % 2 == 1
       {
         r_1 = solve_s_tpoly_point(poly, point, p1, p2,
           v, r_prev, MOBDB_SOLVE_1);
         r_2 = solve_s_tpoly_point(poly, point, p1, p2,
           v, r_prev, MOBDB_SOLVE_0);
-        printf("r_1: %lf, r_2: %lf\n", r_1, r_2);
+        printf("CF mod 2 = 1; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
         fflush(stdout);
         r_inter = solve_angle_0_tpoly_point(poly, point, p1, p2, v, r_prev);
       }
-
-      if ((fabs(r_1 - r_2) < MOBDB_EPSILON && r_1 < 1 && r_2 < 1) ||
-        (r_inter < r_1 && r_inter < r_2 && r_inter < 1))
+*/
+      // No change in cf
+      if (r_1 == 2 && r_2 == 2)
+        break;
+      // Intersection through vertex
+      else if (cfp.cf_1 % 2 == 0 && fabs(r_1 - r_2) < MOBDB_EPSILON)
       {
-        ereport(ERROR,(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
-          errmsg("Intersection detected.")));
+        printf("Intersection detected. #3: %lf, %lf, %lf, %lf\n", r_inter, r_1, r_2, r_prev);
+        fflush(stdout);
+        /* TODO: raise error or return NULL? */
         break;
       }
-      else if (r_1 < r_2 && r_1 < 1)
+      // Precision error, skip the edge and go straight to the next vertex
+      else if (cfp.cf_1 % 2 == 1 && fabs(r_1 - r_2) < MOBDB_EPSILON)
       {
+        /*printf("Skipping edge\n");
+        fflush(stdout);*/
+        if (cfpa.count < 2)
+        {
+          printf("Problem: %lf, %lf, %lf, %lf\n", r_inter, r_1, r_2, r_prev);
+          fflush(stdout);
+          break;
+        }
+        uint32_t prev_cf = uint_mod_sub(cfp.cf_1, 1, 2 * n);
+        uint32_t next_cf = uint_mod_add(cfp.cf_1, 1, 2 * n);
+        if (cfpa.arr[cfpa.count-2].cf_1 == prev_cf)
+          cfp.cf_1 = next_cf;
+        else // cfpa.arr[cfpa.count-2].cf_1 == next_cf
+          cfp.cf_1 = prev_cf;
         cfp.t = inst1->t + (inst2->t - inst1->t) * r_1;
         cfp.pose_1 = pose_interpolate(p1, p2, r_1);
         cfp.free_pose_1 = MOBDB_CFP_FREE;
-        cfp.cf_1 = uint_mod(cfp.cf_1 + 1, 2 * n);
+        cfp.store = MOBDB_CFP_STORE;
+        append_cfp_elem(&cfpa, cfp);
+        r_prev = r_1;
+        break;
+      }
+      // Intersection through edge
+      else if (r_inter < r_1 && r_inter < r_2)
+      {
+        printf("Intersection detected. #3: %lf, %lf, %lf, %lf\n", r_inter, r_1, r_2, r_prev);
+        fflush(stdout);
+        /* TODO: raise error or return NULL? */
+        break;
+      }
+      // Go to next cf
+      else if (r_1 < r_2)
+      {
+        /*printf("Go to next cf\n");
+        fflush(stdout);*/
+        cfp.t = inst1->t + (inst2->t - inst1->t) * r_1;
+        cfp.pose_1 = pose_interpolate(p1, p2, r_1);
+        cfp.free_pose_1 = MOBDB_CFP_FREE;
+        cfp.cf_1 = uint_mod_add(cfp.cf_1, 1, 2 * n);
+        cfp.store = MOBDB_CFP_STORE_NO;
         append_cfp_elem(&cfpa, cfp);
         r_prev = r_1;
       }
-      else if (r_2 < r_1 && r_2 < 1)
+      // Go to previous cf
+      else if (r_2 < r_1)
       {
+        /*printf("Go to prev cf\n");
+        fflush(stdout);*/
         cfp.t = inst1->t + (inst2->t - inst1->t) * r_2;
         cfp.pose_1 = pose_interpolate(p1, p2, r_2);
         cfp.free_pose_1 = MOBDB_CFP_FREE;
-        cfp.cf_1 = uint_mod(cfp.cf_1 - 1, 2 * n);
+        cfp.cf_1 = uint_mod_sub(cfp.cf_1, 1, 2 * n);
+        cfp.store = MOBDB_CFP_STORE_NO;
         append_cfp_elem(&cfpa, cfp);
         r_prev = r_2;
       }
+      // Should never happen
       else
+      {
+        printf("Should never happen: %lf, %lf, %lf, %lf\n", r_inter, r_1, r_2, r_prev);
+        fflush(stdout);
         break;
+      }
     }
     cfp.pose_1 = p2;
     cfp.free_pose_1 = MOBDB_CFP_FREE_NO;
@@ -655,11 +891,11 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
     }
     cfp = next_cfp;
   }
-
+/*
   for (uint32_t i = 0; i < cfpa.count; ++i)
     printf("Cfp %d: %d @ %s\n", i, cfpa.arr[i].cf_1, call_output(TIMESTAMPTZOID, TimestampTzGetDatum(cfpa.arr[i].t)));
   fflush(stdout);
-
+*/
   tdist_array tda;
   init_tdist_array(&tda, cfpa.count);
   for (uint32_t i = 0; i < cfpa.count - 1; ++i)
@@ -669,11 +905,11 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
     compute_turnpoints_tpoly_point(&cfpa.arr[i], &cfpa.arr[i+1], &tda);
   }
   compute_dist_tpoly_point(&cfpa.arr[cfpa.count-1], &tda);
-
+/*
   for (uint32_t i = 0; i < tda.count; ++i)
     printf("Dist %d: %lf @ %s\n", i, tda.arr[i].dist, call_output(TIMESTAMPTZOID, TimestampTzGetDatum(tda.arr[i].t)));
   fflush(stdout);
-
+*/
   TInstant **instants = palloc(sizeof(TInstant *) * tda.count);
   for (uint32_t i = 0; i < tda.count; ++i)
     instants[i] = tinstant_make(Float8GetDatum(tda.arr[i].dist), tda.arr[i].t, type_oid(T_FLOAT8));
