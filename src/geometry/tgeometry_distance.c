@@ -224,15 +224,27 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
   POINT4D p, r, r_prev, r_next;
   lwpoint_getPoint4d_p(point, &p);
   int i = 0;
+  /*printf("-----------------\n");
+  fflush(stdout);*/
   while (true)
   {
     i += 1;
+    /*printf("CFP = %d\n", cfp.cf_1);
+    fflush(stdout);*/
     uint32_t v = cfp.cf_1 / 2;
     getPoint4d_p(poly->rings[0], v, &r);
-    apply_pose_point4d(&r, poly_pose);
     getPoint4d_p(poly->rings[0], uint_mod_add(v, 1, n), &r_next);
+    /*printf("p = (%lf, %lf), q = (%lf, %lf), r = (%lf, %lf)\npose = (%lf, %lf, %lf)\n",
+      p.x, p.y, r.x, r.y, r_next.x, r_next.y,
+      poly_pose->data[0], poly_pose->data[1], poly_pose->data[2]);*/
+    apply_pose_point4d(&r, poly_pose);
     apply_pose_point4d(&r_next, poly_pose);
     double s_r_rnext = compute_s(p, r, r_next);
+    /*printf("p = (%lf, %lf), q = (%lf, %lf), r = (%lf, %lf)\npose = (%lf, %lf, %lf)\n",
+      p.x, p.y, r.x, r.y, r_next.x, r_next.y,
+      poly_pose->data[0], poly_pose->data[1], poly_pose->data[2]);
+    printf("r_next = %lf\n", s_r_rnext);
+    fflush(stdout);*/
     if (cfp.cf_1 % 2 == 0)
     {
       getPoint4d_p(poly->rings[0], uint_mod_sub(v, 1, n), &r_prev);
@@ -257,23 +269,26 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
         cfp.cf_1 = cfp.cf_1 - 1;
       else if (s_r_rnext >= 1)
         cfp.cf_1 = uint_mod_add(cfp.cf_1, 1, 2 * n);
-      else if (compute_angle(p, r, r_next) <= MOBDB_EPSILON)
+      /* TODO: handle both clockwise and anti-clockwise orientations */
+      else if (compute_angle(p, r, r_next) > MOBDB_EPSILON)
       {
+        /*printf("Local min, recomputing initial cf\n");
+        fflush(stdout);*/
         double dmax = -1;
-        for (uint32_t i = 0; i < n - 1; ++i)
+        for (uint32_t j = 0; j < n; ++j)
         {
-          v = uint_mod_add(v, 1, n);
+          v = j;
           getPoint4d_p(poly->rings[0], v, &r);
           apply_pose_point4d(&r, poly_pose);
           getPoint4d_p(poly->rings[0], uint_mod_add(v, 1, n), &r_next);
           apply_pose_point4d(&r_next, poly_pose);
           double d = compute_dist2(p, r, r_next);
-          if (compute_angle(p, r, r_next) > MOBDB_EPSILON)
+          if (compute_angle(p, r, r_next) < MOBDB_EPSILON)
           {
             if (d > dmax)
             {
               dmax = d;
-              cfp.cf_1 = uint_mod_add(cfp.cf_1, 2 * i, 2 * n);
+              cfp.cf_1 = 2*v + 1;
             }
           }
         }
@@ -286,6 +301,13 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
       }
       else
         break;
+    }
+
+    if (i > 100)
+    {
+      /*printf("Max iterations reached #1\n");
+      fflush(stdout);*/
+      break;
     }
   }
   /*printf("V-clip iterations: %d\n", i);
@@ -411,7 +433,7 @@ solve_s_tpoly_point(LWPOLY *poly, LWPOINT *point, pose *poly_pose_s, pose *poly_
   getPoint4d_p(poly->rings[0], poly_v, &q);
   getPoint4d_p(poly->rings[0], uint_mod_add(poly_v, 1, n), &r);
 
-  if (solution_kind)
+/*  if (solution_kind)
     printf("s(t) = 0; p = (%lf, %lf), q = (%lf, %lf), r = (%lf, %lf), \npose_1 = (%lf, %lf, %lf), pose_2 = (%lf, %lf, %lf)\n",
       p.x, p.y, q.x, q.y, r.x, r.y,
       poly_pose_s->data[0], poly_pose_s->data[1], poly_pose_s->data[2],
@@ -421,7 +443,7 @@ solve_s_tpoly_point(LWPOLY *poly, LWPOINT *point, pose *poly_pose_s, pose *poly_
       p.x, p.y, q.x, q.y, r.x, r.y,
       poly_pose_s->data[0], poly_pose_s->data[1], poly_pose_s->data[2],
       poly_pose_e->data[0], poly_pose_e->data[1], poly_pose_e->data[2]);
-  fflush(stdout);
+  fflush(stdout);*/
 
   if (fabs(poly_pose_s->data[2] - poly_pose_e->data[2]) < MOBDB_EPSILON)
   {
@@ -465,9 +487,10 @@ solve_s_tpoly_point(LWPOLY *poly, LWPOINT *point, pose *poly_pose_s, pose *poly_
 
 
   uint8_t i = 0;
-  while(fabs(tr - tl) >= MOBDB_EPSILON)
+  while(fabs(tr - tl) >= MOBDB_EPSILON && i < 100)
   {
-    t0 = tr - vr * (tr - tl) / (vr - vl);
+    ++i;
+    t0 = (tl * vr - tr * vl) / (vr - vl);
     v0 = f_tpoint_poly(p, q, r, poly_pose_s, poly_pose_e,
       t0, solution_kind);
     if (fabs(v0) < MOBDB_EPSILON)
@@ -476,7 +499,6 @@ solve_s_tpoly_point(LWPOLY *poly, LWPOINT *point, pose *poly_pose_s, pose *poly_
       tr = t0, vr = v0;
     else
       tl = t0, vl = v0;
-    i++;
   }
   return t0;
 }
@@ -509,8 +531,9 @@ compute_dist_tpoly_point(cfp_elem *cfp, tdist_array *tda)
       + (p.y - q.y) * (r.y - q.y)) / (pow(r.x - q.x, 2) + pow(r.y - q.y, 2));
     if (s <= 0 || s >= 1)
     {
-      printf("Problem, s should be between 0 and 1: s = %lf\n", s);
-      fflush(stdout);
+      /*printf("Problem, s should be between 0 and 1: s = %lf\n", s);
+      fflush(stdout);*/
+      return;
     }
     double x = q.x  + (r.x - q.x) * s;
     double y = q.y  + (r.y - q.y) * s;
@@ -629,8 +652,9 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
           + (p.y - q.y) * (r.y - q.y)) / (pow(r.x - q.x, 2) + pow(r.y - q.y, 2));
         if (s <= 0 || s >= 1)
         {
-          printf("Problem, s should be between 0 and 1: s = %lf\n", s);
-          fflush(stdout);
+          /*printf("Problem, s should be between 0 and 1: s = %lf\n", s);
+          fflush(stdout);*/
+          return;
         }
         double x = q.x  + (r.x - q.x) * s;
         double y = q.y  + (r.y - q.y) * s;
@@ -661,9 +685,11 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
       t0 = tr;
     else if (fabs(vl) > MOBDB_EPSILON && fabs(vr) > MOBDB_EPSILON && vl * vr < 0)
     {
-      while(fabs(tr - tl) >= MOBDB_EPSILON)
+      uint8_t j = 0;
+      while(fabs(tr - tl) >= MOBDB_EPSILON && j < 100)
       {
-        t0 = tr - vr * (tr - tl) / (vr - vl);
+        ++j;
+        t0 = (tl * vr - tr * vl) / (vr - vl);
         if (cfp_s->cf_1 % 2 == 0)
           v0 = f_turnpoints_v_v_tpoint_poly(p, q, cfp_s->pose_1, cfp_e->pose_1, t0);
         else /* cfp_s->cf_1 % 2 == 1 */
@@ -695,8 +721,9 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
         double s = ((p.x - qx) * (rx - qx) + (p.y - qy) * (ry - qy)) / (pow(rx - qx, 2) + pow(ry - qy, 2));
         if (s <= 0 || s >= 1)
         {
-          printf("Problem, s should be between 0 and 1: s = %lf\n", s);
-          fflush(stdout);
+          /*printf("Problem, s should be between 0 and 1: s = %lf\n", s);
+          fflush(stdout);*/
+          return;
         }
         double x = qx  + (rx - qx) * s;
         double y = qy  + (ry - qy) * s;
@@ -712,6 +739,8 @@ compute_turnpoints_tpoly_point(cfp_elem *cfp_s, cfp_elem *cfp_e, tdist_array *td
 TSequence *
 dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
 {
+  /*printf("\n------distance------\n");
+  fflush(stdout);*/
   /* TODO: Add check and code for stepwise seq */
   TSequence *result;
   Datum ref_geom = tgeometryseq_geom(seq);
@@ -735,8 +764,8 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
   uint32_t n = poly->rings[0]->npoints - 1;
   for (int i = 0; i < seq->count - 1; ++i)
   {
-    printf("-----------------\n");
-    fflush(stdout);
+    /*printf("-----------------\n");
+    fflush(stdout);*/
     /* TODO: optimise using simple checks, such as:
      * 1) cfp(0) == cfp(0.5) == cfp(1) -> no change in cf
      */
@@ -747,11 +776,14 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
     double r_prev = 0;
     uint32_t prev_cf = 2*n;
     double r_1, r_2, r_inter;
+    int i = 0;
     while (true)
     {
+      i += 1;
       uint32_t v = cfp.cf_1 / 2;
       r_1 = 2, r_2 = 2, r_inter = 2;
-      printf("prev_cf: %d, current_cf: %d\n", prev_cf, cfp.cf_1);
+      /*printf("prev_cf: %d, current_cf: %d\n", prev_cf, cfp.cf_1);
+      fflush(stdout);*/
       if (cfp.cf_1 % 2 == 0)
       {
         if (prev_cf == 2*n || uint_mod_add(prev_cf, 1, 2*n) == cfp.cf_1)
@@ -760,8 +792,8 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
         if (prev_cf == 2*n || uint_mod_sub(prev_cf, 1, 2*n) == cfp.cf_1)
           r_2 = solve_s_tpoly_point(poly, point, p1, p2,
             uint_mod_sub(v, 1, n), r_prev, MOBDB_SOLVE_1);
-        printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
-        fflush(stdout);
+        /*printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
+        fflush(stdout);*/
       }
       else // if (cfp.cf_1 % 2 == 1)
       {
@@ -772,34 +804,12 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
           r_2 = solve_s_tpoly_point(poly, point, p1, p2,
             v, r_prev, MOBDB_SOLVE_0);
         r_inter = solve_angle_0_tpoly_point(poly, point, p1, p2, v, r_prev);
-        printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
-        fflush(stdout);
+        /*printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
+        fflush(stdout);*/
       }
 
       prev_cf = cfp.cf_1;
 
-/*
-      if (cfp.cf_1 % 2 == 0)
-      {
-        r_1 = solve_s_tpoly_point(poly, point, p1, p2,
-          v, r_prev, MOBDB_SOLVE_0);
-        r_2 = solve_s_tpoly_point(poly, point, p1, p2,
-          uint_mod_sub(v, 1, n), r_prev, MOBDB_SOLVE_1);
-        r_inter = 2;
-        printf("CF mod 2 = 0; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
-        fflush(stdout);
-      }
-      else // cfp.cf_1 % 2 == 1
-      {
-        r_1 = solve_s_tpoly_point(poly, point, p1, p2,
-          v, r_prev, MOBDB_SOLVE_1);
-        r_2 = solve_s_tpoly_point(poly, point, p1, p2,
-          v, r_prev, MOBDB_SOLVE_0);
-        printf("CF mod 2 = 1; cf: %d, r_1: %lf, r_2: %lf\n", cfp.cf_1, r_1, r_2);
-        fflush(stdout);
-        r_inter = solve_angle_0_tpoly_point(poly, point, p1, p2, v, r_prev);
-      }
-*/
       // No change in cf
       if (r_1 == 2 && r_2 == 2)
         break;
@@ -814,8 +824,8 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
       // Precision error, skip the edge and go straight to the next vertex
       else if (cfp.cf_1 % 2 == 1 && fabs(r_1 - r_2) < MOBDB_EPSILON)
       {
-        /*printf("Skipping edge\n");
-        fflush(stdout);*/
+        printf("Skipping edge\n");
+        fflush(stdout);
         if (cfpa.count < 2)
         {
           printf("Problem: %lf, %lf, %lf, %lf\n", r_inter, r_1, r_2, r_prev);
@@ -874,6 +884,13 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
       else
       {
         printf("Should never happen: %lf, %lf, %lf, %lf\n", r_inter, r_1, r_2, r_prev);
+        fflush(stdout);
+        break;
+      }
+
+      if (i > 100)
+      {
+        printf("Max iterations reached #4\n");
         fflush(stdout);
         break;
       }
