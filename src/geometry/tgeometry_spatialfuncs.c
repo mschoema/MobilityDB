@@ -124,9 +124,9 @@ ensure_same_geom(Datum geom_datum1, Datum geom_datum2)
     ensure_same_geoms_lwpsurface((LWPSURFACE *) geom1, (LWPSURFACE *) geom2);
 
   /* TODO: uncomment */
-  if (!same_lwgeom(geom1, geom2))
+  /*if (!same_lwgeom(geom1, geom2))
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-      errmsg("Operation on different reference geometries")));
+      errmsg("Operation on different reference geometries")));*/
 
   lwgeom_free(geom1);
   lwgeom_free(geom2);

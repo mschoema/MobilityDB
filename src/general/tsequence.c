@@ -465,7 +465,7 @@ tsequence_make1(const TInstant **instants, int count, bool lower_inc,
   {
     void *geom_from = tgeometryinst_geom_ptr(norminsts[0]);
     memcpy(((char *) result) + pdata + pos, geom_from, VARSIZE(geom_from));
-    (tsequence_offsets_ptr(result))[count] = pos;
+    (tsequence_offsets_ptr(result))[newcount] = pos;
   }
   if (normalize && count > 1)
     pfree(norminsts);
