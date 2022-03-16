@@ -61,7 +61,7 @@
 
 #include "pose/pose.h"
 
-#include "geometry/tgeometry_inst.h"
+#include "geometry/tgeometry_temporaltypes.h"
 
 /*****************************************************************************
  * Collinear functions
@@ -270,7 +270,7 @@ tsequence_inst_n(const TSequence *seq, int index)
 /**
  * Ensure the validity of the arguments when creating a temporal value
  */
-static void
+void
 tsequence_make_valid1(const TInstant **instants, int count, bool lower_inc,
   bool upper_inc, bool linear)
 {
@@ -325,7 +325,7 @@ tsequenceset_make_valid_gaps(const TInstant **instants, int count, bool lower_in
  * @note The function does not create new instants, it creates an array of
  * pointers to a subset of the input instants
  */
-static TInstant **
+TInstant **
 tinstarr_normalize(const TInstant **instants, bool linear, int count,
   int *newcount)
 {

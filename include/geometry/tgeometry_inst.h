@@ -41,29 +41,18 @@
 
 #include "general/temporal.h"
 
-/** Symbolic constants for the temporal instant geometry constuctor */
-#define WITH_GEOM       true
-#define NO_GEOM         false
-
 /*****************************************************************************
  * General functions
  *****************************************************************************/
 
 extern Datum *tgeometryinst_geom_ptr(const TInstant *inst);
 extern Datum tgeometryinst_geom(const TInstant *inst);
-extern Datum tgeometryinstset_geom(const TInstantSet *ti);
-extern Datum tgeometryseq_geom(const TSequence *seq);
-extern Datum tgeometryseqset_geom(const TSequenceSet *ts);
-extern Datum tgeometry_geom(const Temporal *temp);
 
 extern size_t tgeometryinst_elem_varsize(const TInstant *inst);
 extern void tgeometryinst_set_elem(TInstant *inst);
-extern size_t tgeometryseq_elem_varsize(const TSequence *seq);
-extern void tgeometryseq_set_elem(TSequence *seq);
 
-
-extern TInstant *tgeometryinst_make(Datum value,
-  TimestampTz t, Oid basetypid, bool hasgeom, Datum geom);
+extern TInstant *tgeometryinst_make(Datum geom, Datum value,
+  TimestampTz t, Oid basetypid);
 
 /*****************************************************************************/
 

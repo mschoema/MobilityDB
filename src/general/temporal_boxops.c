@@ -65,6 +65,7 @@
 
 #include "npoint/tnpoint_boxops.h"
 
+#include "geometry/tgeometry_inst.h"
 #include "geometry/tgeometry_boxops.h"
 
 /*****************************************************************************
@@ -216,7 +217,7 @@ tinstant_make_bbox(const TInstant *inst, void *box)
   else if (inst->basetypid == type_oid(T_NPOINT))
     tnpointinst_make_stbox(inst, (STBOX *) box);
   else if (inst->basetypid == type_oid(T_POSE))
-    tgeometryinst_make_stbox(inst, (STBOX *) box);
+    tgeometryinst_make_stbox(tgeometryinst_geom(inst), inst, (STBOX *) box);
   else
     elog(ERROR, "unknown bounding box function for base type: %d",
       inst->basetypid);
@@ -265,10 +266,8 @@ tinstantset_make_bbox(const TInstant **instants, int count, void *box)
     tpointinstarr_stbox(instants, count, (STBOX *) box);
   else if (instants[0]->basetypid == type_oid(T_NPOINT))
     tnpointinstarr_step_to_stbox(instants, count, (STBOX *) box);
-  else if (instants[0]->basetypid == type_oid(T_POSE))
-    tgeometryinstarr_step_to_stbox(instants, count, (STBOX *) box);
   else
-    elog(ERROR, "unknown bounding box function for base type: %d",
+    elog(ERROR, "#3 unknown bounding box function for base type: %d",
       instants[0]->basetypid);
   return;
 }
@@ -304,15 +303,8 @@ tsequence_make_bbox(const TInstant **instants, int count, bool lower_inc,
     else
       tnpointinstarr_step_to_stbox(instants, count, (STBOX *) box);
   }
-  else if (instants[0]->basetypid == type_oid(T_POSE))
-  {
-    if (MOBDB_FLAGS_GET_LINEAR(instants[0]->flags))
-      tgeometryinstarr_linear_to_stbox(instants, count, (STBOX *) box);
-    else
-      tgeometryinstarr_step_to_stbox(instants, count, (STBOX *) box);
-  }
-  else 
-    elog(ERROR, "unknown bounding box function for base type: %d",
+  else
+    elog(ERROR, "#4 unknown bounding box function for base type: %d",
       instants[0]->basetypid);
   return;
 }

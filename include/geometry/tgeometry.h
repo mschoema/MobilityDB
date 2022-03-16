@@ -41,9 +41,15 @@
 
 #include "general/temporal.h"
 
+/** Symbolic constants for the temporal instant geometry constuctor */
+#define WITH_GEOM       true
+#define NO_GEOM         false
+
 /*****************************************************************************
  * Miscellaneous functions defined in tgeometry.c
  *****************************************************************************/
+
+extern Datum tgeometry_geom(const Temporal *temp);
 
 /* Input/output functions */
 

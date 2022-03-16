@@ -83,18 +83,30 @@ CREATE FUNCTION tgeometry_inst(geometry, pose, timestamptz)
 
 CREATE FUNCTION tgeometry_instset(tgeometry[])
   RETURNS tgeometry
-  AS 'MODULE_PATHNAME', 'tinstantset_constructor'
+  AS 'MODULE_PATHNAME', 'tgeometry_instset_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 CREATE FUNCTION tgeometry_seq(tgeometry[], lower_inc boolean DEFAULT true,
     upper_inc boolean DEFAULT true, linear boolean DEFAULT true)
   RETURNS tgeometry
-  AS 'MODULE_PATHNAME', 'tlinearseq_constructor'
+  AS 'MODULE_PATHNAME', 'tgeometry_seq_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 CREATE FUNCTION tgeometry_seqset(tgeometry[])
   RETURNS tgeometry
-  AS 'MODULE_PATHNAME', 'tsequenceset_constructor'
+  AS 'MODULE_PATHNAME', 'tgeometry_seqset_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+/******************************************************************************
+ * Casting
+ ******************************************************************************/
+
+CREATE FUNCTION period(tgeometry)
+  RETURNS period
+  AS 'MODULE_PATHNAME', 'temporal_to_period'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+-- Casting CANNOT be implicit to avoid ambiguity
+CREATE CAST (tgeometry AS period) WITH FUNCTION period(tgeometry);
 
 /******************************************************************************/

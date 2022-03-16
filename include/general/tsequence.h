@@ -50,9 +50,13 @@ extern size_t *tsequence_offsets_ptr(const TSequence *seq);
 extern const TInstant *tsequence_inst_n(const TSequence *seq, int index);
 extern void *tsequence_bbox_ptr(const TSequence *seq);
 extern void tsequence_bbox(const TSequence *seq, void *box);
+void tsequence_make_valid1(const TInstant **instants, int count,
+  bool lower_inc, bool upper_inc, bool linear);
 extern int *tsequenceset_make_valid_gaps(const TInstant **instants, int count,
   bool lower_inc, bool upper_inc, bool linear, double maxdist, Interval *maxt,
   int *countsplits);
+extern TInstant **tinstarr_normalize(const TInstant **instants, bool linear,
+  int count, int *newcount);
 extern TSequence *tsequence_make1(const TInstant **instants, int count,
   bool lower_inc, bool upper_inc, bool linear, bool normalize);
 extern TSequence *tsequence_make(const TInstant **instants,

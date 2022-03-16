@@ -29,36 +29,29 @@
  *****************************************************************************/
 
 /**
- * @file tgeometry_boxops.h
- * Bounding box operators for rigid temporal geometriess.
+ * @file tgeometry_seqset.h
+ * Functions for rigid temporal sequence set geometries.
  */
 
-#ifndef __TGEOMETRY_BOXOPS_H__
-#define __TGEOMETRY_BOXOPS_H__
+#ifndef __TGEOMETRY_SEQSET_H__
+#define __TGEOMETRY_SEQSET_H__
 
 #include <postgres.h>
 #include <catalog/pg_type.h>
 
 #include "general/temporal.h"
 
-#include "point/stbox.h"
+/*****************************************************************************
+ * General functions
+ *****************************************************************************/
+
+extern Datum tgeometryseqset_geom(const TSequenceSet *ts);
+
+extern TSequenceSet *tgeometry_seqset_make(const Datum geom,
+  const TSequence **sequences, int count, bool normalize);
+extern TSequenceSet *tgeometry_seqset_make_free(const Datum geom,
+  TSequence **sequences, int count, bool normalize);
 
 /*****************************************************************************/
 
-/* Functions computing the bounding box at the creation of the temporal point */
-
-extern void tgeometryinst_make_stbox(const Datum geom, const TInstant *inst,
-  STBOX *box);
-extern void tgeometryinstarr_step_to_stbox(const Datum geom, const TInstant **inst,
-  int count, STBOX *box);
-extern void tgeometryinstarr_linear_to_stbox(const Datum geom, const TInstant **inst,
-  int count, STBOX *box);
-
-extern void tgeometry_instset_make_bbox(const Datum geom, const TInstant **instants,
-  int count, void *box);
-extern void tgeometry_seq_make_bbox(const Datum geom, const TInstant **instants,
-  int count, bool lower_inc, bool upper_inc, bool linear, void *box);
-
-/*****************************************************************************/
-
-#endif /* __TGEOMETRY_BOXOPS_H__ */
+#endif

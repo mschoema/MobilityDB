@@ -53,7 +53,7 @@
 #include "point/tpoint.h"
 #include "point/tpoint_spatialfuncs.h"
 
-#include "geometry/tgeometry_inst.h"
+#include "geometry/tgeometry_temporaltypes.h"
 
 /*****************************************************************************
  * General functions

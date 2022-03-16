@@ -45,7 +45,7 @@
 
 #include "point/tpoint_spatialfuncs.h"
 
-#include "geometry/tgeometry_inst.h"
+#include "geometry/tgeometry_temporaltypes.h"
 
 /*****************************************************************************/
 
@@ -69,7 +69,7 @@ tgeometryinst_parse(char **str, Oid basetype, bool end, bool make, Datum geom)
   ensure_end_input(str, end);
   if (! make)
     return NULL;
-  return tgeometryinst_make(value, t, basetype, WITH_GEOM, geom);
+  return tgeometryinst_make(geom, value, t, basetype);
 }
 
 /**
@@ -110,7 +110,7 @@ tgeometryinstset_parse(char **str, Oid basetype, Datum geom)
     instants[i] = tgeometryinst_parse(str, basetype, false, true, geom);
   }
   p_cbrace(str);
-  return tinstantset_make_free(instants, count, MERGE_NO);
+  return tgeometry_instset_make_free(geom, instants, count, MERGE_NO);
 }
 
 /**
@@ -166,8 +166,8 @@ tgeometryseq_parse(char **str, Oid basetype, bool linear, bool end, bool make, D
   }
   p_cbracket(str);
   p_cparen(str);
-  return tsequence_make_free(instants, count, lower_inc, upper_inc,
-    linear, NORMALIZE);
+  return tgeometry_seq_make_free(geom, instants, count,
+    lower_inc, upper_inc, linear, NORMALIZE);
 }
 
 /**
@@ -210,7 +210,7 @@ tgeometryseqset_parse(char **str, Oid basetype, bool linear, Datum geom)
       geom);
   }
   p_cbrace(str);
-  return tsequenceset_make_free(sequences, count, NORMALIZE);
+  return tgeometry_seqset_make_free(geom, sequences, count, NORMALIZE);
 }
 
 /**

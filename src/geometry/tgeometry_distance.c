@@ -57,7 +57,7 @@
 
 #include "point/tpoint_spatialfuncs.h"
 
-#include "geometry/tgeometry_inst.h"
+#include "geometry/tgeometry_temporaltypes.h"
 #include "geometry/tgeometry_spatialfuncs.h"
 
 #include "pose/pose.h"

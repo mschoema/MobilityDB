@@ -66,7 +66,7 @@
 #include "npoint/tnpoint_static.h"
 #include "npoint/tnpoint_spatialfuncs.h"
 
-#include "geometry/tgeometry_inst.h"
+#include "geometry/tgeometry_temporaltypes.h"
 #include "geometry/tgeometry_spatialfuncs.h"
 
 /*
@@ -323,7 +323,7 @@ ensure_seq_subtypes(int16 subtype)
 /**
  * Ensures that the elements of the array are of instant subtype
  */
-static void
+void
 ensure_tinstarr(TInstant **instants, int count)
 {
   for (int i = 0; i < count; i++)
@@ -553,8 +553,6 @@ ensure_valid_tseqarr(const TSequence **sequences, int count)
         errmsg("Timestamps for temporal value must be increasing: %s, %s", t1, t2)));
     }
     ensure_spatial_validity((Temporal *)sequences[i - 1], (Temporal *)sequences[i]);
-    if (tpose_base_type(sequences[0]->basetypid))
-      ensure_same_geom(tgeometryseq_geom(sequences[0]), tgeometryseq_geom(sequences[i]));
   }
   return;
 }

@@ -47,6 +47,7 @@
 #include <utils/timestamp.h>
 
 #include "general/temporaltypes.h"
+#include "general/tempcache.h"
 #include "general/temporal_util.h"
 
 #include "point/stbox.h"
@@ -130,17 +131,19 @@ lwgeom_apply_pose(LWGEOM *geom, pose *p)
  * @param[in] inst Temporal network point
  */
 void
-tgeometryinst_make_stbox(const TInstant *inst, STBOX *box)
+tgeometryinst_make_stbox(const Datum geom, const TInstant *inst,
+  STBOX *box)
 {
   pose *p = DatumGetPose(tinstant_value(inst));
-  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(
-    tgeometryinst_geom(inst));
+  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(geom);
   LWGEOM *lwgeom = lwgeom_from_gserialized(gs);
-  lwgeom_apply_pose(lwgeom, p);
+  LWGEOM *lwgeom_copy = lwgeom_clone_deep(lwgeom);
+  lwgeom_apply_pose(lwgeom_copy, p);
 
   GBOX gbox;
-  int ret = lwgeom_calculate_gbox(lwgeom, &gbox);
+  int ret = lwgeom_calculate_gbox(lwgeom_copy, &gbox);
 
+  lwgeom_free(lwgeom_copy);
   lwgeom_free(lwgeom);
 
   if (ret == LW_FAILURE)
@@ -184,14 +187,15 @@ tgeometryinst_make_stbox(const TInstant *inst, STBOX *box)
  * @param[in] count Number of elements in the array
  */
 void
-tgeometryinstarr_step_to_stbox(const TInstant **instants, int count, STBOX *box)
+tgeometryinstarr_step_to_stbox(const Datum geom, const TInstant **instants,
+  int count, STBOX *box)
 {
-  tgeometryinst_make_stbox(instants[0], box);
+  tgeometryinst_make_stbox(geom, instants[0], box);
   for (int i = 1; i < count; i++)
   {
     STBOX box1;
     memset(&box1, 0, sizeof(STBOX));
-    tgeometryinst_make_stbox(instants[i], &box1);
+    tgeometryinst_make_stbox(geom, instants[i], &box1);
     stbox_expand(box, &box1);
   }
 }
@@ -202,7 +206,7 @@ tgeometryinstarr_step_to_stbox(const TInstant **instants, int count, STBOX *box)
  * @param[out] box Spatiotemporal box
  * @param[in] inst Temporal network point
  */
-void
+static void
 tgeometryinst_pose_make_stbox(const TInstant *inst, STBOX *box)
 {
   pose *p = DatumGetPose(tinstant_value(inst));
@@ -245,9 +249,9 @@ geom_radius(Datum geom_datum)
  * @param[in] count Number of elements in the array
  */
 void
-tgeometryinstarr_linear_to_stbox(const TInstant **instants, int count, STBOX *box)
+tgeometryinstarr_linear_to_stbox(const Datum geom, const TInstant **instants,
+  int count, STBOX *box)
 {
-  Datum geom = tgeometryinst_geom(instants[0]);
   double r = geom_radius(geom);
   tgeometryinst_pose_make_stbox(instants[0], box);
   for (int i = 1; i < count; i++)
@@ -257,15 +261,67 @@ tgeometryinstarr_linear_to_stbox(const TInstant **instants, int count, STBOX *bo
     tgeometryinst_pose_make_stbox(instants[i], &box1);
     stbox_expand(box, &box1);
   }
-  GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(geom);
   box->xmin -= r;
   box->xmax += r;
   box->ymin -= r;
   box->ymax += r;
   box->zmin -= r;
   box->zmax += r;
-  box->srid = gserialized_get_srid(gs);
+  box->srid = gserialized_get_srid(
+    (GSERIALIZED *) DatumGetPointer(geom));
   MOBDB_FLAGS_SET_GEODETIC(box->flags, false);
+  return;
+}
+
+/*****************************************************************************/
+
+/**
+ * Set the bounding box from the array of temporal instant values
+ * (dispatch function)
+ *
+ * @param[in] box Box
+ * @param[in] instants Temporal instants
+ * @param[in] count Number of elements in the array
+ */
+void
+tgeometry_instset_make_bbox(const Datum geom, const TInstant **instants,
+  int count, void *box)
+{
+  /* Only external types have bounding box */
+  ensure_temporal_base_type(instants[0]->basetypid);
+  if (instants[0]->basetypid == type_oid(T_POSE))
+    tgeometryinstarr_step_to_stbox(geom, instants, count, (STBOX *) box);
+  else
+    elog(ERROR, "#1 unknown bounding box function for base type: %d",
+      instants[0]->basetypid);
+  return;
+}
+
+/**
+ * Set the bounding box from the array of temporal instant values
+ * (dispatch function)
+ *
+ * @param[in] box Box
+ * @param[in] instants Temporal instants
+ * @param[in] count Number of elements in the array
+ * @param[in] lower_inc,upper_inc Period bounds
+ */
+void
+tgeometry_seq_make_bbox(const Datum geom, const TInstant **instants,
+  int count, bool lower_inc, bool upper_inc, bool linear, void *box)
+{
+  /* Only external types have bounding box */
+  ensure_temporal_base_type(instants[0]->basetypid);
+  if (instants[0]->basetypid == type_oid(T_POSE))
+  {
+    if (linear)
+      tgeometryinstarr_linear_to_stbox(geom, instants, count, (STBOX *) box);
+    else
+      tgeometryinstarr_step_to_stbox(geom, instants, count, (STBOX *) box);
+  }
+  else
+    elog(ERROR, "#2 unknown bounding box function for base type: %d",
+      instants[0]->basetypid);
   return;
 }
 

@@ -1,13 +1,12 @@
 /*****************************************************************************
  *
  * This MobilityDB code is provided under The PostgreSQL License.
- *
- * Copyright (c) 2016-2021, Université libre de Bruxelles and MobilityDB
+ * Copyright (c) 2016-2022, Université libre de Bruxelles and MobilityDB
  * contributors
  *
  * MobilityDB includes portions of PostGIS version 3 source code released
  * under the GNU General Public License (GPLv2 or later).
- * Copyright (c) 2001-2021, PostGIS contributors
+ * Copyright (c) 2001-2022, PostGIS contributors
  *
  * Permission to use, copy, modify, and distribute this software and its
  * documentation for any purpose, without fee, and without a written
@@ -29,36 +28,21 @@
  *****************************************************************************/
 
 /**
- * @file tgeometry_boxops.h
- * Bounding box operators for rigid temporal geometriess.
+ * @file tgeometry_temporaltypes.h
+ * General functions for temporal geometry types.
  */
 
-#ifndef __TGEOMETRY_BOXOPS_H__
-#define __TGEOMETRY_BOXOPS_H__
-
-#include <postgres.h>
-#include <catalog/pg_type.h>
-
-#include "general/temporal.h"
-
-#include "point/stbox.h"
+#ifndef __TGEOMETRY_TEMPORALTYPES_H__
+#define __TGEOMETRY_TEMPORALTYPES_H__
 
 /*****************************************************************************/
 
-/* Functions computing the bounding box at the creation of the temporal point */
-
-extern void tgeometryinst_make_stbox(const Datum geom, const TInstant *inst,
-  STBOX *box);
-extern void tgeometryinstarr_step_to_stbox(const Datum geom, const TInstant **inst,
-  int count, STBOX *box);
-extern void tgeometryinstarr_linear_to_stbox(const Datum geom, const TInstant **inst,
-  int count, STBOX *box);
-
-extern void tgeometry_instset_make_bbox(const Datum geom, const TInstant **instants,
-  int count, void *box);
-extern void tgeometry_seq_make_bbox(const Datum geom, const TInstant **instants,
-  int count, bool lower_inc, bool upper_inc, bool linear, void *box);
+#include "tgeometry.h"
+#include "tgeometry_inst.h"
+#include "tgeometry_instset.h"
+#include "tgeometry_seq.h"
+#include "tgeometry_seqset.h"
 
 /*****************************************************************************/
 
-#endif /* __TGEOMETRY_BOXOPS_H__ */
+#endif

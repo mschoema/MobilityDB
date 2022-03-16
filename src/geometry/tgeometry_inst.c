@@ -29,8 +29,8 @@
  *****************************************************************************/
 
 /**
- * @file tpoint.c
- * Basic functions for temporal points.
+ * @file tgeometry_inst.c
+ * Functions for rigid temporal instant geometries.
  */
 
 #include "geometry/tgeometry_inst.h"
@@ -46,6 +46,8 @@
 
 #include "pose/pose.h"
 
+#include "geometry/tgeometry.h"
+
 /*****************************************************************************
  * General functions
  *****************************************************************************/
@@ -56,11 +58,11 @@
 Datum *
 tgeometryinst_geom_ptr(const TInstant *inst)
 {
-  Datum *value = tinstant_value_ptr(inst);
-  size_t value_size = double_pad(VARSIZE(value));
   if (!MOBDB_FLAGS_GET_GEOM(inst->flags))
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
       errmsg("Cannot access geometry from tgeometry instant")));
+  Datum *value = tinstant_value_ptr(inst);
+  size_t value_size = double_pad(VARSIZE(value));
   return (Datum *)((char *)value + value_size);
 }
 
@@ -72,67 +74,6 @@ tgeometryinst_geom(const TInstant *inst)
 {
   Datum *geom = tgeometryinst_geom_ptr(inst);
   return PointerGetDatum(geom);
-}
-
-/**
- * Returns the reference geometry of the temporal value
- */
-Datum
-tgeometryinstset_geom(const TInstantSet *ti)
-{
-  return PointerGetDatum(
-    /* start of data */
-    ((char *)ti) + double_pad(sizeof(TInstantSet)) + ti->bboxsize +
-      (ti->count + 1) * sizeof(size_t) +
-      /* offset */
-      (tinstantset_offsets_ptr(ti))[ti->count]);
-}
-
-/**
- * Returns the reference geometry of the temporal value
- */
-Datum
-tgeometryseq_geom(const TSequence *seq)
-{
-  return PointerGetDatum(
-    /* start of data */
-    ((char *)seq) + double_pad(sizeof(TSequence)) + seq->bboxsize +
-      (seq->count + 1) * sizeof(size_t) +
-      /* offset */
-      (tsequence_offsets_ptr(seq))[seq->count]);
-}
-
-/**
- * Returns the reference geometry of the temporal value
- */
-Datum
-tgeometryseqset_geom(const TSequenceSet *ts)
-{
-  return PointerGetDatum(
-    /* start of data */
-    ((char *)ts) + double_pad(sizeof(TSequenceSet)) + ts->bboxsize +
-      (ts->count + 1) * sizeof(size_t) +
-      /* offset */
-      (tsequenceset_offsets_ptr(ts))[ts->count]);
-}
-
-/**
- * Returns the reference geometry of the temporal value
- */
-Datum
-tgeometry_geom(const Temporal *temp)
-{
-  Datum result;
-  ensure_valid_tempsubtype(temp->subtype);
-  if (temp->subtype == INSTANT)
-    result = tgeometryinst_geom((const TInstant *) temp);
-  else if (temp->subtype == INSTANTSET)
-    result = tgeometryinstset_geom((const TInstantSet *) temp);
-  else if (temp->subtype == SEQUENCE)
-    result = tgeometryseq_geom((const TSequence *) temp);
-  else /* temp->subtype == SEQUENCESET */
-    result = tgeometryseqset_geom((const TSequenceSet *) temp);
-  return result;
 }
 
 /*****************************************************************************/
@@ -158,34 +99,13 @@ tgeometryinst_set_elem(TInstant *inst)
   return;
 }
 
-/**
- * Returns the size of the tgeometryseq without reference geometry
- */
-size_t
-tgeometryseq_elem_varsize(const TSequence *seq)
-{
-  void *geom = DatumGetPointer(tgeometryseq_geom(seq));
-  return VARSIZE(seq) - double_pad(VARSIZE(geom));
-}
-
-/**
- * Set the size of the tgeometryseq without reference geometry
- */
-void
-tgeometryseq_set_elem(TSequence *seq)
-{
-  SET_VARSIZE(seq, tgeometryseq_elem_varsize(seq));
-  MOBDB_FLAGS_SET_GEOM(seq->flags, NO_GEOM);
-  return;
-}
-
 /*****************************************************************************/
 
 /**
  * Ensure the validity of the arguments when creating a temporal value
  */
 static void
-tgeometryinst_make_valid(Datum value, Datum geom)
+tgeometryinst_make_valid(Datum geom, Datum value)
 {
   GSERIALIZED *gs = (GSERIALIZED *)PG_DETOAST_DATUM(geom);
   pose *p = DatumGetPose(value);
@@ -209,8 +129,7 @@ tgeometryinst_make_valid(Datum value, Datum geom)
  * @pre The validity of the arguments has been tested before
  */
 TInstant *
-tgeometryinst_make1(Datum value,
-  TimestampTz t, Oid basetypid, bool hasgeom, Datum geom)
+tgeometryinst_make1(Datum geom, Datum value, TimestampTz t, Oid basetypid)
 {
   size_t value_offset = double_pad(sizeof(TInstant));
   size_t size = value_offset;
@@ -219,23 +138,15 @@ tgeometryinst_make1(Datum value,
 
   void *value_from = DatumGetPointer(value);
   size_t value_size = double_pad(VARSIZE(value_from));
-  void *geom_from;
-  size_t geom_size = 0;
-  if (hasgeom)
-  {
-    geom_from = DatumGetPointer(geom);
-    geom_size = double_pad(VARSIZE(geom_from));
-  }
+  void *geom_from = DatumGetPointer(geom);
+  size_t geom_size = double_pad(VARSIZE(geom_from));
 
   size += value_size + geom_size;
   result = palloc0(size);
   void *value_to = ((char *) result) + value_offset;
   memcpy(value_to, value_from, value_size);
-  if (hasgeom)
-  {
-    void *geom_to = ((char *) result) + value_offset + value_size;
-    memcpy(geom_to, geom_from, geom_size);
-  }
+  void *geom_to = ((char *) result) + value_offset + value_size;
+  memcpy(geom_to, geom_from, geom_size);
 
   /* Initialize fixed-size values */
   result->subtype = INSTANT;
@@ -250,33 +161,31 @@ tgeometryinst_make1(Datum value,
   MOBDB_FLAGS_SET_Z(result->flags, MOBDB_FLAGS_GET_Z(p->flags));
   MOBDB_FLAGS_SET_T(result->flags, true);
   MOBDB_FLAGS_SET_GEODETIC(result->flags, false);
-  MOBDB_FLAGS_SET_GEOM(result->flags, hasgeom);
+  MOBDB_FLAGS_SET_GEOM(result->flags, WITH_GEOM);
   return result;
 }
 
 /**
- * Construct a temporal instant geometry value from the arguments
+ * Construct a temporal geometry instant value from the arguments
  *
- * The memory structure of a temporal instant geometry value is as follows
+ * The memory structure of a temporal geometry instant value is as follows
  * @code
- * ------------------------------------------
- * ( TInstant )_X | ( Value )_X | ( Geom )_X
- * ------------------------------------------
+ * --------------------------------------------
+ * ( TInstant )_X | ( Value )_X | ( Geom )_X |
+ * --------------------------------------------
  * @endcode
  * where the `_X` are unused bytes added for double padding.
  *
- * @param geom Base geometry
- * @param value Base value
+ * @param geom Reference geometry
+ * @param value Base value (Pose)
  * @param t Timestamp
  * @param basetypid Oid of the base type
  */
 TInstant *
-tgeometryinst_make(Datum value,
-  TimestampTz t, Oid basetypid, bool hasgeom, Datum geom)
+tgeometryinst_make(Datum geom, Datum value, TimestampTz t, Oid basetypid)
 {
-  if (hasgeom)
-    tgeometryinst_make_valid(value, geom);
-  return tgeometryinst_make1(value, t, basetypid, hasgeom, geom);
+  tgeometryinst_make_valid(geom, value);
+  return tgeometryinst_make1(geom, value, t, basetypid);
 }
 
 /*****************************************************************************/

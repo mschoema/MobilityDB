@@ -47,8 +47,29 @@
 
 #include "pose/pose.h"
 
-#include "geometry/tgeometry_inst.h"
+#include "geometry/tgeometry_temporaltypes.h"
 #include "geometry/tgeometry_parser.h"
+
+/*****************************************************************************/
+
+/**
+ * Returns the reference geometry of the temporal value
+ */
+Datum
+tgeometry_geom(const Temporal *temp)
+{
+  Datum result;
+  ensure_valid_tempsubtype(temp->subtype);
+  if (temp->subtype == INSTANT)
+    result = tgeometryinst_geom((const TInstant *) temp);
+  else if (temp->subtype == INSTANTSET)
+    result = tgeometryinstset_geom((const TInstantSet *) temp);
+  else if (temp->subtype == SEQUENCE)
+    result = tgeometryseq_geom((const TSequence *) temp);
+  else /* temp->subtype == SEQUENCESET */
+    result = tgeometryseqset_geom((const TSequenceSet *) temp);
+  return result;
+}
 
 /*****************************************************************************
  * Input/output functions
@@ -124,7 +145,7 @@ tgeometry_out(PG_FUNCTION_ARGS)
 
 PG_FUNCTION_INFO_V1(tgeometryinst_constructor);
 /**
- * Construct a temporal instant geometry value from the arguments
+ * Construct a temporal instant value from the arguments
  */
 PGDLLEXPORT Datum
 tgeometryinst_constructor(PG_FUNCTION_ARGS)
@@ -136,8 +157,90 @@ tgeometryinst_constructor(PG_FUNCTION_ARGS)
   TimestampTz t = PG_GETARG_TIMESTAMPTZ(2);
   Oid basetypid = get_fn_expr_argtype(fcinfo->flinfo, 1);
   Temporal *result = (Temporal *) tgeometryinst_make(
-    PointerGetDatum(p), t, basetypid, WITH_GEOM, PointerGetDatum(gs));
+    PointerGetDatum(gs), PointerGetDatum(p), t, basetypid);
   PG_FREE_IF_COPY(gs, 0);
+  PG_RETURN_POINTER(result);
+}
+
+PG_FUNCTION_INFO_V1(tgeometry_instset_constructor);
+/**
+ * Construct a temporal instant set value from the array of temporal
+ * instant values
+ */
+PGDLLEXPORT Datum
+tgeometry_instset_constructor(PG_FUNCTION_ARGS)
+{
+  ArrayType *array = PG_GETARG_ARRAYTYPE_P(0);
+  ensure_non_empty_array(array);
+  int count;
+  TInstant **instants = (TInstant **) temporalarr_extract(array, &count);
+  ensure_tinstarr(instants, count);
+  Temporal *result = (Temporal *) tgeometry_instset_make(
+    tgeometryinst_geom(instants[0]), (const TInstant **) instants,
+    count, MERGE_NO);
+  pfree(instants);
+  PG_FREE_IF_COPY(array, 0);
+  PG_RETURN_POINTER(result);
+}
+
+PG_FUNCTION_INFO_V1(tgeometry_seq_constructor);
+/**
+ * Construct a temporal sequence value with linear or stepwise
+ * interpolation from the array of temporal instant values
+ */
+PGDLLEXPORT Datum
+tgeometry_seq_constructor(PG_FUNCTION_ARGS)
+{
+  ArrayType *array = PG_GETARG_ARRAYTYPE_P(0);
+  bool lower_inc = PG_GETARG_BOOL(1);
+  bool upper_inc = PG_GETARG_BOOL(2);
+  bool linear = PG_GETARG_BOOL(3);
+  ensure_non_empty_array(array);
+  int count;
+  TInstant **instants = (TInstant **) temporalarr_extract(array, &count);
+  ensure_tinstarr(instants, count);
+  Temporal *result = (Temporal *) tgeometry_seq_make(
+    tgeometryinst_geom(instants[0]), (const TInstant **) instants,
+    count, lower_inc, upper_inc, linear, NORMALIZE);
+  pfree(instants);
+  PG_FREE_IF_COPY(array, 0);
+  PG_RETURN_POINTER(result);
+}
+
+PG_FUNCTION_INFO_V1(tgeometry_seqset_constructor);
+/**
+ * Construct a temporal sequence set value from the array of temporal
+ * sequence values
+ */
+PGDLLEXPORT Datum
+tgeometry_seqset_constructor(PG_FUNCTION_ARGS)
+{
+  ArrayType *array = PG_GETARG_ARRAYTYPE_P(0);
+  ensure_non_empty_array(array);
+  int count;
+  TSequence **sequences = (TSequence **) temporalarr_extract(array, &count);
+  bool linear = MOBDB_FLAGS_GET_LINEAR(sequences[0]->flags);
+  /* Ensure that all values are of sequence subtype and of the same interpolation */
+  for (int i = 0; i < count; i++)
+  {
+    if (sequences[i]->subtype != SEQUENCE)
+    {
+      PG_FREE_IF_COPY(array, 0);
+      ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+        errmsg("Input values must be temporal sequences")));
+    }
+    if (MOBDB_FLAGS_GET_LINEAR(sequences[i]->flags) != linear)
+    {
+      PG_FREE_IF_COPY(array, 0);
+      ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+        errmsg("Input sequences must have the same interpolation")));
+    }
+  }
+  Temporal *result = (Temporal *) tgeometry_seqset_make(
+    tgeometryseq_geom(sequences[0]), (const TSequence **) sequences,
+    count, NORMALIZE);
+  pfree(sequences);
+  PG_FREE_IF_COPY(array, 0);
   PG_RETURN_POINTER(result);
 }
 
