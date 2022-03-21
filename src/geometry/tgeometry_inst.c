@@ -79,7 +79,7 @@ tgeometryinst_geom(const TInstant *inst)
 /*****************************************************************************/
 
 /**
- * Returns the size of the tgeometryinst without reference geometry
+ * Returns the size of the tgeometry instant without reference geometry
  */
 size_t
 tgeometryinst_elem_varsize(const TInstant *inst)
@@ -89,7 +89,7 @@ tgeometryinst_elem_varsize(const TInstant *inst)
 }
 
 /**
- * Set the size of the tgeometryinst without reference geometry
+ * Set the size of the tgeometry instant without reference geometry
  */
 void
 tgeometryinst_set_elem(TInstant *inst)
@@ -187,5 +187,50 @@ tgeometryinst_make(Datum geom, Datum value, TimestampTz t, Oid basetypid)
   tgeometryinst_make_valid(geom, value);
   return tgeometryinst_make1(geom, value, t, basetypid);
 }
+
+/*****************************************************************************
+ * Transformation functions
+ *****************************************************************************/
+
+/**
+ * Transform the temporal instant set value into a temporal instant value
+ */
+TInstant *
+tgeometry_instset_to_inst(const TInstantSet *ti)
+{
+  if (ti->count != 1)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot transform input to a temporal instant")));
+  return tgeometry_instset_inst_n(ti, 0);
+}
+
+/**
+ * Transform the temporal sequence value into a temporal instant value
+ */
+TInstant *
+tgeometry_seq_to_inst(const TSequence *seq)
+{
+  if (seq->count != 1)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot transform input to a temporal instant")));
+  return tgeometry_seq_inst_n(seq, 0);
+}
+
+/**
+ * Transform the temporal sequence set value into a temporal instant value
+ */
+TInstant *
+tgeometry_seqset_to_inst(const TSequenceSet *ts)
+{
+  const TSequence *seq = tsequenceset_seq_n(ts, 0);
+  if (ts->count != 1 || seq->count != 1)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot transform input to a temporal instant")));
+
+  const TInstant *inst = tsequence_inst_n(seq, 0);
+  return tgeometryinst_make1(tgeometry_seqset_geom(ts),
+    tinstant_value(inst), inst->t, inst->basetypid);
+}
+
 
 /*****************************************************************************/

@@ -55,7 +55,7 @@
  * Returns the reference geometry of the temporal value
  */
 Datum
-tgeometryseqset_geom(const TSequenceSet *ts)
+tgeometry_seqset_geom(const TSequenceSet *ts)
 {
   return PointerGetDatum(
     /* start of data */
@@ -63,6 +63,24 @@ tgeometryseqset_geom(const TSequenceSet *ts)
       (ts->count + 1) * sizeof(size_t) +
       /* offset */
       (tsequenceset_offsets_ptr(ts))[ts->count]);
+}
+
+/**
+ * Returns the n-th sequence of the temporal value
+ * Note: This creates a new sequence
+ */
+TSequence *
+tgeometry_seqset_seq_n(const TSequenceSet *ts, int index)
+{
+  const TSequence *seq = tsequenceset_seq_n(ts, index);
+  const TInstant **instants = palloc(sizeof(TInstant *) * seq->count);
+  for (int i = 0; i < seq->count; i++)
+    instants[i] = tsequence_inst_n(seq, i);
+  TSequence *result = tgeometry_seq_make1(tgeometry_seqset_geom(ts),
+    instants, count, seq->period.lower_inc, true,
+    MOBDB_FLAGS_GET_LINEAR(seq->flags), NORMALIZE_NO);
+  pfree(instants);
+  return result;
 }
 
 /*****************************************************************************/
@@ -101,7 +119,7 @@ tgeometry_seqset_make(const Datum geom, const TSequence **sequences,
   ensure_valid_tseqarr(sequences, count);
   for (int i = 0; i < count; ++i)
     if (MOBDB_FLAGS_GET_GEOM(sequences[i]->flags))
-      ensure_same_geom(geom, tgeometryseq_geom(sequences[i]));
+      ensure_same_geom(geom, tgeometry_seq_geom(sequences[i]));
 
   /* Normalize the array of sequences */
   TSequence **normseqs = (TSequence **) sequences;
@@ -120,7 +138,7 @@ tgeometry_seqset_make(const Datum geom, const TSequence **sequences,
   for (int i = 0; i < newcount; i++)
   {
     totalcount += normseqs[i]->count;
-    memsize += double_pad(tgeometryseq_elem_varsize(normseqs[i]));
+    memsize += double_pad(tgeometry_seq_elem_varsize(normseqs[i]));
   }
   /* Size of the struct and the offset array */
   memsize += double_pad(sizeof(TSequenceSet)) + (newcount + 1) * sizeof(size_t);
@@ -160,10 +178,10 @@ tgeometry_seqset_make(const Datum geom, const TSequence **sequences,
   size_t pos = 0;
   for (int i = 0; i < newcount; i++)
   {
-    size_t seq_size = tgeometryseq_elem_varsize(normseqs[i]);
+    size_t seq_size = tgeometry_seq_elem_varsize(normseqs[i]);
     memcpy(((char *) result) + pdata + pos, normseqs[i], seq_size);
     (tsequenceset_offsets_ptr(result))[i] = pos;
-    tgeometryseq_set_elem((TSequence *) (((char *)result) + pdata + pos));
+    tgeometry_seq_set_elem((TSequence *) (((char *)result) + pdata + pos));
     pos += double_pad(seq_size);
   }
   /* Store the reference geometry */
@@ -198,6 +216,49 @@ tgeometry_seqset_make_free(const Datum geom, TSequence **sequences,
     count, normalize);
   pfree_array((void **) sequences, count);
   return result;
+}
+
+/*****************************************************************************
+ * Transformation functions
+ *****************************************************************************/
+
+/**
+ * Transform the temporal instant value into a temporal sequence set value
+ */
+TSequenceSet *
+tgeometry_inst_to_seqset(const TInstant *inst, bool linear)
+{
+  TSequence *seq = tgeometry_inst_to_seqset(inst, linear);
+  TSequenceSet *result = tgeometry_seq_to_seqset(seq);
+  pfree(seq);
+  return result;
+}
+
+/**
+ * Transform the temporal instant set value into a temporal sequence set value
+ */
+TSequenceSet *
+tgeometry_instset_to_seqset(const TInstantSet *ti, bool linear)
+{
+  TSequence **sequences = palloc(sizeof(TSequence *) * ti->count);
+  for (int i = 0; i < ti->count; i++)
+  {
+    const TInstant *inst = tinstantset_inst_n(ti, i);
+    sequences[i] = tinstant_to_tsequence(inst, linear);
+  }
+  TSequenceSet *result = tsequenceset_make((const TSequence **) sequences,
+    ti->count, NORMALIZE_NO);
+  pfree(sequences);
+  return result;
+}
+
+/**
+ * Transform the temporal sequence set value from the temporal sequence
+ */
+TSequenceSet *
+tgeometry_seq_to_seqset(const TSequence *seq)
+{
+  return tgeometry_seqset_make(&seq, 1, NORMALIZE_NO);
 }
 
 /*****************************************************************************/

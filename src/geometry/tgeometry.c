@@ -61,13 +61,13 @@ tgeometry_geom(const Temporal *temp)
   Datum result;
   ensure_valid_tempsubtype(temp->subtype);
   if (temp->subtype == INSTANT)
-    result = tgeometryinst_geom((const TInstant *) temp);
+    result = tgeometry_inst_geom((const TInstant *) temp);
   else if (temp->subtype == INSTANTSET)
-    result = tgeometryinstset_geom((const TInstantSet *) temp);
+    result = tgeometry_instset_geom((const TInstantSet *) temp);
   else if (temp->subtype == SEQUENCE)
-    result = tgeometryseq_geom((const TSequence *) temp);
+    result = tgeometry_seq_geom((const TSequence *) temp);
   else /* temp->subtype == SEQUENCESET */
-    result = tgeometryseqset_geom((const TSequenceSet *) temp);
+    result = tgeometry_seqset_geom((const TSequenceSet *) temp);
   return result;
 }
 
@@ -241,6 +241,102 @@ tgeometry_seqset_constructor(PG_FUNCTION_ARGS)
     count, NORMALIZE);
   pfree(sequences);
   PG_FREE_IF_COPY(array, 0);
+  PG_RETURN_POINTER(result);
+}
+
+/*****************************************************************************
+ * Transformation functions
+ *****************************************************************************/
+
+PG_FUNCTION_INFO_V1(tgeometry_to_tinstant);
+/**
+ * Transform the temporal value into a temporal instant value
+ */
+PGDLLEXPORT Datum
+tgeometry_to_tinstant(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  Temporal *result;
+  ensure_valid_tempsubtype(temp->subtype);
+  if (temp->subtype == INSTANT)
+    result = temporal_copy(temp);
+  else if (temp->subtype == INSTANTSET)
+    result = (Temporal *) tgeometry_tinstset_to_tinst((TInstantSet *) temp);
+  else if (temp->subtype == SEQUENCE)
+    result = (Temporal *) tgeometry_tseq_to_tinst((TSequence *) temp);
+  else /* temp->subtype == SEQUENCESET */
+    result = (Temporal *) tgeometry_tseqset_to_tinst((TSequenceSet *) temp);
+  PG_FREE_IF_COPY(temp, 0);
+  PG_RETURN_POINTER(result);
+}
+
+PG_FUNCTION_INFO_V1(tgeometry_to_tinstantset);
+/**
+ * Transform the temporal value into a temporal instant set value
+ */
+PGDLLEXPORT Datum
+tgeometry_to_tinstantset(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  Temporal *result;
+  ensure_valid_tempsubtype(temp->subtype);
+  if (temp->subtype == INSTANT)
+    result = (Temporal *) tgeometry_tinst_to_tinstset((TInstant *) temp);
+  else if (temp->subtype == INSTANTSET)
+    result = temporal_copy(temp);
+  else if (temp->subtype == SEQUENCE)
+    result = (Temporal *) tgeometry_tseq_to_tinstset((TSequence *) temp);
+  else /* temp->subtype == SEQUENCESET */
+    result = (Temporal *) tgeometry_tseqset_to_tinstset((TSequenceSet *) temp);
+  PG_FREE_IF_COPY(temp, 0);
+  PG_RETURN_POINTER(result);
+}
+
+PG_FUNCTION_INFO_V1(tgeometry_to_tsequence);
+/**
+ * Transform the temporal value into a temporal sequence value
+ */
+PGDLLEXPORT Datum
+tgeometry_to_tsequence(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  Temporal *result;
+  ensure_valid_tempsubtype(temp->subtype);
+  if (temp->subtype == INSTANT)
+    result = (Temporal *) tgeometry_tinst_to_tseq((TInstant *) temp,
+      MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
+  else if (temp->subtype == INSTANTSET)
+    result = (Temporal *) tgeometry_tinstset_to_tseq((TInstantSet *) temp,
+      MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
+  else if (temp->subtype == SEQUENCE)
+    result = temporal_copy(temp);
+  else /* temp->subtype == SEQUENCESET */
+    result = (Temporal *) tgeometry_tseqset_to_tseq((TSequenceSet *) temp);
+  PG_FREE_IF_COPY(temp, 0);
+  PG_RETURN_POINTER(result);
+}
+
+PG_FUNCTION_INFO_V1(tgeometry_to_tsequenceset);
+/**
+ * Transform the temporal value into a temporal sequence set value
+ */
+PGDLLEXPORT Datum
+tgeometry_to_tsequenceset(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  Temporal *result;
+  ensure_valid_tempsubtype(temp->subtype);
+  if (temp->subtype == INSTANT)
+    result = (Temporal *) tgeometry_tinst_to_tseqset((TInstant *) temp,
+      MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
+  else if (temp->subtype == INSTANTSET)
+    result = (Temporal *) tgeometry_tinstset_to_tseqset((TInstantSet *) temp,
+      MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
+  else if (temp->subtype == SEQUENCE)
+    result = (Temporal *) tgeometry_tseq_to_tseqset((TSequence *) temp);
+  else /* temp->subtype == SEQUENCESET */
+    result = temporal_copy(temp);
+  PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_POINTER(result);
 }
 

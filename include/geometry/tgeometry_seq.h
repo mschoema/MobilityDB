@@ -45,10 +45,10 @@
  * General functions
  *****************************************************************************/
 
-extern Datum tgeometryseq_geom(const TSequence *seq);
+extern Datum tgeometry_seq_geom(const TSequence *seq);
 
-extern size_t tgeometryseq_elem_varsize(const TSequence *seq);
-extern void tgeometryseq_set_elem(TSequence *seq);
+extern size_t tgeometry_seq_elem_varsize(const TSequence *seq);
+extern void tgeometry_seq_set_elem(TSequence *seq);
 
 extern TSequence *tgeometry_seq_make1(const Datum geom, const TInstant **instants,
   int count, bool lower_inc, bool upper_inc, bool linear, bool normalize);

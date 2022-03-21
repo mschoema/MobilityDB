@@ -55,7 +55,7 @@
  * Returns the reference geometry of the temporal value
  */
 Datum
-tgeometryinstset_geom(const TInstantSet *ti)
+tgeometry_instset_geom(const TInstantSet *ti)
 {
   return PointerGetDatum(
     /* start of data */
@@ -63,6 +63,18 @@ tgeometryinstset_geom(const TInstantSet *ti)
       (ti->count + 1) * sizeof(size_t) +
       /* offset */
       (tinstantset_offsets_ptr(ti))[ti->count]);
+}
+
+/**
+ * Returns the n-th instant of the temporal geometry
+ * Note: This creates a new instant
+ */
+TInstant *
+tgeometry_instset_inst_n(const TInstantSet *ti, int index)
+{
+  const TInstant *inst = tinstantset_inst_n(ti, index);
+  return tgeometryinst_make1(tgeometry_instset_geom(ti),
+    tinstant_value(inst), inst->t, inst->basetypid);
 }
 
 /*****************************************************************************/
@@ -203,5 +215,66 @@ tgeometry_instset_make_free(const Datum geom, TInstant **instants,
   pfree_array((void **) instants, count);
   return result;
 }
+
+/*****************************************************************************
+ * Transformation functions
+ *****************************************************************************/
+
+/**
+ * Transform the temporal instant value into a temporal instant set value
+ */
+TInstantSet *
+tgeometry_inst_to_instset(const TInstant *inst)
+{
+  return tgeometry_instset_make1(tgeometryinst_geom(inst), &inst, 1);
+}
+
+/**
+ * Transforms the temporal sequence value into a temporal instant value
+ *
+ * @return Returns an error if the temporal sequence has more than one instant
+ */
+TInstantSet *
+tgeometry_seq_to_instset(const TSequence *seq)
+{
+  if (seq->count != 1)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot transform input to a temporal instant set")));
+
+  const TInstant *inst = tsequence_inst_n(seq, 0);
+  return tgeometry_instset_make1(tgeometryinst_geom(inst), &inst, 1);
+}
+
+/**
+ * Transforms the temporal sequence set value into a temporal instant
+ * set value
+ *
+ * @return Returns an error if any of the composing temporal sequences has
+ * more than one instant
+*/
+TInstantSet *
+tgeometry_seqset_to_instset(const TSequenceSet *ts)
+{
+  const TSequence *seq;
+  for (int i = 0; i < ts->count; i++)
+  {
+    seq = tsequenceset_seq_n(ts, i);
+    if (seq->count != 1)
+      ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+        errmsg("Cannot transform input to a temporal instant set")));
+  }
+
+  const TInstant **instants = palloc(sizeof(TInstant *) * ts->count);
+  for (int i = 0; i < ts->count; i++)
+  {
+    seq = tsequenceset_seq_n(ts, i);
+    instants[i] = tsequence_inst_n(seq, 0);
+  }
+  TInstantSet *result = tgeometry_instset_make1(
+    tgeometry_seqset_geom(ts), instants, ts->count);
+  pfree(instants);
+  return result;
+}
+
 
 /*****************************************************************************/

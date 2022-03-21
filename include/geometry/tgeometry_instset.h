@@ -45,7 +45,7 @@
  * General functions
  *****************************************************************************/
 
-extern Datum tgeometryinstset_geom(const TInstantSet *ti);
+extern Datum tgeometry_instset_geom(const TInstantSet *ti);
 
 extern TInstantSet *tgeometry_instset_make1(const Datum geom,
   const TInstant **instants, int count);

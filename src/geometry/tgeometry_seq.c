@@ -54,7 +54,7 @@
  * Returns the reference geometry of the temporal value
  */
 Datum
-tgeometryseq_geom(const TSequence *seq)
+tgeometry_seq_geom(const TSequence *seq)
 {
   if (!MOBDB_FLAGS_GET_GEOM(seq->flags))
     ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
@@ -67,15 +67,27 @@ tgeometryseq_geom(const TSequence *seq)
       (tsequence_offsets_ptr(seq))[seq->count]);
 }
 
+/**
+ * Returns the n-th instant of the temporal geometry
+ * Note: This creates a new instant
+ */
+TInstant *
+tgeometry_seq_inst_n(const TSequence *seq, int index)
+{
+  const TInstant *inst = tsequence_inst_n(seq, index);
+  return tgeometryinst_make1(tgeometry_seq_geom(seq),
+    tinstant_value(inst), inst->t, inst->basetypid);
+}
+
 /*****************************************************************************/
 
 /**
  * Returns the size of the tgeometryseq without reference geometry
  */
 size_t
-tgeometryseq_elem_varsize(const TSequence *seq)
+tgeometry_seq_elem_varsize(const TSequence *seq)
 {
-  void *geom = DatumGetPointer(tgeometryseq_geom(seq));
+  void *geom = DatumGetPointer(tgeometry_seq_geom(seq));
   return VARSIZE(seq) - double_pad(VARSIZE(geom));
 }
 
@@ -83,9 +95,9 @@ tgeometryseq_elem_varsize(const TSequence *seq)
  * Set the size of the tgeometryseq without reference geometry
  */
 void
-tgeometryseq_set_elem(TSequence *seq)
+tgeometry_seq_set_elem(TSequence *seq)
 {
-  SET_VARSIZE(seq, tgeometryseq_elem_varsize(seq));
+  SET_VARSIZE(seq, tgeometry_seq_elem_varsize(seq));
   MOBDB_FLAGS_SET_GEOM(seq->flags, NO_GEOM);
   return;
 }
@@ -240,6 +252,47 @@ tgeometry_seq_make_free(const Datum geom, TInstant **instants, int count,
     count, lower_inc, upper_inc, linear, normalize);
   pfree_array((void **) instants, count);
   return result;
+}
+
+/*****************************************************************************
+ * Transformation functions
+ *****************************************************************************/
+
+/**
+ * Transform the temporal instant value into a temporal sequence value
+ */
+TSequence *
+tgeometry_inst_to_seq(const TInstant *inst, bool linear)
+{
+  return tgeometry_seq_make1(tgeometryinst_geom(inst),
+    &inst, 1, true, true, linear, NORMALIZE_NO);
+}
+
+/**
+ * Transform the temporal instant set value into a temporal sequence value
+ */
+TSequence *
+tgeometry_instset_to_seq(const TInstantSet *ti, bool linear)
+{
+  if (ti->count != 1)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot transform input value to a temporal sequence")));
+
+  const TInstant *inst = tinstantset_inst_n(ti, 0);
+  return tgeometry_seq_make1(tgeometry_instset_geom(ti),
+    &inst, 1, true, true, linear, NORMALIZE_NO);
+}
+
+/**
+ * Transform the temporal sequence set value into a temporal sequence value
+ */
+TSequence *
+tgeometry_seqset_to_seq(const TSequenceSet *ts)
+{
+  if (ts->count != 1)
+    ereport(ERROR, (errcode(ERRCODE_INVALID_PARAMETER_VALUE),
+      errmsg("Cannot transform input to a temporal sequence")));
+  return tgeometry_seqset_seq_n(ts, 0);
 }
 
 /*****************************************************************************/

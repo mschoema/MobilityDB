@@ -45,7 +45,7 @@
  * General functions
  *****************************************************************************/
 
-extern Datum tgeometryseqset_geom(const TSequenceSet *ts);
+extern Datum tgeometry_seqset_geom(const TSequenceSet *ts);
 
 extern TSequenceSet *tgeometry_seqset_make(const Datum geom,
   const TSequence **sequences, int count, bool normalize);

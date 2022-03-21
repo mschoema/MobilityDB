@@ -109,4 +109,48 @@ CREATE FUNCTION period(tgeometry)
 -- Casting CANNOT be implicit to avoid ambiguity
 CREATE CAST (tgeometry AS period) WITH FUNCTION period(tgeometry);
 
+/******************************************************************************
+ * Transformations
+ ******************************************************************************/
+
+CREATE FUNCTION tgeometry_inst(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tinstant'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION tgeometry_instset(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tinstantset'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION tgeometry_seq(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tsequence'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION tgeometry_seqset(tgeometry)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'temporal_to_tsequenceset'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION tgeometry_instset(geometry, timestampset)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'tinstantset_from_base'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION tgeometry_seq(geometry, period, linear boolean DEFAULT true)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'tsequence_from_base'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+CREATE FUNCTION tgeometry_seqset(geometry, periodset, linear boolean DEFAULT true)
+  RETURNS tgeometry AS 'MODULE_PATHNAME', 'tsequenceset_from_base'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION appendInstant(tgeometry, tgeometry)
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'temporal_append_tinstant'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+-- Function is not strict
+CREATE FUNCTION merge(tgeometry, tgeometry)
+  RETURNS tgeometry
+  AS 'MODULE_PATHNAME', 'temporal_merge'
+  LANGUAGE C IMMUTABLE PARALLEL SAFE;
+
+CREATE FUNCTION merge(tgeometry[])
+  RETURNS tgeometry
+AS 'MODULE_PATHNAME', 'temporal_merge_array'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+
 /******************************************************************************/
