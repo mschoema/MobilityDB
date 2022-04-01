@@ -51,8 +51,14 @@ extern Datum tgeometryinst_geom(const TInstant *inst);
 extern size_t tgeometryinst_elem_varsize(const TInstant *inst);
 extern void tgeometryinst_set_elem(TInstant *inst);
 
+extern TInstant *tgeometryinst_make1(Datum geom, Datum value,
+  TimestampTz t, Oid basetypid);
 extern TInstant *tgeometryinst_make(Datum geom, Datum value,
   TimestampTz t, Oid basetypid);
+
+extern TInstant *tgeometry_instset_to_inst(const TInstantSet *ti);
+extern TInstant *tgeometry_seq_to_inst(const TSequence *seq);
+extern TInstant *tgeometry_seqset_to_inst(const TSequenceSet *ts);
 
 /*****************************************************************************/
 

@@ -46,6 +46,7 @@
  *****************************************************************************/
 
 extern Datum tgeometry_instset_geom(const TInstantSet *ti);
+extern TInstant *tgeometry_instset_inst_n(const TInstantSet *ti, int index);
 
 extern TInstantSet *tgeometry_instset_make1(const Datum geom,
   const TInstant **instants, int count);
@@ -53,6 +54,10 @@ extern TInstantSet *tgeometry_instset_make(const Datum geom,
   const TInstant **instants, int count, bool merge);
 extern TInstantSet *tgeometry_instset_make_free(const Datum geom,
   TInstant **instants, int count, bool merge);
+
+extern TInstantSet *tgeometry_inst_to_instset(const TInstant *inst);
+extern TInstantSet *tgeometry_seq_to_instset(const TSequence *seq);
+extern TInstantSet *tgeometry_seqset_to_instset(const TSequenceSet *ts);
 
 /*****************************************************************************/
 

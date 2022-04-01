@@ -136,21 +136,4 @@ CREATE FUNCTION tgeometry_seqset(geometry, periodset, linear boolean DEFAULT tru
   RETURNS tgeometry AS 'MODULE_PATHNAME', 'tsequenceset_from_base'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
-CREATE FUNCTION appendInstant(tgeometry, tgeometry)
-  RETURNS tgeometry
-  AS 'MODULE_PATHNAME', 'temporal_append_tinstant'
-  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
-
--- Function is not strict
-CREATE FUNCTION merge(tgeometry, tgeometry)
-  RETURNS tgeometry
-  AS 'MODULE_PATHNAME', 'temporal_merge'
-  LANGUAGE C IMMUTABLE PARALLEL SAFE;
-
-CREATE FUNCTION merge(tgeometry[])
-  RETURNS tgeometry
-AS 'MODULE_PATHNAME', 'temporal_merge_array'
-  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
-
-
 /******************************************************************************/

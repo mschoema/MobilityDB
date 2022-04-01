@@ -46,7 +46,7 @@
 
 #include "pose/pose.h"
 
-#include "geometry/tgeometry.h"
+#include "geometry/tgeometry_temporaltypes.h"
 
 /*****************************************************************************
  * General functions

@@ -743,7 +743,7 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
   fflush(stdout);*/
   /* TODO: Add check and code for stepwise seq */
   TSequence *result;
-  Datum ref_geom = tgeometryseq_geom(seq);
+  Datum ref_geom = tgeometry_seq_geom(seq);
   GSERIALIZED *ref_gs = (GSERIALIZED *) DatumGetPointer(ref_geom);
 
   /* TODO: check that polygon is convex */

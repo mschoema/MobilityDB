@@ -46,6 +46,7 @@
  *****************************************************************************/
 
 extern Datum tgeometry_seq_geom(const TSequence *seq);
+extern TInstant *tgeometry_seq_inst_n(const TSequence *seq, int index);
 
 extern size_t tgeometry_seq_elem_varsize(const TSequence *seq);
 extern void tgeometry_seq_set_elem(TSequence *seq);
@@ -56,6 +57,10 @@ extern TSequence *tgeometry_seq_make(const Datum geom, const TInstant **instants
   int count, bool lower_inc, bool upper_inc, bool linear, bool normalize);
 extern TSequence *tgeometry_seq_make_free(const Datum geom, TInstant **instants,
   int count, bool lower_inc, bool upper_inc, bool linear, bool normalize);
+
+extern TSequence *tgeometry_inst_to_seq(const TInstant *inst, bool linear);
+extern TSequence *tgeometry_instset_to_seq(const TInstantSet *ti, bool linear);
+extern TSequence *tgeometry_seqset_to_seq(const TSequenceSet *ts);
 
 /*****************************************************************************/
 

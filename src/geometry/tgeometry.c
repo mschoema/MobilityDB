@@ -61,7 +61,7 @@ tgeometry_geom(const Temporal *temp)
   Datum result;
   ensure_valid_tempsubtype(temp->subtype);
   if (temp->subtype == INSTANT)
-    result = tgeometry_inst_geom((const TInstant *) temp);
+    result = tgeometryinst_geom((const TInstant *) temp);
   else if (temp->subtype == INSTANTSET)
     result = tgeometry_instset_geom((const TInstantSet *) temp);
   else if (temp->subtype == SEQUENCE)
@@ -237,7 +237,7 @@ tgeometry_seqset_constructor(PG_FUNCTION_ARGS)
     }
   }
   Temporal *result = (Temporal *) tgeometry_seqset_make(
-    tgeometryseq_geom(sequences[0]), (const TSequence **) sequences,
+    tgeometry_seq_geom(sequences[0]), (const TSequence **) sequences,
     count, NORMALIZE);
   pfree(sequences);
   PG_FREE_IF_COPY(array, 0);
@@ -261,11 +261,11 @@ tgeometry_to_tinstant(PG_FUNCTION_ARGS)
   if (temp->subtype == INSTANT)
     result = temporal_copy(temp);
   else if (temp->subtype == INSTANTSET)
-    result = (Temporal *) tgeometry_tinstset_to_tinst((TInstantSet *) temp);
+    result = (Temporal *) tgeometry_instset_to_inst((TInstantSet *) temp);
   else if (temp->subtype == SEQUENCE)
-    result = (Temporal *) tgeometry_tseq_to_tinst((TSequence *) temp);
+    result = (Temporal *) tgeometry_seq_to_inst((TSequence *) temp);
   else /* temp->subtype == SEQUENCESET */
-    result = (Temporal *) tgeometry_tseqset_to_tinst((TSequenceSet *) temp);
+    result = (Temporal *) tgeometry_seqset_to_inst((TSequenceSet *) temp);
   PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_POINTER(result);
 }
@@ -281,13 +281,13 @@ tgeometry_to_tinstantset(PG_FUNCTION_ARGS)
   Temporal *result;
   ensure_valid_tempsubtype(temp->subtype);
   if (temp->subtype == INSTANT)
-    result = (Temporal *) tgeometry_tinst_to_tinstset((TInstant *) temp);
+    result = (Temporal *) tgeometry_inst_to_instset((TInstant *) temp);
   else if (temp->subtype == INSTANTSET)
     result = temporal_copy(temp);
   else if (temp->subtype == SEQUENCE)
-    result = (Temporal *) tgeometry_tseq_to_tinstset((TSequence *) temp);
+    result = (Temporal *) tgeometry_seq_to_instset((TSequence *) temp);
   else /* temp->subtype == SEQUENCESET */
-    result = (Temporal *) tgeometry_tseqset_to_tinstset((TSequenceSet *) temp);
+    result = (Temporal *) tgeometry_seqset_to_instset((TSequenceSet *) temp);
   PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_POINTER(result);
 }
@@ -303,15 +303,15 @@ tgeometry_to_tsequence(PG_FUNCTION_ARGS)
   Temporal *result;
   ensure_valid_tempsubtype(temp->subtype);
   if (temp->subtype == INSTANT)
-    result = (Temporal *) tgeometry_tinst_to_tseq((TInstant *) temp,
+    result = (Temporal *) tgeometry_inst_to_seq((TInstant *) temp,
       MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
   else if (temp->subtype == INSTANTSET)
-    result = (Temporal *) tgeometry_tinstset_to_tseq((TInstantSet *) temp,
+    result = (Temporal *) tgeometry_instset_to_seq((TInstantSet *) temp,
       MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
   else if (temp->subtype == SEQUENCE)
     result = temporal_copy(temp);
   else /* temp->subtype == SEQUENCESET */
-    result = (Temporal *) tgeometry_tseqset_to_tseq((TSequenceSet *) temp);
+    result = (Temporal *) tgeometry_seqset_to_seq((TSequenceSet *) temp);
   PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_POINTER(result);
 }
@@ -327,13 +327,13 @@ tgeometry_to_tsequenceset(PG_FUNCTION_ARGS)
   Temporal *result;
   ensure_valid_tempsubtype(temp->subtype);
   if (temp->subtype == INSTANT)
-    result = (Temporal *) tgeometry_tinst_to_tseqset((TInstant *) temp,
+    result = (Temporal *) tgeometry_inst_to_seqset((TInstant *) temp,
       MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
   else if (temp->subtype == INSTANTSET)
-    result = (Temporal *) tgeometry_tinstset_to_tseqset((TInstantSet *) temp,
+    result = (Temporal *) tgeometry_instset_to_seqset((TInstantSet *) temp,
       MOBDB_FLAGS_GET_CONTINUOUS(temp->flags));
   else if (temp->subtype == SEQUENCE)
-    result = (Temporal *) tgeometry_tseq_to_tseqset((TSequence *) temp);
+    result = (Temporal *) tgeometry_seq_to_seqset((TSequence *) temp);
   else /* temp->subtype == SEQUENCESET */
     result = temporal_copy(temp);
   PG_FREE_IF_COPY(temp, 0);

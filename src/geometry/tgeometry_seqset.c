@@ -77,7 +77,7 @@ tgeometry_seqset_seq_n(const TSequenceSet *ts, int index)
   for (int i = 0; i < seq->count; i++)
     instants[i] = tsequence_inst_n(seq, i);
   TSequence *result = tgeometry_seq_make1(tgeometry_seqset_geom(ts),
-    instants, count, seq->period.lower_inc, true,
+    instants, seq->count, seq->period.lower_inc, true,
     MOBDB_FLAGS_GET_LINEAR(seq->flags), NORMALIZE_NO);
   pfree(instants);
   return result;
@@ -228,7 +228,7 @@ tgeometry_seqset_make_free(const Datum geom, TSequence **sequences,
 TSequenceSet *
 tgeometry_inst_to_seqset(const TInstant *inst, bool linear)
 {
-  TSequence *seq = tgeometry_inst_to_seqset(inst, linear);
+  TSequence *seq = tgeometry_inst_to_seq(inst, linear);
   TSequenceSet *result = tgeometry_seq_to_seqset(seq);
   pfree(seq);
   return result;
@@ -258,7 +258,7 @@ tgeometry_instset_to_seqset(const TInstantSet *ti, bool linear)
 TSequenceSet *
 tgeometry_seq_to_seqset(const TSequence *seq)
 {
-  return tgeometry_seqset_make(&seq, 1, NORMALIZE_NO);
+  return tgeometry_seqset_make(tgeometry_seq_geom(seq), &seq, 1, NORMALIZE_NO);
 }
 
 /*****************************************************************************/
