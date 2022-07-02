@@ -3277,6 +3277,13 @@ tsegment_value_at_timestamp(const TInstant *inst1, const TInstant *inst2,
     npoint *result = npoint_make(np1->rid, pos);
     return PointerGetDatum(result);
   }
+  if (basetypid == type_oid(T_POSE))
+  {
+    pose *p1 = DatumGetPose(value1);
+    pose *p2 = DatumGetPose(value2);
+    pose *result = pose_interpolate(p1, p2, ratio);
+    return PointerGetDatum(result);
+  }
   elog(ERROR, "unknown interpolation function for continuous base type: %d", basetypid);
 }
 

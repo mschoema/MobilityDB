@@ -84,7 +84,7 @@ lwgeom_affine_transform(LWGEOM *geom,
   return;
 }
 
-static void
+void
 lwgeom_apply_pose(LWGEOM *geom, pose *p)
 {
   if (!MOBDB_FLAGS_GET_Z(p->flags))

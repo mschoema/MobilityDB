@@ -59,6 +59,16 @@ extern Datum tgeometry_out(PG_FUNCTION_ARGS);
 /* Constructor functions */
 
 extern Datum tgeometryinst_constructor(PG_FUNCTION_ARGS);
+extern Datum tgeometry_instset_constructor(PG_FUNCTION_ARGS);
+extern Datum tgeometry_seq_constructor(PG_FUNCTION_ARGS);
+extern Datum tgeometry_seqset_constructor(PG_FUNCTION_ARGS);
+
+extern Datum tgeometry_to_tinstant(PG_FUNCTION_ARGS);
+extern Datum tgeometry_to_tinstantset(PG_FUNCTION_ARGS);
+extern Datum tgeometry_to_tsequence(PG_FUNCTION_ARGS);
+extern Datum tgeometry_to_tsequenceset(PG_FUNCTION_ARGS);
+
+extern Datum tgeometry_value_at_timestamp(PG_FUNCTION_ARGS);
 
 /*****************************************************************************/
 

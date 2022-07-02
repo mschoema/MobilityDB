@@ -37,7 +37,7 @@
  * V-clip functions
  *****************************************************************************/
 
-CREATE FUNCTION v_clip_tpoly_point(geometry, geometry, pose)
+CREATE FUNCTION v_clip_tpoly_point(geometry, geometry, pose, integer)
   RETURNS integer
   AS 'MODULE_PATHNAME', 'v_clip_tpoly_point'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;

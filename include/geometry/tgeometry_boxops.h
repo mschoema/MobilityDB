@@ -43,7 +43,11 @@
 
 #include "point/stbox.h"
 
+#include "pose/pose.h"
+
 /*****************************************************************************/
+
+extern void lwgeom_apply_pose(LWGEOM *geom, pose *p);
 
 /* Functions computing the bounding box at the creation of the temporal point */
 

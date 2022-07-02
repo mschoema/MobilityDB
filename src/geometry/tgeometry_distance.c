@@ -242,14 +242,16 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
     double s_r_rnext = compute_s(p, r, r_next);
     /*printf("p = (%lf, %lf), q = (%lf, %lf), r = (%lf, %lf)\npose = (%lf, %lf, %lf)\n",
       p.x, p.y, r.x, r.y, r_next.x, r_next.y,
-      poly_pose->data[0], poly_pose->data[1], poly_pose->data[2]);
-    printf("r_next = %lf\n", s_r_rnext);
+      poly_pose->data[0], poly_pose->data[1], poly_pose->data[2]);*/
+    /*printf("r_next = %lf\n", s_r_rnext);
     fflush(stdout);*/
     if (cfp.cf_1 % 2 == 0)
     {
       getPoint4d_p(poly->rings[0], uint_mod_sub(v, 1, n), &r_prev);
       apply_pose_point4d(&r_prev, poly_pose);
       double s_rprev_r = compute_s(p, r_prev, r);
+      /*printf("r_prev = %lf\n", s_r_rnext);
+      fflush(stdout);*/
       if (s_rprev_r < 1)
         cfp.cf_1 = uint_mod_sub(cfp.cf_1, 1, 2 * n);
       else if (s_r_rnext > 0)
@@ -269,7 +271,11 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
         cfp.cf_1 = cfp.cf_1 - 1;
       else if (s_r_rnext >= 1)
         cfp.cf_1 = uint_mod_add(cfp.cf_1, 1, 2 * n);
-      /* TODO: handle both clockwise and anti-clockwise orientations */
+      /*
+       * TODO: handle both clockwise and anti-clockwise orientations
+       * ccw: <
+       * cw: >
+       */
       else if (compute_angle(p, r, r_next) > MOBDB_EPSILON)
       {
         /*printf("Local min, recomputing initial cf\n");
@@ -305,8 +311,8 @@ v_clip_tpoly_point_internal(cfp_elem prev_cfp)
 
     if (i > 100)
     {
-      /*printf("Max iterations reached #1\n");
-      fflush(stdout);*/
+      printf("Max iterations reached #1\n");
+      fflush(stdout);
       break;
     }
   }
@@ -326,14 +332,16 @@ v_clip_tpoly_point(PG_FUNCTION_ARGS)
   GSERIALIZED *gs_poly = PG_GETARG_GSERIALIZED_P(0);
   GSERIALIZED *gs_point = PG_GETARG_GSERIALIZED_P(1);
   pose *p = PG_GETARG_POSE(2);
+  int i = PG_GETARG_INT32(3);
   if (gserialized_is_empty(gs_poly) || gserialized_is_empty(gs_point))
     PG_RETURN_NULL();
   LWPOLY *poly = lwgeom_as_lwpoly(lwgeom_from_gserialized(gs_poly));
   LWPOINT *point = lwgeom_as_lwpoint(lwgeom_from_gserialized(gs_point));
   /* Store fcinfo into a global variable */
   store_fcinfo(fcinfo);
-  cfp_elem cfp = v_clip_tpoly_point_internal(
-    cfp_make_zero((LWGEOM *)poly, (LWGEOM *)point, p, NULL, 0, MOBDB_CFP_STORE_NO));
+  cfp_elem prev_cfp = cfp_make_zero((LWGEOM *)poly, (LWGEOM *)point, p, NULL, 0, MOBDB_CFP_STORE_NO);
+  prev_cfp.cf_1 = i;
+  cfp_elem cfp = v_clip_tpoly_point_internal(prev_cfp);
   lwpoly_free(poly);
   lwpoint_free(point);
   PG_FREE_IF_COPY(gs_poly, 0);
@@ -762,6 +770,7 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
     cfp_make_zero((LWGEOM *)poly, (LWGEOM *)point, p1, NULL, inst1->t, MOBDB_CFP_STORE));
   append_cfp_elem(&cfpa, cfp);
   uint32_t n = poly->rings[0]->npoints - 1;
+  uint32_t k = 0;
   for (int i = 0; i < seq->count - 1; ++i)
   {
     /*printf("-----------------\n");
@@ -773,6 +782,8 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
     inst2 = tsequence_inst_n(seq, i + 1);
     p1 = DatumGetPose(tinstant_value(inst1));
     p2 = DatumGetPose(tinstant_value(inst2));
+    if (fabs(p1->data[2] - p2->data[2]) < MOBDB_EPSILON)
+      k++;
     double r_prev = 0;
     uint32_t prev_cf = 2*n;
     double r_1, r_2, r_inter;
@@ -824,8 +835,8 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
       // Precision error, skip the edge and go straight to the next vertex
       else if (cfp.cf_1 % 2 == 1 && fabs(r_1 - r_2) < MOBDB_EPSILON)
       {
-        printf("Skipping edge\n");
-        fflush(stdout);
+        /*printf("Skipping edge\n");
+        fflush(stdout);*/
         if (cfpa.count < 2)
         {
           printf("Problem: %lf, %lf, %lf, %lf\n", r_inter, r_1, r_2, r_prev);
@@ -908,6 +919,9 @@ dist2d_tgeometryseq_point(const TSequence *seq, GSERIALIZED *gs)
     }
     cfp = next_cfp;
   }
+
+  printf("A,%d\nB,%d\n", seq->count - k, k);
+  fflush(stdout);
 /*
   for (uint32_t i = 0; i < cfpa.count; ++i)
     printf("Cfp %d: %d @ %s\n", i, cfpa.arr[i].cf_1, call_output(TIMESTAMPTZOID, TimestampTzGetDatum(cfpa.arr[i].t)));

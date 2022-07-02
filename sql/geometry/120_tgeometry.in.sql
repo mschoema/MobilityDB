@@ -137,3 +137,15 @@ CREATE FUNCTION tgeometry_seqset(geometry, periodset, linear boolean DEFAULT tru
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 /******************************************************************************/
+
+CREATE FUNCTION valueAtTimestamp(tgeometry, timestamptz)
+  RETURNS geometry(Polygon)
+  AS 'MODULE_PATHNAME', 'tgeometry_value_at_timestamp'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION poseAtTimestamp(tgeometry, timestamptz)
+  RETURNS pose
+  AS 'MODULE_PATHNAME', 'temporal_value_at_timestamp'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+/******************************************************************************/

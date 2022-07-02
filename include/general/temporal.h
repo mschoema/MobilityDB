@@ -651,6 +651,8 @@ extern Temporal *temporal_restrict_timestamp_internal(const Temporal *temp,
   TimestampTz t, bool atfunc);
 extern bool temporal_value_at_timestamp_inc(const Temporal *temp,
   TimestampTz t, Datum *value);
+extern bool temporal_value_at_timestamp_internal(const Temporal *temp,
+  TimestampTz t, Datum *value);
 extern Temporal *temporal_restrict_period_internal(const Temporal *temp,
   const Period *ps, bool atfunc);
 extern Temporal *temporal_restrict_periodset_internal(const Temporal *temp,

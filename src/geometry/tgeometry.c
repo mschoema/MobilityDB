@@ -49,6 +49,7 @@
 
 #include "geometry/tgeometry_temporaltypes.h"
 #include "geometry/tgeometry_parser.h"
+#include "geometry/tgeometry_boxops.h"
 
 /*****************************************************************************/
 
@@ -338,6 +339,41 @@ tgeometry_to_tsequenceset(PG_FUNCTION_ARGS)
     result = temporal_copy(temp);
   PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_POINTER(result);
+}
+
+/*****************************************************************************/
+
+PG_FUNCTION_INFO_V1(tgeometry_value_at_timestamp);
+/**
+ * Returns the geometry of the tgeometry value at the timestamp
+ */
+PGDLLEXPORT Datum
+tgeometry_value_at_timestamp(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  TimestampTz t = PG_GETARG_TIMESTAMPTZ(1);
+  Datum geom = tgeometry_geom(temp);
+  Datum pose_datum;
+  Datum result;
+  bool found = temporal_value_at_timestamp_internal(temp, t, &pose_datum);
+  if (found)
+  {
+    pose *p = DatumGetPose(pose_datum);
+    GSERIALIZED *gs = (GSERIALIZED *) DatumGetPointer(geom);
+    LWGEOM *lwgeom = lwgeom_from_gserialized(gs);
+    LWGEOM *lwgeom_copy = lwgeom_clone_deep(lwgeom);
+    lwgeom_apply_pose(lwgeom_copy, p);
+    if (lwgeom_copy->bbox)
+      lwgeom_refresh_bbox(lwgeom_copy);
+    lwgeom_free(lwgeom);
+    GSERIALIZED *result_gs = geo_serialize(lwgeom_copy);
+    lwgeom_free(lwgeom_copy);
+    result = PointerGetDatum(result_gs);
+  }
+  PG_FREE_IF_COPY(temp, 0);
+  if (!found)
+    PG_RETURN_NULL();
+  PG_RETURN_DATUM(result);
 }
 
 /*****************************************************************************/
