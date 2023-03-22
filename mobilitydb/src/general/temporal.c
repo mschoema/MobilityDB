@@ -730,6 +730,7 @@ Tsequenceset_constructor_gaps(PG_FUNCTION_ARGS)
   TInstant **instants = (TInstant **) temporalarr_extract(array, &count);
   TSequenceSet *result = tsequenceset_make_gaps((const TInstant **) instants,
     count, interp, maxt, maxdist);
+
   pfree(instants);
   PG_FREE_IF_COPY(array, 0);
   PG_RETURN_POINTER(result);

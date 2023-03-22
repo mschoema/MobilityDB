@@ -1,0 +1,124 @@
+SELECT pose 'Pose(1,1,0)';
+      pose      
+----------------
+ POSE (1, 1, 0)
+(1 row)
+
+SELECT pose 'Pose(1,1,1)';
+      pose      
+----------------
+ POSE (1, 1, 1)
+(1 row)
+
+SELECT pose 'Pose(1,1,-1)';
+      pose       
+-----------------
+ POSE (1, 1, -1)
+(1 row)
+
+SELECT pose ' Pose   (   1   ,  1   ,   0   )   ';
+      pose      
+----------------
+ POSE (1, 1, 0)
+(1 row)
+
+/* Errors */
+SELECT pose 'Point(1,1,0)';
+ERROR:  Could not parse pose value: Point(1,1,0)
+LINE 2: SELECT pose 'Point(1,1,0)';
+                    ^
+SELECT pose 'Pose 1,1,1)';
+ERROR:  Could not parse pose: Missing opening parenthesis
+LINE 1: SELECT pose 'Pose 1,1,1)';
+                    ^
+SELECT pose 'Pose(1,1,1';
+ERROR:  Could not parse pose: Missing closing parenthesis
+LINE 1: SELECT pose 'Pose(1,1,1';
+                    ^
+SELECT pose 'Pose(1 1 0)';
+ERROR:  invalid input syntax for type double precision: ""
+LINE 1: SELECT pose 'Pose(1 1 0)';
+                    ^
+SELECT pose 'Pose(1,1,)';
+ERROR:  invalid input syntax for type double precision: ""
+LINE 1: SELECT pose 'Pose(1,1,)';
+                    ^
+SELECT pose 'Pose(1,1,4)';
+ERROR:  Could not parse 2D pose: Rotation angle must be in ]-pi, pi]. Recieved: 4.000000
+LINE 1: SELECT pose 'Pose(1,1,4)';
+                    ^
+SELECT pose 'Pose(1,1,0)xxx';
+ERROR:  Could not parse pose value
+LINE 1: SELECT pose 'Pose(1,1,0)xxx';
+                    ^
+SELECT pose 'PoseZ(1,1,1,1,0,0,0)';
+             pose             
+------------------------------
+ POSE Z (1, 1, 1, 1, 0, 0, 0)
+(1 row)
+
+SELECT pose 'PoseZ(1,1,1,0,0,1,0)';
+             pose             
+------------------------------
+ POSE Z (1, 1, 1, 0, 0, 1, 0)
+(1 row)
+
+SELECT pose 'PoseZ(1,1,1,-1,0,0,0)';
+             pose             
+------------------------------
+ POSE Z (1, 1, 1, 1, 0, 0, 0)
+(1 row)
+
+SELECT pose ' PoseZ   (   1   ,  1   ,   1   ,   1   ,   0   ,   0   ,   0   )   ';
+             pose             
+------------------------------
+ POSE Z (1, 1, 1, 1, 0, 0, 0)
+(1 row)
+
+/* Errors */
+SELECT pose 'Point(1,1,1,1,0,0,0)';
+ERROR:  Could not parse pose value: Point(1,1,1,1,0,0,0)
+LINE 2: SELECT pose 'Point(1,1,1,1,0,0,0)';
+                    ^
+SELECT pose 'PoseZ 1,1,1,1,0,0,0)';
+ERROR:  Could not parse pose: Missing opening parenthesis
+LINE 1: SELECT pose 'PoseZ 1,1,1,1,0,0,0)';
+                    ^
+SELECT pose 'PoseZ(1,1,1,1,0,0,0';
+ERROR:  Could not parse pose: Missing closing parenthesis
+LINE 1: SELECT pose 'PoseZ(1,1,1,1,0,0,0';
+                    ^
+SELECT pose 'PoseZ(1 1 1 1 0 0 0)';
+ERROR:  invalid input syntax for type double precision: ""
+LINE 1: SELECT pose 'PoseZ(1 1 1 1 0 0 0)';
+                    ^
+SELECT pose 'PoseZ(1,1,1,1,0,0,)';
+ERROR:  invalid input syntax for type double precision: ""
+LINE 1: SELECT pose 'PoseZ(1,1,1,1,0,0,)';
+                    ^
+SELECT pose 'PoseZ(1,1,1,1,1,0,0)';
+ERROR:  Could not parse 3D pose: Rotation quaternion must be of unit norm. Recieved: 1.414214
+LINE 1: SELECT pose 'PoseZ(1,1,1,1,1,0,0)';
+                    ^
+SELECT pose 'PoseZ(1,1,1,1,0,0,0)xxx';
+ERROR:  Could not parse pose value
+LINE 1: SELECT pose 'PoseZ(1,1,1,1,0,0,0)xxx';
+                    ^
+SELECT pose(1, 1, 1);
+      pose      
+----------------
+ POSE (1, 1, 1)
+(1 row)
+
+/* Errors */
+SELECT pose(1, 1, 4);
+ERROR:  Rotation angle must be in ]-pi, pi]. Recieved: 4.000000
+SELECT pose(1, 1, 1, 1, 0, 0, 0);
+             pose             
+------------------------------
+ POSE Z (1, 1, 1, 1, 0, 0, 0)
+(1 row)
+
+/* Errors */
+SELECT pose(1, 1, 1, 1, 1, 1, 1);
+ERROR:  Rotation quaternion must be of unit norm. Recieved: 2.000000

@@ -109,6 +109,9 @@ const char *_meosType_names[] =
   [T_NPOINTSET] = "npointset",
   [T_NSEGMENT] = "nsegment",
   [T_TNPOINT] = "tnpoint",
+  [T_POSE] = "pose",
+  [T_TPOSE] = "tpose",
+  [T_TGEOMETRY] = "tgeometry",
 };
 
 /**
@@ -127,6 +130,8 @@ temptype_catalog_struct _temptype_catalog[] =
   {T_TGEOMPOINT, T_GEOMETRY},
   {T_TGEOGPOINT, T_GEOGRAPHY},
   {T_TNPOINT,    T_NPOINT},
+  {T_TPOSE,      T_POSE},
+  {T_TGEOMETRY,  T_POSE},
 };
 
 /**
@@ -337,8 +342,8 @@ meos_basetype(meosType type)
     type == T_INT8 || type == T_FLOAT8 || type == T_TIMESTAMPTZ ||
     /* The doubleX are internal types used for temporal aggregation */
     type == T_DOUBLE2 || type == T_DOUBLE3 || type == T_DOUBLE4 ||
-    type == T_GEOMETRY || type == T_GEOGRAPHY || type == T_NPOINT
-    )
+    type == T_GEOMETRY || type == T_GEOGRAPHY || type == T_NPOINT ||
+    type == T_POSE)
     return true;
   return false;
 }
@@ -364,7 +369,8 @@ bool
 basetype_varlength(meosType type)
 {
   assert(meos_basetype(type));
-  if (type == T_TEXT || type == T_GEOMETRY || type == T_GEOGRAPHY)
+  if (type == T_TEXT || type == T_GEOMETRY ||
+    type == T_GEOGRAPHY || type == T_POSE)
     return true;
   return false;
 }
@@ -393,6 +399,8 @@ basetype_length(meosType type)
   if (type == T_NPOINT)
     return sizeof(Npoint);
 #endif
+  if (type == T_POSE)
+    return -1;
   meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
     "unknown base type: %d", type);
   return SHRT_MAX;
@@ -768,11 +776,11 @@ temporal_type(meosType type)
   if (type == T_TBOOL || type == T_TINT || type == T_TFLOAT ||
       type == T_TTEXT || type == T_TGEOMPOINT || type == T_TGEOGPOINT ||
       /* The doubleX are internal types used for temporal aggregation */
-      type == T_TDOUBLE2 || type == T_TDOUBLE3 || type == T_TDOUBLE4
+      type == T_TDOUBLE2 || type == T_TDOUBLE3 || type == T_TDOUBLE4 ||
 #if NPOINT
-    || type == T_TNPOINT
+      type == T_TNPOINT ||
 #endif
-    )
+      type == T_TPOSE || type == T_TGEOMETRY)
     return true;
   return false;
 }
@@ -805,10 +813,11 @@ bool
 temptype_continuous(meosType type)
 {
   if (type == T_TFLOAT || type == T_TDOUBLE2 || type == T_TDOUBLE3 ||
-      type == T_TDOUBLE4 || type == T_TGEOMPOINT || type == T_TGEOGPOINT
+      type == T_TDOUBLE4 || type == T_TGEOMPOINT || type == T_TGEOGPOINT ||
 #if NPOINT
-    || type == T_TNPOINT
+      type == T_TNPOINT ||
 #endif
+      type == T_TPOSE || type == T_TGEOMETRY
     )
     return true;
   return false;
@@ -912,11 +921,11 @@ tnumber_spansettype(meosType type)
 bool
 tspatial_type(meosType type)
 {
-  if (type == T_TGEOMPOINT || type == T_TGEOGPOINT
+  if (type == T_TGEOMPOINT || type == T_TGEOGPOINT ||
 #if NPOINT
-      || type == T_TNPOINT
+    type == T_TNPOINT ||
 #endif
-      )
+    type == T_TPOSE || type == T_TGEOMETRY)
     return true;
   return false;
 }
@@ -945,11 +954,11 @@ ensure_tspatial_type(meosType type)
 bool
 tspatial_basetype(meosType type)
 {
-  if (type == T_GEOMETRY || type == T_GEOGRAPHY
+  if (type == T_GEOMETRY || type == T_GEOGRAPHY ||
 #if NPOINT
-    || type == T_NPOINT
+    type == T_NPOINT ||
 #endif
-    )
+    type == T_POSE)
     return true;
   return false;
 }

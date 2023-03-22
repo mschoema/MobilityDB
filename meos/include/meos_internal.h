@@ -102,6 +102,7 @@
 /*****************************************************************************
  * Macros for manipulating the 'flags' element where the less significant
  * bits are GTZXIICB, where
+ *   GEOM: the reference geometry is stored
  *   G: coordinates are geodetic
  *   T: has T coordinate,
  *   Z: has Z coordinate
@@ -130,6 +131,7 @@
 #define MEOS_FLAG_Z          0x0020  // 32
 #define MEOS_FLAG_T          0x0040  // 64
 #define MEOS_FLAG_GEODETIC   0x0080  // 128
+#define MEOS_FLAG_GEOM       0x0100  // 256
 
 #define MEOS_FLAGS_GET_BYVAL(flags)      ((bool) (((flags) & MEOS_FLAG_BYVAL)))
 #define MEOS_FLAGS_GET_ORDERED(flags)    ((bool) (((flags) & MEOS_FLAG_ORDERED)>>1))
@@ -138,6 +140,7 @@
 #define MEOS_FLAGS_GET_Z(flags)          ((bool) (((flags) & MEOS_FLAG_Z)>>5))
 #define MEOS_FLAGS_GET_T(flags)          ((bool) (((flags) & MEOS_FLAG_T)>>6))
 #define MEOS_FLAGS_GET_GEODETIC(flags)   ((bool) (((flags) & MEOS_FLAG_GEODETIC)>>7))
+#define MEOS_FLAGS_GET_GEOM(flags)       ((bool) (((flags) & MEOS_FLAG_GEOM)>>8))
 
 #define MEOS_FLAGS_SET_BYVAL(flags, value) \
   ((flags) = (value) ? ((flags) | MEOS_FLAG_BYVAL) : ((flags) & ~MEOS_FLAG_BYVAL))
@@ -153,6 +156,8 @@
   ((flags) = (value) ? ((flags) | MEOS_FLAG_T) : ((flags) & ~MEOS_FLAG_T))
 #define MEOS_FLAGS_SET_GEODETIC(flags, value) \
   ((flags) = (value) ? ((flags) | MEOS_FLAG_GEODETIC) : ((flags) & ~MEOS_FLAG_GEODETIC))
+#define MEOS_FLAGS_SET_GEOM(flags, value) \
+  ((flags) = (value) ? ((flags) | MEOS_FLAG_GEOM) : ((flags) & ~MEOS_FLAG_GEOM))
 
 #define MEOS_FLAGS_GET_INTERP(flags) (((flags) & MEOS_FLAGS_INTERP) >> 2)
 #define MEOS_FLAGS_SET_INTERP(flags, value) ((flags) = (((flags) & ~MEOS_FLAGS_INTERP) | ((value & 0x0003) << 2)))
@@ -432,7 +437,9 @@ extern bool inter_tbox_tbox(const TBox *box1, const TBox *box2, TBox *result);
 /* Macros for speeding up access to components of temporal sequences (sets)*/
 
 #ifdef DEBUG_BUILD
+extern size_t *TSEQUENCE_OFFSETS_PTR(const TSequence *seq);
 extern const TInstant *TSEQUENCE_INST_N(const TSequence *seq, int index);
+extern size_t *TSEQUENCESET_OFFSETS_PTR(const TSequenceSet *ss);
 extern const TSequence *TSEQUENCESET_SEQ_N(const TSequenceSet *ss, int index);
 #else
 /**
@@ -641,6 +648,7 @@ extern int tsequenceset_num_timestamps(const TSequenceSet *ss);
 extern TSequence **tsequenceset_segments(const TSequenceSet *ss, int *count);
 extern TSequence **tsequenceset_sequences(const TSequenceSet *ss);
 extern const TSequence **tsequenceset_sequences_p(const TSequenceSet *ss);
+extern bool ensure_valid_tseqarr(const TSequence **sequences, int count);
 extern void tsequenceset_set_bbox(const TSequenceSet *ss, void *box);
 extern TimestampTz tsequenceset_start_timestamp(const TSequenceSet *ss);
 extern SpanSet *tsequenceset_time(const TSequenceSet *ss);

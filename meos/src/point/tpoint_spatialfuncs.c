@@ -60,6 +60,7 @@
 #if NPOINT
   #include "npoint/tnpoint_spatialfuncs.h"
 #endif
+#include "pose/tpose.h"
 
 /*****************************************************************************
  * Utility functions
@@ -331,6 +332,10 @@ ensure_spatial_validity(const Temporal *temp1, const Temporal *temp2)
       (! ensure_same_srid(tpoint_srid(temp1), tpoint_srid(temp2)) ||
        ! ensure_same_dimensionality(temp1->flags, temp2->flags)))
     return false;
+  else if (temp1->temptype == T_TPOSE &&
+      (! ensure_same_srid(tpose_srid(temp1), tpose_srid(temp2)) ||
+       ! ensure_same_dimensionality(temp1->flags, temp2->flags)))
+    return false;
   return true;
 }
 
@@ -388,7 +393,7 @@ ensure_same_srid(int32_t srid1, int32_t srid2)
 bool
 ensure_same_srid_stbox(const STBox *box1, const STBox *box2)
 {
-  if (MEOS_FLAGS_GET_X(box1->flags) && MEOS_FLAGS_GET_X(box2->flags) && 
+  if (MEOS_FLAGS_GET_X(box1->flags) && MEOS_FLAGS_GET_X(box2->flags) &&
       box1->srid != box2->srid)
   {
     meos_error(ERROR, MEOS_ERR_INVALID_ARG_VALUE,
@@ -665,9 +670,9 @@ ensure_not_empty(const GSERIALIZED *gs)
 /*****************************************************************************/
 
 /**
- * @brief Ensure the validity of a spatiotemporal box and a geometry 
+ * @brief Ensure the validity of a spatiotemporal box and a geometry
  */
-bool 
+bool
 ensure_valid_stbox_geo(const STBox *box, const GSERIALIZED *gs)
 {
   if (! ensure_not_null((void *) box) || ! ensure_not_null((void *) gs) ||
@@ -676,13 +681,13 @@ ensure_valid_stbox_geo(const STBox *box, const GSERIALIZED *gs)
     return false;
   return true;
 }
- 
+
 /**
- * @brief Ensure the validity of a temporal point and a geometry 
+ * @brief Ensure the validity of a temporal point and a geometry
  * @note The geometry can be empty since some functions such atGeometry or
  * minusGeometry return different result on empty geometries.
  */
-bool 
+bool
 ensure_valid_tpoint_geo(const Temporal *temp, const GSERIALIZED *gs)
 {
   meosType geotype = FLAGS_GET_GEODETIC(gs->gflags) ? T_GEOGRAPHY : T_GEOMETRY;
@@ -697,7 +702,7 @@ ensure_valid_tpoint_geo(const Temporal *temp, const GSERIALIZED *gs)
 /**
  * @brief Ensure the validity of a spatiotemporal boxes
  */
-bool 
+bool
 ensure_valid_spatial_stbox_stbox(const STBox *box1, const STBox *box2)
 {
   if (! ensure_not_null((void *) box1) || ! ensure_not_null((void *) box2) ||
@@ -709,9 +714,9 @@ ensure_valid_spatial_stbox_stbox(const STBox *box1, const STBox *box2)
 }
 
 /**
- * @brief Ensure the validity of a temporal point and a spatial box 
+ * @brief Ensure the validity of a temporal point and a spatial box
  */
-bool 
+bool
 ensure_valid_tpoint_box(const Temporal *temp, const STBox *box)
 {
   if (! ensure_not_null((void *) temp) || ! ensure_not_null((void *) box) ||

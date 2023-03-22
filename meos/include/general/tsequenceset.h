@@ -46,6 +46,8 @@
 
 extern bool tsequenceset_find_timestamp(const TSequenceSet *ss, TimestampTz t,
   int *loc);
+extern int *ensure_valid_tinstarr_gaps(const TInstant **instants, int count,
+  bool merge, double maxdist, Interval *maxt, int *nsplits);
 
 /* Synchronize functions */
 

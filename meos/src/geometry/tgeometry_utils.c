@@ -1,0 +1,219 @@
+/*****************************************************************************
+ *
+ * This MobilityDB code is provided under The PostgreSQL License.
+ * Copyright (c) 2016-2023, Université libre de Bruxelles and MobilityDB
+ * contributors
+ *
+ * MobilityDB includes portions of PostGIS version 3 source code released
+ * under the GNU General Public License (GPLv2 or later).
+ * Copyright (c) 2001-2023, PostGIS contributors
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without a written
+ * agreement is hereby granted, provided that the above copyright notice and
+ * this paragraph and the following two paragraphs appear in all copies.
+ *
+ * IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+ * LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+ * EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+ * OF SUCH DAMAGE.
+ *
+ * UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+ * AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS. 
+ *
+ *****************************************************************************/
+
+/**
+ * @brief Bounding box operators for rigid temporal geometries.
+ */
+
+#include "geometry/tgeometry_boxops.h"
+
+/* C */
+#include <assert.h>
+#include <math.h>
+/* PostgreSQL */
+#include <utils/timestamp.h>
+/* PostGIS */
+#include <liblwgeom.h>
+/* MEOS */
+#include "meos_internal.h"
+#include "point/stbox.h"
+#include "pose/tpose_static.h"
+#include "geometry/tgeometry_inst.h"
+
+/*****************************************************************************/
+
+static void
+ensure_same_rings_lwpoly(const LWPOLY *poly1, const LWPOLY *poly2)
+{
+  if (poly1->nrings != poly2->nrings)
+    elog(ERROR, "Operation on different reference geometries");
+  for (int i = 0; i < (int) poly1->nrings; ++i)
+    if (poly1->rings[i]->npoints != poly2->rings[i]->npoints)
+      elog(ERROR, "Operation on different reference geometries");
+}
+
+static void
+ensure_same_geoms_lwpsurface(const LWPSURFACE *psurface1, const LWPSURFACE *psurface2)
+{
+  if (psurface1->ngeoms != psurface2->ngeoms)
+    elog(ERROR, "Operation on different reference geometries");
+  for (int i = 0; i < (int) psurface1->ngeoms; ++i)
+    ensure_same_rings_lwpoly(psurface1->geoms[i], psurface2->geoms[i]);
+}
+
+static bool
+same_lwgeom(const LWGEOM *geom1, const LWGEOM *geom2)
+{
+  LWPOINTITERATOR *it1 = lwpointiterator_create(geom1);
+  LWPOINTITERATOR *it2 = lwpointiterator_create(geom2);
+  POINT4D p1;
+  POINT4D p2;
+
+  bool result = true;
+  while (lwpointiterator_next(it1, &p1)
+    && lwpointiterator_next(it2, &p2)
+    && result)
+  {
+    if (FLAGS_GET_Z(geom1->flags))
+    {
+      result = fabs(p1.x - p2.x) < MEOS_EPSILON
+        && fabs(p1.y - p2.y) < MEOS_EPSILON
+        && fabs(p1.z - p2.z) < MEOS_EPSILON;
+    }
+    else
+    {
+      result = fabs(p1.x - p2.x) < MEOS_EPSILON
+        && fabs(p1.y - p2.y) < MEOS_EPSILON;
+    }
+  }
+  lwpointiterator_destroy(it1);
+  lwpointiterator_destroy(it2);
+  return result;
+}
+
+/**
+ * Ensure that the rigid temporal geometry instants have the same reference geometry
+ */
+void
+ensure_same_geom(Datum geom_datum1, Datum geom_datum2)
+{
+  if (geom_datum1 == geom_datum2)
+    return;
+
+  GSERIALIZED *gs1 = (GSERIALIZED *) DatumGetPointer(geom_datum1);
+  GSERIALIZED *gs2 = (GSERIALIZED *) DatumGetPointer(geom_datum2);
+
+  if (gserialized_get_type(gs1) != gserialized_get_type(gs2))
+    elog(ERROR, "Operation on different reference geometries");
+
+  LWGEOM *geom1 = lwgeom_from_gserialized(gs1);
+  LWGEOM *geom2 = lwgeom_from_gserialized(gs2);
+
+  if (gserialized_get_type(gs1) == POLYGONTYPE)
+    ensure_same_rings_lwpoly((LWPOLY *) geom1, (LWPOLY *) geom2);
+  else
+    ensure_same_geoms_lwpsurface((LWPSURFACE *) geom1, (LWPSURFACE *) geom2);
+
+  if (!same_lwgeom(geom1, geom2))
+    elog(ERROR, "Operation on different reference geometries");
+
+  lwgeom_free(geom1);
+  lwgeom_free(geom2);
+  return;
+}
+
+/*****************************************************************************/
+
+static void
+lwgeom_affine_transform(LWGEOM *geom,
+  double a, double b, double c,
+  double d, double e, double f,
+  double g, double h, double i,
+  double xoff, double yoff, double zoff)
+{
+  AFFINE affine;
+  affine.afac =  a;
+  affine.bfac =  b;
+  affine.cfac =  c;
+  affine.dfac =  d;
+  affine.efac =  e;
+  affine.ffac =  f;
+  affine.gfac =  g;
+  affine.hfac =  h;
+  affine.ifac =  i;
+  affine.xoff =  xoff;
+  affine.yoff =  yoff;
+  affine.zoff =  zoff;
+  lwgeom_affine(geom, &affine);
+  return;
+}
+
+void
+lwgeom_apply_pose(LWGEOM *geom, Pose *pose)
+{
+  if (!MEOS_FLAGS_GET_Z(pose->flags))
+  {
+    double a = cos(pose->data[2]);
+    double b = sin(pose->data[2]);
+
+    lwgeom_affine_transform(geom,
+      a, -b, 0,
+      b, a, 0,
+      0, 0, 1,
+      pose->data[0], pose->data[1], 0);
+  }
+  else
+  {
+    double W = pose->data[3];
+    double X = pose->data[4];
+    double Y = pose->data[5];
+    double Z = pose->data[6];
+
+    double a = W*W + X*X - Y*Y - Z*Z;
+    double b = 2*X*Y - 2*W*Z;
+    double c = 2*X*Z + 2*W*Y;
+    double d = 2*X*Y + 2*W*Z;
+    double e = W*W - X*X + Y*Y - Z*Z;
+    double f = 2*Y*Z - 2*W*X;
+    double g = 2*X*Z - 2*W*Y;
+    double h = 2*Y*Z + 2*W*X;
+    double i = W*W - X*X - Y*Y + Z*Z;
+
+    lwgeom_affine_transform(geom,
+      a, b, c,
+      d, e, f,
+      g, h, i,
+      pose->data[0], pose->data[1], pose->data[2]);
+  }
+  return;
+}
+
+/*****************************************************************************/
+
+double
+geom_radius(Datum geom_datum)
+{
+  GSERIALIZED *gs = DatumGetGserializedP(geom_datum);
+  LWGEOM *geom = lwgeom_from_gserialized(gs);
+  LWPOINTITERATOR *it = lwpointiterator_create(geom);
+  double r = 0;
+  POINT4D p;
+  while (lwpointiterator_next(it, &p))
+  {
+    if (FLAGS_GET_Z(geom->flags))
+      r = fmax(r, sqrt(pow(p.x, 2) + pow(p.y, 2) + pow(p.z, 2)));
+    else
+      r = fmax(r, sqrt(pow(p.x, 2) + pow(p.y, 2)));
+  }
+  lwpointiterator_destroy(it);
+  lwgeom_free(geom);
+  return r;
+}
+
+/*****************************************************************************/

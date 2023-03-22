@@ -47,6 +47,7 @@
 #include <meos_internal.h>
 #include "general/doxygen_libmeos.h"
 #include "general/lifting.h"
+#include "general/meos_catalog.h"
 #include "general/pg_types.h"
 #include "general/temporaltypes.h"
 #include "general/temporal_boxops.h"
@@ -59,6 +60,7 @@
 #if NPOINT
   #include "npoint/tnpoint_spatialfuncs.h"
 #endif
+#include "pose/tpose_static.h"
 
 /*****************************************************************************
  * Global variables

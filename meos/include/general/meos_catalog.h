@@ -97,9 +97,12 @@ typedef enum
   T_NPOINTSET      = 43,  /**< network point set type */
   T_NSEGMENT       = 44,  /**< network segment type */
   T_TNPOINT        = 45,  /**< temporal network point type */
+  T_POSE           = 46,  /**< pose type */
+  T_TPOSE          = 47,  /**< temporal pose type */
+  T_TGEOMETRY      = 48,  /**< temporal rigid geometry type */
 } meosType;
 
-#define NO_MEOS_TYPES 46
+#define NO_MEOS_TYPES 49
 
 /**
  * Enumeration that defines the classes of Boolean operators used in

@@ -4,5 +4,4 @@ add_subdirectory(point)
 if(NPOINT)
   add_subdirectory(npoint)
 endif()
-
-
+add_subdirectory(pose)

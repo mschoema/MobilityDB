@@ -148,7 +148,7 @@ tsequenceset_set_bbox(const TSequenceSet *ss, void *box)
  * timestamp, and if they are temporal points, have the same srid and the
  * same dimensionality
  */
-static bool
+bool
 ensure_valid_tseqarr(const TSequence **sequences, int count)
 {
   interpType interp = MEOS_FLAGS_GET_INTERP(sequences[0]->flags);
@@ -199,7 +199,7 @@ ensure_valid_tseqarr(const TSequence **sequences, int count)
  * @brief Function version of the the macro of the same name for
  * debugging purposes
  */
-static size_t *
+size_t *
 TSEQUENCESET_OFFSETS_PTR(const TSequenceSet *ss)
 {
   return (size_t *)( ((char *) &ss->period) + ss->bboxsize );
@@ -307,6 +307,8 @@ tsequenceset_make_exp(const TSequence **sequences, int count, int maxcount,
     MEOS_FLAGS_SET_GEODETIC(result->flags,
       MEOS_FLAGS_GET_GEODETIC(sequences[0]->flags));
   }
+  else if (sequences[0]->temptype == T_TPOSE)
+    MEOS_FLAGS_SET_Z(result->flags, MEOS_FLAGS_GET_Z(sequences[0]->flags));
   /* Initialization of the variable-length part */
   /* Compute the bounding box */
   tseqarr_compute_bbox((const TSequence **) normseqs, newcount,
@@ -388,7 +390,7 @@ tsequenceset_make_free(TSequence **sequences, int count, bool normalize)
  * @param[out] nsplits Number of splits
  * @result Array of indices at which the temporal sequence is split
  */
-static int *
+int *
 ensure_valid_tinstarr_gaps(const TInstant **instants, int count, bool merge,
   double maxdist, Interval *maxt, int *nsplits)
 {

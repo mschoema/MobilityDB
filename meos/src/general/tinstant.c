@@ -61,6 +61,7 @@
   #include "npoint/tnpoint.h"
   #include "npoint/tnpoint_static.h"
 #endif
+#include "pose/tpose.h"
 
 /*****************************************************************************
  * General functions
@@ -333,6 +334,12 @@ tinstant_make(Datum value, meosType temptype, TimestampTz t)
     MEOS_FLAGS_SET_Z(result->flags, FLAGS_GET_Z(gs->gflags));
     MEOS_FLAGS_SET_GEODETIC(result->flags, FLAGS_GET_GEODETIC(gs->gflags));
     PG_FREE_IF_COPY_P(gs, DatumGetPointer(value));
+  }
+  else if (temptype == T_TPOSE)
+  {
+    Pose *pose = DatumGetPose(value);
+    MEOS_FLAGS_SET_Z(result->flags, MEOS_FLAGS_GET_Z(pose->flags));
+    PG_FREE_IF_COPY_P(pose, DatumGetPointer(value));
   }
   return result;
 }

@@ -33,6 +33,7 @@
  */
 
 #include "general/tsequence.h"
+#include "general/meos_catalog.h"
 
 /* C */
 #include <assert.h>
@@ -69,6 +70,7 @@
   #include "npoint/tnpoint_spatialfuncs.h"
   #include "npoint/tnpoint_distance.h"
 #endif
+#include "pose/tpose_static.h"
 
 /*****************************************************************************
  * Collinear functions
@@ -168,6 +170,22 @@ npoint_collinear(Npoint *np1, Npoint *np2, Npoint *np3, double ratio)
 
 /**
  * @brief Return true if the three values are collinear
+ * @param[in] p1,p2,p3 Input values
+ * @param[in] ratio Value in [0,1] representing the duration of the
+ * timestamps associated to `p1` and `p2` divided by the duration
+ * of the timestamps associated to `p1` and `p3`
+ */
+static bool
+pose_collinear(Pose *p1, Pose *p2, Pose *p3, double ratio)
+{
+  Pose *p2_interpolated = pose_interpolate(p1, p3, ratio);
+  bool result = pose_eq(p2, p2_interpolated);
+  pfree(p2_interpolated);
+  return result;
+}
+
+/**
+ * @brief Return true if the three values are collinear
  * @param[in] value1,value2,value3 Input values
  * @param[in] basetype Base type
  * @param[in] t1,t2,t3 Input timestamps
@@ -203,6 +221,9 @@ datum_collinear(Datum value1, Datum value2, Datum value3, meosType basetype,
     return npoint_collinear(DatumGetNpointP(value1), DatumGetNpointP(value2),
       DatumGetNpointP(value3), ratio);
 #endif
+  if (basetype == T_POSE)
+    return pose_collinear(DatumGetPose(value1), DatumGetPose(value2),
+      DatumGetPose(value3), ratio);
   meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
     "unknown collinear operation for base type: %d", basetype);
   return false;
@@ -255,7 +276,7 @@ tsequence_norm_test(Datum value1, Datum value2, Datum value3, meosType basetype,
  * @note The function does not create new instants, it creates an array of
  * pointers to a subset of the input instants
  */
-static TInstant **
+TInstant **
 tinstarr_normalize(const TInstant **instants, interpType interp, int count,
   int *newcount)
 {
@@ -773,7 +794,7 @@ tsequence_out(const TSequence *seq, int maxdd)
  * @brief Function version of the the macro of the same name for
  * debugging purposes
  */
-static size_t *
+size_t *
 TSEQUENCE_OFFSETS_PTR(const TSequence *seq)
 {
   return (size_t *)( ((char *) &seq->period) + seq->bboxsize );
@@ -869,6 +890,8 @@ tsequence_make1_exp(const TInstant **instants, int count, int maxcount,
     MEOS_FLAGS_SET_GEODETIC(result->flags,
       MEOS_FLAGS_GET_GEODETIC(instants[0]->flags));
   }
+  else if (instants[0]->temptype == T_TPOSE)
+    MEOS_FLAGS_SET_Z(result->flags, MEOS_FLAGS_GET_Z(instants[0]->flags));
   /* Initialization of the variable-length part */
   /* Store the bounding box passed as parameter or compute it if not given */
   if (bbox)
@@ -2663,6 +2686,13 @@ tsegment_value_at_timestamp(const TInstant *inst1, const TInstant *inst2,
     return PointerGetDatum(result);
   }
 #endif
+  if (inst1->temptype == T_TGEOMETRY)
+  {
+    Pose *p1 = DatumGetPose(value1);
+    Pose *p2 = DatumGetPose(value2);
+    Pose *result = pose_interpolate(p1, p2, ratio);
+    return PointerGetDatum(result);
+  }
   meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
     "unknown interpolation function for continuous temporal type: %d",
     inst1->temptype);

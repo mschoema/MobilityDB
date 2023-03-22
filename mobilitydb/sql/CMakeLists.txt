@@ -42,6 +42,8 @@ add_subdirectory(point)
 if(NPOINT)
   add_subdirectory(npoint)
 endif()
+add_subdirectory(pose)
+add_subdirectory(geometry)
 
 list(SORT PROJECT_SQL_FILES)
 

@@ -198,6 +198,7 @@ extern void store_fcinfo(FunctionCallInfo fcinfo);
 /* Typmod functions */
 
 extern bool tempsubtype_from_string(const char *str, int16 *subtype);
+extern interpType interp_from_string(const char *interp_str);
 
 /* Send/receive functions */
 

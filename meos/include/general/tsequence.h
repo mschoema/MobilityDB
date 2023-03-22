@@ -62,6 +62,8 @@ extern bool tsequence_join_test(const TSequence *seq1, const TSequence *seq2,
   bool *removelast, bool *removefirst);
 extern TSequence *tsequence_join(const TSequence *seq1, const TSequence *seq2,
   bool removelast, bool removefirst);
+extern TInstant **tinstarr_normalize(const TInstant **instants,
+  interpType interp, int count, int *newcount);
 extern TSequence **tseqarr_normalize(const TSequence **sequences, int count,
   int *newcount);
 extern TSequence **tsequence_merge_array1(const TSequence **sequences,

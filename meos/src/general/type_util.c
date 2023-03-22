@@ -57,6 +57,7 @@
   #include "npoint/tnpoint_static.h"
   #include "npoint/tnpoint_parser.h"
 #endif
+#include "pose/tpose_parser.h"
 
 /* To avoid including varlena.h */
 extern int varstr_cmp(const char *arg1, int len1, const char *arg2, int len2, Oid collid);
@@ -143,6 +144,8 @@ datum_eq(Datum l, Datum r, meosType type)
   if (type == T_NPOINT)
     return npoint_eq(DatumGetNpointP(l), DatumGetNpointP(r));
 #endif
+  if (type == T_POSE)
+    return pose_eq(DatumGetPose(l), DatumGetPose(r));
   meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
     "unknown datum_eq2 function for base type: %d", type);
   return false;
@@ -924,6 +927,8 @@ basetype_in(const char *str, meosType basetype, bool end __attribute__((unused))
     case T_NPOINT:
       return PointerGetDatum(npoint_parse(&str, end));
 #endif
+    case T_POSE:
+      return PointerGetDatum(pose_parse(&str, end));
     default: /* Error! */
       meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
         "Unknown base type: %d", basetype);
@@ -976,6 +981,8 @@ basetype_out(Datum value, meosType basetype, int maxdd)
     case T_NPOINT:
       return npoint_out(DatumGetNpointP(value), maxdd);
 #endif
+    case T_POSE:
+      return pose_out(DatumGetPose(value), maxdd);
     default: /* Error! */
       meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
         "Unknown base type: %d", basetype);

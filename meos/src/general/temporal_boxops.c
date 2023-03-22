@@ -53,11 +53,15 @@
 /* MEOS */
 #include <meos.h>
 #include <meos_internal.h>
+#include "general/meos_catalog.h"
 #include "general/temporaltypes.h"
 #include "point/tpoint_boxops.h"
 #if NPOINT
   #include "npoint/tnpoint_boxops.h"
 #endif
+#include "pose/tpose.h"
+#include "geometry/tgeometry_inst.h"
+#include "geometry/tgeometry_boxops.h"
 
 /*****************************************************************************
  * Functions on generic bounding boxes of temporal types
@@ -207,6 +211,10 @@ tinstant_set_bbox(const TInstant *inst, void *box)
   else if (inst->temptype == T_TNPOINT)
     tnpointinst_set_stbox(inst, (STBox *) box);
 #endif
+  else if (inst->temptype == T_TPOSE)
+    tposeinst_set_stbox(inst, (STBox *) box);
+  else if (inst->temptype == T_TGEOMETRY)
+    tgeometryinst_make_stbox(tgeometryinst_geom(inst), inst, (STBox *) box);
   else
     meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
       "unknown temporal type for bounding box function: %d", inst->temptype);
@@ -303,6 +311,8 @@ tinstarr_compute_bbox(const TInstant **instants, int count, bool lower_inc,
   else if (temptype == T_TNPOINT)
     tnpointinstarr_set_stbox(instants, count, interp, (STBox *) box);
 #endif
+  else if (temptype == T_TPOSE)
+    tposeinstarr_set_stbox(instants, count, (STBox *) box);
   else
   {
     meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
