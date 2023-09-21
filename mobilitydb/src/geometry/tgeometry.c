@@ -57,6 +57,7 @@
  * Input/output functions
  *****************************************************************************/
 
+PGDLLEXPORT Datum Tgeometry_in(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_in);
 /**
  * Generic input function for rigid temporal geometries
@@ -83,7 +84,7 @@ PG_FUNCTION_INFO_V1(Tgeometry_in);
  * Pose(0, 0, 0) @ 2012-01-01 08:30:00 ] }
  * @endcode
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_in(PG_FUNCTION_ARGS)
 {
   const char *input = PG_GETARG_CSTRING(0);
@@ -92,11 +93,12 @@ Tgeometry_in(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_out(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_out);
 /**
  * Generic output function for rigid temporal geometries
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_out(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -109,15 +111,16 @@ Tgeometry_out(PG_FUNCTION_ARGS)
  * Constructor functions
  *****************************************************************************/
 
+PGDLLEXPORT Datum Tgeometryinst_constructor(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometryinst_constructor);
 /**
  * Construct a temporal instant value from the arguments
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometryinst_constructor(PG_FUNCTION_ARGS)
 {
   GSERIALIZED *gs = PG_GETARG_GSERIALIZED_P(0);
-  Pose *pose = PG_GETARG_POSE(1);
+  Pose *pose = PG_GETARG_POSE_P(1);
   ensure_not_empty(gs);
   ensure_has_not_M_gs(gs);
   TimestampTz t = PG_GETARG_TIMESTAMPTZ(2);
@@ -128,13 +131,14 @@ Tgeometryinst_constructor(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_seq_constructor(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_seq_constructor);
 /**
  * @ingroup mobilitydb_temporal_constructor
  * @brief Construct a temporal sequence from an array of temporal instants
  * @sqlfunc tbool_seq(), tint_seq(), tfloat_seq(), ttext_seq(), ...
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_seq_constructor(PG_FUNCTION_ARGS)
 {
   ArrayType *array = PG_GETARG_ARRAYTYPE_P(0);
@@ -163,12 +167,13 @@ Tgeometry_seq_constructor(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_seqset_constructor(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_seqset_constructor);
 /**
  * Construct a temporal sequence set value from the array of temporal
  * sequence values
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_seqset_constructor(PG_FUNCTION_ARGS)
 {
   ArrayType *array = PG_GETARG_ARRAYTYPE_P(0);
@@ -183,6 +188,7 @@ Tgeometry_seqset_constructor(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_seqset_constructor_gaps(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_seqset_constructor_gaps);
 /**
  * @ingroup mobilitydb_temporal_constructor
@@ -191,7 +197,7 @@ PG_FUNCTION_INFO_V1(Tgeometry_seqset_constructor_gaps);
  * @note The SQL function is not strict
  * @sqlfunc tint_seqset_gaps(), tfloat_seqset_gaps(), tgeompoint_seqset_gaps()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_seqset_constructor_gaps(PG_FUNCTION_ARGS)
 {
   if (PG_ARGISNULL(0))
@@ -232,13 +238,14 @@ Tgeometry_seqset_constructor_gaps(PG_FUNCTION_ARGS)
  * Casting functions
  *****************************************************************************/
 
+PGDLLEXPORT Datum Tgeometry_to_tgeompoint(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_to_tgeompoint);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the end instant of a temporal value
  * @sqlfunc endInstant()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_to_tgeompoint(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -251,13 +258,14 @@ Tgeometry_to_tgeompoint(PG_FUNCTION_ARGS)
  * Accessor functions
  *****************************************************************************/
 
+PGDLLEXPORT Datum Tgeometry_start_instant(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_start_instant);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the start instant of a temporal value
  * @sqlfunc startInstant()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_start_instant(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -266,13 +274,14 @@ Tgeometry_start_instant(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_end_instant(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_end_instant);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the end instant of a temporal value
  * @sqlfunc endInstant()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_end_instant(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -281,13 +290,14 @@ Tgeometry_end_instant(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_instant_n(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_instant_n);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the n-th instant of a temporal value
  * @sqlfunc instantN()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_instant_n(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -299,13 +309,14 @@ Tgeometry_instant_n(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_instants(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_instants);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the distinct instants of a temporal value as an array
  * @sqlfunc instants()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_instants(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -318,13 +329,14 @@ Tgeometry_instants(PG_FUNCTION_ARGS)
   PG_RETURN_ARRAYTYPE_P(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_start_sequence(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_start_sequence);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the start sequence of a temporal sequence (set)
  * @sqlfunc startSequence()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_start_sequence(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -333,13 +345,14 @@ Tgeometry_start_sequence(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_end_sequence(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_end_sequence);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the end sequence of a temporal sequence (set)
  * @sqlfunc endSequence()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_end_sequence(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -348,13 +361,14 @@ Tgeometry_end_sequence(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_sequence_n(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_sequence_n);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the n-th sequence of a temporal sequence (set)
  * @sqlfunc sequenceN()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_sequence_n(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -366,13 +380,14 @@ Tgeometry_sequence_n(PG_FUNCTION_ARGS)
   PG_RETURN_POINTER(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_sequences(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_sequences);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the sequences of a temporal sequence (set) as an array
  * @sqlfunc sequences()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_sequences(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -385,13 +400,14 @@ Tgeometry_sequences(PG_FUNCTION_ARGS)
   PG_RETURN_ARRAYTYPE_P(result);
 }
 
+PGDLLEXPORT Datum Tgeometry_segments(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_segments);
 /**
  * @ingroup mobilitydb_tgeometry_accessor
  * @brief Return the segments of a temporal sequence (set) as an array
  * @sqlfunc segments()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_segments(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);
@@ -408,13 +424,14 @@ Tgeometry_segments(PG_FUNCTION_ARGS)
  * Restriction Functions
  *****************************************************************************/
 
+PGDLLEXPORT Datum Tgeometry_value_at_timestamp(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tgeometry_value_at_timestamp);
 /**
  * @ingroup mobilitydb_temporal_accessor
  * @brief Return the base value of a temporal value at the timestamp
  * @sqlfunc valueAtTimestamp()
  */
-PGDLLEXPORT Datum
+Datum
 Tgeometry_value_at_timestamp(PG_FUNCTION_ARGS)
 {
   Temporal *temp = PG_GETARG_TEMPORAL_P(0);

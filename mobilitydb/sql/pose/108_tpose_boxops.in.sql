@@ -23,30 +23,47 @@
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
  * AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
  * AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
- * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS. 
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  *****************************************************************************/
 
 /**
- * @brief Functions for parsing temporal pose objects.
+ * tpose_boxops.sql
+ * Bounding box operators for temporal poses.
  */
 
-#ifndef __TPOSE_PARSER_H__
-#define __TPOSE_PARSER_H__
+/*****************************************************************************
+ * Temporal pose to stbox
+ *****************************************************************************/
 
-/* Postgres */
-#include <postgres.h>
-/* MEOS */
-#include <meos.h>
-#include "general/temporal.h"
-#include "pose/tpose.h"
-#include "pose/tpose_static.h"
+CREATE FUNCTION stbox(pose)
+  RETURNS stbox
+  AS 'MODULE_PATHNAME', 'Pose_to_stbox'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION stbox(pose, timestamptz)
+  RETURNS stbox
+  AS 'MODULE_PATHNAME', 'Pose_timestamp_to_stbox'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION stbox(pose, tstzspan)
+  RETURNS stbox
+  AS 'MODULE_PATHNAME', 'Pose_period_to_stbox'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION stbox(tpose)
+  RETURNS stbox
+  AS 'MODULE_PATHNAME', 'Tpoint_to_stbox'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE CAST (pose AS stbox) WITH FUNCTION stbox(pose);
+CREATE CAST (tpose AS stbox) WITH FUNCTION stbox(tpose);
 
 /*****************************************************************************/
 
-extern Pose *pose_parse(const char **str, bool end);
-extern Temporal *tpose_parse(const char **str, meosType temptype);
+CREATE FUNCTION expandSpace(tpose, float)
+  RETURNS stbox
+  AS 'MODULE_PATHNAME', 'Tpoint_expand_space'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 /*****************************************************************************/
-
-#endif /* __TPOSE_PARSER_H__ */

@@ -28,25 +28,26 @@
  *****************************************************************************/
 
 /**
- * @brief Functions for parsing temporal pose objects.
+ * @brief Bounding box operators for temporal pose objects.
  */
 
-#ifndef __TPOSE_PARSER_H__
-#define __TPOSE_PARSER_H__
+#ifndef __TPOSE_BOXOPS_H__
+#define __TPOSE_BOXOPS_H__
 
-/* Postgres */
-#include <postgres.h>
-/* MEOS */
-#include <meos.h>
 #include "general/temporal.h"
-#include "pose/tpose.h"
 #include "pose/tpose_static.h"
 
 /*****************************************************************************/
 
-extern Pose *pose_parse(const char **str, bool end);
-extern Temporal *tpose_parse(const char **str, meosType temptype);
+extern bool pose_set_stbox(const Pose *pose, STBox *box);
+extern bool pose_timestamp_set_stbox(const Pose *pose, TimestampTz t,
+  STBox *box);
+extern bool pose_period_set_stbox(const Pose *pose, const Span *p,
+  STBox *box);
+
+extern void tposeinst_set_stbox(const TInstant *inst, STBox *box);
+extern void tposeinstarr_set_stbox(const TInstant **instants, int count, STBox *box);
 
 /*****************************************************************************/
 
-#endif /* __TPOSE_PARSER_H__ */
+#endif /* __TPOSE_BOXOPS_H__ */

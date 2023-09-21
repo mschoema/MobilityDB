@@ -47,6 +47,7 @@
  * Input/output functions
  *****************************************************************************/
 
+PGDLLEXPORT Datum Tpose_in(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Tpose_in);
 /**
  * Generic input function for temporal pose objects
@@ -70,12 +71,32 @@ PG_FUNCTION_INFO_V1(Tpose_in);
  *   [ Pose(1, 1, 0) @ 2012-01-01 08:20:00 , Pose(0, 0, 0) @ 2012-01-01 08:30:00 ] }
  * @endcode
  */
-PGDLLEXPORT Datum
+Datum
 Tpose_in(PG_FUNCTION_ARGS)
 {
   const char *input = PG_GETARG_CSTRING(0);
   Oid temptypid = PG_GETARG_OID(1);
   Temporal *result = tpose_parse(&input, oid_type(temptypid));
+  PG_RETURN_POINTER(result);
+}
+
+/*****************************************************************************
+ * Casting functions
+ *****************************************************************************/
+
+PGDLLEXPORT Datum Tpose_to_tgeompoint(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Tpose_to_tgeompoint);
+/**
+ * @ingroup mobilitydb_tgeometry_accessor
+ * @brief Return the end instant of a temporal value
+ * @sqlfunc endInstant()
+ */
+Datum
+Tpose_to_tgeompoint(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  Temporal *result = tpose_to_tgeompoint(temp);
+  PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_POINTER(result);
 }
 

@@ -750,7 +750,7 @@ dist2d_tgeometryseq_point(const TSequence *seq, const GSERIALIZED *gs)
   Pose *pose1, *pose2;
 
   inst1 = TSEQUENCE_INST_N(seq, 0);
-  pose1 = DatumGetPose(tinstant_value(inst1));
+  pose1 = DatumGetPoseP(tinstant_value(inst1));
 
   /* Compute the initial closest features */
   cfp_array cfpa;
@@ -766,8 +766,8 @@ dist2d_tgeometryseq_point(const TSequence *seq, const GSERIALIZED *gs)
      */
     inst1 = TSEQUENCE_INST_N(seq, i);
     inst2 = TSEQUENCE_INST_N(seq, i + 1);
-    pose1 = DatumGetPose(tinstant_value(inst1));
-    pose2 = DatumGetPose(tinstant_value(inst2));
+    pose1 = DatumGetPoseP(tinstant_value(inst1));
+    pose2 = DatumGetPoseP(tinstant_value(inst2));
     double ratio = 0.0;
     int loop = 0, state, direction = MEOS_ANY;
     /* Compute the evolution of closest features for this segment */
@@ -1563,7 +1563,7 @@ dist2d_tgeometryseq_poly(const TSequence *seq, const GSERIALIZED *gs)
   Pose *pose1, *pose2;
 
   inst1 = TSEQUENCE_INST_N(seq, 0);
-  pose1 = DatumGetPose(tinstant_value(inst1));
+  pose1 = DatumGetPoseP(tinstant_value(inst1));
 
   /* Compute the initial closest features */
   cfp_array cfpa;
@@ -1581,8 +1581,8 @@ dist2d_tgeometryseq_poly(const TSequence *seq, const GSERIALIZED *gs)
      */
     inst1 = TSEQUENCE_INST_N(seq, i);
     inst2 = TSEQUENCE_INST_N(seq, i + 1);
-    pose1 = DatumGetPose(tinstant_value(inst1));
-    pose2 = DatumGetPose(tinstant_value(inst2));
+    pose1 = DatumGetPoseP(tinstant_value(inst1));
+    pose2 = DatumGetPoseP(tinstant_value(inst2));
     double ratio = 0.0;
     int loop = 0, state, dir1 = MEOS_ANY, dir2 = MEOS_ANY;
     /* Compute the evolution of closest features for this segment */

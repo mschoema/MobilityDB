@@ -95,7 +95,7 @@ static void
 tgeometryinst_make_valid(Datum geom, Datum value)
 {
   const GSERIALIZED *gs = DatumGetGserializedP(geom);
-  const Pose *pose = DatumGetPose(value);
+  const Pose *pose = DatumGetPoseP(value);
   ensure_not_empty(gs);
   ensure_has_not_M_gs(gs);
   int geomtype = gserialized_get_type(gs);
@@ -139,7 +139,7 @@ tgeometryinst_make1(Datum geom, Datum value, meosType temptype, TimestampTz t)
   // MEOS_FLAGS_SET_INTERP(result->flags, DISCRETE);
   MEOS_FLAGS_SET_X(result->flags, true);
   MEOS_FLAGS_SET_T(result->flags, true);
-  const Pose *pose = DatumGetPose(value);
+  const Pose *pose = DatumGetPoseP(value);
   MEOS_FLAGS_SET_Z(result->flags, MEOS_FLAGS_GET_Z(pose->flags));
   MEOS_FLAGS_SET_GEODETIC(result->flags, false);
   MEOS_FLAGS_SET_GEOM(result->flags, WITH_GEOM);

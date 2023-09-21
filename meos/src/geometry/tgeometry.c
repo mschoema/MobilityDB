@@ -91,8 +91,7 @@ tgeometry_to_tgeompoint(const Temporal *temp)
   LiftedFunctionInfo lfinfo;
   memset(&lfinfo, 0, sizeof(LiftedFunctionInfo));
   lfinfo.func = (varfunc) &datum_pose_geom;
-  lfinfo.numparam = 1;
-  lfinfo.param[0] = Int32GetDatum(tgeometry_srid(temp));
+  lfinfo.numparam = 0;
   lfinfo.args = true;
   lfinfo.argtype[0] = temptype_basetype(temp->temptype);
   lfinfo.restype = T_TGEOMPOINT;
@@ -295,7 +294,7 @@ tgeometry_value_at_timestamp(const Temporal *temp, TimestampTz t, bool strict,
     /* Apply pose to reference geometry */
     GSERIALIZED *gs = DatumGetGserializedP(tgeometry_geom(temp));
     GSERIALIZED *result_gs;
-    Pose *pose = DatumGetPose(pose_datum);
+    Pose *pose = DatumGetPoseP(pose_datum);
     LWGEOM *geom = lwgeom_from_gserialized(gs);
     LWGEOM *result_geom = lwgeom_clone_deep(geom);
     lwgeom_apply_pose(result_geom, pose);

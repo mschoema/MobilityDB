@@ -41,7 +41,29 @@
 /* MEOS */
 #include <meos.h>
 #include <meos_internal.h>
+#include "general/lifting.h"
 #include "pose/tpose_static.h"
+
+/*****************************************************************************
+ * Cast functions
+ *****************************************************************************/
+
+Temporal *
+tpose_to_tgeompoint(const Temporal *temp)
+{
+  /* We only need to fill these parameters for tfunc_temporal */
+  LiftedFunctionInfo lfinfo;
+  memset(&lfinfo, 0, sizeof(LiftedFunctionInfo));
+  lfinfo.func = (varfunc) &datum_pose_geom;
+  lfinfo.numparam = 0;
+  lfinfo.args = true;
+  lfinfo.argtype[0] = temptype_basetype(temp->temptype);
+  lfinfo.restype = T_TGEOMPOINT;
+  lfinfo.tpfunc_base = NULL;
+  lfinfo.tpfunc = NULL;
+  Temporal *result = tfunc_temporal(temp, &lfinfo);
+  return result;
+}
 
 /*****************************************************************************
  * Functions for spatial reference systems
@@ -55,7 +77,7 @@
 int
 tposeinst_srid(const TInstant *inst)
 {
-  Pose *gs = DatumGetPose(tinstant_value(inst));
+  Pose *gs = DatumGetPoseP(tinstant_value(inst));
   return pose_get_srid(gs);
 }
 
@@ -113,7 +135,7 @@ TInstant *
 tposeinst_set_srid(const TInstant *inst, int32 srid)
 {
   TInstant *result = tinstant_copy(inst);
-  Pose *pose = DatumGetPose(tinstant_value(result));
+  Pose *pose = DatumGetPoseP(tinstant_value(result));
   pose_set_srid(pose, srid);
   return result;
 }
@@ -131,7 +153,7 @@ tposeseq_set_srid(const TSequence *seq, int32 srid)
   for (int i = 0; i < seq->count; i++)
   {
     const TInstant *inst = TSEQUENCE_INST_N(result, i);
-    Pose *pose = DatumGetPose(tinstant_value(inst));
+    Pose *pose = DatumGetPoseP(tinstant_value(inst));
     pose_set_srid(pose, srid);
   }
   /* Set the SRID of the bounding box */
@@ -158,7 +180,7 @@ tposeseqset_set_srid(const TSequenceSet *ss, int32 srid)
     {
       /* Set the SRID of the composing points */
       const TInstant *inst = TSEQUENCE_INST_N(seq, j);
-      Pose *pose = DatumGetPose(tinstant_value(inst));
+      Pose *pose = DatumGetPoseP(tinstant_value(inst));
       pose_set_srid(pose, srid);
     }
     /* Set the SRID of the bounding box */
@@ -192,48 +214,6 @@ tpose_set_srid(const Temporal *temp, int32 srid)
 
   assert(result != NULL);
   return result;
-}
-
-/*****************************************************************************/
-
-void
-tposeinst_set_stbox(const TInstant *inst, STBox *box)
-{
-  Pose *pose = DatumGetPose(tinstant_value(inst));
-  pose_set_stbox(pose, box);
-  span_set(TimestampTzGetDatum(inst->t), TimestampTzGetDatum(inst->t),
-    true, true, T_TIMESTAMPTZ, &box->period);
-  MEOS_FLAGS_SET_T(box->flags, true);
-}
-
-void
-tposeinstarr_set_stbox(const TInstant **instants, int count, STBox *box)
-{
-  /* Initialize the bounding box with the first instant */
-  tposeinst_set_stbox(instants[0], box);
-  /* Prepare for the iteration */
-  bool hasz = MEOS_FLAGS_GET_Z(instants[0]->flags);
-  bool geodetic = MEOS_FLAGS_GET_GEODETIC(instants[0]->flags);
-  for (int i = 1; i < count; i++)
-  {
-    Pose *pose = DatumGetPose(tinstant_value(instants[i]));
-    box->xmin = Min(box->xmin, pose->data[0]);
-    box->xmax = Max(box->xmax, pose->data[0]);
-    box->ymin = Min(box->ymin, pose->data[1]);
-    box->ymax = Max(box->ymax, pose->data[1]);
-    if (hasz)
-    {
-      box->zmin = Min(box->zmin, pose->data[2]);
-      box->zmax = Max(box->zmax, pose->data[2]);
-    }
-    box->period.lower = TimestampTzGetDatum(
-      Min(DatumGetTimestampTz(box->period.lower), instants[i]->t));
-    box->period.upper = TimestampTzGetDatum(
-      Max(DatumGetTimestampTz(box->period.upper), instants[i]->t));
-  }
-  MEOS_FLAGS_SET_Z(box->flags, hasz);
-  MEOS_FLAGS_SET_GEODETIC(box->flags, geodetic);
-  return;
 }
 
 /*****************************************************************************/

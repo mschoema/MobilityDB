@@ -337,7 +337,7 @@ tinstant_make(Datum value, meosType temptype, TimestampTz t)
   }
   else if (temptype == T_TPOSE)
   {
-    Pose *pose = DatumGetPose(value);
+    Pose *pose = DatumGetPoseP(value);
     MEOS_FLAGS_SET_Z(result->flags, MEOS_FLAGS_GET_Z(pose->flags));
     PG_FREE_IF_COPY_P(pose, DatumGetPointer(value));
   }

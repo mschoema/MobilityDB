@@ -62,7 +62,7 @@ void
 tgeometryinst_make_stbox(const Datum geom, const TInstant *inst,
   STBox *box)
 {
-  Pose *pose = DatumGetPose(tinstant_value(inst));
+  Pose *pose = DatumGetPoseP(tinstant_value(inst));
   GSERIALIZED *gs = DatumGetGserializedP(geom);
 
   /* Note: zero-fill is required here, just as in heap tuples */
@@ -130,7 +130,7 @@ tgeometry_instarr_static_stbox(const Datum geom, const TInstant **instants,
 static void
 tgeometryinst_make_pose_stbox(const TInstant *inst, STBox *box)
 {
-  Pose *pose = DatumGetPose(tinstant_value(inst));
+  Pose *pose = DatumGetPoseP(tinstant_value(inst));
   box->xmin = box->xmax = pose->data[0];
   box->ymin = box->ymax = pose->data[1];
   if (MEOS_FLAGS_GET_Z(pose->flags))

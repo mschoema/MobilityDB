@@ -31,13 +31,15 @@
  * @brief Functions for parsing temporal pose objects.
  */
 
-#ifndef __POSE_H__
-#define __POSE_H__
+#ifndef __TPOSE_H__
+#define __TPOSE_H__
 
 #include "general/temporal.h"
 #include "pose/tpose_static.h"
 
 /*****************************************************************************/
+
+extern Temporal *tpose_to_tgeompoint(const Temporal *temp);
 
 extern int tpose_srid(const Temporal *temp);
 extern Temporal *tpose_set_srid(const Temporal *temp, int32 srid);
@@ -47,4 +49,4 @@ extern void tposeinstarr_set_stbox(const TInstant **instants, int count, STBox *
 
 /*****************************************************************************/
 
-#endif /* __POSE_H__ */
+#endif /* __TPOSE_H__ */

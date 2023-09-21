@@ -222,8 +222,8 @@ datum_collinear(Datum value1, Datum value2, Datum value3, meosType basetype,
       DatumGetNpointP(value3), ratio);
 #endif
   if (basetype == T_POSE)
-    return pose_collinear(DatumGetPose(value1), DatumGetPose(value2),
-      DatumGetPose(value3), ratio);
+    return pose_collinear(DatumGetPoseP(value1), DatumGetPoseP(value2),
+      DatumGetPoseP(value3), ratio);
   meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
     "unknown collinear operation for base type: %d", basetype);
   return false;
@@ -2688,8 +2688,8 @@ tsegment_value_at_timestamp(const TInstant *inst1, const TInstant *inst2,
 #endif
   if (inst1->temptype == T_TGEOMETRY)
   {
-    Pose *p1 = DatumGetPose(value1);
-    Pose *p2 = DatumGetPose(value2);
+    Pose *p1 = DatumGetPoseP(value1);
+    Pose *p2 = DatumGetPoseP(value2);
     Pose *result = pose_interpolate(p1, p2, ratio);
     return PointerGetDatum(result);
   }

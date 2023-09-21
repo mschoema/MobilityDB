@@ -31,8 +31,8 @@
  * @brief Basic functions for static pose objects.
  */
 
-#ifndef __POSE_STATIC_H__
-#define __POSE_STATIC_H__
+#ifndef __TPOSE_STATIC_H__
+#define __TPOSE_STATIC_H__
 
 #include <postgres.h>
 #include <catalog/pg_type.h>
@@ -63,9 +63,10 @@ typedef struct
  * fmgr macros
  *****************************************************************************/
 
-#define DatumGetPose(X)       ((Pose *) DatumGetPointer(X))
-#define PoseGetDatum(X)       PointerGetDatum(X)
-#define PG_GETARG_POSE(i)     ((Pose *) PG_GETARG_POINTER(i))
+#define DatumGetPoseP(X)         ((Pose *) DatumGetPointer(X))
+#define PosePGetDatum(X)         PointerGetDatum(X)
+#define PG_GETARG_POSE_P(X)      DatumGetPoseP(PG_GETARG_DATUM(X))
+#define PG_RETURN_POSE_P(X)      PG_RETURN_POINTER(X)
 
 /*****************************************************************************
  * tpose_static.c
@@ -77,14 +78,13 @@ extern char *pose_out(const Pose *pose, int maxdd);
 extern Pose *pose_make_2d(double x, double y, double theta);
 extern Pose *pose_make_3d(double x, double y, double z,
   double W, double X, double Y, double Z);
+extern Pose *pose_copy(Pose *pose);
 
 extern int32 pose_get_srid(const Pose *pose);
 extern void pose_set_srid(Pose *pose, int32 srid);
 
-extern void pose_set_stbox(const Pose *pose, STBox *box);
-
-extern GSERIALIZED *pose_geom(const Pose *pose, int srid);
-extern Datum datum_pose_geom(Datum pose, Datum srid);
+extern GSERIALIZED *pose_geom(const Pose *pose);
+extern Datum datum_pose_geom(Datum pose);
 
 extern Datum pose_distance(Datum pose1, Datum pose2);
 
@@ -94,4 +94,4 @@ extern Pose *pose_interpolate(const Pose *pose1, const Pose *pose2, double ratio
 
 /*****************************************************************************/
 
-#endif /* __POSE_STATIC_H__ */
+#endif /* __TPOSE_STATIC_H__ */

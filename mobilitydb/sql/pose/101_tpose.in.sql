@@ -117,6 +117,15 @@ CREATE FUNCTION timeSpan(tpose)
 -- Casting CANNOT be implicit to avoid ambiguity
 CREATE CAST (tpose AS tstzspan) WITH FUNCTION timeSpan(tpose);
 
+CREATE FUNCTION tgeompoint(tpose)
+  RETURNS tgeompoint
+  AS 'MODULE_PATHNAME', 'Tpose_to_tgeompoint'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+-- Casting CANNOT be implicit to avoid ambiguity
+CREATE CAST (tpose AS tgeompoint) WITH FUNCTION tgeompoint(tpose);
+
+
 /******************************************************************************
  * Transformations
  ******************************************************************************/
@@ -294,6 +303,25 @@ CREATE FUNCTION sequences(tpose)
 CREATE FUNCTION segments(tpose)
   RETURNS tpose[]
   AS 'MODULE_PATHNAME', 'Temporal_segments'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+/*****************************************************************************
+ * Transformation functions
+ *****************************************************************************/
+
+CREATE FUNCTION shift(tpose, interval)
+  RETURNS tpose
+  AS 'MODULE_PATHNAME', 'Temporal_shift'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION tscale(tpose, interval)
+  RETURNS tpose
+  AS 'MODULE_PATHNAME', 'Temporal_tscale'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE FUNCTION shiftTscale(tpose, interval, interval)
+  RETURNS tpose
+  AS 'MODULE_PATHNAME', 'Temporal_shift_tscale'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
 /******************************************************************************/

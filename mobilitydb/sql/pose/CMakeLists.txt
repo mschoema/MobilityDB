@@ -5,6 +5,7 @@ SET(LOCAL_FILES
   101_tpose
   102_tpose_inout
   104_tpose_spatialfuncs
+  108_tpose_boxops
   )
 
 foreach (f ${LOCAL_FILES})

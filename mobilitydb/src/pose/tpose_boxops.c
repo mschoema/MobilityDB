@@ -1,4 +1,4 @@
-/***********************************************************************
+/*****************************************************************************
  *
  * This MobilityDB code is provided under The PostgreSQL License.
  * Copyright (c) 2016-2023, Université libre de Bruxelles and MobilityDB
@@ -29,88 +29,82 @@
 
 /**
  * @file
- * @brief Spatial functions for temporal poses.
+ * @brief Bounding box operators for temporal poses.
+ *
+ * These operators test the bounding boxes of temporal poses, which are
+ * STBox boxes. The following operators are defined:
+ *    overlaps, contains, contained, same
+ * The operators consider as many dimensions as they are shared in both
+ * arguments: only the space dimension, only the time dimension, or both
+ * the space and the time dimensions.
  */
+
+#include "pose/tpose_boxops.h"
+
 
 /* PostgreSQL */
 #include <postgres.h>
+#include <utils/timestamp.h>
 /* MEOS */
 #include <meos.h>
 #include <meos_internal.h>
-/* MobilityDB */
-#include "pg_general/temporal.h"
-#include "pg_general/type_util.h"
 #include "pose/tpose.h"
-#include "pose/tpose_static.h"
+#include "pose/tpose_boxops.h"
 
 /*****************************************************************************
- * Functions for spatial reference systems
+ * Transform a temporal pose to a STBox
  *****************************************************************************/
 
-PGDLLEXPORT Datum Pose_get_srid(PG_FUNCTION_ARGS);
-PG_FUNCTION_INFO_V1(Pose_get_srid);
+PGDLLEXPORT Datum Pose_to_stbox(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Pose_to_stbox);
 /**
- * @ingroup mobilitydb_temporal_spatial_accessor
- * @brief Return the SRID of a temporal pose
- * @sqlfunc SRID()
+ * @ingroup mobilitydb_temporal_cast
+ * @brief Return the bounding box of the network point value
+ * @sqlfunc stbox()
+ * @sqlop @p ::
  */
 Datum
-Pose_get_srid(PG_FUNCTION_ARGS)
+Pose_to_stbox(PG_FUNCTION_ARGS)
 {
   Pose *pose = PG_GETARG_POSE_P(0);
-  int result = pose_get_srid(pose);
-  PG_FREE_IF_COPY(pose, 0);
-  PG_RETURN_INT32(result);
+  STBox *result = palloc0(sizeof(STBox));
+  pose_set_stbox(pose, result);
+  PG_RETURN_POINTER(result);
 }
 
-PGDLLEXPORT Datum Pose_set_srid(PG_FUNCTION_ARGS);
-PG_FUNCTION_INFO_V1(Pose_set_srid);
+PGDLLEXPORT Datum Pose_timestamp_to_stbox(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Pose_timestamp_to_stbox);
 /**
- * @ingroup mobilitydb_temporal_spatial_accessor
- * @brief Return the SRID of a temporal pose
- * @sqlfunc SRID()
+ * @ingroup mobilitydb_temporal_cast
+ * @brief Transform a network point and a timestamp to a spatiotemporal box
+ * @sqlfunc stbox()
+ * @sqlop @p
  */
 Datum
-Pose_set_srid(PG_FUNCTION_ARGS)
+Pose_timestamp_to_stbox(PG_FUNCTION_ARGS)
 {
   Pose *pose = PG_GETARG_POSE_P(0);
-  int32 srid = PG_GETARG_INT32(1);
-  Pose *result = pose_copy(pose);
-  pose_set_srid(result, srid);
-  PG_FREE_IF_COPY(pose, 0);
-  PG_RETURN_INT32(result);
+  TimestampTz t = PG_GETARG_TIMESTAMPTZ(1);
+  STBox *result = palloc0(sizeof(STBox));
+  pose_timestamp_set_stbox(pose, t, result);
+  PG_RETURN_POINTER(result);
 }
 
-PGDLLEXPORT Datum Tpose_get_srid(PG_FUNCTION_ARGS);
-PG_FUNCTION_INFO_V1(Tpose_get_srid);
+PGDLLEXPORT Datum Pose_period_to_stbox(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Pose_period_to_stbox);
 /**
- * @ingroup mobilitydb_temporal_spatial_accessor
- * @brief Return the SRID of a temporal pose
- * @sqlfunc SRID()
+ * @ingroup mobilitydb_temporal_cast
+ * @brief Transform a network point and a period to a spatiotemporal box
+ * @sqlfunc stbox()
+ * @sqlop @p
  */
 Datum
-Tpose_get_srid(PG_FUNCTION_ARGS)
+Pose_period_to_stbox(PG_FUNCTION_ARGS)
 {
-  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
-  int result = tpose_srid(temp);
-  PG_FREE_IF_COPY(temp, 0);
-  PG_RETURN_INT32(result);
-}
-
-PGDLLEXPORT Datum Tpose_set_srid(PG_FUNCTION_ARGS);
-PG_FUNCTION_INFO_V1(Tpose_set_srid);
-/**
- * @ingroup mobilitydb_temporal_spatial_transf
- * @brief Set the SRID of a temporal pose
- * @sqlfunc setSRID()
- */
-Datum
-Tpose_set_srid(PG_FUNCTION_ARGS)
-{
-  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
-  int32 srid = PG_GETARG_INT32(1);
-  Temporal *result = tpose_set_srid(temp, srid);
-  PG_FREE_IF_COPY(temp, 0);
+  Pose *pose = PG_GETARG_POSE_P(0);
+  Span *p = PG_GETARG_SPAN_P(1);
+  STBox *result = palloc0(sizeof(STBox));
+  pose_period_set_stbox(pose, p, result);
   PG_RETURN_POINTER(result);
 }
 

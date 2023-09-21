@@ -83,4 +83,15 @@ CREATE FUNCTION pose(double precision, double precision, double precision,
   AS 'MODULE_PATHNAME', 'Pose_constructor'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+/*****************************************************************************
+ * Cast functions
+ *****************************************************************************/
+
+CREATE FUNCTION geometry(pose)
+  RETURNS geometry
+  AS 'MODULE_PATHNAME', 'Pose_to_geom'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE CAST (pose AS geometry) WITH FUNCTION geometry(pose);
+
 /******************************************************************************/

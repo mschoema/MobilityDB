@@ -145,7 +145,7 @@ datum_eq(Datum l, Datum r, meosType type)
     return npoint_eq(DatumGetNpointP(l), DatumGetNpointP(r));
 #endif
   if (type == T_POSE)
-    return pose_eq(DatumGetPose(l), DatumGetPose(r));
+    return pose_eq(DatumGetPoseP(l), DatumGetPoseP(r));
   meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
     "unknown datum_eq2 function for base type: %d", type);
   return false;
@@ -982,7 +982,7 @@ basetype_out(Datum value, meosType basetype, int maxdd)
       return npoint_out(DatumGetNpointP(value), maxdd);
 #endif
     case T_POSE:
-      return pose_out(DatumGetPose(value), maxdd);
+      return pose_out(DatumGetPoseP(value), maxdd);
     default: /* Error! */
       meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,
         "Unknown base type: %d", basetype);

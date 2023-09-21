@@ -150,6 +150,17 @@ pose_make_3d(double x, double y, double z,
   return result;
 }
 
+Pose *
+pose_copy(Pose *pose)
+{
+  /* Ensure validity of the arguments */
+  if (! ensure_not_null((void *) pose))
+    return NULL;
+  Pose *result = palloc(VARSIZE(pose));
+  memcpy(result, pose, VARSIZE(pose));
+  return result;
+}
+
 /*****************************************************************************
  * SRID functions
  *****************************************************************************/
@@ -188,28 +199,6 @@ pose_set_srid(Pose *pose, int32 srid)
 }
 
 /*****************************************************************************
- * Box functions
- *****************************************************************************/
-
-void
-pose_set_stbox(const Pose *pose, STBox *box)
-{
-  /* Note: zero-fill is required here, just as in heap tuples */
-  memset(box, 0, sizeof(STBox));
-  bool hasz = (bool) MEOS_FLAGS_GET_Z(pose->flags);
-  box->srid = pose_get_srid(pose);
-  MEOS_FLAGS_SET_X(box->flags, true);
-  MEOS_FLAGS_SET_Z(box->flags, hasz);
-  MEOS_FLAGS_SET_T(box->flags, false);
-  MEOS_FLAGS_SET_GEODETIC(box->flags, false);
-
-  box->xmin = box->xmax = pose->data[0];
-  box->ymin = box->ymax = pose->data[1];
-  if (hasz)
-    box->zmin = box->zmax = pose->data[2];
-}
-
-/*****************************************************************************
  * Cast functions
  *****************************************************************************/
 
@@ -217,14 +206,14 @@ pose_set_stbox(const Pose *pose, STBox *box)
  * @brief Transforms the pose into a geometry point
  */
 GSERIALIZED *
-pose_geom(const Pose *pose, int srid)
+pose_geom(const Pose *pose)
 {
   LWPOINT *point;
   if (MEOS_FLAGS_GET_Z(pose->flags))
-    point = lwpoint_make3dz(srid,
+    point = lwpoint_make3dz(pose_get_srid(pose),
       pose->data[0], pose->data[1], pose->data[2]);
   else
-    point = lwpoint_make2d(srid,
+    point = lwpoint_make2d(pose_get_srid(pose),
       pose->data[0], pose->data[1]);
   GSERIALIZED *gs = geo_serialize((LWGEOM *)point);
   lwpoint_free(point);
@@ -235,10 +224,9 @@ pose_geom(const Pose *pose, int srid)
  * @brief Transforms the pose into a geometry point
  */
 Datum
-datum_pose_geom(Datum pose, Datum srid)
+datum_pose_geom(Datum pose)
 {
-  return PointerGetDatum(pose_geom(
-    DatumGetPose(pose), DatumGetInt32(srid)));
+  return PosePGetDatum(pose_geom(DatumGetPoseP(pose)));
 }
 
 /*****************************************************************************
@@ -251,8 +239,8 @@ datum_pose_geom(Datum pose, Datum srid)
 Datum
 pose_distance(Datum pose1, Datum pose2)
 {
-  Datum geom1 = PointerGetDatum(pose_geom(DatumGetPose(pose1), 0));
-  Datum geom2 = PointerGetDatum(pose_geom(DatumGetPose(pose2), 0));
+  Datum geom1 = PosePGetDatum(pose_geom(DatumGetPoseP(pose1)));
+  Datum geom2 = PosePGetDatum(pose_geom(DatumGetPoseP(pose2)));
   return pt_distance2d(geom1, geom2);
 }
 

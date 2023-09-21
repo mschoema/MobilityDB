@@ -162,7 +162,7 @@ tposeinst_parse(const char **str, meosType temptype, bool end, bool make,
   meosType basetype = temptype_basetype(temptype);
   /* The next instruction will throw an exception if it fails */
   Datum value = temporal_basetype_parse(str, basetype);
-  Pose *pose = DatumGetPose(value);
+  Pose *pose = DatumGetPoseP(value);
   /* If one of the SRID of the temporal pose and of the geometry
    * is SRID_UNKNOWN and the other not, copy the SRID */
   int pose_srid = pose_get_srid(pose);
@@ -187,7 +187,7 @@ tposeinst_parse(const char **str, meosType temptype, bool end, bool make,
     pfree(pose);
     return NULL;
   }
-  TInstant *result = tinstant_make(PointerGetDatum(pose), temptype, t);
+  TInstant *result = tinstant_make(PosePGetDatum(pose), temptype, t);
   pfree(pose);
   return result;
 }

@@ -134,7 +134,7 @@ VClip_tpoly_point(PG_FUNCTION_ARGS)
   GSERIALIZED *gs_poly = DatumGetGserializedP(tgeometry_geom(temp));
   LWPOLY *poly = lwgeom_as_lwpoly(lwgeom_from_gserialized(gs_poly));
   LWPOINT *point = lwgeom_as_lwpoint(lwgeom_from_gserialized(gs_point));
-  Pose *pose = DatumGetPose(value);
+  Pose *pose = DatumGetPoseP(value);
   uint32_t poly_feature = 0;
   double distance;
   v_clip_tpoly_point(poly, point, pose, &poly_feature, &distance);
@@ -170,7 +170,7 @@ VClip_tpoly_poly(PG_FUNCTION_ARGS)
   GSERIALIZED *gs_poly1 = DatumGetGserializedP(tgeometry_geom(temp));
   LWPOLY *poly1 = lwgeom_as_lwpoly(lwgeom_from_gserialized(gs_poly1));
   LWPOLY *poly2 = lwgeom_as_lwpoly(lwgeom_from_gserialized(gs_poly2));
-  Pose *pose1 = DatumGetPose(value);
+  Pose *pose1 = DatumGetPoseP(value);
   uint32_t poly1_feature = 0, poly2_feature = 0;
   double distance;
   v_clip_tpoly_tpoly(poly1, poly2, pose1, NULL, &poly1_feature, &poly2_feature, &distance);
@@ -204,7 +204,7 @@ VClip_tpoly_tpoint(PG_FUNCTION_ARGS)
   }
   GSERIALIZED *gs_poly = DatumGetGserializedP(tgeometry_geom(temp1));
   LWPOLY *poly = lwgeom_as_lwpoly(lwgeom_from_gserialized(gs_poly));
-  Pose *pose = DatumGetPose(value1);
+  Pose *pose = DatumGetPoseP(value1);
   GSERIALIZED *gs_point = DatumGetGserializedP(value2);
   LWPOINT *point = lwgeom_as_lwpoint(lwgeom_from_gserialized(gs_point));
   uint32_t poly_feature = 0;
@@ -240,10 +240,10 @@ VClip_tpoly_tpoly(PG_FUNCTION_ARGS)
   }
   GSERIALIZED *gs_poly1 = DatumGetGserializedP(tgeometry_geom(temp1));
   LWPOLY *poly1 = lwgeom_as_lwpoly(lwgeom_from_gserialized(gs_poly1));
-  Pose *pose1 = DatumGetPose(value1);
+  Pose *pose1 = DatumGetPoseP(value1);
   GSERIALIZED *gs_poly2 = DatumGetGserializedP(tgeometry_geom(temp2));
   LWPOLY *poly2 = lwgeom_as_lwpoly(lwgeom_from_gserialized(gs_poly2));
-  Pose *pose2 = DatumGetPose(value2);
+  Pose *pose2 = DatumGetPoseP(value2);
   uint32_t poly1_feature = 0, poly2_feature = 0;
   double distance;
   v_clip_tpoly_tpoly(poly1, poly2, pose1, pose2, &poly1_feature, &poly2_feature, &distance);

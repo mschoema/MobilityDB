@@ -47,27 +47,29 @@
  * Input/Output functions for pose
  *****************************************************************************/
 
+PGDLLEXPORT Datum Pose_in(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Pose_in);
 /**
  * Input function for pose values
  * Example of input:
  *    (1, 0.5)
  */
-PGDLLEXPORT Datum
+Datum
 Pose_in(PG_FUNCTION_ARGS)
 {
   const char *str = PG_GETARG_CSTRING(0);
   PG_RETURN_POINTER(pose_in(str, true));
 }
 
+PGDLLEXPORT Datum Pose_out(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Pose_out);
 /**
  * Output function for pose values
  */
-PGDLLEXPORT Datum
+Datum
 Pose_out(PG_FUNCTION_ARGS)
 {
-  Pose *pose = PG_GETARG_POSE(0);
+  Pose *pose = PG_GETARG_POSE_P(0);
   PG_RETURN_CSTRING(pose_out(pose, OUT_DEFAULT_DECIMAL_DIGITS));
 }
 
@@ -75,11 +77,12 @@ Pose_out(PG_FUNCTION_ARGS)
  * Constructors
  *****************************************************************************/
 
+PGDLLEXPORT Datum Pose_constructor(PG_FUNCTION_ARGS);
 PG_FUNCTION_INFO_V1(Pose_constructor);
 /**
  * Construct a pose value from the arguments
  */
-PGDLLEXPORT Datum
+Datum
 Pose_constructor(PG_FUNCTION_ARGS)
 {
   double x, y, z, theta;
@@ -107,6 +110,25 @@ Pose_constructor(PG_FUNCTION_ARGS)
     PG_RETURN_NULL();
   }
 
+  PG_RETURN_POINTER(result);
+}
+
+/*****************************************************************************
+ * Casting to Point
+ *****************************************************************************/
+
+PGDLLEXPORT Datum Pose_to_geom(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Pose_to_geom);
+/**
+ * @ingroup mobilitydb_temporal_transf
+ * @brief Transforms the pose into a geometry point
+ * @sqlfunc geometry()
+ */
+Datum
+Pose_to_geom(PG_FUNCTION_ARGS)
+{
+  Pose *pose = PG_GETARG_POSE_P(0);
+  GSERIALIZED *result = pose_geom(pose);
   PG_RETURN_POINTER(result);
 }
 
