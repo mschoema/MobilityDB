@@ -24,7 +24,7 @@ SELECT pose ' Pose   (   1   ,  1   ,   0   )   ';
 
 /* Errors */
 SELECT pose 'Point(1,1,0)';
-ERROR:  Could not parse pose value: Point(1,1,0)
+ERROR:  Could not parse pose value
 LINE 2: SELECT pose 'Point(1,1,0)';
                     ^
 SELECT pose 'Pose 1,1,1)';
@@ -48,7 +48,7 @@ ERROR:  Could not parse 2D pose: Rotation angle must be in ]-pi, pi]. Recieved: 
 LINE 1: SELECT pose 'Pose(1,1,4)';
                     ^
 SELECT pose 'Pose(1,1,0)xxx';
-ERROR:  Could not parse pose value
+ERROR:  Could not parse pose value: Extraneous characters at the end
 LINE 1: SELECT pose 'Pose(1,1,0)xxx';
                     ^
 SELECT pose 'PoseZ(1,1,1,1,0,0,0)';
@@ -77,7 +77,7 @@ SELECT pose ' PoseZ   (   1   ,  1   ,   1   ,   1   ,   0   ,   0   ,   0   )  
 
 /* Errors */
 SELECT pose 'Point(1,1,1,1,0,0,0)';
-ERROR:  Could not parse pose value: Point(1,1,1,1,0,0,0)
+ERROR:  Could not parse pose value
 LINE 2: SELECT pose 'Point(1,1,1,1,0,0,0)';
                     ^
 SELECT pose 'PoseZ 1,1,1,1,0,0,0)';
@@ -101,7 +101,7 @@ ERROR:  Could not parse 3D pose: Rotation quaternion must be of unit norm. Recie
 LINE 1: SELECT pose 'PoseZ(1,1,1,1,1,0,0)';
                     ^
 SELECT pose 'PoseZ(1,1,1,1,0,0,0)xxx';
-ERROR:  Could not parse pose value
+ERROR:  Could not parse pose value: Extraneous characters at the end
 LINE 1: SELECT pose 'PoseZ(1,1,1,1,0,0,0)xxx';
                     ^
 SELECT pose(1, 1, 1);

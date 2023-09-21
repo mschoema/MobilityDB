@@ -109,6 +109,7 @@ pose_make_2d(double x, double y, double theta)
   size_t memsize = DOUBLE_PAD(sizeof(Pose)) + 3 * sizeof(double);
   Pose *result = palloc0(memsize);
   SET_VARSIZE(result, memsize);
+  MEOS_FLAGS_SET_X(result->flags, true);
   MEOS_FLAGS_SET_Z(result->flags, false);
   result->data[0] = x;
   result->data[1] = y;
@@ -139,6 +140,7 @@ pose_make_3d(double x, double y, double z,
   size_t memsize = DOUBLE_PAD(sizeof(Pose)) + 7 * sizeof(double);
   Pose *result = palloc0(memsize);
   SET_VARSIZE(result, memsize);
+  MEOS_FLAGS_SET_X(result->flags, true);
   MEOS_FLAGS_SET_Z(result->flags, true);
   result->data[0] = x;
   result->data[1] = y;

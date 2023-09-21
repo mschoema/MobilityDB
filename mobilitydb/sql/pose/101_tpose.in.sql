@@ -324,4 +324,56 @@ CREATE FUNCTION shiftTscale(tpose, interval, interval)
   AS 'MODULE_PATHNAME', 'Temporal_shift_tscale'
   LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+/*****************************************************************************
+ * Ever/Always Comparison Functions
+ *****************************************************************************/
+
+CREATE FUNCTION ever_eq(tpose, pose)
+  RETURNS boolean
+  AS 'MODULE_PATHNAME', 'Tpose_ever_eq'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE OPERATOR ?= (
+  LEFTARG = tpose, RIGHTARG = pose,
+  PROCEDURE = ever_eq,
+  NEGATOR = %<>,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
+);
+
+CREATE FUNCTION always_eq(tpose, pose)
+  RETURNS boolean
+  AS 'MODULE_PATHNAME', 'Tpose_always_eq'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE OPERATOR %= (
+  LEFTARG = tpose, RIGHTARG = pose,
+  PROCEDURE = always_eq,
+  NEGATOR = ?<>,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
+);
+
+CREATE FUNCTION ever_ne(tpose, pose)
+  RETURNS boolean
+  AS 'MODULE_PATHNAME', 'Tpose_ever_ne'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE OPERATOR ?<> (
+  LEFTARG = tpose, RIGHTARG = pose,
+  PROCEDURE = ever_ne,
+  NEGATOR = %=,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
+);
+
+CREATE FUNCTION always_ne(tpose, pose)
+  RETURNS boolean
+  AS 'MODULE_PATHNAME', 'Tpose_always_ne'
+  LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
+CREATE OPERATOR %<> (
+  LEFTARG = tpose, RIGHTARG = pose,
+  PROCEDURE = always_ne,
+  NEGATOR = ?=,
+  RESTRICT = tpoint_sel, JOIN = tpoint_joinsel
+);
+
 /******************************************************************************/

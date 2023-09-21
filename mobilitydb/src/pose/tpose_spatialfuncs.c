@@ -42,6 +42,7 @@
 #include "pg_general/type_util.h"
 #include "pose/tpose.h"
 #include "pose/tpose_static.h"
+#include "pose/tpose_spatialfuncs.h"
 
 /*****************************************************************************
  * Functions for spatial reference systems
@@ -112,6 +113,79 @@ Tpose_set_srid(PG_FUNCTION_ARGS)
   Temporal *result = tpose_set_srid(temp, srid);
   PG_FREE_IF_COPY(temp, 0);
   PG_RETURN_POINTER(result);
+}
+
+/*****************************************************************************
+ * Ever/always functions
+ *****************************************************************************/
+
+/**
+ * @brief Generic function for the temporal ever/always comparison operators
+ * @param[in] fcinfo Catalog information about the external function
+ * @param[in] func Specific function for the ever/always comparison
+ */
+static Datum
+tpose_ev_al_comp_ext(FunctionCallInfo fcinfo,
+  bool (*func)(const Temporal *, const Pose *))
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  Pose *pose = PG_GETARG_POSE_P(1);
+  bool result = func(temp, pose);
+  PG_FREE_IF_COPY(temp, 0);
+  PG_FREE_IF_COPY(pose, 1);
+  PG_RETURN_BOOL(result);
+}
+
+PGDLLEXPORT Datum Tpose_ever_eq(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Tpose_ever_eq);
+/**
+ * @ingroup mobilitydb_temporal_ever
+ * @brief Return true if a temporal pose is ever equal to a pose
+ * @sqlfunc ever_eq()
+ */
+Datum
+Tpose_ever_eq(PG_FUNCTION_ARGS)
+{
+  return tpose_ev_al_comp_ext(fcinfo, &tpose_ever_eq);
+}
+
+PGDLLEXPORT Datum Tpose_always_eq(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Tpose_always_eq);
+/**
+ * @ingroup mobilitydb_temporal_ever
+ * @brief Return true if a temporal pose is always equal to a pose
+ * @sqlfunc always_eq()
+ */
+Datum
+Tpose_always_eq(PG_FUNCTION_ARGS)
+{
+  return tpose_ev_al_comp_ext(fcinfo, &tpose_always_eq);
+}
+
+PGDLLEXPORT Datum Tpose_ever_ne(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Tpose_ever_ne);
+/**
+ * @ingroup mobilitydb_temporal_ever
+ * @brief Return true if a temporal pose is ever different from a pose
+ * @sqlfunc ever_ne()
+ */
+Datum
+Tpose_ever_ne(PG_FUNCTION_ARGS)
+{
+  return ! tpose_ev_al_comp_ext(fcinfo, &tpose_always_eq);
+}
+
+PGDLLEXPORT Datum Tpose_always_ne(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Tpose_always_ne);
+/**
+ * @ingroup mobilitydb_temporal_ever
+ * @brief Return true if a temporal pose is always different from a pose
+ * @sqlfunc always_ne()
+ */
+Datum
+Tpose_always_ne(PG_FUNCTION_ARGS)
+{
+  return ! tpose_ev_al_comp_ext(fcinfo, &tpose_ever_eq);
 }
 
 /*****************************************************************************/

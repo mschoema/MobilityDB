@@ -71,6 +71,7 @@
   #include "npoint/tnpoint_distance.h"
 #endif
 #include "pose/tpose_static.h"
+#include "pose/tpose_spatialfuncs.h"
 
 /*****************************************************************************
  * Collinear functions
@@ -3097,6 +3098,8 @@ tlinearsegm_intersection_value(const TInstant *inst1, const TInstant *inst2,
   else if (inst1->temptype == T_TNPOINT)
     result = tnpointsegm_intersection_value(inst1, inst2, value, t);
 #endif
+  else if (inst1->temptype == T_TPOSE)
+    result = tposesegm_intersection_value(inst1, inst2, value, t);
   else
   {
     meos_error(ERROR, MEOS_ERR_INTERNAL_TYPE_ERROR,

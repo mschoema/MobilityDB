@@ -46,7 +46,7 @@
 /**
  * Structure to represent a pose values
  *
- * flags (8 bits, x = unused): xxxZxxxx
+ * flags (8 bits, x = unused): xxZXxxxx
  * data: 2D: [x, y, theta]
  *       3D: [x, y, z, W, X, Z, Y]
  *

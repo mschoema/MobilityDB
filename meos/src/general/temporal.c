@@ -60,6 +60,7 @@
 #if NPOINT
   #include "npoint/tnpoint_spatialfuncs.h"
 #endif
+#include "pose/tpose_boxops.h"
 #include "pose/tpose_static.h"
 
 /*****************************************************************************
@@ -3264,6 +3265,8 @@ temporal_bbox_ev_al_eq(const Temporal *temp, Datum value, bool ever)
       pfree(geom);
     }
 #endif
+    if (temp->temptype == T_TPOSE)
+      pose_set_stbox(DatumGetPoseP(value), &box2);
     return (ever && contains_stbox_stbox(&box1, &box2)) ||
       (!ever && same_stbox_stbox(&box1, &box2));
   }
