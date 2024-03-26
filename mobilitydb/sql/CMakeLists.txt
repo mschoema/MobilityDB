@@ -56,6 +56,7 @@ add_subdirectory(point)
 if(NPOINT)
   add_subdirectory(npoint)
 endif()
+add_subdirectory(pose)
 
 list(SORT PROJECT_SQL_FILES)
 

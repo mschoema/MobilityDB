@@ -105,9 +105,11 @@ if(CMAKE_GENERATOR STREQUAL "Visual Studio 17 2022")
   target_compile_options(general PRIVATE "/W4")
   target_compile_options(point PRIVATE "/W4")
   target_compile_options(npoint PRIVATE "/W4")
+  target_compile_options(pose PRIVATE "/W4")
   target_compile_options(pg_general PRIVATE "/W4")
   target_compile_options(pg_point PRIVATE "/W4")
   target_compile_options(pg_npoint PRIVATE "/W4")
+  target_compile_options(pg_pose PRIVATE "/W4")
 endif()
 
 #--------------------------------
@@ -121,6 +123,7 @@ if(NPOINT)
   message(STATUS "Including network points")
   set(PROJECT_OBJECTS ${PROJECT_OBJECTS} "$<TARGET_OBJECTS:npoint>")
 endif()
+set(PROJECT_OBJECTS ${PROJECT_OBJECTS} "$<TARGET_OBJECTS:pose>")
 
 # Build the library: PostGIS
 set(PROJECT_OBJECTS ${PROJECT_OBJECTS} "$<TARGET_OBJECTS:liblwgeom>")
@@ -133,6 +136,7 @@ set(PROJECT_OBJECTS ${PROJECT_OBJECTS} "$<TARGET_OBJECTS:pg_point>")
 if(NPOINT)
   set(PROJECT_OBJECTS ${PROJECT_OBJECTS} "$<TARGET_OBJECTS:pg_npoint>")
 endif()
+set(PROJECT_OBJECTS ${PROJECT_OBJECTS} "$<TARGET_OBJECTS:pg_pose>")
 
 # Build the library
 add_library(${MOBILITYDB_LIB_NAME} MODULE ${PROJECT_OBJECTS})
