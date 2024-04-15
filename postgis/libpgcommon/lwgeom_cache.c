@@ -17,7 +17,7 @@
 #include "fmgr.h"
 #include "utils/memutils.h"
 
-#include "../postgis_config.h"
+#include "postgis_config.h"
 
 /* Include for VARATT_EXTERNAL_GET_POINTER */
 #if POSTGRESQL_VERSION_NUMBER < 130000

@@ -26,7 +26,7 @@
 
 #include "liblwgeom.h"
 #include "lwgeom_log.h"
-#include "../postgis_config.h"
+#include "postgis_config.h"
 
 #if defined(HAVE_LIBJSON)
 

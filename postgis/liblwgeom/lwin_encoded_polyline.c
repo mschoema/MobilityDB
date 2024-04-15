@@ -28,7 +28,7 @@
 #include <math.h>
 
 #include "liblwgeom.h"
-#include "../postgis_config.h"
+#include "postgis_config.h"
 
 LWGEOM*
 lwgeom_from_encoded_polyline(const char *encodedpolyline, int precision)

@@ -33,7 +33,7 @@
 #include <ctype.h> /* for tolower */
 
 /* Global variables */
-#include "../postgis_config.h"
+#include "postgis_config.h"
 #include "liblwgeom_internal.h"
 #include "lwgeom_log.h"
 

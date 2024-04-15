@@ -24,7 +24,7 @@
 
 /* MobilityDB: Added for pg_strcasecmp */
 // #include "postgres.h"
-#include "../postgis_config.h"
+#include "postgis_config.h"
 #include "liblwgeom_internal.h"
 #include "lwgeom_log.h"
 #include <string.h>

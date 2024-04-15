@@ -81,10 +81,11 @@ add_definitions(-DPOSTGIS_VERSION_NUMBER=${POSTGIS_VERSION_NUMBER})
 #--------------------------------
 
 # Embed PostGIS 3
-configure_file(${CMAKE_SOURCE_DIR}/postgis/postgis_config.h.in ${CMAKE_SOURCE_DIR}/postgis/postgis_config.h)
+configure_file(../postgis/postgis_config.h.in ../postgis/postgis_config.h)
 include_directories("${CMAKE_SOURCE_DIR}/postgis/liblwgeom")
 include_directories("${CMAKE_SOURCE_DIR}/postgis/libpgcommon")
 include_directories("${CMAKE_SOURCE_DIR}/postgis")
+include_directories("${CMAKE_BINARY_DIR}/postgis")
 add_subdirectory("${CMAKE_SOURCE_DIR}/postgis" "postgis")
 
 # MEOS

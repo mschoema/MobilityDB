@@ -33,7 +33,7 @@
 #include <catalog/pg_extension.h>
 #include <commands/extension.h>
 
-#include "../postgis_config.h"
+#include "postgis_config.h"
 
 #if POSTGRESQL_VERSION_NUMBER >= 100000
 #include <utils/regproc.h>

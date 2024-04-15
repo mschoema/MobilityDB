@@ -33,7 +33,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h> // MEOS
-#include "../postgis_config.h"
+#include "postgis_config.h"
 
 #include "proj.h"
 

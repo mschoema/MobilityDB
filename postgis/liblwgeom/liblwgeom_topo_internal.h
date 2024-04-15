@@ -26,7 +26,7 @@
 #ifndef LIBLWGEOM_TOPO_INTERNAL_H
 #define LIBLWGEOM_TOPO_INTERNAL_H 1
 
-#include "../postgis_config.h"
+#include "postgis_config.h"
 
 #include "liblwgeom.h"
 #include "liblwgeom_topo.h"

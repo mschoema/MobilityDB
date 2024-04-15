@@ -30,7 +30,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "../postgis_config.h"
+#include "postgis_config.h"
 
 /*#define POSTGIS_DEBUG_LEVEL 3*/
 
