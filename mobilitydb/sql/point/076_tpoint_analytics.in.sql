@@ -142,4 +142,10 @@ RETURNS geom_times
 AS 'MODULE_PATHNAME','Tpoint_AsMVTGeom'
 LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
 
+CREATE FUNCTION asMVTGeom2(tpoint tgeompoint, bounds stbox,
+  extent int4 DEFAULT 4096, buffer int4 DEFAULT 256, clip bool DEFAULT TRUE)
+  RETURNS tgeompoint
+AS 'MODULE_PATHNAME','Tpoint_AsMVTGeom2'
+LANGUAGE C IMMUTABLE STRICT PARALLEL SAFE;
+
 /*****************************************************************************/

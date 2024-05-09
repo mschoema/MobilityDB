@@ -3443,6 +3443,64 @@ tpoint_AsMVTGeom(const Temporal *temp, const STBox *bounds, int32_t extent,
   return true;
 }
 
+/**
+ * @ingroup meos_temporal_spatial_transf
+ * @brief Return a temporal point transformed to Mapbox Vector Tile format
+ * @param[in] temp Temporal point
+ * @param[in] bounds Bounds
+ * @param[in] extent Extent
+ * @param[in] buffer Buffer
+ * @param[in] clip_geom True when the geometry is clipped
+ * @param[out] gsarr Array of geometries
+ * @param[out] timesarr Array of timestamps
+ * @param[out] count Number of elements in the output array
+ * @csqlfn #Tpoint_AsMVTGeom()
+ */
+Temporal *
+tpoint_AsMVTGeom2(const Temporal *temp, const STBox *bounds, int32_t extent,
+  int32_t buffer, bool clip_geom)
+{
+  /* Ensure validity of the arguments */
+  if (! ensure_not_null((void *) temp) || ! ensure_not_null((void *) bounds) ||
+      ! ensure_tgeo_type(temp->temptype))
+    return false;
+
+  if (bounds->xmax - bounds->xmin <= 0 || bounds->ymax - bounds->ymin <= 0)
+  {
+    meos_error(ERROR, MEOS_ERR_INVALID_ARG_VALUE,
+      "%s: Geometric bounds are too small", __func__);
+    return false;
+  }
+  if (extent <= 0)
+  {
+    meos_error(ERROR, MEOS_ERR_INVALID_ARG_VALUE,
+      "%s: Extent must be greater than 0", __func__);
+    return false;
+  }
+
+  /* Contrary to what is done in PostGIS we do not use the following filter
+   * to enable the visualization of temporal points with instant subtype.
+   * PostGIS filtering adapted to MobilityDB would be as follows.
+
+  / * Bounding box test to drop geometries smaller than the resolution * /
+  STBox box;
+  temporal_set_bbox(temp, &box);
+  double tpoint_width = box.xmax - box.xmin;
+  double tpoint_height = box.ymax - box.ymin;
+  / * We use half of the square height and width as limit: We use this
+   * and not area so it works properly with lines * /
+  double bounds_width = ((bounds->xmax - bounds->xmin) / extent) / 2.0;
+  double bounds_height = ((bounds->ymax - bounds->ymin) / extent) / 2.0;
+  if (tpoint_width < bounds_width && tpoint_height < bounds_height)
+  {
+    PG_FREE_IF_COPY(temp, 0);
+    PG_RETURN_NULL();
+  }
+  */
+
+  return tpoint_mvt(temp, bounds, extent, buffer, clip_geom);
+}
+
 /*****************************************************************************
  * Length functions
  *****************************************************************************/

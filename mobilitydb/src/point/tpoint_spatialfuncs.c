@@ -320,6 +320,40 @@ Tpoint_AsMVTGeom(PG_FUNCTION_ARGS)
   PG_RETURN_DATUM(result);
 }
 
+PGDLLEXPORT Datum Tpoint_AsMVTGeom(PG_FUNCTION_ARGS);
+PG_FUNCTION_INFO_V1(Tpoint_AsMVTGeom2);
+/**
+ * @ingroup mobilitydb_temporal_spatial_transf
+ * @brief Return a temporal point transformed to the Mapbox Vector Tile
+ * representation
+ * @sqlfn asMVTGeom()
+ */
+Datum
+Tpoint_AsMVTGeom2(PG_FUNCTION_ARGS)
+{
+  Temporal *temp = PG_GETARG_TEMPORAL_P(0);
+  STBox *bounds = PG_GETARG_STBOX_P(1);
+  int32_t extent = PG_GETARG_INT32(2);
+  int32_t buffer = PG_GETARG_INT32(3);
+  bool clip_geom = PG_GETARG_BOOL(4);
+
+  printf("1\n");
+  fflush(stdout);
+
+  Temporal *result = tpoint_AsMVTGeom2(temp, bounds, extent, buffer, clip_geom);
+  if (! result)
+  {
+    PG_FREE_IF_COPY(temp, 0);
+    PG_RETURN_NULL();
+  }
+
+  printf("1\n");
+  fflush(stdout);
+
+  PG_FREE_IF_COPY(temp, 0);
+  PG_RETURN_DATUM(PointerGetDatum(result));
+}
+
 /*****************************************************************************
  * Functions for extracting coordinates
  *****************************************************************************/
