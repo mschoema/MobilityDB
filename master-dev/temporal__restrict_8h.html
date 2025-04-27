@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>MobilityDB: meos/include/general/temporal_restrict.h File Reference</title>
+<title>MobilityDB: meos/include/temporal/temporal_restrict.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,7 +70,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_0fff62ca9c7e6b49d869dbbeba2dc9ed.html">meos</a></li><li class="navelem"><a class="el" href="dir_87ff05107218c94eb54c7d49f556ada2.html">include</a></li><li class="navelem"><a class="el" href="dir_8c13b810ba29739bffadb2426a4b1e5d.html">general</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_0fff62ca9c7e6b49d869dbbeba2dc9ed.html">meos</a></li><li class="navelem"><a class="el" href="dir_87ff05107218c94eb54c7d49f556ada2.html">include</a></li><li class="navelem"><a class="el" href="dir_aa92cce0f61242abd286802b3a4d1fb4.html">temporal</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -81,8 +81,8 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="postgres_8h_source.html">postgres.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="meos_8h_source.html">meos.h</a>&gt;</code><br />
-<code>#include &quot;general/meos_catalog.h&quot;</code><br />
-<code>#include &quot;general/temporal.h&quot;</code><br />
+<code>#include &quot;temporal/meos_catalog.h&quot;</code><br />
+<code>#include &quot;temporal/temporal.h&quot;</code><br />
 </div>
 <p><a href="temporal__restrict_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -190,7 +190,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a15a07fedf9b08fb54716ff98bb3988f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="temporal__restrict_8h_a15a07fedf9b08fb54716ff98bb3988f7.html#a15a07fedf9b08fb54716ff98bb3988f7">tsegment_at_timestamptz</a> (const <a class="el" href="structTInstant.html">TInstant</a> *inst1, const <a class="el" href="structTInstant.html">TInstant</a> *inst2, <a class="el" href="meos_8h_ad06cc805fa18b06ac937fd98a9eba0e7.html#ad06cc805fa18b06ac937fd98a9eba0e7">interpType</a> interp, <a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a> t)</td></tr>
 <tr class="memdesc:a15a07fedf9b08fb54716ff98bb3988f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restrict the segment of a temporal sequence to a timestamptz.  <a href="temporal__restrict_8h_a15a07fedf9b08fb54716ff98bb3988f7.html#a15a07fedf9b08fb54716ff98bb3988f7">More...</a><br /></td></tr>
 <tr class="separator:a15a07fedf9b08fb54716ff98bb3988f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f63a063a5e5a2b509665a88514a6c2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="temporal__restrict_8h_a2f63a063a5e5a2b509665a88514a6c2d.html#a2f63a063a5e5a2b509665a88514a6c2d">tsequence_at_values_iter</a> (const <a class="el" href="structTSequence.html">TSequence</a> *seq, const <a class="el" href="structSet.html">Set</a> *<a class="el" href="meos_2src_2geo_2CMakeLists_8txt_acc4f13a33f0cd5acbdf508083831fe59.html#acc4f13a33f0cd5acbdf508083831fe59">set</a>, <a class="el" href="structTSequence.html">TSequence</a> **result)</td></tr>
+<tr class="memitem:a2f63a063a5e5a2b509665a88514a6c2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="temporal__restrict_8h_a2f63a063a5e5a2b509665a88514a6c2d.html#a2f63a063a5e5a2b509665a88514a6c2d">tsequence_at_values_iter</a> (const <a class="el" href="structTSequence.html">TSequence</a> *seq, const <a class="el" href="structSet.html">Set</a> *<a class="el" href="meos_2src_2cbuffer_2CMakeLists_8txt_a3270654e8f083a33144aced11d28b9b3.html#a3270654e8f083a33144aced11d28b9b3">set</a>, <a class="el" href="structTSequence.html">TSequence</a> **result)</td></tr>
 <tr class="memdesc:a2f63a063a5e5a2b509665a88514a6c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restrict a temporal sequence to an array of base values (iterator function)  <a href="temporal__restrict_8h_a2f63a063a5e5a2b509665a88514a6c2d.html#a2f63a063a5e5a2b509665a88514a6c2d">More...</a><br /></td></tr>
 <tr class="separator:a2f63a063a5e5a2b509665a88514a6c2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
