@@ -159,18 +159,28 @@ compute_dist2_safe(POINT4D p, POINT4D vs, POINT4D ve)
 }
 
 /**
- * @brief Tests if a polygon is defined in counter-clockwise order (ccw)
- * @return Returns True if it is the case
- * @note The polygon must be convex
+ * @brief Return true if the outer ring of @p poly turns counterclockwise
+ * @details Read from the signed area of the WHOLE ring rather than from the
+ * turn at its first vertex.  The turn at one vertex says nothing when that
+ * vertex is collinear with its neighbours or repeats one of them -- both of
+ * which a valid ring may do -- and there the sign test silently reports the
+ * opposite orientation, which inverts every side test that follows and can
+ * double the reported distance.  The signed area is also defined for a ring
+ * that is not convex, where a single turn is not.
  */
 static bool
 poly_is_ccw(const LWPOLY *poly)
 {
-  POINT4D v1, v2, v3;
-  getPoint4d_p(poly->rings[0], 0, &v1);
-  getPoint4d_p(poly->rings[0], 1, &v2);
-  getPoint4d_p(poly->rings[0], 2, &v3);
-  return compute_angle(v1, v2, v3) < 0;
+  uint32_t n = poly->rings[0]->npoints - 1;
+  double area2 = 0.0;
+  for (uint32_t i = 0; i < n; i++)
+  {
+    POINT4D a, b;
+    getPoint4d_p(poly->rings[0], i, &a);
+    getPoint4d_p(poly->rings[0], (i + 1) % n, &b);
+    area2 += a.x * b.y - b.x * a.y;
+  }
+  return area2 > 0.0;
 }
 
 /**
@@ -212,11 +222,12 @@ vertex_vertex_tpoly_point(const LWPOLY *poly, POINT4D point,
     return MEOS_CONTINUE;
   }
 
-  /* We found the closest feature */
-  if (s_prev > 1 - MEOS_EPSILON || s_next < MEOS_EPSILON)
-    return MEOS_DISJOINT;
-  /* Point is on the vertex */
-  return MEOS_INTERSECT;
+  /* We found the closest feature.  A point lying exactly ON the vertex is
+   * reported here too, and the caller reads that from a distance of zero:
+   * the two projection parameters cannot tell the two apart, since they are
+   * one and zero for a point on the vertex and for every point of its region
+   * beyond it. */
+  return MEOS_DISJOINT;
 }
 
 /**
@@ -360,7 +371,10 @@ v_clip_tpoly_point(const LWPOLY *poly, const LWPOINT *point,
       *dist = sqrt(compute_dist2(pt, v_start, v_end));
     }
   }
-  return MEOS_DISJOINT;
+  /* Return what the walk concluded.  Reporting MEOS_DISJOINT unconditionally,
+   * as this did, made the interior undetectable through the return value even
+   * though @p dist was set to zero for it. */
+  return result;
 }
 
 /**

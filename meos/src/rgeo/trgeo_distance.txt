@@ -1,0 +1,824 @@
+meos/src/rgeo/trgeo_distance.txt
+
+Temporal Distance for Rigid Geometries
+======================================
+
+This file describes the algorithm behind trgeo_distance.c: the time-varying
+distance between a temporal rigid geometry and a static geometry, a temporal
+point, or another temporal rigid geometry, together with the operators built
+on it (nearestApproachDistance, nearestApproachInstant, shortestLine).
+
+The algorithm follows Schoemans, Sakr and Zimanyi [1], which tracks the pair
+of closest features (vertices or edges) of two moving bodies and derives the
+distance from that pair.  This file records three things the published work
+leaves open, and which govern how the code is organized:
+
+  * Every equation the algorithm has to solve belongs to one small family of
+    functions.  Writing that family down explicitly is what lets a single
+    solver serve the feature transitions, the extrema of the distance, the
+    contact instants and the merge crossings alike.
+
+  * The published algorithm treats intersecting bodies as a failure case.
+    Overlap is instead handled as a second tracking regime with its own O(1)
+    witness, so a distance is defined and exact on both sides of contact.
+
+  * Root finding is certified rather than assumed.  The number of cells
+    needed to isolate every root is computed from the coefficients before
+    any sampling happens, and each cell either yields a root or carries a
+    proof that it holds none.
+
+Nothing here changes the shape of the published algorithm.  The walk over
+closest features is still the core, and the complexity results of [1] still
+apply.  What changes is the layer underneath it.
+
+
+Notation and Motion Model
+-------------------------
+
+A rigid geometry is a reference polygon together with a temporal pose.  Over
+one temporal segment the pose interpolates linearly, so for body A with
+rotation centre cA, translation dA and rotation thA, a reference vertex a
+(expressed in body coordinates, that is, relative to the rotation centre)
+traces
+
+    vA(t) = R(thA*t) * a + cA + t*dA,        t in [0,1]
+
+where R(psi) is the rotation by psi.  This is Equation (5) of [1].  The
+body is rigid, so a and every quantity derived from it alone -- edge
+lengths, edge directions, vertex radii, support values -- are constants of
+the motion.  That is the property the whole design leans on.
+
+Throughout:
+
+    u  = a_e - a_s      edge vector of A in body coordinates
+    L  = |u|            edge length, constant
+    beta = angle(u)     edge direction in body coordinates, constant
+    b               a vertex of B in body coordinates (b = 0 for a point)
+    rb = |b|, alpha_b = angle(b)
+    W(t) = (cB - cA) + t*(dB - dA)      relative centre offset, LINEAR in t
+
+W(t) carries both translations.  It is the only place the translations
+appear, and it is affine, which matters in the section on root isolation.
+
+
+The Central Closed Form
+-----------------------
+
+Equation (8) of [1] defines the projection parameter
+
+    s(t) = dot( p(t) - vs(t), ve(t) - vs(t) ) / L^2
+
+and [1] observes that it is "non-linear if the rotation of the polygon is
+nonzero", then delegates to a numerical method.  Expanding the numerator in
+the motion model above gives
+
+    N(t) = dot( p(t) - vs(t), ve(t) - vs(t) )
+
+         = L * [ Wx(t)*cos(thA*t + beta) + Wy(t)*sin(thA*t + beta) ]
+         + rb * L * cos( (thA - thB)*t + beta - alpha_b )
+         - dot(a_s, u)
+
+and the cross-product sibling, which carries the vertex-to-edge distance and
+the intersection test, is the same expression with cos and sin exchanged:
+
+    G(t) = cross( p(t) - vs(t), ve(t) - vs(t) )
+
+         = L * [ Wx(t)*sin(thA*t + beta) - Wy(t)*cos(thA*t + beta) ]
+         + rb * L * sin( (thA - thB)*t + beta - alpha_b )
+         - cross(a_s, u)
+
+Three structural facts follow, and they are the reason this file exists.
+
+First, the rotation of B enters only through the single frequency
+thA - thB, and only with a CONSTANT amplitude rb*L.  The rotation of A
+enters through the frequency thA with coefficients that are affine in t.
+There are no other frequencies and no higher powers.
+
+Second, both expressions belong to
+
+    F(t) = (a1*t + a0)*cos(w*t + g)
+         + (b1*t + b0)*sin(w*t + g)
+         + c2*t^2 + c1*t + c0                            (the FAMILY)
+
+possibly summed over two or three known frequencies w.  The squared distance
+between two moving vertices is in the same family (the quadratic part is
+|W(t)|^2), and so is the difference of any two of them.
+
+Third, the family is closed under differentiation:
+
+    d/dt [ (a1*t+a0)*cos(w*t+g) + (b1*t+b0)*sin(w*t+g) ]
+        = ( w*b1*t + a1 + w*b0 ) * cos(w*t+g)
+        + ( -w*a1*t + b1 - w*a0 ) * sin(w*t+g)
+
+The coefficients stay affine.  So the derivative of a distance function is
+obtained by arithmetic on coefficients, never by finite differences and
+never by sampling.  Every extremum problem becomes a root problem in the
+same family as the transition problems.
+
+
+Correspondence with the Published Equations
+-------------------------------------------
+
+    Eq. (8)   s(t)                        N(t)/L^2
+    Eq. (11)  (a) s_j = 0, (b) s_{j-1}=1  N=0 on e_j; N=L^2 on e_{j-1}
+    Eq. (12)  (c) s_j = 1, (d) s_j = 0    ONE N(t), two levels L^2 and 0
+    Eq. (15), (16)                        as (11), with b a vertex of B
+    Eq. (17)  (e), (f)                    ONE N(t), two levels
+    Eq. (13)  intersection through edge    G(t) = 0
+    Eq. (18), (19) parallel edges          pure sinusoid, see below
+    Eq. (20)  vertex-vertex d^2            quadratic + family terms
+    Eq. (21)  vertex-edge d^2              G(t)^2 / L^2
+    Eq. (22)  merge crossing               difference of two of the above
+    Eq. (25), (26)                         the thA = 0 case of N=0 and N=L^2
+
+Two rows deserve comment.
+
+Equations (12) and (17) each pair two tests on the SAME edge.  Since
+s(t) = N(t)/L^2, the test s=1 is N = L^2 and the test s=0 is N = 0: one
+function against two levels, not two functions.  The code must build the
+coefficients once and isolate the roots of both levels from one subdivision.
+
+Equation (21) does not need s(t).  Inside a vertex-edge interval we have
+0 < s < 1 by definition of the feature pair, so the distance is simply
+
+    d(t) = |G(t)| / L
+
+which sidesteps substituting s(t) back into the distance.  [1] omits the
+derivation of the extrema here ("The developments for this direct solution
+are omitted here"); with this identity it is one line, because
+
+    (d^2)' = 2*G*G' / L^2
+
+so the extrema are the roots of G', and the roots of G are the instants at
+which the distance is zero -- that is, the contact instants.  Extrema and
+contact fall out of the same solve.
+
+
+Parallel Edges Are Solved Directly
+----------------------------------
+
+Equations (18) and (19) of [1] test whether an edge of A is parallel to an
+edge of B, and [1] states that they "are nonlinear in the general case and
+have to be solved using numerical methods".  They are not.  A rotation
+preserves the cross product, so
+
+    cross( ve_A(t) - vs_A(t), ve_B(t) - vs_B(t) )
+        = LA * LB * sin( (thB - thA)*t + betaB - betaA )
+
+a sinusoid of constant amplitude whose zeros are
+
+    t = ( k*pi - (betaB - betaA) ) / (thB - thA),        k integer
+
+enumerated directly for the k that land in the interval of interest.  When
+thA = thB the expression is constant: the two edges are either parallel for
+the whole segment or never, which is the special case listed in Section
+4.3.3 of [1], now detected by inspecting one coefficient rather than by a
+root finder failing to bracket.
+
+
+Regime 1: Disjoint Bodies
+-------------------------
+
+While the bodies are disjoint the state is the closest feature pair (i,j),
+each index in [0, 2n) with even meaning a vertex and odd meaning an edge.
+This is the walk of Sections 4.2 and 4.3 of [1] and is unchanged in
+substance.  Per temporal segment:
+
+  1. Seed from the pair at the end of the previous segment.  V-Clip is
+     warm-started from that pair, so it converges in O(1) rather than
+     rescanning the polygon.  Only the first segment of a trajectory needs
+     a cold seed.
+
+  2. Repeatedly find the earliest transition strictly after the previous
+     one.  The candidate equations are those of the tables above.  Both
+     directions are tested at every step; the published algorithm does the
+     same, and restricting to the direction of the previous step is an
+     unproven optimization that this design does not adopt.
+
+  3. Between two transitions the feature pair is fixed, so the distance is
+     an explicit member of the family and its extrema are the roots of its
+     derivative.
+
+Note that the value emitted at each instant comes from the closed form of
+that interval's own feature pair, not from a fresh distance computation.  A
+V-Clip cross-check at each emitted instant is worth keeping under Assert,
+but it must not be on the hot path: it costs more than everything else in
+the algorithm combined.
+
+
+Regime 2: Overlapping Bodies
+----------------------------
+
+Section 4.2 of [1] states that intersection "is not allowed in the
+algorithm, and if one of these two cases is detected, the algorithm will
+fail".  The difficulty is real: V-Clip is defined for disjoint convex
+bodies, and once the bodies interpenetrate there is no separating witness
+for it to converge to, so the feature pair is not merely stale but
+undefined.  Detecting the START of an overlap is easy -- it is a root of G,
+which the extremum solve already produces -- but nothing in the disjoint
+regime can say when the overlap ENDS.  If the overlap spans several temporal
+segments there is not even a valid pair to seed the next segment with.
+
+The resolution is a second regime with its own witness.  Define the signed
+separation
+
+    sigma(t) = max over edge-normal axes of the signed separation
+
+    sigma > 0   disjoint,     sigma = distance
+    sigma < 0   overlapping,  -sigma = penetration depth
+    sigma = 0   touching
+
+sigma is a single continuous function defined on both sides of contact, so
+overlap entry and overlap exit are both simply its zeros.  By the separating
+axis theorem the edge normals of the two bodies are a sufficient axis set
+for convex polygons, so the maximum above is over a finite, known set.
+
+The witness while overlapping is the axis attaining that maximum -- the
+least-penetrating axis.  It is the exact analogue of the closest feature
+pair: O(1) of state, carried across temporal segments, and warm-started
+because the attaining axis rarely jumps between neighbouring instants.
+
+For an edge of A with body-frame unit normal n0, the gap along that axis is
+
+    gap(t) = dot( R(thA*t)*n0, W(t) )
+           + min over b in B of dot( R((thA-thB)*t)*n0, b )
+           - hA(n0)
+
+with three parts:
+
+  * dot( R(thA*t)*n0, W(t) ) is a member of the family: affine coefficients
+    at frequency thA.
+
+  * The middle term is the support function of B evaluated along a
+    direction that rotates at the constant rate thA - thB.  For a convex
+    polygon the support function along a rotating direction is piecewise a
+    single sinusoid of constant amplitude; it switches when the supporting
+    vertex changes, which happens when the direction angle crosses an
+    edge-normal angle of B.  That angle is affine in t, so the switching
+    instants are closed form.  Subdivide at them and each piece is a smooth
+    member of the family.
+
+  * hA(n0) is the body-frame support value of A along n0.  It is a constant
+    of the motion and is precomputed once per edge of the reference
+    geometry.
+
+So the overlapping regime uses the same coefficients, the same root
+isolator and the same warm-start discipline as the disjoint regime.  Its
+cost is paid only while the bodies actually overlap.
+
+
+The Regime State Machine
+------------------------
+
+    DISJOINT   witness : closest feature pair (i,j)
+               value   : |G(t)|/L, or |vA(t) - vB(t)| for a vertex pair
+               exit    : a root of G (or of d^2), already computed while
+                         locating the extrema
+                         --> the contact normal, which is a separating axis
+
+    OVERLAP    witness : least-penetrating axis k
+               value   : 0
+               exit    : a root of gap_k(t)
+                         --> the contact axis; the supporting vertex found
+                             while evaluating it gives the contact feature
+                             pair
+
+Each transition hands the other regime exactly the seed it needs, so no
+cold restart is required at a segment boundary in either regime.  A cold
+scan is needed only when a trajectory begins already overlapping.
+
+Defining entry as a zero of sigma rather than as a degeneracy of the feature
+pair is also more robust in its own right.  At the contact instant the pair
+is degenerate -- a vertex lies exactly on an edge -- which is precisely
+where a feature-based test is most delicate, while sigma is continuous
+there.
+
+
+Certified Root Isolation
+------------------------
+
+The remaining question is how to find EVERY root of a family member on an
+interval, rather than however many a fixed sampling density happens to
+reveal.  Sampling the values of a distance and inferring the sign of its
+slope has two failure modes that are easy to hit: an extremum lying in the
+first or the last cell has no neighbouring sample to flip the inferred
+sign, and a shallow extremum between two samples that both read as falling
+is invisible.  Both disappear once the derivative is available in closed
+form, because then it is the SIGN OF AN EVALUATED FUNCTION that is
+bracketed, not an inference from three values.
+
+Beyond that, the family admits an a priori bound on how finely it must be
+subdivided.  Write the single-frequency part in polar form,
+
+    L * [ Wx*cos(w*t+g) + Wy*sin(w*t+g) ]
+        = L * rho(t) * cos( w*t + g - delta(t) )
+
+    rho(t) = |W(t)|,   delta(t) = angle(W(t))
+
+Because W(t) is affine, W traces a straight line in the plane, and
+therefore:
+
+  * rho^2 is a convex quadratic, so rho is unimodal and its single turning
+    point is the vertex of that quadratic -- closed form.
+
+  * delta is monotone, and its total variation is strictly less than pi
+    (a straight line subtends less than a half turn as seen from any point).
+
+Hence the total phase variation of the argument is bounded by |w| + pi
+before anything is evaluated.  Under the restriction theta in [-pi, pi] used
+in [1] this is at most 2*pi, so a subdivision into
+
+    K = ceil( (|w| + pi) / (pi/4) )
+
+cells -- eight in the worst case, not sixty-four -- advances the phase by
+less than a quarter turn per cell.  Split additionally at the turning point
+of rho and at the support-vertex switches of the overlap regime, and every
+resulting cell is one on which the function is well behaved.
+
+Each cell is then resolved as follows.  If F changes sign across the cell,
+a safeguarded Newton iteration (Newton with a bisection fallback, using the
+exact derivative) converges to the root.  If it does not change sign, bound
+|F'| on the cell in closed form -- the sinusoids are bounded by one and the
+coefficients are affine, so their extremes are their endpoint values -- and
+apply
+
+    |F(t_mid)| > (h/2) * max|F'| on the cell   ==>   no root in the cell
+
+where h is the cell width.  A cell that passes this test is discarded with
+a proof.  A cell that fails is bisected.  The recursion terminates, and on
+termination every root has been isolated.  This is what replaces the
+assumption that the sampling was dense enough.
+
+How many roots there can be is also answerable.  A family member lies in
+
+    span{ 1, t, t^2, cos(w*t), sin(w*t), t*cos(w*t), t*sin(w*t) }
+
+which is annihilated by the order-7 constant-coefficient operator
+
+    D^3 * (D^2 + w^2)^2
+
+The key step is that (D^2 + w^2) maps an affine-coefficient sinusoid to a
+CONSTANT-coefficient one,
+
+    (D^2 + w^2)[ (a1*t+a0)*cos(w*t+g) + (b1*t+b0)*sin(w*t+g) ]
+        = 2*w*b1*cos(w*t+g) - 2*w*a1*sin(w*t+g)
+
+so a second application annihilates it outright.  On an interval where the
+equation is disconjugate a nonzero solution has at most six zeros.  Over
+200000 random family members with |w| <= pi the observed maximum was three,
+with more than half having none at all.  The practical consequence is that
+the cost of resolving an interval is a small constant, which is exactly the
+assumption Section 4.2.1 of [1] makes when it treats solving one equation
+as O(1); here it is a consequence of the coefficients rather than a
+simplification.
+
+
+What Is Solved Directly and What Is Solved Numerically
+------------------------------------------------------
+
+Solved directly, always:
+
+  * Equations (18) and (19), parallel edges.  See above.
+
+Solved directly when no body carrying a feature rotates (thA = 0, and
+thB = 0 unless the other operand is a point):
+
+  * Transitions.  N(t) is affine, so N = 0 and N = L^2 are one division
+    each.  These are Equations (25) and (26) of [1].
+
+  * Vertex-vertex distance.  d^2 is a quadratic, so its single extremum is
+    at the vertex of that quadratic.
+
+  * Vertex-edge distance.  G(t) is affine, so d = |G|/L is EXACTLY affine.
+    There is no interior extremum at all unless the distance reaches zero,
+    and that zero is the root of G.  The piecewise linear result is not an
+    approximation on such an interval; it is the exact function.
+
+  * The merge crossing, Equation (22): a difference of quadratics.
+
+Solved numerically, and irreducibly so, once a body rotates:
+
+  * Transitions, Equations (11), (12), (15), (16), (17).
+  * The intersection test, Equation (13).
+  * The extrema of Equations (20) and (21), as roots of an exact
+    derivative rather than as a search over sampled values.
+  * The merge crossing, Equation (22).
+  * The overlap exit, gap(t) = 0.
+
+These are transcendental and have no elementary closed form.  What the
+closed form buys is not their elimination but an exact derivative and a
+subdivision whose sufficiency is computed rather than assumed.
+
+A warning about a tempting shortcut.  Two bodies rotating at the SAME rate
+do not reduce to the non-rotating case, even though their relative
+orientation is constant.  Two bodies spinning at equal rates about
+different centres still have oscillatory relative motion: the thA term of
+N(t) survives with affine coefficients.  Only Equations (18) and (19)
+degenerate.  A relative-frame formulation makes this shortcut look
+plausible, which is one reason the world-frame formulation above is
+preferred.
+
+
+The Non-Rotating Specialization
+-------------------------------
+
+Section 7.2 of [1] reports that 65.7 percent of segments in a real AIS
+dataset have zero rotation, so this path carries most of the traffic and
+deserves to be selected once per segment rather than tested inside each
+solver.
+
+The branch must be taken on a GEOMETRIC tolerance, not on an absolute angle.
+A rotation of 1e-7 radians is negligible for a two-metre robot and is not
+negligible for a three-hundred-metre vessel.  The test is
+
+    |w| * (body radius) < eps * (length scale)
+
+where the body radius is the largest vertex radius of the reference
+geometry, itself a constant of the motion and computed once.
+
+
+Building the Result
+-------------------
+
+The temporal distance is returned as a tfloat: a piecewise linear function
+that reproduces the distance exactly at every instant it stores and keeps
+every extremum of the true function, so that reducing it with min yields
+the exact nearest approach distance.  The instants are:
+
+  * the ends of each temporal segment;
+  * every feature transition;
+  * every extremum located inside a feature interval;
+  * every contact instant (a root of G, or of sigma), where the function
+    has a kink.
+
+Each value is evaluated from the closed form of the feature pair that owns
+the interval.  The instants are then sorted; duplicates in time are
+collapsed keeping the smaller value, so that a transition coinciding with
+an extremum does not produce two instants.
+
+Interpolation of the input must be honoured.  With step interpolation a
+body holds its pose for the whole of a segment, so w = 0 AND the
+translation is zero: the distance is constant over the segment and no walk
+is required.  This falls out of the same machinery and must not be reached
+by running the linear walk and labelling the result step.
+
+
+Data Structures and Caching
+---------------------------
+
+Two lifetimes matter, and conflating them is the main performance hazard.
+
+Per reference geometry, invariant for all time:
+
+  * normalized ring: closed, duplicate points removed, orientation fixed;
+  * convexity flag, and for a non-convex body its convex decomposition;
+  * per vertex: radius and angle in body coordinates;
+  * per edge: length, direction angle, outward unit normal, and the support
+    value hA(n0);
+  * a bounding volume hierarchy over the edges IN BODY COORDINATES, which
+    is therefore built once and valid for every pose the body ever takes;
+  * the largest vertex radius, for the tolerance above.
+
+None of this depends on the pose, so it is computed when the reference
+geometry is first seen and cached with it.  Recomputing any of it per call,
+per segment or per sample is the difference between the published cost per
+segment and several times that.
+
+Per temporal segment:
+
+  * (cA, dA, thA) and (cB, dB, thB), hence W(t) and the frequencies;
+  * the coefficient sets of the currently active equations.
+
+Per closest-feature interval:
+
+  * the coefficients of the distance function and of its derivative.
+
+
+Degenerate Cases
+----------------
+
+Section 4.3.3 of [1] lists special cases and notes that they are rare in
+practice.  Rare is not never, and enumerating them invites the ones at the
+tail of the list to go unimplemented.  Where possible they should be
+removed as categories rather than handled as cases:
+
+  * Feature pairs are indices in [0,2n) x [0,2m) uniformly, edge-edge
+    included.  An edge-edge pair is a normal state with its own transition
+    set, not a state to abandon the segment from.
+
+  * Permanently parallel edges are thA = thB in the closed form of
+    Equations (18) and (19): a coefficient, not a numerical accident.
+
+  * Ties at a segment start are resolved by advancing by an epsilon and
+    re-seeding from a warm V-Clip.  Warm V-Clip is O(1), so re-seeding is
+    cheap enough to be the general answer rather than a special one.
+
+  * Overlap is an interval with two endpoints, per the regime above, not a
+    failure.
+
+  * The reference ring is canonicalized once, when its feature constants are
+    computed: repeated vertices go, vertices lying on the straight edge
+    through their neighbours go, and the ring is oriented counterclockwise.
+    None of that changes the distance the ring realizes.  A repeated vertex
+    adds an edge with no direction, and a collinear vertex splits one
+    straight edge in two while adding a Voronoi wedge of no width; both are
+    positions the walk would otherwise have to be taught to occupy and leave
+    without time passing.  Removing the cases is worth more than handling
+    them: it deletes a stored orientation flag, a branch in the side test,
+    and a whole class of degeneracy, and it lets the division by an edge
+    length go unguarded because there is nothing left to guard against.
+
+    A non-convex ring is refused there rather than answered wrongly, since
+    Section 4.4 is not implemented.  The collinearity test compares the SINE
+    of the turn, which is dimensionless and so needs no length scale; the
+    reference geometry the temporal value stores is untouched, and only the
+    working copy is cleaned.
+
+  * A root of a transition equation is not by itself a transition.  Leaving
+    a region means crossing its boundary OUTWARD, and each of the four tests
+    knows which direction that is: the two bounding a region from above are
+    left by rising and the two bounding it from below by falling.  Reading
+    the sign of the derivative, which the family gives exactly, is what
+    separates the two.
+
+    This is not a refinement.  A transition sits exactly on a boundary, and
+    a root isolator counts anything within its value tolerance of a level as
+    a root, so searching forward from a transition reports that same
+    crossing again, one unit in the last place later and still inside its
+    own accuracy.  A walk that takes it steps back to where it came from,
+    finds the exit it then wants already in the past, and strands itself on
+    a stale feature for the rest of the segment.  Stepping the search bound
+    forward instead only moves the question to how far is far enough, which
+    depends on the slope and so is not a constant.  The direction test
+    answers it with no tolerance at all.
+
+  * The walk advances strictly: each transition must be later than the
+    previous one by more than an epsilon.  It therefore terminates without
+    an iteration cap.  If a guard ever fires it must degrade to evaluating
+    the segment instant by instant, not fail the query.
+
+
+Tolerances
+----------
+
+Only one tolerance in the walk is load bearing, and it is worth saying which
+and why, because a constant nobody can justify is the kind of thing that is
+still there years later with nobody willing to touch it.
+
+The walk re-establishes its invariant on arrival by testing the PROJECTION
+PARAMETER against its region, not the raw dot product.  That parameter is
+dimensionless, so unlike a distance its tolerance needs no length scale: the
+same constant is right for a two-metre robot and a three-hundred-metre vessel.
+
+It cannot be zero.  A transition lands exactly on a region boundary, where the
+test is decided by the last bit, and settling there undoes the transition that
+just happened.  Sweeping it over the randomized suite of 20000 segments:
+
+    0        1370 wrong values, 712 wrong minima, 7127 refusals
+    1e-14       2 wrong values,   1 wrong minimum,  15 refusals
+    1e-12       clean
+    1e-9        clean
+    1e-6        clean
+
+So the behaviour is invariant over six decades and the value used, 1e-9, sits
+in the middle of them.  It is a floor above floating point noise, not a figure
+anything was tuned to.
+
+Everything else is either derived or reported.  The root isolator's cell count
+follows from the coefficients; its subdivision and stack budgets are reported
+through a return value rather than assumed; and the step cap on the walk exists
+only so that a bug cannot hang a query, since the direction test above is what
+actually makes the walk advance.
+
+
+Non-Convex Bodies
+-----------------
+
+The walk requires convex bodies.  Section 4.4 of [1] decomposes a
+non-convex body into convex parts, computes N*M partial solutions and
+merges them with a sweep line.  Until that exists, a non-convex reference
+geometry must be REJECTED with a clear error.  Accepting one and running
+the convex walk on it returns a silently wrong answer whose error depends
+on the data: for a translating body it is often right, and for the same
+body rotating it can be off by more than the distance itself.
+
+When the decomposition is implemented, two things should differ from [1]:
+
+  * The bounding volume hierarchy over body-frame edges prunes most part
+    pairs before any walk runs, and it is built once per reference
+    geometry.
+
+  * The merge should compare the two lowest curves exactly.  Equation (22)
+    is a difference of two family members, so the same root isolator
+    applies.  Merging on the crossing of the LINEAR APPROXIMATIONS and
+    correcting only the value there leaves the crossing at the wrong
+    instant and can lose the true minimum between two components.
+
+
+Code Organization
+-----------------
+
+The subsystem is three translation units, split by what each one is allowed to
+know about.
+
+  meos/src/rgeo/trgeo_distsolve.c   the function family and its root isolator
+  meos/src/rgeo/trgeo_distwalk.c    the coefficients and the two regimes
+  meos/src/rgeo/trgeo_distance.c    temporal assembly and the MEOS API
+  mobilitydb/src/rgeo/trgeo_distance.c   the PostgreSQL wrappers
+
+Headers live in meos/include/rgeo/ next to their peers.
+
+trgeo_distsolve.c holds the family described above, its derivative, its
+amplitude bound and the certified isolator.  It is deliberately free of
+PostgreSQL, PostGIS and MEOS headers: it uses only <math.h>, <assert.h>,
+<stdbool.h> and <stddef.h>, performs no allocation, and reports every
+condition through a return value.  That is not tidiness for its own sake.  It
+means the file can be compiled on its own,
+
+  gcc -O2 -Wall -I meos/include -o trgeo_distsolve_test \
+      meos/test/trgeo_distsolve_test.c meos/src/rgeo/trgeo_distsolve.c -lm
+
+so the root isolator can be fuzzed against dense sampling without a database,
+and the translation being fuzzed is the one that ships.  Adding palloc, Assert
+or meos_error would break that: the latter two longjmp inside MEOS, which
+would give the file different control flow in the two builds.  The
+consequences are worth stating, because each is individually tempting to
+break.  Root buffers are supplied by the caller, which costs nothing since at
+most six roots can exist.  Tolerances are parameters rather than globals,
+which is better regardless: the right value for a two-metre robot is wrong for
+a three-hundred-metre vessel, and only the caller knows the scale.  And there
+is one negative result, DISTFUN_ZERO, that is not an error at all but the
+equal-rotation-rate state of Section 4.3.3, which the walk must handle rather
+than report.
+
+trgeo_distwalk.c turns a reference geometry, a pose segment and a feature pair
+into coefficients, and runs the two regimes over one temporal segment.  It
+knows about poses and polygons but not about time: no TimestampTz and no
+TSequence appear in it.  Its coefficient builders should carry a debug-only
+self-check comparing the assembled function against the direct expression at a
+few points in the segment, since a mistyped sign there is otherwise found only
+as a wrong distance much later.
+
+trgeo_distance.c walks sequences and sequence sets, synchronizes two temporal
+values, assembles the tfloat, and presents the MEOS API.  It is the only one of
+the three that deals in temporal types.
+
+If the walk ever outgrows one file, the natural second cut is by REGIME --
+the closest-feature walk and the separating-axis walk are independent, sharing
+only the handover -- and not by separating the coefficient builders from the
+control flow that uses them.  Those two change together: every new regime adds
+both a builder and a state.
+
+
+Verification
+------------
+
+The closed forms above were checked against direct evaluation over
+randomized rigid motions; the residuals are at the level of floating point
+noise and are recorded here so that a regression in the coefficient algebra
+is recognizable:
+
+    N(t), moving body vs static target             2.6e-13
+    G(t), moving body vs static target             2.4e-13
+    vertex-vertex d^2, static target               1.4e-12
+    N(t), moving body vs moving body               2.6e-13
+    G(t), moving body vs moving body               3.0e-13
+    vertex-vertex d^2, moving body vs moving body  3.6e-12
+    Eq. (18) as LA*LB*sin(...)                     1.5e-13
+    N_1(t) = N_0(t) - L^2                          2.7e-13
+    vertex-edge distance = |G|/L for 0 < s < 1     7.1e-14
+    gap(t) of the overlap regime                   7.1e-15
+    (D^2+w^2) reduces affine to constant coeffs    2.8e-14
+
+    non-rotating vertex-edge distance is affine    9.9e-13 relative
+    non-rotating vertex-vertex d^2 is quadratic    5.0e-12 relative
+    sign(sigma) vs brute-force overlap test        2400 of 2400 agree
+
+The properties the root isolation relies on were checked over 20000 random
+affine W(t): |W|^2 was convex in every case and angle(W) was monotone in
+every case, with the largest observed total turning 3.141373 against a bound
+of pi.
+
+The closest-feature walk carries meos/test/trgeo_distwalk_poly_test.c, which
+compares it against a dense scan of the true point-to-convex-polygon distance.
+Over 20000 randomized segments, of which 13032 do not intersect:
+
+    emitted instants carrying a wrong distance    0  (worst 1.1e-11 relative)
+    instants out of order                         0
+    NAD above the true minimum                    0  (worst 5.9e-15 relative)
+    a distance reported BELOW the true one        0
+
+The third line is the property the design exists for.  The last guards a
+specific mistake: inside a vertex-to-edge interval the distance is |G|/L, which
+is the distance to the LINE of the edge, so a walk sitting on an edge whose
+projection has left it reports a distance smaller than the true one.  Measuring
+that separately is what distinguishes a tracking error from a formula error.
+
+No segment was refused.  An earlier form of the walk refused eight of them,
+which turned out not to be a property of the geometry at all but the
+re-reported crossing described under Degenerate Cases; the direction test
+removed them.  The check that caught them is kept: when no further transition
+is found, the feature is verified against the one that holds at the end of the
+segment, because a stale feature would otherwise be wrong for the whole
+remainder and wrong silently.  If it ever fires the caller degrades to
+evaluating that segment instant by instant.
+
+The coefficient builders carry their own test, meos/test/
+trgeo_distwalk_test.c, which compares each assembled function against the
+expression it stands for over randomized reference features and pose segments,
+for a moving and for a static second operand.  Over 40000 segments:
+
+    transition N(t)                             1.5e-13 relative
+    cross G(t)                                  1.5e-13
+    vertex-vertex squared distance              4.2e-13
+    parallel edges                              1.1e-13
+    s(t) = 1 is the same function at level L^2  2.7e-13
+    |G|/L is the distance while 0 < s < 1       5.3e-15
+
+Its last check is the one that protects the existing regression outputs.  The
+rotation of a pose segment is read once, into the motion of the segment, and
+must reproduce posesegm_interpolate exactly -- including its counterclockwise
+tie-break at half a turn -- or every distance computed from the coefficients
+disagrees with the body the database actually places.  The observed difference
+is 8.9e-16 radians.
+
+The root isolator carries its own standalone test, meos/test/
+trgeo_distsolve_test.c, described under Code Organization.  Over 60000 fuzzed
+coefficient sets checked against a 200003-point dense scan it missed no root
+and invented none, and the amplitude bound was never violated.  The same test
+run against a three-point bracket with no certificate -- which is what the
+published algorithm's "solve numerically" has so far meant in practice --
+misses about eleven percent of roots and structurally cannot return more than
+two from one call, where the certified form returns up to five.  That contrast
+is the reason the test exists.
+
+Beyond unit tests of the algebra, the suite should include a randomized
+comparison of nearestApproachDistance against a dense-sampling minimum over
+rotating bodies.  That is the test that distinguishes an implementation
+which finds every extremum from one which usually does: an implementation
+that brackets extrema by sampled values rather than by an evaluated
+derivative fails it on roughly half of randomly generated rotating cases,
+while agreeing to eleven digits on the rest.  Cases worth covering
+explicitly: a body entering and leaving a static polygon; an overlap
+spanning several temporal segments; step interpolation; equal rotation
+rates; and a non-convex reference geometry, which must raise an error.
+
+
+Relation to the Published Paper
+-------------------------------
+
+If this material were folded back into [1], it does not belong in one
+place.  Most of it is a sharpening of existing sections and reads best
+inline:
+
+  * The closed form of N(t) belongs immediately after Equation (8) in
+    Section 4.1.  It is short, and it changes how a reader understands
+    every equation that follows: "non-linear" becomes "a trigonometric
+    polynomial with affine coefficients and at most two known
+    frequencies".
+
+  * The direct solution of Equations (18) and (19) replaces the sentence in
+    Section 4.3.2 that sends them to a numerical method.
+
+  * The identity d = |G|/L, and the extrema as roots of G', belong in
+    Section 6.1, where the derivation is currently omitted.
+
+  * The exactness of the piecewise linear result on non-rotating
+    vertex-edge intervals belongs in Section 5 and strengthens the claim
+    Section 6.1 makes about the approximation.
+
+Two pieces do not fit inline.
+
+  * Overlap as a second tracking regime removes a stated limitation of the
+    algorithm and needs its own development and figures.  It should be a
+    new section alongside Section 4.4, not a remark.
+
+  * The certified root isolation is a self-contained numerical argument
+    that would interrupt the geometric development.  It belongs in an
+    appendix, referenced from Section 4.2.1 at the point where the cost of
+    solving one equation is assumed to be constant -- which is exactly what
+    the appendix turns from an assumption into a consequence.
+
+Since [1] is published, the realistic vehicle is an extended version or a
+short follow-up; the placement above is what it would look like in a
+revision.
+
+
+References
+----------
+
+[1] Maxime Schoemans, Mahmoud Sakr and Esteban Zimanyi.  On Computing the
+    Time-varying Distance between Moving Bodies.  ACM Transactions on
+    Spatial Algorithms and Systems 9(4), Article 29, November 2023.
+    https://doi.org/10.1145/3611010
+
+[2] Brian Mirtich.  V-Clip: Fast and Robust Polyhedral Collision Detection.
+    ACM Transactions on Graphics 17, 1998, 177-208.
+
+[3] Ming C. Lin and John F. Canny.  A Fast Algorithm for Incremental
+    Distance Calculation.  Proceedings of the IEEE International Conference
+    on Robotics and Automation, 1991, 1008-1014.
+
+[4] Maxime Schoemans, Mahmoud Sakr and Esteban Zimanyi.  Implementing Rigid
+    Temporal Geometries in Moving Object Databases.  Proceedings of the
+    37th IEEE International Conference on Data Engineering, 2021.
