@@ -1,11 +1,16 @@
 var searchData=
 [
-  ['tboxgridstate_0',['TboxGridState',['../temporal__tile_8h_ac535cd7c14f21ac0c5784dd467856e5d.html#ac535cd7c14f21ac0c5784dd467856e5d',1,'temporal_tile.h']]],
-  ['text_1',['text',['../postgres__ext__defs_8in_8h_af5f2dec97dfaab496adb8b568e1660c1.html#af5f2dec97dfaab496adb8b568e1660c1',1,'postgres_ext_defs.in.h']]],
-  ['timeadt_2',['TimeADT',['../postgres__ext__defs_8in_8h_ac855d2530925e3123cb4be1a069b8b6a.html#ac855d2530925e3123cb4be1a069b8b6a',1,'postgres_ext_defs.in.h']]],
-  ['timeoffset_3',['TimeOffset',['../postgres__ext__defs_8in_8h_afeeec9fef4965fff91ab315ec70c1e9b.html#afeeec9fef4965fff91ab315ec70c1e9b',1,'postgres_ext_defs.in.h']]],
-  ['timestamp_4',['Timestamp',['../postgres__ext__defs_8in_8h_a073f186f9dddbefc6d819f25c6ccaa00.html#a073f186f9dddbefc6d819f25c6ccaa00',1,'postgres_ext_defs.in.h']]],
-  ['timestamptz_5',['TimestampTz',['../postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe',1,'postgres_ext_defs.in.h']]],
-  ['tpfunc_5fbase_6',['tpfunc_base',['../meos_2include_2temporal_2temporal_8h_a14e8d51921d33d20867929767d50f51d.html#a14e8d51921d33d20867929767d50f51d',1,'temporal.h']]],
-  ['tpfunc_5ftemp_7',['tpfunc_temp',['../meos_2include_2temporal_2temporal_8h_a73d8710f730e73a0865d3d6200b6910c.html#a73d8710f730e73a0865d3d6200b6910c',1,'temporal.h']]]
+  ['raquet_0',['Raquet',['../meos__raster_8h_a82bc18d6228bd1c7229a47fd763cd791.html#a82bc18d6228bd1c7229a47fd763cd791',1,'meos_raster.h']]],
+  ['raster_1',['Raster',['../meos__raster_8h_a26e9c4944333ddf47d33cd090c782e00.html#a26e9c4944333ddf47d33cd090c782e00',1,'meos_raster.h']]],
+  ['raster_5fcross_5ffn_2',['raster_cross_fn',['../raster__quadbin_8h_a40699c74d8b24ed7b8a70900c8e0b94d.html#a40699c74d8b24ed7b8a70900c8e0b94d',1,'raster_quadbin.h']]],
+  ['raster_5fdata_5ffn_3',['raster_data_fn',['../raster__quadbin_8h_aae11f3cbdc4589863201e9aa65017f5c.html#aae11f3cbdc4589863201e9aa65017f5c',1,'raster_quadbin.h']]],
+  ['raster_5fgrid_5ffn_4',['raster_grid_fn',['../raster__quadbin_8h_a7e81a09b3ef2c217db95c42a98bfa4ef.html#a7e81a09b3ef2c217db95c42a98bfa4ef',1,'raster_quadbin.h']]],
+  ['raster_5fpixel_5ffn_5',['raster_pixel_fn',['../raster__quadbin_8h_a86bc9090a05ec01d585e4fae32a3353c.html#a86bc9090a05ec01d585e4fae32a3353c',1,'raster_quadbin.h']]],
+  ['raster_5fpoint_5ffn_6',['raster_point_fn',['../raster__quadbin_8h_a2d93fafd5797ff86e8b0fde841bb152d.html#a2d93fafd5797ff86e8b0fde841bb152d',1,'raster_quadbin.h']]],
+  ['rastergridops_7',['RasterGridOps',['../raster__quadbin_8h_addb16eddd3035ecea62f83d39a5a4c9a.html#addb16eddd3035ecea62f83d39a5a4c9a',1,'raster_quadbin.h']]],
+  ['residual_5ffn_8',['residual_fn',['../meos_2src_2rgeo_2trgeo__geom__clip_8c_a56035d2d4d20fa3229c263a28ff3a7dc.html#a56035d2d4d20fa3229c263a28ff3a7dc',1,'trgeo_geom_clip.c']]],
+  ['rtree_9',['RTree',['../meos_8h_a3dbd73b6367ac05a5b7a41205de49460.html#a3dbd73b6367ac05a5b7a41205de49460',1,'meos.h']]],
+  ['rtreenncursor_10',['RTreeNNCursor',['../meos_8h_a1a246a111be2aaddf6a8a458906ee4b6.html#a1a246a111be2aaddf6a8a458906ee4b6',1,'meos.h']]],
+  ['rtreennentry_11',['RTreeNNEntry',['../temporal__rtree_8c_aa0e2f15c4fc62314de4552df6fc15b31.html#aa0e2f15c4fc62314de4552df6fc15b31',1,'temporal_rtree.c']]],
+  ['rtreenode_12',['RTreeNode',['../temporal__rtree_8h_afe479577f2d312dc7122eeb5e6d51a4d.html#afe479577f2d312dc7122eeb5e6d51a4d',1,'temporal_rtree.h']]]
 ];

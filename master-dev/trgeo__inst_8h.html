@@ -79,6 +79,9 @@ $(function() {
   <div class="headertitle"><div class="title">trgeo_inst.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Functions for temporal rigid instant geometries.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;postgres.h&gt;</code><br />
 <code>#include &quot;temporal/temporal.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="pose_8h_source.html">pose/pose.h</a>&quot;</code><br />
@@ -88,7 +91,7 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a6b6b81c65a1fba9f6d33dc2f9d8af41d"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structGSERIALIZED.html">GSERIALIZED</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="trgeo__inst_8h_a6b6b81c65a1fba9f6d33dc2f9d8af41d.html#a6b6b81c65a1fba9f6d33dc2f9d8af41d">trgeoinst_geom_p</a> (const <a class="el" href="structTInstant.html">TInstant</a> *inst)</td></tr>
-<tr class="memdesc:a6b6b81c65a1fba9f6d33dc2f9d8af41d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functions for temporal rigid instant geometries.  <a href="trgeo__inst_8h_a6b6b81c65a1fba9f6d33dc2f9d8af41d.html#a6b6b81c65a1fba9f6d33dc2f9d8af41d">More...</a><br /></td></tr>
+<tr class="memdesc:a6b6b81c65a1fba9f6d33dc2f9d8af41d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the reference geometry of the temporal value.  <a href="trgeo__inst_8h_a6b6b81c65a1fba9f6d33dc2f9d8af41d.html#a6b6b81c65a1fba9f6d33dc2f9d8af41d">More...</a><br /></td></tr>
 <tr class="separator:a6b6b81c65a1fba9f6d33dc2f9d8af41d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89c90a275479408770f02d4f34a93e6d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="trgeo__inst_8h_a89c90a275479408770f02d4f34a93e6d.html#a89c90a275479408770f02d4f34a93e6d">trgeoinst_make1</a> (const <a class="el" href="structGSERIALIZED.html">GSERIALIZED</a> *geom, const <a class="el" href="structPose.html">Pose</a> *pose, <a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a> t)</td></tr>
 <tr class="memdesc:a89c90a275479408770f02d4f34a93e6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creating a temporal value from its arguments.  <a href="trgeo__inst_8h_a89c90a275479408770f02d4f34a93e6d.html#a89c90a275479408770f02d4f34a93e6d">More...</a><br /></td></tr>
@@ -102,14 +105,16 @@ Functions</h2></td></tr>
 <tr class="memitem:a9d3bf078c5279559a4bf84fb615e28d1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="trgeo__inst_8h_a9d3bf078c5279559a4bf84fb615e28d1.html#a9d3bf078c5279559a4bf84fb615e28d1">trgeoinst_tposeinst</a> (const <a class="el" href="structTInstant.html">TInstant</a> *inst)</td></tr>
 <tr class="memdesc:a9d3bf078c5279559a4bf84fb615e28d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a new temporal pose instant obtained by removing the reference geometry of a temporal rigid geometry instant.  <a href="trgeo__inst_8h_a9d3bf078c5279559a4bf84fb615e28d1.html#a9d3bf078c5279559a4bf84fb615e28d1">More...</a><br /></td></tr>
 <tr class="separator:a9d3bf078c5279559a4bf84fb615e28d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa539c1bcd2173f65eb8ee7f91c03a077"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="trgeo__inst_8h_aa539c1bcd2173f65eb8ee7f91c03a077.html#aa539c1bcd2173f65eb8ee7f91c03a077">trgeoseq_to_tinstant</a> (const <a class="el" href="structTSequence.html">TSequence</a> *seq)</td></tr>
-<tr class="memdesc:aa539c1bcd2173f65eb8ee7f91c03a077"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal sequence transformed into a temporal instant.  <a href="trgeo__inst_8h_aa539c1bcd2173f65eb8ee7f91c03a077.html#aa539c1bcd2173f65eb8ee7f91c03a077">More...</a><br /></td></tr>
-<tr class="separator:aa539c1bcd2173f65eb8ee7f91c03a077"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b120188792100b6ebd49f5f8f37a384"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="trgeo__inst_8h_a2b120188792100b6ebd49f5f8f37a384.html#a2b120188792100b6ebd49f5f8f37a384">trgeoseqset_to_tinstant</a> (const <a class="el" href="structTSequenceSet.html">TSequenceSet</a> *ts)</td></tr>
-<tr class="memdesc:a2b120188792100b6ebd49f5f8f37a384"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal sequence set transformed into a temporal instant.  <a href="trgeo__inst_8h_a2b120188792100b6ebd49f5f8f37a384.html#a2b120188792100b6ebd49f5f8f37a384">More...</a><br /></td></tr>
-<tr class="separator:a2b120188792100b6ebd49f5f8f37a384"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf8674a670a97cac435ee8cfaef010319"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__rgeo__transf_gaf8674a670a97cac435ee8cfaef010319.html#gaf8674a670a97cac435ee8cfaef010319">trgeoseq_as_tinstant</a> (const <a class="el" href="structTSequence.html">TSequence</a> *seq)</td></tr>
+<tr class="memdesc:gaf8674a670a97cac435ee8cfaef010319"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal sequence transformed into a temporal instant.  <a href="group__meos__internal__rgeo__transf_gaf8674a670a97cac435ee8cfaef010319.html#gaf8674a670a97cac435ee8cfaef010319">More...</a><br /></td></tr>
+<tr class="separator:gaf8674a670a97cac435ee8cfaef010319"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9ebdf20a25e36671ceabdc27b6922a42"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__rgeo__transf_ga9ebdf20a25e36671ceabdc27b6922a42.html#ga9ebdf20a25e36671ceabdc27b6922a42">trgeoseqset_as_tinstant</a> (const <a class="el" href="structTSequenceSet.html">TSequenceSet</a> *ts)</td></tr>
+<tr class="memdesc:ga9ebdf20a25e36671ceabdc27b6922a42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal sequence set transformed into a temporal instant.  <a href="group__meos__internal__rgeo__transf_ga9ebdf20a25e36671ceabdc27b6922a42.html#ga9ebdf20a25e36671ceabdc27b6922a42">More...</a><br /></td></tr>
+<tr class="separator:ga9ebdf20a25e36671ceabdc27b6922a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >Functions for temporal rigid instant geometries. </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5

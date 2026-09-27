@@ -102,10 +102,10 @@ Macros</h2></td></tr>
 <tr class="separator:ac58386431fc4f90cd57ced06279f3a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad75afb6281ab4c88de9b4d96760cb72"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__store_8c_aad75afb6281ab4c88de9b4d96760cb72.html#aad75afb6281ab4c88de9b4d96760cb72">MAX_LEN_SQL</a>&#160;&#160;&#160;16384</td></tr>
 <tr class="separator:aad75afb6281ab4c88de9b4d96760cb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e9bf5b7600277284348c87728a323e6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__store_8c_a4e9bf5b7600277284348c87728a323e6.html#a4e9bf5b7600277284348c87728a323e6">NO_BULK_INSERT</a>&#160;&#160;&#160;20</td></tr>
-<tr class="separator:a4e9bf5b7600277284348c87728a323e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__store_8c_afbe4a2478a752bedf912ba66f0ad8b11.html#afbe4a2478a752bedf912ba66f0ad8b11">NO_INSTS_BATCH</a>&#160;&#160;&#160;10000</td></tr>
-<tr class="separator:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39a7670c192c00b7df08b1c2645335d4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__store_8c_a39a7670c192c00b7df08b1c2645335d4.html#a39a7670c192c00b7df08b1c2645335d4">NUM_BULK_INSERT</a>&#160;&#160;&#160;20</td></tr>
+<tr class="separator:a39a7670c192c00b7df08b1c2645335d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c35632621ff795485e9a92b287d11aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__store_8c_a8c35632621ff795485e9a92b287d11aa.html#a8c35632621ff795485e9a92b287d11aa">NUM_INSTS_BATCH</a>&#160;&#160;&#160;10000</td></tr>
+<tr class="separator:a8c35632621ff795485e9a92b287d11aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -121,7 +121,8 @@ Functions</h2></td></tr>
 </div><!-- fragment --><p >You should configure PostgreSQL to accept all incoming connections by setting in the <code>pg_hba.conf</code> file </p><div class="fragment"><div class="line">host all all 0.0.0.0/0 md5</div>
 </div><!-- fragment --><p> Also, make sure that PostgreSQL allows incoming connections on all available IP interfaces by setting in the <code>postgresql.conf</code> file </p><div class="fragment"><div class="line">listen_addresses = <span class="charliteral">&#39;*&#39;</span></div>
 </div><!-- fragment --><p >This program is based on the libpq example programs <a href="https://www.postgresql.org/docs/current/libpq-example.html">https://www.postgresql.org/docs/current/libpq-example.html</a> Please read the assumptions made about the input file in the file <code><a class="el" href="02__ais__read_8c.html" title="A simple program that reads AIS data from a CSV file and outputs a few of these records converted int...">02_ais_read.c</a></code> in the same directory.</p>
-<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/include -I/usr/include/postgresql -o 04_ais_store 04_ais_store.c -L/usr/local/lib -lmeos -lpq</div>
+<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a> -I/usr/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a>/postgresql -o 04_ais_store 04_ais_store.c -L/usr/local/lib -lmeos -lpq</div>
+<div class="ttc" id="amobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56_html_a6e1b934a889b7b6fe98de44d12f49c56"><div class="ttname"><a href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a></div><div class="ttdeci">include(AssembleExtensionSql) configure_file(mobilitydb_datagen.in.control $</div><div class="ttdef"><b>Definition:</b> CMakeLists.txt:28</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

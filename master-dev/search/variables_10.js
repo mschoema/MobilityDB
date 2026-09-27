@@ -1,10 +1,18 @@
 var searchData=
 [
-  ['oid_5fmeostype_0',['oid_meostype',['../structmobilitydb__constants_ab115ec3eaedc8d1362bfbcbd7bc88dab.html#ab115ec3eaedc8d1362bfbcbd7bc88dab',1,'mobilitydb_constants']]],
-  ['oper_1',['oper',['../structoid__meosoper__entry_a70f0007acf15fed66063c73874fb9be4.html#a70f0007acf15fed66063c73874fb9be4',1,'oid_meosoper_entry']]],
-  ['oper_5foid_5fargs_2',['oper_oid_args',['../structmobilitydb__constants_afcc1c45dcf88b1eff5a9e8376fc968d0.html#afcc1c45dcf88b1eff5a9e8376fc968d0',1,'mobilitydb_constants']]],
-  ['oproid_3',['oproid',['../structoid__meosoper__entry_a8adb88a8e52a4e728f5419dd633eb78a.html#a8adb88a8e52a4e728f5419dd633eb78a',1,'oid_meosoper_entry']]],
-  ['ordered_4',['ordered',['../structmeos__wkb__parse__state_a4e0802bf3fbed7387f0fb2adbaf371bc.html#a4e0802bf3fbed7387f0fb2adbaf371bc',1,'meos_wkb_parse_state']]],
-  ['origin_5',['origin',['../structSpanBinState_ad11bc7b35c0d5f5e0b179bcd3b55359e.html#ad11bc7b35c0d5f5e0b179bcd3b55359e',1,'SpanBinState']]],
-  ['overlap_6',['overlap',['../structConsiderSplitContext_ac642bba235103527c730cc244dcbef89.html#ac642bba235103527c730cc244dcbef89',1,'ConsiderSplitContext']]]
+  ['offset_0',['offset',['../structPCDimensionSpec_a21950d10c93d95e63bae2e6c14802ae8.html#a21950d10c93d95e63bae2e6c14802ae8',1,'PCDimensionSpec']]],
+  ['oid_5fmeostype_1',['oid_meostype',['../structmobilitydb__constants_ab115ec3eaedc8d1362bfbcbd7bc88dab.html#ab115ec3eaedc8d1362bfbcbd7bc88dab',1,'mobilitydb_constants']]],
+  ['op_2',['op',['../structRelateOperands_a9811a7883c525e0c7760499f1b9b0938.html#a9811a7883c525e0c7760499f1b9b0938',1,'RelateOperands::op()'],['../structRelateCtx_afc8640daa7ab7dff0000d31bf8b9c0b5.html#afc8640daa7ab7dff0000d31bf8b9c0b5',1,'RelateCtx::op()'],['../structOpCase_ad8fddd17b768de4720834f04fe22076e.html#ad8fddd17b768de4720834f04fe22076e',1,'OpCase::op()']]],
+  ['oper_3',['oper',['../structoid__meosoper__entry_a34ca3f2cf760bec93ede077b2b608c0d.html#a34ca3f2cf760bec93ede077b2b608c0d',1,'oid_meosoper_entry']]],
+  ['oper_5foid_5fargs_4',['oper_oid_args',['../structmobilitydb__constants_af4ab4f29e78da5f82aed2d0dabd54281.html#af4ab4f29e78da5f82aed2d0dabd54281',1,'mobilitydb_constants']]],
+  ['oproid_5',['oproid',['../structoid__meosoper__entry_a8adb88a8e52a4e728f5419dd633eb78a.html#a8adb88a8e52a4e728f5419dd633eb78a',1,'oid_meosoper_entry']]],
+  ['ops_6',['OPS',['../index__position__test_8c_a8aa90ada3aa6ec8f1e93b18b7b8db580.html#a8aa90ada3aa6ec8f1e93b18b7b8db580',1,'index_position_test.c']]],
+  ['oracle_7',['oracle',['../structOpCase_a0395aabbdafdb0438ebce6a4fc49f2e1.html#a0395aabbdafdb0438ebce6a4fc49f2e1',1,'OpCase']]],
+  ['ordered_8',['ordered',['../structmeos__wkb__parse__state_a4e0802bf3fbed7387f0fb2adbaf371bc.html#a4e0802bf3fbed7387f0fb2adbaf371bc',1,'meos_wkb_parse_state']]],
+  ['orient_9',['orient',['../structRelateMember_a900e97f8135e44803fe4313cb21d8789.html#a900e97f8135e44803fe4313cb21d8789',1,'RelateMember']]],
+  ['origin_10',['origin',['../structSpanBinState_ad11bc7b35c0d5f5e0b179bcd3b55359e.html#ad11bc7b35c0d5f5e0b179bcd3b55359e',1,'SpanBinState']]],
+  ['origins_11',['origins',['../structH3CellPlanes_a60c0df7322370deddb8c392eeb474370.html#a60c0df7322370deddb8c392eeb474370',1,'H3CellPlanes']]],
+  ['overflow_12',['overflow',['../structh3__buf_a30b9a3ec8e1549f88d2275ffcaa6a03f.html#a30b9a3ec8e1549f88d2275ffcaa6a03f',1,'h3_buf::overflow()'],['../structquadbin__buf_a4871b1dbdd31d3021c2cb6c9a3a1a10e.html#a4871b1dbdd31d3021c2cb6c9a3a1a10e',1,'quadbin_buf::overflow()'],['../structs2cell__buf_a2199978e5c55c404cce656b06eb2d660.html#a2199978e5c55c404cce656b06eb2d660',1,'s2cell_buf::overflow()']]],
+  ['overlap_13',['overlap',['../structBboxSplitContext_a2197d12e72f9d3fac732e19406578231.html#a2197d12e72f9d3fac732e19406578231',1,'BboxSplitContext::overlap()'],['../structConsiderSplitContext_ac642bba235103527c730cc244dcbef89.html#ac642bba235103527c730cc244dcbef89',1,'ConsiderSplitContext::overlap()']]],
+  ['own_14',['own',['../structRelateOperand_abe7cf00a84244424c725d7dcbaf617ce.html#abe7cf00a84244424c725d7dcbaf617ce',1,'RelateOperand']]]
 ];

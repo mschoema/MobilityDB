@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A simple program that reads AIS data from a CSV file containing one full day of observations provided by the Danish Maritime Authority in <a href="https://web.ais.dk/aisdata/">https://web.ais.dk/aisdata/</a>, constructs for each ship temporal values for the trip and the SOG, and outputs for each ship the MMSI, the number of records and instants used for contruct the temporal values, the distance travelled and the time-weighted average of the SOG.  
+<p>Build one full day of ship trips by expanding sequences.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
@@ -112,12 +112,12 @@ Macros</h2></td></tr>
 <tr class="separator:a0bedc3a2739e909a4ca588c90bfaccf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdbb7e14018eb6251338be3801625e50"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ais__expand__full_8c_abdbb7e14018eb6251338be3801625e50.html#abdbb7e14018eb6251338be3801625e50">MAX_LEN_TIMESTAMP</a>&#160;&#160;&#160;32</td></tr>
 <tr class="separator:abdbb7e14018eb6251338be3801625e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8df658b6b703ccf5bf6b2848181f615f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ais__expand__full_8c_a8df658b6b703ccf5bf6b2848181f615f.html#a8df658b6b703ccf5bf6b2848181f615f">MAX_NO_RECS</a>&#160;&#160;&#160;20000000</td></tr>
-<tr class="separator:a8df658b6b703ccf5bf6b2848181f615f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6df06b2dadf812d3cd6b2d148d72e03c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ais__expand__full_8c_a6df06b2dadf812d3cd6b2d148d72e03c.html#a6df06b2dadf812d3cd6b2d148d72e03c">MAX_NO_SHIPS</a>&#160;&#160;&#160;6500</td></tr>
-<tr class="separator:a6df06b2dadf812d3cd6b2d148d72e03c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc21eb8e55ddb849855c1f3c938e9dc7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ais__expand__full_8c_adc21eb8e55ddb849855c1f3c938e9dc7.html#adc21eb8e55ddb849855c1f3c938e9dc7">NO_RECS_BATCH</a>&#160;&#160;&#160;100000</td></tr>
-<tr class="separator:adc21eb8e55ddb849855c1f3c938e9dc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a581ee509d3ec23e4f95f8a87ad6c54ad"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ais__expand__full_8c_a581ee509d3ec23e4f95f8a87ad6c54ad.html#a581ee509d3ec23e4f95f8a87ad6c54ad">MAX_NUM_RECS</a>&#160;&#160;&#160;20000000</td></tr>
+<tr class="separator:a581ee509d3ec23e4f95f8a87ad6c54ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaec4b1fe75dd1a4e9e4dbcb99a89a37e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ais__expand__full_8c_aaec4b1fe75dd1a4e9e4dbcb99a89a37e.html#aaec4b1fe75dd1a4e9e4dbcb99a89a37e">MAX_NUM_SHIPS</a>&#160;&#160;&#160;6500</td></tr>
+<tr class="separator:aaec4b1fe75dd1a4e9e4dbcb99a89a37e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3f66b29292c9bce5c57ef1e704f959c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="ais__expand__full_8c_ad3f66b29292c9bce5c57ef1e704f959c.html#ad3f66b29292c9bce5c57ef1e704f959c">NUM_RECS_BATCH</a>&#160;&#160;&#160;100000</td></tr>
+<tr class="separator:ad3f66b29292c9bce5c57ef1e704f959c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -125,14 +125,16 @@ Functions</h2></td></tr>
 <tr class="separator:a840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >A simple program that reads AIS data from a CSV file containing one full day of observations provided by the Danish Maritime Authority in <a href="https://web.ais.dk/aisdata/">https://web.ais.dk/aisdata/</a>, constructs for each ship temporal values for the trip and the SOG, and outputs for each ship the MMSI, the number of records and instants used for contruct the temporal values, the distance travelled and the time-weighted average of the SOG. </p>
+<div class="textblock"><p >Build one full day of ship trips by expanding sequences. </p>
+<p >A simple program that reads AIS data from a CSV file containing one full day of observations provided by the Danish Maritime Authority in <a href="https://web.ais.dk/aisdata/">https://web.ais.dk/aisdata/</a>, constructs for each ship temporal values for the trip and the SOG, and outputs for each ship the MMSI, the number of records and instants used for contruct the temporal values, the distance travelled and the time-weighted average of the SOG.</p>
 <p >Please notice that the <code>data</code> directory DOES NOT contain the input CSV file, you must download it from the website above.</p>
 <p >Please read the assumptions made about the input CSV file in the file <code><a class="el" href="02__ais__read_8c.html" title="A simple program that reads AIS data from a CSV file and outputs a few of these records converted int...">02_ais_read.c</a></code> in the same directory. The program assumes that the input file contains at most a given number of records for at most a given number of ships, as defined by two compilation constraints. Also, the program copes with minimal error correction, that is,</p><ul>
 <li>It supposes that the observations have increasing timestamp values</li>
 <li>It verifies that the latitude, longitude, and SOG values read are in specified ranges, and</li>
 <li>It takes only the first observation when there are two or more observations for the same ship with equal timestamp values.</li>
 </ul>
-<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/include -o ais_expand_full ais_expand_full.c -L/usr/local/lib -lmeos</div>
+<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a> -o ais_expand_full ais_expand_full.c -L/usr/local/lib -lmeos</div>
+<div class="ttc" id="amobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56_html_a6e1b934a889b7b6fe98de44d12f49c56"><div class="ttname"><a href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a></div><div class="ttdeci">include(AssembleExtensionSql) configure_file(mobilitydb_datagen.in.control $</div><div class="ttdef"><b>Definition:</b> CMakeLists.txt:28</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

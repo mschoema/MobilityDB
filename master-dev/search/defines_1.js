@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['bbox_5ftest_0',['BBOX_TEST',['../meos_2include_2temporal_2temporal_8h_a992e328527bba8d82568f9fcd8debdc9.html#a992e328527bba8d82568f9fcd8debdc9',1,'temporal.h']]],
-  ['bbox_5ftest_5fno_1',['BBOX_TEST_NO',['../meos_2include_2temporal_2temporal_8h_a9203a90a170ee73d4681f4fe94c34b49.html#a9203a90a170ee73d4681f4fe94c34b49',1,'temporal.h']]],
-  ['bbox_5ftype_2',['BBOX_TYPE',['../rtree__example_8c_a1053ea16cbdefebbfa02eb9ee19d797f.html#a1053ea16cbdefebbfa02eb9ee19d797f',1,'rtree_example.c']]],
-  ['border_5fexc_3',['BORDER_EXC',['../meos_2include_2temporal_2temporal_8h_a6a6b4bdfb1828b7bb8dbde05e079cc92.html#a6a6b4bdfb1828b7bb8dbde05e079cc92',1,'temporal.h']]],
-  ['border_5finc_4',['BORDER_INC',['../meos_2include_2temporal_2temporal_8h_a888c5df49c0c821f4bae0c6494bdfe19.html#a888c5df49c0c821f4bae0c6494bdfe19',1,'temporal.h']]],
-  ['btree_5fam_5foid_5',['BTREE_AM_OID',['../temporal__selfuncs_8h_a61cb01df7cb4cea59362e25b6c2c5132.html#a61cb01df7cb4cea59362e25b6c2c5132',1,'temporal_selfuncs.h']]]
+  ['add_5fcurrent_5fposition_0',['ADD_CURRENT_POSITION',['../meos_2src_2geo_2tpoint__datagen_8c_afc4d0407ec5739895370c148ed5ef9d8.html#afc4d0407ec5739895370c148ed5ef9d8',1,'tpoint_datagen.c']]],
+  ['advanced_1',['ADVANCED',['../geopose__test_8c_a5eeb999d0ba590f6ecfe76cbf64fc5da.html#a5eeb999d0ba590f6ecfe76cbf64fc5da',1,'geopose_test.c']]],
+  ['always_2',['ALWAYS',['../meos_2include_2temporal_2temporal_8h_afaa4e46bb91ebf05695f7a8c1bf63abe.html#afaa4e46bb91ebf05695f7a8c1bf63abe',1,'temporal.h']]],
+  ['arena_3',['ARENA',['../rtree__mest__example_8c_a08bb50663a7d17fe03e3976032fe8009.html#a08bb50663a7d17fe03e3976032fe8009',1,'rtree_mest_example.c']]],
+  ['assertion_5fsegs_5fper_5fquad_4',['ASSERTION_SEGS_PER_QUAD',['../geo__op__diff_8c_a55a1aca334b087c07d688c1edd3243e9.html#a55a1aca334b087c07d688c1edd3243e9',1,'geo_op_diff.c']]],
+  ['axis1_5fportable_5ffunctions_5',['AXIS1_PORTABLE_FUNCTIONS',['../temporal__supportfn_8c_aeb285000b4a075315134db408054c35f.html#aeb285000b4a075315134db408054c35f',1,'temporal_supportfn.c']]],
+  ['axis1_5fportable_5fstrategies_6',['AXIS1_PORTABLE_STRATEGIES',['../temporal__supportfn_8c_acee915e422b23c5359c2f3cbc9724cd9.html#acee915e422b23c5359c2f3cbc9724cd9',1,'temporal_supportfn.c']]]
 ];

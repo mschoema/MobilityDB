@@ -1,14 +1,15 @@
 var searchData=
 [
-  ['order_0',['ORDER',['../meos_2include_2temporal_2temporal_8h_a826715579f0649bd271fb6702a175dbc.html#a826715579f0649bd271fb6702a175dbc',1,'temporal.h']]],
-  ['order_5fno_1',['ORDER_NO',['../meos_2include_2temporal_2temporal_8h_a53f0283d21c31b6a2daf0046a27187f2.html#a53f0283d21c31b6a2daf0046a27187f2',1,'temporal.h']]],
-  ['out_5fdefault_5fdecimal_5fdigits_2',['OUT_DEFAULT_DECIMAL_DIGITS',['../type__inout_8h_a28e7bebfef9609f69d1a63575a8dd923.html#a28e7bebfef9609f69d1a63575a8dd923',1,'type_inout.h']]],
-  ['out_5fdouble_5fbuffer_5fsize_3',['OUT_DOUBLE_BUFFER_SIZE',['../type__inout_8h_a7b4e1361958b9e9441e3f5b419e17e54.html#a7b4e1361958b9e9441e3f5b419e17e54',1,'type_inout.h']]],
-  ['out_5fmax_5fbytes_5fdouble_4',['OUT_MAX_BYTES_DOUBLE',['../type__inout_8h_a42392877f919bac2bb440b3b34c0d73d.html#a42392877f919bac2bb440b3b34c0d73d',1,'type_inout.h']]],
-  ['out_5fmax_5fdigits_5',['OUT_MAX_DIGITS',['../type__inout_8h_a09a503314142075391a658550b17d3b2.html#a09a503314142075391a658550b17d3b2',1,'type_inout.h']]],
-  ['out_5fmax_5fdigs_5fdouble_6',['OUT_MAX_DIGS_DOUBLE',['../meos_2src_2temporal_2type__out_8c_a592afcb79525826a9687659a6e2c5fd4.html#a592afcb79525826a9687659a6e2c5fd4',1,'type_out.c']]],
-  ['out_5fmax_5fdouble_7',['OUT_MAX_DOUBLE',['../type__inout_8h_a384825d792f071da7efa1ee9d31bb3b8.html#a384825d792f071da7efa1ee9d31bb3b8',1,'type_inout.h']]],
-  ['out_5fmax_5fdouble_5fprecision_8',['OUT_MAX_DOUBLE_PRECISION',['../meos_2src_2temporal_2type__out_8c_ac5840da3b0d5b6607a5c6aeab4e067bb.html#ac5840da3b0d5b6607a5c6aeab4e067bb',1,'type_out.c']]],
-  ['out_5fmin_5fdouble_9',['OUT_MIN_DOUBLE',['../type__inout_8h_a3a6bf254da105e3b0619ad53f86971e7.html#a3a6bf254da105e3b0619ad53f86971e7',1,'type_inout.h']]],
-  ['out_5fshow_5fdigs_5fdouble_10',['OUT_SHOW_DIGS_DOUBLE',['../meos_2src_2temporal_2type__out_8c_a95c27a8a79ae819ed6c624b94a653197.html#a95c27a8a79ae819ed6c624b94a653197',1,'type_out.c']]]
+  ['large1_0',['LARGE1',['../setset__pairs__test_8c_a0a55586ef86195defe41218473d6962e.html#a0a55586ef86195defe41218473d6962e',1,'setset_pairs_test.c']]],
+  ['large2_1',['LARGE2',['../setset__pairs__test_8c_abd99bf235450f791c063a8295b696604.html#abd99bf235450f791c063a8295b696604',1,'setset_pairs_test.c']]],
+  ['limit_5fratio_2',['LIMIT_RATIO',['../bbox__index_8h_a447ebdddb8fd2f64a52e7e2fea2ba992.html#a447ebdddb8fd2f64a52e7e2fea2ba992',1,'bbox_index.h']]],
+  ['lonlat_5fto_5fcart_3',['lonlat_to_cart',['../postgis__funcs_8h_ae591df65a6bbda7954eff62111b5b71f.html#ae591df65a6bbda7954eff62111b5b71f',1,'postgis_funcs.h']]],
+  ['lwflag_5fbbox_4',['LWFLAG_BBOX',['../postgis__ext__defs_8in_8h_a6ab6b8d3b2c6f6af28b69b9021a95abd.html#a6ab6b8d3b2c6f6af28b69b9021a95abd',1,'postgis_ext_defs.in.h']]],
+  ['lwflag_5fgeodetic_5',['LWFLAG_GEODETIC',['../postgis__ext__defs_8in_8h_ab6ca96468601e0590a2dd0aa0a71187b.html#ab6ca96468601e0590a2dd0aa0a71187b',1,'postgis_ext_defs.in.h']]],
+  ['lwflag_5fm_6',['LWFLAG_M',['../postgis__ext__defs_8in_8h_a4ab89f16958d130d26aadf3a4de39706.html#a4ab89f16958d130d26aadf3a4de39706',1,'postgis_ext_defs.in.h']]],
+  ['lwflag_5freadonly_7',['LWFLAG_READONLY',['../postgis__ext__defs_8in_8h_a90b766f35d3f072c18fbc5fbe92a3292.html#a90b766f35d3f072c18fbc5fbe92a3292',1,'postgis_ext_defs.in.h']]],
+  ['lwflag_5fsolid_8',['LWFLAG_SOLID',['../postgis__ext__defs_8in_8h_a5d34b5eef36ad2983f876098466a2e82.html#a5d34b5eef36ad2983f876098466a2e82',1,'postgis_ext_defs.in.h']]],
+  ['lwflag_5fversbit2_9',['LWFLAG_VERSBIT2',['../meos__internal__geo_8h_ae19ecee039e42f3e042bc4667fdaf7d2.html#ae19ecee039e42f3e042bc4667fdaf7d2',1,'meos_internal_geo.h']]],
+  ['lwflag_5fz_10',['LWFLAG_Z',['../postgis__ext__defs_8in_8h_a54418b6c4bdbaf46aee355e336d0dd4e.html#a54418b6c4bdbaf46aee355e336d0dd4e',1,'postgis_ext_defs.in.h']]],
+  ['lwgeom_5fgeos_5ferrmsg_5fmaxsize_11',['LWGEOM_GEOS_ERRMSG_MAXSIZE',['../geo__lwgeom__none_8c_a08f07efd4c8038e871d55f1c6c4dd35d.html#a08f07efd4c8038e871d55f1c6c4dd35d',1,'geo_lwgeom_none.c']]]
 ];

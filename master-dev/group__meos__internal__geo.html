@@ -71,7 +71,8 @@ $(function() {
 
 <div class="header">
   <div class="summary">
-<a href="#groups">Modules</a>  </div>
+<a href="#groups">Modules</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Functions for temporal geometries<div class="ingroups"><a class="el" href="group__meos.html">MEOS library</a> &raquo; <a class="el" href="group__meos__internal.html">Internal API</a></div></div></div>
 </div><!--header-->
 <div class="contents">
@@ -118,10 +119,10 @@ Modules</h2></td></tr>
 <tr class="memdesc:group__meos__internal__geo__dist"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance functions for temporal geometries. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:group__meos__internal__geo__srid"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo__srid.html">Spatial reference system functions</a></td></tr>
-<tr class="memdesc:group__meos__internal__geo__srid"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial reference system functions for temporal geos. <br /></td></tr>
+<tr class="memdesc:group__meos__internal__geo__srid"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial reference system functions for temporal geometries. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:group__meos__internal__geo__rel"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo__rel.html">Spatial relationship functions</a></td></tr>
-<tr class="memdesc:group__meos__internal__geo__rel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial relationship functions for temporal geos. <br /></td></tr>
+<tr class="memdesc:group__meos__internal__geo__rel"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial relationship functions for temporal geometries. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:group__meos__internal__geo__agg"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo__agg.html">Aggregate functions</a></td></tr>
 <tr class="memdesc:group__meos__internal__geo__agg"><td class="mdescLeft">&#160;</td><td class="mdescRight">Aggregate functions for temporal geometries. <br /></td></tr>
@@ -129,6 +130,24 @@ Modules</h2></td></tr>
 <tr class="memitem:group__meos__internal__geo__tile"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo__tile.html">Tile functions</a></td></tr>
 <tr class="memdesc:group__meos__internal__geo__tile"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tile functions for temporal geometries. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:group__meos__internal__geo__spatial__rel__ever"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo__spatial__rel__ever.html">Ever/always relationship functions</a></td></tr>
+<tr class="memdesc:group__meos__internal__geo__spatial__rel__ever"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ever/always spatial relationship functions for temporal geometries. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga6d0b7c1d80351fa7f166f2d7025454d2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTemporal.html">Temporal</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo_ga6d0b7c1d80351fa7f166f2d7025454d2.html#ga6d0b7c1d80351fa7f166f2d7025454d2">tpoint_linear_distance_geom</a> (const <a class="el" href="structTemporal.html">Temporal</a> *temp, const <a class="el" href="structGSERIALIZED.html">GSERIALIZED</a> *gs)</td></tr>
+<tr class="memdesc:ga6d0b7c1d80351fa7f166f2d7025454d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the temporal float distance between a temporal geometric point with linear interpolation and a 2D geometry.  <a href="group__meos__internal__geo_ga6d0b7c1d80351fa7f166f2d7025454d2.html#ga6d0b7c1d80351fa7f166f2d7025454d2">More...</a><br /></td></tr>
+<tr class="separator:ga6d0b7c1d80351fa7f166f2d7025454d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga28c9d7e1b6cb5456e301b5630d65814a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTemporal.html">Temporal</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo_ga28c9d7e1b6cb5456e301b5630d65814a.html#ga28c9d7e1b6cb5456e301b5630d65814a">tpoint_linear_dwithin_geom</a> (const <a class="el" href="structTemporal.html">Temporal</a> *temp, const <a class="el" href="structGSERIALIZED.html">GSERIALIZED</a> *gs, double dist)</td></tr>
+<tr class="memdesc:ga28c9d7e1b6cb5456e301b5630d65814a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal Boolean that states whether a temporal geometric point with linear interpolation is within a distance of a 2D geometry.  <a href="group__meos__internal__geo_ga28c9d7e1b6cb5456e301b5630d65814a.html#ga28c9d7e1b6cb5456e301b5630d65814a">More...</a><br /></td></tr>
+<tr class="separator:ga28c9d7e1b6cb5456e301b5630d65814a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga994483a673e894f7045a02d09a86fb2f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTemporal.html">Temporal</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo_ga994483a673e894f7045a02d09a86fb2f.html#ga994483a673e894f7045a02d09a86fb2f">tpoint_linear_dwithin_geom_ctx</a> (const <a class="el" href="structTemporal.html">Temporal</a> *temp, const void *ctxv, double dist)</td></tr>
+<tr class="memdesc:ga994483a673e894f7045a02d09a86fb2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal Boolean that states whether a temporal geometric point with linear interpolation is within a distance of a 2D geometry.  <a href="group__meos__internal__geo_ga994483a673e894f7045a02d09a86fb2f.html#ga994483a673e894f7045a02d09a86fb2f">More...</a><br /></td></tr>
+<tr class="separator:ga994483a673e894f7045a02d09a86fb2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae3cdddc206cf6af95d65640cccaca6ae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTemporal.html">Temporal</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__geo_gae3cdddc206cf6af95d65640cccaca6ae.html#gae3cdddc206cf6af95d65640cccaca6ae">tpoint_linear_inter_geom</a> (const <a class="el" href="structTemporal.html">Temporal</a> *temp, const <a class="el" href="structGSERIALIZED.html">GSERIALIZED</a> *gs, bool clip)</td></tr>
+<tr class="memdesc:gae3cdddc206cf6af95d65640cccaca6ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the temporal intersection/intersects of a temporal geometric point with linear interpolation and a 2D geometry.  <a href="group__meos__internal__geo_gae3cdddc206cf6af95d65640cccaca6ae.html#gae3cdddc206cf6af95d65640cccaca6ae">More...</a><br /></td></tr>
+<tr class="separator:gae3cdddc206cf6af95d65640cccaca6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p >Functions for temporal geometries. </p>

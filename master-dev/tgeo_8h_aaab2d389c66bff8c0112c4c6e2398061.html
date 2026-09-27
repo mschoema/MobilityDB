@@ -82,8 +82,8 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__internal__geo__box__conversion_ga2ad89fcbc869ae67830f2febcf4a8740.html#ga2ad89fcbc869ae67830f2febcf4a8740">geo_stbox</a></td></tr>
           <tr><td class="navtabHL"><a class="navtab" href="tgeo_8h_aaab2d389c66bff8c0112c4c6e2398061.html#aaab2d389c66bff8c0112c4c6e2398061">mobilitydb_init</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__internal__geo__box__conversion_ga179804423a66843d02903b800bbbda40.html#ga179804423a66843d02903b800bbbda40">stbox_geo</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="tgeo_8h_af59d0fdccf8929d396a9b2b3144830e3.html#af59d0fdccf8929d396a9b2b3144830e3">tcomp_geo_tgeo</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="tgeo_8h_a8cbce7a8b41a103e53aeec0e03394932.html#a8cbce7a8b41a103e53aeec0e03394932">tcomp_tgeo_geo</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="tgeo_8h_af8c46751a0fd32440e72eb2710113f76.html#af8c46751a0fd32440e72eb2710113f76">tcomp_geo_tgeo</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="tgeo_8h_a573553aedbec9af4d9a8404c2ee46bf9.html#a573553aedbec9af4d9a8404c2ee46bf9">tcomp_tgeo_geo</a></td></tr>
         </table>
       </div>
    </td>
@@ -104,8 +104,8 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p>Functions for temporal geos. </p>
-<p >Functions for temporal geos. </p>
+<p><a class="el" href="structSet.html" title="Structure to represent sets of values.">Set</a> the handlers for initializing the liblwgeom library (and libpc.a when POINTCLOUD=ON) </p>
+<dl class="section note"><dt>Note</dt><dd>When both libMobilityDB-1.4.so and pointcloud-1.2.so are loaded in the same backend, both bundle their own copy of libpc.a; ELF's global symbol interposition chooses one copy for the whole process. If our copy wins and we never called <code>pc_set_handlers</code>, the first time any libpc entry point (pc_schema_from_xml, pc_point_get_x, …) hits an error or warning it dereferences a NULL handler pointer and the backend crashes. Calling <code>pc_set_handlers</code> here makes us symmetric with pgpointcloud's own <code>_PG_init</code> so either copy is safe. </dd></dl>
 
 </div>
 </div>

@@ -79,6 +79,7 @@ $(function() {
    <td valign="top">
       <div class="navtab">
         <table>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__bbox__split_ga45a28501bffed05d1dd38688f66ecbed.html#ga45a28501bffed05d1dd38688f66ecbed">tgeo_space_time_boxes</a></td></tr>
           <tr><td class="navtabHL"><a class="navtab" href="group__meos__geo__bbox__split_ga1ca0bb397bbf5deb023c4d325cbff1d7.html#ga1ca0bb397bbf5deb023c4d325cbff1d7">tgeo_split_each_n_stboxes</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__bbox__split_ga63c4bae0c99cde9218366a050142a3f5.html#ga63c4bae0c99cde9218366a050142a3f5">tgeo_split_n_stboxes</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__bbox__split_ga7a11ca268aa6d0836f8d87b767d30462.html#ga7a11ca268aa6d0836f8d87b767d30462">tgeo_stboxes</a></td></tr>
@@ -118,8 +119,8 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p>Return an array of spatiotemporal boxes obtained by merging consecutive instants or segments of a temporal geo, where the choice between instants or segments depends, respectively, on whether the interpolation is discrete or continuous. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Return an array of spatiotemporal boxes obtained by merging consecutive instants or segments of a temporal geo. </p>
+<p >The choice between instants or segments depends, respectively, on whether the interpolation is discrete or continuous. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">temp</td><td><a class="el" href="structTemporal.html" title="Structure to represent the common structure of temporal values of any temporal subtype.">Temporal</a> value </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">elems_per_box</td><td>Number of input instants or segments merged into an output box </td></tr>
@@ -127,7 +128,7 @@ $(function() {
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>On error return <code>NULL</code> @csqlfn <a class="el" href="group__mobilitydb__geo__bbox_ga4886f7c42f4d28dfc1d1446bfdc64181.html#ga4886f7c42f4d28dfc1d1446bfdc64181" title="Return an array of spatiotemporal boxes from the instants or segments of a spatiotemporal value,...">Tgeo_split_each_n_stboxes()</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>On error return NULL @csqlfn <a class="el" href="group__mobilitydb__geo__bbox_ga4886f7c42f4d28dfc1d1446bfdc64181.html#ga4886f7c42f4d28dfc1d1446bfdc64181" title="Return an array of spatiotemporal boxes from the instants or segments of a spatiotemporal value.">Tgeo_split_each_n_stboxes()</a> </dd></dl>
 
 </div>
 </div>

@@ -79,6 +79,11 @@ $(function() {
    <td valign="top">
       <div class="navtab">
         <table>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_ga53c62d93351e0ea4088e22aa2cf8db6c.html#ga53c62d93351e0ea4088e22aa2cf8db6c">tbigint_from_base_temp</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_gaac5df11214741175f7b6ace8f2dfa135.html#gaac5df11214741175f7b6ace8f2dfa135">tbigintinst_make</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_ga67b41234096710b2e524b8a993ba3633.html#ga67b41234096710b2e524b8a993ba3633">tbigintseq_from_base_tstzset</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_ga39f8bb2566f390ca03627052af6a3ed1.html#ga39f8bb2566f390ca03627052af6a3ed1">tbigintseq_from_base_tstzspan</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_ga00422930cc2f7e2bdab1da5c3cd75ac9.html#ga00422930cc2f7e2bdab1da5c3cd75ac9">tbigintseqset_from_base_tstzspanset</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_ga74d759c7630d173b0830a37e264da8ef.html#ga74d759c7630d173b0830a37e264da8ef">tbool_from_base_temp</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_ga137e86d7b760520e55255fe2c75ebb0e.html#ga137e86d7b760520e55255fe2c75ebb0e">tboolinst_make</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__constructor_ga77c6bf2e499e0565e68064b3afc3bb20.html#ga77c6bf2e499e0565e68064b3afc3bb20">tboolseq_from_base_tstzset</a></td></tr>
@@ -151,14 +156,14 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p>Return a temporal sequence set from an array of temporal instants introducing a gap when two consecutive instants are separated from each other by at least a distance or a time interval. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Return a temporal sequence set from an array of temporal instants introducing gaps. </p>
+<p >A gap is introduced when two consecutive instants are separated from each other by at least a distance or a time interval. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">instants</td><td>Array of instants </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">count</td><td>Number of elements in the array </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">interp</td><td>Interpolation </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">maxdist</td><td>Maximum distance for defining a gap </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">maxt</td><td>Maximum time interval for defining a gap @csqlfn <a class="el" href="group__mobilitydb__temporal__constructor_ga24ddb4159cb9a66c74d9b2d64c621b98.html#ga24ddb4159cb9a66c74d9b2d64c621b98" title="Return a temporal sequence set from an array of temporal instants accounting for potential gaps.">Tsequenceset_constructor_gaps()</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">maxt</td><td>Maximum time interval for defining a gap, may be <code>NULL</code> @csqlfn <a class="el" href="group__mobilitydb__temporal__constructor_ga24ddb4159cb9a66c74d9b2d64c621b98.html#ga24ddb4159cb9a66c74d9b2d64c621b98" title="Return a temporal sequence set from an array of temporal instants accounting for potential gaps.">Tsequenceset_constructor_gaps()</a> </td></tr>
   </table>
   </dd>
 </dl>

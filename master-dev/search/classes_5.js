@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['floatspanset_5frecord_0',['floatspanset_record',['../structfloatspanset__record.html',1,'']]]
+  ['edge_0',['Edge',['../structEdge.html',1,'']]],
+  ['ekf_5ft_1',['ekf_t',['../structekf__t.html',1,'']]],
+  ['endpointedgestate_2',['EndpointEdgeState',['../structEndpointEdgeState.html',1,'']]]
 ];

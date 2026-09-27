@@ -100,23 +100,23 @@ Data Structures</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:ac58386431fc4f90cd57ced06279f3a4b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__spatial__ref__sys_8c_ac58386431fc4f90cd57ced06279f3a4b.html#ac58386431fc4f90cd57ced06279f3a4b">MAX_LEN_HEADER</a>&#160;&#160;&#160;1024</td></tr>
 <tr class="separator:ac58386431fc4f90cd57ced06279f3a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada96e8274f85231985cc08e48fc88cc4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__spatial__ref__sys_8c_ada96e8274f85231985cc08e48fc88cc4.html#ada96e8274f85231985cc08e48fc88cc4">maxprojlen</a>&#160;&#160;&#160;512</td></tr>
-<tr class="separator:ada96e8274f85231985cc08e48fc88cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a94f0d82eb362607c4dbe5e9d1866ca"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__spatial__ref__sys_8c_a4a94f0d82eb362607c4dbe5e9d1866ca.html#a4a94f0d82eb362607c4dbe5e9d1866ca">MAX_PROJ_LEN</a>&#160;&#160;&#160;512</td></tr>
+<tr class="separator:a4a94f0d82eb362607c4dbe5e9d1866ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42576072520d659feaebfcdf1f3ddeda"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__spatial__ref__sys_8c_a42576072520d659feaebfcdf1f3ddeda.html#a42576072520d659feaebfcdf1f3ddeda">SPATIAL_REF_SYS</a>&#160;&#160;&#160;&quot;/usr/local/share/spatial_ref_sys.csv&quot;</td></tr>
 <tr class="separator:a42576072520d659feaebfcdf1f3ddeda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a764e1dc319d89bdb6bd66b9198b9db7d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__spatial__ref__sys_8c_a764e1dc319d89bdb6bd66b9198b9db7d.html#a764e1dc319d89bdb6bd66b9198b9db7d">spibufferlen</a>&#160;&#160;&#160;512</td></tr>
-<tr class="separator:a764e1dc319d89bdb6bd66b9198b9db7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a822f91226972374eaa49c60ff2829457"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structPjStrs.html">PjStrs</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__spatial__ref__sys_8c_a822f91226972374eaa49c60ff2829457.html#a822f91226972374eaa49c60ff2829457">GetProjStringsSPI</a> (int32_t srid)</td></tr>
+<tr class="memdesc:a822f91226972374eaa49c60ff2829457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the PROJ strings of an SRID, read from the spatial_ref_sys table.  <a href="read__spatial__ref__sys_8c_a822f91226972374eaa49c60ff2829457.html#a822f91226972374eaa49c60ff2829457">More...</a><br /></td></tr>
 <tr class="separator:a822f91226972374eaa49c60ff2829457"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="read__spatial__ref__sys_8c_ae66f6b31b5ad750f1fe042a706a4e3d4.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
 <tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >A simple program that reads the <code>spatial_ref_sys.csv</code> file obtained by exporting the PostGIS <code>spatial_ref_sys</code> table in CSV format. </p>
-<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/include -o read_spatial_ref_sys read_spatial_ref_sys.c -L/usr/local/lib -lmeos</div>
+<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a> -o read_spatial_ref_sys read_spatial_ref_sys.c -L/usr/local/lib -lmeos</div>
+<div class="ttc" id="amobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56_html_a6e1b934a889b7b6fe98de44d12f49c56"><div class="ttname"><a href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a></div><div class="ttdeci">include(AssembleExtensionSql) configure_file(mobilitydb_datagen.in.control $</div><div class="ttdef"><b>Definition:</b> CMakeLists.txt:28</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

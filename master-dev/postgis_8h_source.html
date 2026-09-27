@@ -80,12 +80,12 @@ $(function() {
 <a href="postgis_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*****************************************************************************</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> * This MobilityDB code is provided under The PostgreSQL License.</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * Copyright (c) 2016-2025, Université libre de Bruxelles and MobilityDB</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> * Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * contributors</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment"> * MobilityDB includes portions of PostGIS version 3 source code released</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment"> * under the GNU General Public License (GPLv2 or later).</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"> * Copyright (c) 2001-2025, PostGIS contributors</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment"> * Copyright (c) 2001-2026, PostGIS contributors</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment"> * Permission to use, copy, modify, and distribute this software and its</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment"> * documentation for any purpose, without fee, and without a written</span></div>
@@ -106,40 +106,39 @@ $(function() {
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment"> *****************************************************************************/</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#ifndef __POSTGIS_H__</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#define __POSTGIS_H__</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">/* PostgreSQL */</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">#include &lt;postgres.h&gt;</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &lt;fmgr.h&gt;</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">/* PostGIS */</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#include &lt;liblwgeom.h&gt;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &lt;lwgeodetic_tree.h&gt;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">/* MEOS */</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#include &quot;temporal/temporal.h&quot;</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="comment">/*****************************************************************************</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment"> * fmgr macros</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment"> *****************************************************************************/</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P(varno) ((GSERIALIZED *)PG_DETOAST_DATUM(PG_GETARG_DATUM(varno)))</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P_COPY(varno) ((GSERIALIZED *)PG_DETOAST_DATUM_COPY(PG_GETARG_DATUM(varno)))</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#define PG_RETURN_GSERIALIZED_P(x)   return PointerGetDatum(x)</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="comment">/*****************************************************************************/</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="comment">/*****************************************************************************</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="comment"> * fmgr macros</span></div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment"> *****************************************************************************/</span></div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="postgis_8h_aeaca2ef61c13b07ba36cffdb9725b5af.html#aeaca2ef61c13b07ba36cffdb9725b5af">   61</a></span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P(varno) ((GSERIALIZED *)PG_DETOAST_DATUM(PG_GETARG_DATUM(varno)))</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="postgis_8h_a1601e747419b57badc0850a66a4d1e7e.html#a1601e747419b57badc0850a66a4d1e7e">   62</a></span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P_COPY(varno) ((GSERIALIZED *)PG_DETOAST_DATUM_COPY(PG_GETARG_DATUM(varno)))</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="postgis_8h_a90c321a2985dda88b25f7649e78888a3.html#a90c321a2985dda88b25f7649e78888a3">   63</a></span><span class="preprocessor">#define PG_RETURN_GSERIALIZED_P(x)   return PointerGetDatum(x)</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="comment">/*****************************************************************************/</span></div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="postgis_8h_a0ddf235c90627fcedf3c130ea2a64580.html#a0ddf235c90627fcedf3c130ea2a64580">   67</a></span>int32_t <a class="code hl_function" href="postgis_8h_a0ddf235c90627fcedf3c130ea2a64580.html#a0ddf235c90627fcedf3c130ea2a64580">getSRIDbySRS</a>(FunctionCallInfo fcinfo, <span class="keyword">const</span> <span class="keywordtype">char</span> *srs);</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="postgis_8h_a73b0edb89aa26f31af1df8a07337f3f1.html#a73b0edb89aa26f31af1df8a07337f3f1">   68</a></span><span class="keywordtype">char</span> *<a class="code hl_function" href="postgis_8h_a73b0edb89aa26f31af1df8a07337f3f1.html#a73b0edb89aa26f31af1df8a07337f3f1">getSRSbySRID</a>(FunctionCallInfo fcinfo, int32_t srid, <span class="keywordtype">bool</span> short_crs);</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#ifndef __POSTGIS_H__</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#define __POSTGIS_H__</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">/* PostgreSQL */</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">#include &lt;postgres.h&gt;</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#include &lt;fmgr.h&gt;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">/* PostGIS */</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#include &lt;liblwgeom.h&gt;</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">#include &lt;lwgeodetic_tree.h&gt;</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment">/* MEOS */</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#include &quot;temporal/temporal.h&quot;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="comment">/*****************************************************************************</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="comment"> * fmgr macros</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="comment"> *****************************************************************************/</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P(varno) ((GSERIALIZED *)PG_DETOAST_DATUM(PG_GETARG_DATUM(varno)))</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P_COPY(varno) ((GSERIALIZED *)PG_DETOAST_DATUM_COPY(PG_GETARG_DATUM(varno)))</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#define PG_RETURN_GSERIALIZED_P(x)   return PointerGetDatum(x)</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">/*****************************************************************************/</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="comment">/*****************************************************************************</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="comment"> * fmgr macros</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment"> *****************************************************************************/</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="postgis_8h_aeaca2ef61c13b07ba36cffdb9725b5af.html#aeaca2ef61c13b07ba36cffdb9725b5af">   62</a></span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P(varno) ((GSERIALIZED *)PG_DETOAST_DATUM(PG_GETARG_DATUM(varno)))</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="postgis_8h_a1601e747419b57badc0850a66a4d1e7e.html#a1601e747419b57badc0850a66a4d1e7e">   63</a></span><span class="preprocessor">#define PG_GETARG_GSERIALIZED_P_COPY(varno) ((GSERIALIZED *)PG_DETOAST_DATUM_COPY(PG_GETARG_DATUM(varno)))</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="postgis_8h_a90c321a2985dda88b25f7649e78888a3.html#a90c321a2985dda88b25f7649e78888a3">   64</a></span><span class="preprocessor">#define PG_RETURN_GSERIALIZED_P(x)   return PointerGetDatum(x)</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment">/*****************************************************************************/</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="postgis_8h_a0ddf235c90627fcedf3c130ea2a64580.html#a0ddf235c90627fcedf3c130ea2a64580">   68</a></span>int32_t <a class="code hl_function" href="postgis_8h_a0ddf235c90627fcedf3c130ea2a64580.html#a0ddf235c90627fcedf3c130ea2a64580">getSRIDbySRS</a>(FunctionCallInfo fcinfo, <span class="keyword">const</span> <span class="keywordtype">char</span> *srs);</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">/* PostGIS functions called by MobilityDB */</span></div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
@@ -252,7 +251,6 @@ $(function() {
 <div class="ttc" id="apostgis_8h_a6f5ca95e4714d17e6c9bd48fc6298cdd_html_a6f5ca95e4714d17e6c9bd48fc6298cdd"><div class="ttname"><a href="postgis_8h_a6f5ca95e4714d17e6c9bd48fc6298cdd.html#a6f5ca95e4714d17e6c9bd48fc6298cdd">relate_pattern</a></div><div class="ttdeci">Datum relate_pattern(PG_FUNCTION_ARGS)</div></div>
 <div class="ttc" id="apostgis_8h_a71aad9673878ee1165bda09aa89c1d20_html_a71aad9673878ee1165bda09aa89c1d20"><div class="ttname"><a href="postgis_8h_a71aad9673878ee1165bda09aa89c1d20.html#a71aad9673878ee1165bda09aa89c1d20">ST_3DDistance</a></div><div class="ttdeci">Datum ST_3DDistance(PG_FUNCTION_ARGS)</div></div>
 <div class="ttc" id="apostgis_8h_a735c1d7c7c5777ed809bb3fa651a3c56_html_a735c1d7c7c5777ed809bb3fa651a3c56"><div class="ttname"><a href="postgis_8h_a735c1d7c7c5777ed809bb3fa651a3c56.html#a735c1d7c7c5777ed809bb3fa651a3c56">transform</a></div><div class="ttdeci">Datum transform(PG_FUNCTION_ARGS)</div></div>
-<div class="ttc" id="apostgis_8h_a73b0edb89aa26f31af1df8a07337f3f1_html_a73b0edb89aa26f31af1df8a07337f3f1"><div class="ttname"><a href="postgis_8h_a73b0edb89aa26f31af1df8a07337f3f1.html#a73b0edb89aa26f31af1df8a07337f3f1">getSRSbySRID</a></div><div class="ttdeci">char * getSRSbySRID(FunctionCallInfo fcinfo, int32_t srid, bool short_crs)</div></div>
 <div class="ttc" id="apostgis_8h_a74d867942f2875ba66afa5be324dfd82_html_a74d867942f2875ba66afa5be324dfd82"><div class="ttname"><a href="postgis_8h_a74d867942f2875ba66afa5be324dfd82.html#a74d867942f2875ba66afa5be324dfd82">issimple</a></div><div class="ttdeci">Datum issimple(PG_FUNCTION_ARGS)</div></div>
 <div class="ttc" id="apostgis_8h_a78f265e0836ad97219c91d2c7f6dac2f_html_a78f265e0836ad97219c91d2c7f6dac2f"><div class="ttname"><a href="postgis_8h_a78f265e0836ad97219c91d2c7f6dac2f.html#a78f265e0836ad97219c91d2c7f6dac2f">LWGEOM_setpoint_linestring</a></div><div class="ttdeci">Datum LWGEOM_setpoint_linestring(PG_FUNCTION_ARGS)</div></div>
 <div class="ttc" id="apostgis_8h_a792431a442a4f69fe9d63458f254a561_html_a792431a442a4f69fe9d63458f254a561"><div class="ttname"><a href="postgis_8h_a792431a442a4f69fe9d63458f254a561.html#a792431a442a4f69fe9d63458f254a561">LWGEOM_dwithin3d</a></div><div class="ttdeci">Datum LWGEOM_dwithin3d(PG_FUNCTION_ARGS)</div></div>
@@ -290,7 +288,7 @@ $(function() {
 <div class="ttc" id="apostgis_8h_afa7cea4e1235b557fbb9dcebc3152403_html_afa7cea4e1235b557fbb9dcebc3152403"><div class="ttname"><a href="postgis_8h_afa7cea4e1235b557fbb9dcebc3152403.html#afa7cea4e1235b557fbb9dcebc3152403">LWGEOM_dwithin</a></div><div class="ttdeci">Datum LWGEOM_dwithin(PG_FUNCTION_ARGS)</div></div>
 <div class="ttc" id="apostgis_8h_afee491d82a37138cc9aa75164b1bc38a_html_afee491d82a37138cc9aa75164b1bc38a"><div class="ttname"><a href="postgis_8h_afee491d82a37138cc9aa75164b1bc38a.html#afee491d82a37138cc9aa75164b1bc38a">containsproperly</a></div><div class="ttdeci">Datum containsproperly(PG_FUNCTION_ARGS)</div></div>
 <div class="ttc" id="apostgis_8h_aff1ddae9b83a4408b1acb1e401f025ad_html_aff1ddae9b83a4408b1acb1e401f025ad"><div class="ttname"><a href="postgis_8h_aff1ddae9b83a4408b1acb1e401f025ad.html#aff1ddae9b83a4408b1acb1e401f025ad">LWGEOM_closestpoint3d</a></div><div class="ttdeci">Datum LWGEOM_closestpoint3d(PG_FUNCTION_ARGS)</div></div>
-<div class="ttc" id="apostgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6_html_a43879eb52e27b2413d7a05056a173ca6"><div class="ttname"><a href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a></div><div class="ttdeci">uintptr_t Datum</div><div class="ttdef"><b>Definition:</b> postgres_ext_defs.in.h:7</div></div>
+<div class="ttc" id="apostgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6_html_a43879eb52e27b2413d7a05056a173ca6"><div class="ttname"><a href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a></div><div class="ttdeci">uintptr_t Datum</div><div class="ttdef"><b>Definition:</b> postgres_ext_defs.in.h:15</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

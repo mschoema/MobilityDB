@@ -87,7 +87,7 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga4dae58caa9b4f45c88188da9db28fe7d.html#ga4dae58caa9b4f45c88188da9db28fe7d">tgeo_end_value</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_gabf1aa6dfe8bf84078496889a3e65724f.html#gabf1aa6dfe8bf84078496889a3e65724f">tgeo_start_value</a></td></tr>
           <tr><td class="navtabHL"><a class="navtab" href="group__meos__geo__accessor_ga85bfc1a02e93198d7537e8b6b5a8b20c.html#ga85bfc1a02e93198d7537e8b6b5a8b20c">tgeo_traversed_area</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga0e89e09b430a0f019855bd1c92996240.html#ga0e89e09b430a0f019855bd1c92996240">tgeo_value_at_timestamptz</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga65b014734c0fac3611b05670c3ec422f.html#ga65b014734c0fac3611b05670c3ec422f">tgeo_value_at_timestamptz</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga93e0ed41f56080d6d28994d4fbfc145f.html#ga93e0ed41f56080d6d28994d4fbfc145f">tgeo_value_n</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga6f890f3328f6faa4fe1dfe5e5f335d05.html#ga6f890f3328f6faa4fe1dfe5e5f335d05">tgeo_values</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga0c57db430b346cf3d02e8db714bc0989.html#ga0c57db430b346cf3d02e8db714bc0989">tpoint_angular_difference</a></td></tr>
@@ -132,7 +132,8 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p>Return the traversed area of a temporal geo or the trajectory for a temporal point with discrete or step interpolation. </p>
+<p>Return the traversed area of a temporal geo that is not a point. </p>
+<p >The values a temporal geo takes are its placements, and it holds each for the whole of its own interval, so they are also the area it traverses. A temporal point has no area and answers <a class="el" href="group__meos__geo__accessor_gadb6cb9e042e99920726efdbea8933d8c.html#gadb6cb9e042e99920726efdbea8933d8c" title="Return the trajectory of a temporal point.">tpoint_trajectory()</a> instead </p><dl class="section note"><dt>Note</dt><dd>The geodetic case reaches the same planar dissolve as the planar one, which is a property of this entry that predates the point split and is not settled by it </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">temp</td><td><a class="el" href="structTemporal.html" title="Structure to represent the common structure of temporal values of any temporal subtype.">Temporal</a> geo </td></tr>

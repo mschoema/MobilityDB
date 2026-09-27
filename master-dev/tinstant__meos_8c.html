@@ -85,18 +85,24 @@ $(function() {
 <div class="textblock"><code>#include &quot;temporal/tinstant.h&quot;</code><br />
 <code>#include &lt;assert.h&gt;</code><br />
 <code>#include &lt;postgres.h&gt;</code><br />
+<code>#include &lt;varatt.h&gt;</code><br />
 <code>#include &lt;utils/timestamp.h&gt;</code><br />
 <code>#include &lt;common/hashfn.h&gt;</code><br />
 <code>#include &lt;<a class="el" href="meos_8h_source.html">meos.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="meos__internal_8h_source.html">meos_internal.h</a>&gt;</code><br />
 <code>#include &quot;temporal/meos_catalog.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="postgres__types_8h_source.html">temporal/postgres_types.h</a>&quot;</code><br />
 <code>#include &quot;temporal/tsequence.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="type__parser_8h_source.html">temporal/type_parser.h</a>&quot;</code><br />
 <code>#include &quot;temporal/type_util.h&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ga4d194d5aeca24071b91b97d37032d082"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__temporal__inout_ga4d194d5aeca24071b91b97d37032d082.html#ga4d194d5aeca24071b91b97d37032d082">tbigintinst_in</a> (const char *str)</td></tr>
+<tr class="memdesc:ga4d194d5aeca24071b91b97d37032d082"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal big integer instant from its Well-Known Text (WKT) representation.  <a href="group__meos__internal__temporal__inout_ga4d194d5aeca24071b91b97d37032d082.html#ga4d194d5aeca24071b91b97d37032d082">More...</a><br /></td></tr>
+<tr class="separator:ga4d194d5aeca24071b91b97d37032d082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaac5df11214741175f7b6ace8f2dfa135"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__temporal__constructor_gaac5df11214741175f7b6ace8f2dfa135.html#gaac5df11214741175f7b6ace8f2dfa135">tbigintinst_make</a> (int64 i, <a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a> t)</td></tr>
+<tr class="memdesc:gaac5df11214741175f7b6ace8f2dfa135"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal big integer instant from a big integer and a timestamptz.  <a href="group__meos__temporal__constructor_gaac5df11214741175f7b6ace8f2dfa135.html#gaac5df11214741175f7b6ace8f2dfa135">More...</a><br /></td></tr>
+<tr class="separator:gaac5df11214741175f7b6ace8f2dfa135"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gacae8f16069faf1549e013dd5802399db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structTInstant.html">TInstant</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__meos__internal__temporal__inout_gacae8f16069faf1549e013dd5802399db.html#gacae8f16069faf1549e013dd5802399db">tboolinst_in</a> (const char *str)</td></tr>
 <tr class="memdesc:gacae8f16069faf1549e013dd5802399db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a temporal boolean instant from its Well-Known Text (WKT) representation.  <a href="group__meos__internal__temporal__inout_gacae8f16069faf1549e013dd5802399db.html#gacae8f16069faf1549e013dd5802399db">More...</a><br /></td></tr>
 <tr class="separator:gacae8f16069faf1549e013dd5802399db"><td class="memSeparator" colspan="2">&#160;</td></tr>

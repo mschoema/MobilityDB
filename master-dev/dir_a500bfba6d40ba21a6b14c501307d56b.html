@@ -80,6 +80,27 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clip__clipper2_8cpp.html">clip_clipper2.cpp</a></td></tr>
+<tr class="memdesc:clip__clipper2_8cpp"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clipper2-backed polygon Boolean engine. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geo__buffer_8c.html">geo_buffer.c</a></td></tr>
+<tr class="memdesc:geo__buffer_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Native implementation of PostGIS function <code>ST_Buffer()</code> that do not polygonizes arc segments. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geo__cluster_8c.html">geo_cluster.c</a></td></tr>
+<tr class="memdesc:geo__cluster_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clustering of geometries by proximity, without GEOS. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="meos_2src_2geo_2geo__funcs_8c.html">geo_funcs.c</a></td></tr>
+<tr class="memdesc:meos_2src_2geo_2geo__funcs_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompose a geometry into the edges a native implementation works on. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geo__geos__none_8c.html">geo_geos_none.c</a></td></tr>
+<tr class="memdesc:geo__geos__none_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The GEOS entry points the vendored PostGIS raster calls, answered from the native engines for a build carrying no GEOS. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geo__lwgeom__none_8c.html">geo_lwgeom_none.c</a></td></tr>
+<tr class="memdesc:geo__lwgeom__none_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The entry points of the geometry library's GEOS files that the rest of that library still calls, for a build carrying no GEOS. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geo__poly__clip_8c.html">geo_poly_clip.c</a></td></tr>
+<tr class="memdesc:geo__poly__clip_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Polygon Boolean clipping for temporal-point spatial functions. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geo__round_8c.html">geo_round.c</a></td></tr>
 <tr class="memdesc:geo__round_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functions for rounding the float coordinates of geometries. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,6 +149,9 @@ Files</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="meos_2src_2geo_2tpoint__datagen_8c.html">tpoint_datagen.c</a></td></tr>
 <tr class="memdesc:meos_2src_2geo_2tpoint__datagen_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data generator for MobilityDB. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tpoint__geom__clip_8c.html">tpoint_geom_clip.c</a></td></tr>
+<tr class="memdesc:tpoint__geom__clip_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fast 2D/3D temporal point clipping against 2D geometries. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tpoint__spatialfuncs_8c.html">tpoint_spatialfuncs.c</a></td></tr>
 <tr class="memdesc:tpoint__spatialfuncs_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial functions for temporal points. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,6 +163,9 @@ Files</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tspatial__posops__meos_8c.html">tspatial_posops_meos.c</a></td></tr>
 <tr class="memdesc:tspatial__posops__meos_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Position operators for temporal geometry points. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="meos_2src_2geo_2tspatial__spgist_8c.html">tspatial_spgist.c</a></td></tr>
+<tr class="memdesc:meos_2src_2geo_2tspatial__spgist_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">SP-GiST implementation of 8-dimensional quad-tree over temporal spatial values. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tspatial__srid_8c.html">tspatial_srid.c</a></td></tr>
 <tr class="memdesc:tspatial__srid_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">SRID functions for spatial types. <br /></td></tr>

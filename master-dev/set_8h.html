@@ -81,6 +81,9 @@ $(function() {
   <div class="headertitle"><div class="title">set.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Basic functions for set of (distinct) timestamps.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;postgres.h&gt;</code><br />
 <code>#include &lt;<a class="el" href="meos_8h_source.html">meos.h</a>&gt;</code><br />
 <code>#include &quot;temporal/meos_catalog.h&quot;</code><br />
@@ -97,7 +100,6 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:ad48c564f6253fa8d6800e307506ab9a8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_ad48c564f6253fa8d6800e307506ab9a8.html#ad48c564f6253fa8d6800e307506ab9a8">DatumGetSetP</a>(X)&#160;&#160;&#160;((<a class="el" href="structSet.html">Set</a> *) <a class="el" href="postgres__ext__defs_8in_8h_a728d1259d508437d9be53bf0b19c89da.html#a728d1259d508437d9be53bf0b19c89da">DatumGetPointer</a>(X))</td></tr>
-<tr class="memdesc:ad48c564f6253fa8d6800e307506ab9a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Basic functions for set of (distinct) timestamps.  <a href="set_8h_ad48c564f6253fa8d6800e307506ab9a8.html#ad48c564f6253fa8d6800e307506ab9a8">More...</a><br /></td></tr>
 <tr class="separator:ad48c564f6253fa8d6800e307506ab9a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3667114b667b0cbab1e1a78ff5aa2d1c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_a3667114b667b0cbab1e1a78ff5aa2d1c.html#a3667114b667b0cbab1e1a78ff5aa2d1c">MAXIDX</a>&#160;&#160;&#160;count - 1</td></tr>
 <tr class="separator:a3667114b667b0cbab1e1a78ff5aa2d1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -112,26 +114,28 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1c8549b30520d41dfd2dd261ac0ab9ab"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_a1c8549b30520d41dfd2dd261ac0ab9ab.html#a1c8549b30520d41dfd2dd261ac0ab9ab">ensure_set_isof_type</a> (const <a class="el" href="structSet.html">Set</a> *s, <a class="el" href="meos_2include_2temporal_2meos__catalog_8h_a0b32bc8e8dd442c3e430ac0fb9958e87.html#a0b32bc8e8dd442c3e430ac0fb9958e87">meosType</a> settype)</td></tr>
-<tr class="memdesc:a1c8549b30520d41dfd2dd261ac0ab9ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure that a set is of a given set type.  <a href="set_8h_a1c8549b30520d41dfd2dd261ac0ab9ab.html#a1c8549b30520d41dfd2dd261ac0ab9ab">More...</a><br /></td></tr>
-<tr class="separator:a1c8549b30520d41dfd2dd261ac0ab9ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af11631145b6545ffd2c0ca16ea2df72e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_af11631145b6545ffd2c0ca16ea2df72e.html#af11631145b6545ffd2c0ca16ea2df72e">ensure_set_isof_type</a> (const <a class="el" href="structSet.html">Set</a> *s, <a class="el" href="meos_2include_2temporal_2meos__catalog_8h_a05df1d1fd2c829ee784b125ed34e8401.html#a05df1d1fd2c829ee784b125ed34e8401">MeosType</a> settype)</td></tr>
+<tr class="memdesc:af11631145b6545ffd2c0ca16ea2df72e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure that a set is of a given set type.  <a href="set_8h_af11631145b6545ffd2c0ca16ea2df72e.html#af11631145b6545ffd2c0ca16ea2df72e">More...</a><br /></td></tr>
+<tr class="separator:af11631145b6545ffd2c0ca16ea2df72e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2659e1c646a454f2028bb6f7870da016"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_a2659e1c646a454f2028bb6f7870da016.html#a2659e1c646a454f2028bb6f7870da016">ensure_valid_set_set</a> (const <a class="el" href="structSet.html">Set</a> *s1, const <a class="el" href="structSet.html">Set</a> *s2)</td></tr>
 <tr class="memdesc:a2659e1c646a454f2028bb6f7870da016"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure that a temporal number and a temporal box have the same span type.  <a href="set_8h_a2659e1c646a454f2028bb6f7870da016.html#a2659e1c646a454f2028bb6f7870da016">More...</a><br /></td></tr>
 <tr class="separator:a2659e1c646a454f2028bb6f7870da016"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8d8cd31626135c8c47c0e3c753d9c63"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_ab8d8cd31626135c8c47c0e3c753d9c63.html#ab8d8cd31626135c8c47c0e3c753d9c63">set_find_value</a> (const <a class="el" href="structSet.html">Set</a> *s, <a class="el" href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a>, int *loc)</td></tr>
 <tr class="memdesc:ab8d8cd31626135c8c47c0e3c753d9c63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the location of a value in a set using binary search.  <a href="set_8h_ab8d8cd31626135c8c47c0e3c753d9c63.html#ab8d8cd31626135c8c47c0e3c753d9c63">More...</a><br /></td></tr>
 <tr class="separator:ab8d8cd31626135c8c47c0e3c753d9c63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5c68726331849f29f553a1a6065361b"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_ac5c68726331849f29f553a1a6065361b.html#ac5c68726331849f29f553a1a6065361b">set_out_fn</a> (const <a class="el" href="structSet.html">Set</a> *s, int maxdd, <a class="el" href="meos_2include_2temporal_2temporal_8h_aaa33a6fdb39a479161961f963bef1a97.html#aaa33a6fdb39a479161961f963bef1a97">outfunc</a> value_out)</td></tr>
+<tr class="memitem:ac5c68726331849f29f553a1a6065361b"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_ac5c68726331849f29f553a1a6065361b.html#ac5c68726331849f29f553a1a6065361b">set_out_fn</a> (const <a class="el" href="structSet.html">Set</a> *s, int maxdd, <a class="el" href="meos_2include_2temporal_2temporal_8h_ace9828da47da5723c105b20e7fc95b46.html#ace9828da47da5723c105b20e7fc95b46">outfunc</a> value_out)</td></tr>
 <tr class="memdesc:ac5c68726331849f29f553a1a6065361b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the output representation of a set given by a function.  <a href="set_8h_ac5c68726331849f29f553a1a6065361b.html#ac5c68726331849f29f553a1a6065361b">More...</a><br /></td></tr>
 <tr class="separator:ac5c68726331849f29f553a1a6065361b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa979ce49f7f1d6355ed406645a58fbaa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structSetUnnestState.html">SetUnnestState</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_aa979ce49f7f1d6355ed406645a58fbaa.html#aa979ce49f7f1d6355ed406645a58fbaa">set_unnest_state_make</a> (const <a class="el" href="structSet.html">Set</a> *<a class="el" href="meos_2src_2cbuffer_2CMakeLists_8txt_a4f8060fff461ef48c45a3b2031f43be6.html#a4f8060fff461ef48c45a3b2031f43be6">set</a>)</td></tr>
+<tr class="memitem:aa979ce49f7f1d6355ed406645a58fbaa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structSetUnnestState.html">SetUnnestState</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_aa979ce49f7f1d6355ed406645a58fbaa.html#aa979ce49f7f1d6355ed406645a58fbaa">set_unnest_state_make</a> (const <a class="el" href="structSet.html">Set</a> *<a class="el" href="meos_2CMakeLists_8txt_a50c962d28d1be08c3cf4bcc093e4a883.html#a50c962d28d1be08c3cf4bcc093e4a883">set</a>)</td></tr>
 <tr class="memdesc:aa979ce49f7f1d6355ed406645a58fbaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the initial state that persists across multiple calls of the function.  <a href="set_8h_aa979ce49f7f1d6355ed406645a58fbaa.html#aa979ce49f7f1d6355ed406645a58fbaa">More...</a><br /></td></tr>
 <tr class="separator:aa979ce49f7f1d6355ed406645a58fbaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa766cfb3b0cc29e6b4b26391523932f0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="set_8h_aa766cfb3b0cc29e6b4b26391523932f0.html#aa766cfb3b0cc29e6b4b26391523932f0">set_unnest_state_next</a> (<a class="el" href="structSetUnnestState.html">SetUnnestState</a> *state)</td></tr>
 <tr class="memdesc:aa766cfb3b0cc29e6b4b26391523932f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Increment the current state to the next unnest value.  <a href="set_8h_aa766cfb3b0cc29e6b4b26391523932f0.html#aa766cfb3b0cc29e6b4b26391523932f0">More...</a><br /></td></tr>
 <tr class="separator:aa766cfb3b0cc29e6b4b26391523932f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p >Basic functions for set of (distinct) timestamps. </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5

@@ -1,21 +1,11 @@
 var searchData=
 [
-  ['liftedfunctioninfo_0',['LiftedFunctionInfo',['../structLiftedFunctionInfo.html',1,'']]],
-  ['lwcircstring_1',['LWCIRCSTRING',['../structLWCIRCSTRING.html',1,'']]],
-  ['lwcollection_2',['LWCOLLECTION',['../structLWCOLLECTION.html',1,'']]],
-  ['lwcompound_3',['LWCOMPOUND',['../structLWCOMPOUND.html',1,'']]],
-  ['lwcurvepoly_4',['LWCURVEPOLY',['../structLWCURVEPOLY.html',1,'']]],
-  ['lwgeom_5',['LWGEOM',['../structLWGEOM.html',1,'']]],
-  ['lwline_6',['LWLINE',['../structLWLINE.html',1,'']]],
-  ['lwmcurve_7',['LWMCURVE',['../structLWMCURVE.html',1,'']]],
-  ['lwmline_8',['LWMLINE',['../structLWMLINE.html',1,'']]],
-  ['lwmpoint_9',['LWMPOINT',['../structLWMPOINT.html',1,'']]],
-  ['lwmpoly_10',['LWMPOLY',['../structLWMPOLY.html',1,'']]],
-  ['lwmsurface_11',['LWMSURFACE',['../structLWMSURFACE.html',1,'']]],
-  ['lwpoint_12',['LWPOINT',['../structLWPOINT.html',1,'']]],
-  ['lwpoly_13',['LWPOLY',['../structLWPOLY.html',1,'']]],
-  ['lwproj_14',['LWPROJ',['../structLWPROJ.html',1,'']]],
-  ['lwpsurface_15',['LWPSURFACE',['../structLWPSURFACE.html',1,'']]],
-  ['lwtin_16',['LWTIN',['../structLWTIN.html',1,'']]],
-  ['lwtriangle_17',['LWTRIANGLE',['../structLWTRIANGLE.html',1,'']]]
+  ['h3_5fbuf_0',['h3_buf',['../structh3__buf.html',1,'']]],
+  ['h3_5fcellset_1',['h3_cellset',['../structh3__cellset.html',1,'']]],
+  ['h3_5fstack_2',['h3_stack',['../structh3__stack.html',1,'']]],
+  ['h3cellplanes_3',['H3CellPlanes',['../structH3CellPlanes.html',1,'']]],
+  ['h3indexsplitstate_4',['H3indexSplitState',['../structH3indexSplitState.html',1,'']]],
+  ['h3segmentpath_5',['H3SegmentPath',['../structH3SegmentPath.html',1,'']]],
+  ['hullboundary_6',['HullBoundary',['../structHullBoundary.html',1,'']]],
+  ['hullfeature_7',['HullFeature',['../structHullFeature.html',1,'']]]
 ];

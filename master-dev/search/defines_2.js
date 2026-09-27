@@ -1,10 +1,13 @@
 var searchData=
 [
-  ['c_5fcollation_5foid_0',['C_COLLATION_OID',['../meos_2include_2temporal_2temporal_8h_a7d2d04807bbec363a97df2d253ae5181.html#a7d2d04807bbec363a97df2d253ae5181',1,'temporal.h']]],
-  ['cbufferpgetdatum_1',['CbufferPGetDatum',['../cbuffer_8h_ac73f7ab2cd9aee8d80be3acbfef331b8.html#ac73f7ab2cd9aee8d80be3acbfef331b8',1,'cbuffer.h']]],
-  ['cluster_5fintersecting_2',['CLUSTER_INTERSECTING',['../regions__intersecting_8c_a4ce9cedca0d6d83358b2f568dde14e59.html#a4ce9cedca0d6d83358b2f568dde14e59',1,'regions_intersecting.c']]],
-  ['compact_5fcomp_5fseqs_3',['COMPACT_COMP_SEQS',['../ttext__expand_8c_a01fa66b89ffeecb1c172bc490622d411.html#a01fa66b89ffeecb1c172bc490622d411',1,'ttext_expand.c']]],
-  ['continuous_4',['CONTINUOUS',['../meos_2include_2temporal_2temporal_8h_acf80826c205230fbc6a84ab9c46ff9af.html#acf80826c205230fbc6a84ab9c46ff9af',1,'temporal.h']]],
-  ['crossings_5',['CROSSINGS',['../meos_2include_2temporal_2temporal_8h_a048c093fef7b037e36e7f19bf83c5d53.html#a048c093fef7b037e36e7f19bf83c5d53',1,'temporal.h']]],
-  ['crossings_5fno_6',['CROSSINGS_NO',['../meos_2include_2temporal_2temporal_8h_a21881fbfe51a67ecb3bf3d86fd979cb3.html#a21881fbfe51a67ecb3bf3d86fd979cb3',1,'temporal.h']]]
+  ['basic_5fquaternion_0',['BASIC_QUATERNION',['../geopose__test_8c_a549283d1f128bb2bc5cda15cddaa352e.html#a549283d1f128bb2bc5cda15cddaa352e',1,'geopose_test.c']]],
+  ['basic_5fypr_1',['BASIC_YPR',['../geopose__test_8c_af483aabb8163ada73bd52db48e9ec2ae.html#af483aabb8163ada73bd52db48e9ec2ae',1,'geopose_test.c']]],
+  ['bbox_5ftest_2',['BBOX_TEST',['../meos_2include_2temporal_2temporal_8h_a992e328527bba8d82568f9fcd8debdc9.html#a992e328527bba8d82568f9fcd8debdc9',1,'temporal.h']]],
+  ['bbox_5ftest_5fno_3',['BBOX_TEST_NO',['../meos_2include_2temporal_2temporal_8h_a9203a90a170ee73d4681f4fe94c34b49.html#a9203a90a170ee73d4681f4fe94c34b49',1,'temporal.h']]],
+  ['border_5fexc_4',['BORDER_EXC',['../meos_2include_2temporal_2temporal_8h_a6a6b4bdfb1828b7bb8dbde05e079cc92.html#a6a6b4bdfb1828b7bb8dbde05e079cc92',1,'temporal.h']]],
+  ['border_5finc_5',['BORDER_INC',['../meos_2include_2temporal_2temporal_8h_a888c5df49c0c821f4bae0c6494bdfe19.html#a888c5df49c0c821f4bae0c6494bdfe19',1,'temporal.h']]],
+  ['box_5fspan_6',['BOX_SPAN',['../sptree__load__test_8c_a7d34132f9e9a2074d95356db19f88307.html#a7d34132f9e9a2074d95356db19f88307',1,'sptree_load_test.c']]],
+  ['btree_5fam_5foid_7',['BTREE_AM_OID',['../temporal__selfuncs_8h_a61cb01df7cb4cea59362e25b6c2c5132.html#a61cb01df7cb4cea59362e25b6c2c5132',1,'temporal_selfuncs.h']]],
+  ['buffer_5flocator_5findex_5fmin_5fpairs_8',['BUFFER_LOCATOR_INDEX_MIN_PAIRS',['../geo__buffer_8c_adeb17d341c68dd0a66dc944c91bedb1c.html#adeb17d341c68dd0a66dc944c91bedb1c',1,'geo_buffer.c']]],
+  ['buffer_5fmitre_5fon_5fsegments_9',['BUFFER_MITRE_ON_SEGMENTS',['../geo__buffer_8c_ac45c0e1ea2117e802572ac52344abd74.html#ac45c0e1ea2117e802572ac52344abd74',1,'geo_buffer.c']]]
 ];

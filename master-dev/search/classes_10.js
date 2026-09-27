@@ -1,4 +1,28 @@
 var searchData=
 [
-  ['varlena_0',['varlena',['../structvarlena.html',1,'']]]
+  ['raquet_0',['Raquet',['../structRaquet.html',1,'']]],
+  ['raquetsamplestate_1',['RaquetSampleState',['../structRaquetSampleState.html',1,'']]],
+  ['rasteranswer_2',['RasterAnswer',['../structRasterAnswer.html',1,'']]],
+  ['rastergridops_3',['RasterGridOps',['../structRasterGridOps.html',1,'']]],
+  ['rasterrun_4',['RasterRun',['../structRasterRun.html',1,'']]],
+  ['rastersamplestate_5',['RasterSampleState',['../structRasterSampleState.html',1,'']]],
+  ['rastervaluegdalctx_6',['RasterValueGdalCtx',['../structRasterValueGdalCtx.html',1,'']]],
+  ['region_5frecord_7',['region_record',['../structregion__record.html',1,'']]],
+  ['relatecomp_8',['RelateComp',['../structRelateComp.html',1,'']]],
+  ['relatectx_9',['RelateCtx',['../structRelateCtx.html',1,'']]],
+  ['relatectxcache_10',['RelateCtxCache',['../structRelateCtxCache.html',1,'']]],
+  ['relatectxcacheentry_11',['RelateCtxCacheEntry',['../structRelateCtxCacheEntry.html',1,'']]],
+  ['relatectxseen_12',['RelateCtxSeen',['../structRelateCtxSeen.html',1,'']]],
+  ['relateedges_13',['RelateEdges',['../structRelateEdges.html',1,'']]],
+  ['relateinterval_14',['RelateInterval',['../structRelateInterval.html',1,'']]],
+  ['relatelinearends_15',['RelateLinearEnds',['../structRelateLinearEnds.html',1,'']]],
+  ['relatemember_16',['RelateMember',['../structRelateMember.html',1,'']]],
+  ['relateoperand_17',['RelateOperand',['../structRelateOperand.html',1,'']]],
+  ['relateoperands_18',['RelateOperands',['../structRelateOperands.html',1,'']]],
+  ['relatequery_19',['RelateQuery',['../structRelateQuery.html',1,'']]],
+  ['reltype_5fcatalog_5fstruct_20',['reltype_catalog_struct',['../structreltype__catalog__struct.html',1,'']]],
+  ['rtree_21',['RTree',['../structRTree.html',1,'']]],
+  ['rtreenncursor_22',['RTreeNNCursor',['../structRTreeNNCursor.html',1,'']]],
+  ['rtreennentry_23',['RTreeNNEntry',['../structRTreeNNEntry.html',1,'']]],
+  ['rtreenode_24',['RTreeNode',['../structRTreeNode.html',1,'']]]
 ];

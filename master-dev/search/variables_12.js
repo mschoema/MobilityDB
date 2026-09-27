@@ -1,20 +1,13 @@
 var searchData=
 [
-  ['radius_0',['radius',['../structSPHEROID_a2ec41241699a094e4f98928220c045c7.html#a2ec41241699a094e4f98928220c045c7',1,'SPHEROID::radius()'],['../structCbuffer_a121a38c66ff48003c153580ace3679be.html#a121a38c66ff48003c153580ace3679be',1,'Cbuffer::radius()']]],
-  ['range_1',['range',['../structConsiderSplitContext_ab3ac677738b07b65c855008d7fa67595.html#ab3ac677738b07b65c855008d7fa67595',1,'ConsiderSplitContext']]],
-  ['ratio_2',['ratio',['../structConsiderSplitContext_a6ce66465b595c8b1f134356c6c34241c.html#a6ce66465b595c8b1f134356c6c34241c',1,'ConsiderSplitContext']]],
-  ['reslinear_3',['reslinear',['../structLiftedFunctionInfo_a40286f1d7f4da9a01d1e8d7f26ab3320.html#a40286f1d7f4da9a01d1e8d7f26ab3320',1,'LiftedFunctionInfo']]],
-  ['restype_4',['restype',['../structLiftedFunctionInfo_aa9f049e818402d49f42e8c533e691394.html#aa9f049e818402d49f42e8c533e691394',1,'LiftedFunctionInfo']]],
-  ['rid_5',['rid',['../structNpoint_a0560de3edeea8503ecadb1f5038e60af.html#a0560de3edeea8503ecadb1f5038e60af',1,'Npoint::rid()'],['../structNsegment_a95f22aa9e6246931d2eca7534ff2a2d7.html#a95f22aa9e6246931d2eca7534ff2a2d7',1,'Nsegment::rid()']]],
-  ['right_6',['right',['../structSTboxNode_ac05a610d1803f84878426220ea77f535.html#ac05a610d1803f84878426220ea77f535',1,'STboxNode::right()'],['../structSpanNode_a7d50dd13b4e824e4303bd48d3a1790e9.html#a7d50dd13b4e824e4303bd48d3a1790e9',1,'SpanNode::right()'],['../structTboxNode_ad320507fdac0871fecc5ad762e4cdbfe.html#ad320507fdac0871fecc5ad762e4cdbfe',1,'TboxNode::right()']]],
-  ['right_7',['RIGHT',['../tgeo__restrict_8c_a088fe0153a918af361dc8f4e775d020e.html#a088fe0153a918af361dc8f4e775d020e',1,'tgeo_restrict.c']]],
-  ['right_5flower_8',['right_lower',['../structConsiderSplitContext_a162416d9eb39cd01736aa3ae1d46ac23.html#a162416d9eb39cd01736aa3ae1d46ac23',1,'ConsiderSplitContext']]],
-  ['rightlower_9',['rightLower',['../structConsiderSplitContext_a429305c1628a73ce14433a3ff20bc673.html#a429305c1628a73ce14433a3ff20bc673',1,'ConsiderSplitContext']]],
-  ['rings_10',['rings',['../structLWPOLY_a2b0a8b89f0af409f4bd4527255bc1bbf.html#a2b0a8b89f0af409f4bd4527255bc1bbf',1,'LWPOLY::rings()'],['../structLWCURVEPOLY_a7697b8eddb636d429009fd5f84b95089.html#a7697b8eddb636d429009fd5f84b95089',1,'LWCURVEPOLY::rings()']]],
-  ['root_11',['root',['../structRTree_af63bc9816508ff62fba78dc67f0b5fd7.html#af63bc9816508ff62fba78dc67f0b5fd7',1,'RTree']]],
-  ['rotx_12',['rotx',['../projection__gk_8c_a48691d48226a83de51fef2037fd39bf2.html#a48691d48226a83de51fef2037fd39bf2',1,'projection_gk.c']]],
-  ['roty_13',['roty',['../projection__gk_8c_af2d270424ed9bf1a5fab2accf380e966.html#af2d270424ed9bf1a5fab2accf380e966',1,'projection_gk.c']]],
-  ['rotz_14',['rotz',['../projection__gk_8c_a3bc522161034a64098cc55f6798ecc39.html#a3bc522161034a64098cc55f6798ecc39',1,'projection_gk.c']]],
-  ['routes_15',['routes',['../structstruct__WaysCache_a11662000ecd53ae2f3c87db4197273e6.html#a11662000ecd53ae2f3c87db4197273e6',1,'struct_WaysCache']]],
-  ['rtype_16',['rtype',['../structoid__meosoper__entry_a97f88ac6b0375a12ec4921467f2b809e.html#a97f88ac6b0375a12ec4921467f2b809e',1,'oid_meosoper_entry']]]
+  ['qb_5fb_0',['QB_B',['../meos_2src_2quadbin_2quadbin_8c_ad725d11a00acb27fc15251e1c7b46bd0.html#ad725d11a00acb27fc15251e1c7b46bd0',1,'QB_B():&#160;quadbin.c'],['../raster__quadbin_8c_ad725d11a00acb27fc15251e1c7b46bd0.html#ad725d11a00acb27fc15251e1c7b46bd0',1,'QB_B():&#160;raster_quadbin.c']]],
+  ['qb_5fs_1',['QB_S',['../meos_2src_2quadbin_2quadbin_8c_adc2076adb7d5cff0028d16f0d98e7465.html#adc2076adb7d5cff0028d16f0d98e7465',1,'quadbin.c']]],
+  ['quadbin_2',['quadbin',['../structRaquet_a462a6f39cdd328133ae72cf5fe347b9b.html#a462a6f39cdd328133ae72cf5fe347b9b',1,'Raquet::quadbin()'],['../structGrid_a5fa983c665a3561e3eb3ae57e986cdd8.html#a5fa983c665a3561e3eb3ae57e986cdd8',1,'Grid::quadbin()']]],
+  ['quadbin_5fcellops_3',['quadbin_cellops',['../meos_2src_2quadbin_2tquadbin__ops_8c_ac198225647d908e10f9dc83d4881958a.html#ac198225647d908e10f9dc83d4881958a',1,'tquadbin_ops.c']]],
+  ['quadtree_5fnext_4',['quadtree_next',['../structSPTree_a3e081f826f66132ba4d70d7f5b796635.html#a3e081f826f66132ba4d70d7f5b796635',1,'SPTree']]],
+  ['query_5',['query',['../structRTreeNNCursor_ae493fc8dfb548950aa58e431ef9fd4bc.html#ae493fc8dfb548950aa58e431ef9fd4bc',1,'RTreeNNCursor::query()'],['../structSPNNCursor_aad2b05b6541a9ade7d4f3ebf68013d38.html#aad2b05b6541a9ade7d4f3ebf68013d38',1,'SPNNCursor::query()']]],
+  ['qw_6',['qw',['../structGeoPoseAnchor_a2ffa276f2fe90f047fe7a80ee62b269e.html#a2ffa276f2fe90f047fe7a80ee62b269e',1,'GeoPoseAnchor']]],
+  ['qx_7',['qx',['../structDistShortLine_ad1a5cfa08443c9778854ff3a36dcd63e.html#ad1a5cfa08443c9778854ff3a36dcd63e',1,'DistShortLine::qx()'],['../structGeoPoseAnchor_a2889305d292545fd4c9ff05ab9f4460e.html#a2889305d292545fd4c9ff05ab9f4460e',1,'GeoPoseAnchor::qx()']]],
+  ['qy_8',['qy',['../structDistShortLine_ab1e9c1f73eacdec38bc58d5c99e8b484.html#ab1e9c1f73eacdec38bc58d5c99e8b484',1,'DistShortLine::qy()'],['../structGeoPoseAnchor_aa5f391cbd7c65f3c1f4371d90ea3e523.html#aa5f391cbd7c65f3c1f4371d90ea3e523',1,'GeoPoseAnchor::qy()']]],
+  ['qz_9',['qz',['../structGeoPoseAnchor_aa67fca032218bcf2625bab5b984f9e5a.html#aa67fca032218bcf2625bab5b984f9e5a',1,'GeoPoseAnchor']]]
 ];

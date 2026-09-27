@@ -81,7 +81,7 @@ $(function() {
         <table>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga24a522a01ec1ada425e46d39753bcd23.html#ga24a522a01ec1ada425e46d39753bcd23">geo_cluster_dbscan</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_gad31415476297b3a624cbee8ccdc06b4a.html#gad31415476297b3a624cbee8ccdc06b4a">geo_cluster_intersecting</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga39b03dbde3abdad356eb09d892da4e6a.html#ga39b03dbde3abdad356eb09d892da4e6a">geo_cluster_kmeans</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga5f0e2bb93d8eb95ca84efb233ee52fa9.html#ga5f0e2bb93d8eb95ca84efb233ee52fa9">geo_cluster_kmeans</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_gad00e6711f9332171153d6f7f75f16b7a.html#gad00e6711f9332171153d6f7f75f16b7a">geo_cluster_within</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga53bd251c74e0484a3e1c7a87aab460e7.html#ga53bd251c74e0484a3e1c7a87aab460e7">geo_collect_garray</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga8d5149137ee7f32cd1ca22021695ba91.html#ga8d5149137ee7f32cd1ca22021695ba91">geo_geo_n</a></td></tr>
@@ -98,7 +98,9 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga1062ff2dab61985af1a2a20eb2fa7f55.html#ga1062ff2dab61985af1a2a20eb2fa7f55">geom_difference2d</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga843ba29fe8423477ab828192ac5b818c.html#ga843ba29fe8423477ab828192ac5b818c">geom_intersection2d</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga34875ba9f2fdb3137061d112c1918889.html#ga34875ba9f2fdb3137061d112c1918889">geom_intersection2d_coll</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga3876c5dc724b33d8f21018f0b7c741c2.html#ga3876c5dc724b33d8f21018f0b7c741c2">geom_min_bounding_radius</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga4c43039b8653455b0deca057f1c5604e.html#ga4c43039b8653455b0deca057f1c5604e">geom_is_simple</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga2836bc2ac6761798b63154135896eb91.html#ga2836bc2ac6761798b63154135896eb91">geom_minimum_bounding_radius</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_gaa9d084c3fa8cf531fef5aa4f18c39ae0.html#gaa9d084c3fa8cf531fef5aa4f18c39ae0">geom_oriented_envelope</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga3625560eff370095b7c7cd1494ed52d6.html#ga3625560eff370095b7c7cd1494ed52d6">geom_shortestline2d</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga34d5b963ed0f9c339ecd4d8398bdd2e1.html#ga34d5b963ed0f9c339ecd4d8398bdd2e1">geom_shortestline3d</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__base__spatial_ga3e227f98f45314e22860b20b114a33d2.html#ga3e227f98f45314e22860b20b114a33d2">geom_unary_union</a></td></tr>
@@ -126,7 +128,7 @@ $(function() {
 </div><div class="memdoc">
 
 <p>Return the centroid of a geometry. </p>
-<dl class="section note"><dt>Note</dt><dd>PostGIS function: <code><a class="el" href="postgis_8h_a3c50bb0dc24be98daf8640f9e4cc3191.html#a3c50bb0dc24be98daf8640f9e4cc3191">centroid(PG_FUNCTION_ARGS)</a></code>. </dd></dl>
+<p >The answer carries the ordinates of its input: the centroid is a mean, and a mean is taken in every dimension the geometry states. PostGIS answers a bare point in the plane, since the GEOS centroid it delegates to has no ordinates to give back. </p><dl class="section note"><dt>Note</dt><dd>PostGIS function: <code><a class="el" href="postgis_8h_a3c50bb0dc24be98daf8640f9e4cc3191.html#a3c50bb0dc24be98daf8640f9e4cc3191">centroid(PG_FUNCTION_ARGS)</a></code>. </dd></dl>
 
 </div>
 </div>

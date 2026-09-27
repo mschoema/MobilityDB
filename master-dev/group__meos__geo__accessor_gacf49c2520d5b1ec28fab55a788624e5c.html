@@ -87,7 +87,7 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga4dae58caa9b4f45c88188da9db28fe7d.html#ga4dae58caa9b4f45c88188da9db28fe7d">tgeo_end_value</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_gabf1aa6dfe8bf84078496889a3e65724f.html#gabf1aa6dfe8bf84078496889a3e65724f">tgeo_start_value</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga85bfc1a02e93198d7537e8b6b5a8b20c.html#ga85bfc1a02e93198d7537e8b6b5a8b20c">tgeo_traversed_area</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga0e89e09b430a0f019855bd1c92996240.html#ga0e89e09b430a0f019855bd1c92996240">tgeo_value_at_timestamptz</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga65b014734c0fac3611b05670c3ec422f.html#ga65b014734c0fac3611b05670c3ec422f">tgeo_value_at_timestamptz</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga93e0ed41f56080d6d28994d4fbfc145f.html#ga93e0ed41f56080d6d28994d4fbfc145f">tgeo_value_n</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga6f890f3328f6faa4fe1dfe5e5f335d05.html#ga6f890f3328f6faa4fe1dfe5e5f335d05">tgeo_values</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__geo__accessor_ga0c57db430b346cf3d02e8db714bc0989.html#ga0c57db430b346cf3d02e8db714bc0989">tpoint_angular_difference</a></td></tr>
@@ -143,11 +143,12 @@ $(function() {
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">temp</td><td><a class="el" href="structTemporal.html" title="Structure to represent the common structure of temporal values of any temporal subtype.">Temporal</a> point </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">gs</td><td>Geometry </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">invert</td><td>True when the result should be inverted </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">invert</td><td>True when the result should be inverted </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>On empty geometry or on error return NULL @csqlfn <a class="el" href="group__mobilitydb__geo__accessor_ga3ba7d66a5c8b31ba6efdf633a3259f1b.html#ga3ba7d66a5c8b31ba6efdf633a3259f1b" title="Return the temporal bearing between a temporal point and a geometry/geography point @sqlfn bearing()">Bearing_tpoint_point()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>An empty geometry has no bearing, so the answer is NULL </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>On error return NULL @csqlfn <a class="el" href="group__mobilitydb__geo__accessor_ga3ba7d66a5c8b31ba6efdf633a3259f1b.html#ga3ba7d66a5c8b31ba6efdf633a3259f1b" title="Return the temporal bearing between a temporal point and a geometry/geography point @sqlfn bearing()">Bearing_tpoint_point()</a> <a class="el" href="group__mobilitydb__geo__accessor_ga454818d42732b96b3b53c4a414c8a0fb.html#ga454818d42732b96b3b53c4a414c8a0fb" title="Return the temporal bearing between a geometry/geography point and a temporal point @sqlfn bearing()">Bearing_point_tpoint()</a> </dd></dl>
 
 </div>
 </div>

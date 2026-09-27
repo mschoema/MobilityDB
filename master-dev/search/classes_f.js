@@ -1,17 +1,7 @@
 var searchData=
 [
-  ['tbox_0',['TBox',['../structTBox.html',1,'']]],
-  ['tboxgridstate_1',['TboxGridState',['../structTboxGridState.html',1,'']]],
-  ['tboxnode_2',['TboxNode',['../structTboxNode.html',1,'']]],
-  ['tdist_5farray_3',['tdist_array',['../structtdist__array.html',1,'']]],
-  ['tdist_5felem_4',['tdist_elem',['../structtdist__elem.html',1,'']]],
-  ['temporal_5',['Temporal',['../structTemporal.html',1,'']]],
-  ['temporalanalyzeextradata_6',['TemporalAnalyzeExtraData',['../structTemporalAnalyzeExtraData.html',1,'']]],
-  ['temptype_5fcatalog_5fstruct_7',['temptype_catalog_struct',['../structtemptype__catalog__struct.html',1,'']]],
-  ['tempunneststate_8',['TempUnnestState',['../structTempUnnestState.html',1,'']]],
-  ['textset_5frecord_9',['textset_record',['../structtextset__record.html',1,'']]],
-  ['tinstant_10',['TInstant',['../structTInstant.html',1,'']]],
-  ['trip_5frecord_11',['trip_record',['../structtrip__record.html',1,'']]],
-  ['tsequence_12',['TSequence',['../structTSequence.html',1,'']]],
-  ['tsequenceset_13',['TSequenceSet',['../structTSequenceSet.html',1,'']]]
+  ['quadbin_5fbuf_0',['quadbin_buf',['../structquadbin__buf.html',1,'']]],
+  ['quadbin_5ftile_1',['quadbin_tile',['../structquadbin__tile.html',1,'']]],
+  ['quadbinborder_2',['QuadbinBorder',['../structQuadbinBorder.html',1,'']]],
+  ['quadbinsplitstate_3',['QuadbinSplitState',['../structQuadbinSplitState.html',1,'']]]
 ];

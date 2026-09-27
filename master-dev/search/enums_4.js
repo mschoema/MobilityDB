@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rtreenodetype_0',['RTreeNodeType',['../temporal__rtree_8h_a522f6266d12157223342b2a772846dae.html#a522f6266d12157223342b2a772846dae',1,'temporal_rtree.h']]]
+  ['h3unit_0',['H3Unit',['../th3index__internal_8h_a42163dde6d2a853976e074583263b4fe.html#a42163dde6d2a853976e074583263b4fe',1,'th3index_internal.h']]]
 ];

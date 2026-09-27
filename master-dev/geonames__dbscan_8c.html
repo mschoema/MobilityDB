@@ -81,7 +81,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A simple program that reads from a CSV file obtained from geonames <a href="https://download.geonames.org/export/dump/US.zip">https://download.geonames.org/export/dump/US.zip</a> and applies the PostGIS function <code>ST_DBSCAN</code> to the entire file.  
+<p>Cluster the GeoNames places of the United States with DBSCAN.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;ctype.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
@@ -95,16 +95,16 @@ $(function() {
 Macros</h2></td></tr>
 <tr class="memitem:a076fd3c5ba5ac7c6bbedb64c188565f3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_a076fd3c5ba5ac7c6bbedb64c188565f3.html#a076fd3c5ba5ac7c6bbedb64c188565f3">MAX_LEN_LINE</a>&#160;&#160;&#160;2048</td></tr>
 <tr class="separator:a076fd3c5ba5ac7c6bbedb64c188565f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaeaf30138a10ac86c117f19e937c5d83"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_aaeaf30138a10ac86c117f19e937c5d83.html#aaeaf30138a10ac86c117f19e937c5d83">MAX_NO_ADMIN1</a>&#160;&#160;&#160;64</td></tr>
-<tr class="separator:aaeaf30138a10ac86c117f19e937c5d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c7b9a944bf9db856d91f5fb2082a2ac"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_a3c7b9a944bf9db856d91f5fb2082a2ac.html#a3c7b9a944bf9db856d91f5fb2082a2ac">MAX_NO_FIELDS</a>&#160;&#160;&#160;24</td></tr>
-<tr class="separator:a3c7b9a944bf9db856d91f5fb2082a2ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fca6ef1a5ef96bb9428f1027051bf63"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_a8fca6ef1a5ef96bb9428f1027051bf63.html#a8fca6ef1a5ef96bb9428f1027051bf63">MAX_NUM_ADMIN1</a>&#160;&#160;&#160;64</td></tr>
+<tr class="separator:a8fca6ef1a5ef96bb9428f1027051bf63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac074b7ddc90e477ba182801b3957665e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_ac074b7ddc90e477ba182801b3957665e.html#ac074b7ddc90e477ba182801b3957665e">MAX_NUM_FIELDS</a>&#160;&#160;&#160;24</td></tr>
+<tr class="separator:ac074b7ddc90e477ba182801b3957665e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b94af9dcb0358f28d175d80eed98330"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_a3b94af9dcb0358f28d175d80eed98330.html#a3b94af9dcb0358f28d175d80eed98330">MAX_ROWS</a>&#160;&#160;&#160;250000</td></tr>
 <tr class="separator:a3b94af9dcb0358f28d175d80eed98330"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa40b87c2a7411f172f61db3e7bff46a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_afa40b87c2a7411f172f61db3e7bff46a.html#afa40b87c2a7411f172f61db3e7bff46a">MAX_ROWS_WIN</a>&#160;&#160;&#160;15000</td></tr>
 <tr class="separator:afa40b87c2a7411f172f61db3e7bff46a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_afbe4a2478a752bedf912ba66f0ad8b11.html#afbe4a2478a752bedf912ba66f0ad8b11">NO_INSTS_BATCH</a>&#160;&#160;&#160;10000</td></tr>
-<tr class="separator:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c35632621ff795485e9a92b287d11aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="geonames__dbscan_8c_a8c35632621ff795485e9a92b287d11aa.html#a8c35632621ff795485e9a92b287d11aa">NUM_INSTS_BATCH</a>&#160;&#160;&#160;10000</td></tr>
+<tr class="separator:a8c35632621ff795485e9a92b287d11aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -118,26 +118,28 @@ Functions</h2></td></tr>
 <tr class="separator:a92488df83476d9d8729fd04197bc35f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >A simple program that reads from a CSV file obtained from geonames <a href="https://download.geonames.org/export/dump/US.zip">https://download.geonames.org/export/dump/US.zip</a> and applies the PostGIS function <code>ST_DBSCAN</code> to the entire file. </p>
+<div class="textblock"><p >Cluster the GeoNames places of the United States with DBSCAN. </p>
+<p >A simple program that reads from a CSV file obtained from geonames <a href="https://download.geonames.org/export/dump/US.zip">https://download.geonames.org/export/dump/US.zip</a> and applies the PostGIS function <code>ST_DBSCAN</code> to the entire file.</p>
 <p >This file simply reproduces in MEOS Paul Ramsey's blog <a href="https://www.crunchydata.com/blog/postgis-clustering-with-k-means">https://www.crunchydata.com/blog/postgis-clustering-with-k-means</a> Therefore, the program corresponds to the following SQL query </p><div class="fragment"><div class="line">DROP TABLE IF EXISTS geonames_sch;</div>
 <div class="line">CREATE TABLE geonames_sch AS</div>
 <div class="line">SELECT *, ST_ClusterDBScan(geom, 2000, 5)</div>
-<div class="line">  OVER (PARTITION BY admin1) AS cluster</div>
+<div class="line">OVER (PARTITION BY admin1) AS cluster</div>
 <div class="line">FROM geonames</div>
 <div class="line">WHERE fcode = &#39;SCH&#39;;</div>
-</div><!-- fragment --><p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/include -o geonames_dbscan geonames_dbscan.c -L/usr/local/lib -lmeos</div>
+</div><!-- fragment --><p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a> -o geonames_dbscan geonames_dbscan.c -L/usr/local/lib -lmeos</div>
+<div class="ttc" id="amobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56_html_a6e1b934a889b7b6fe98de44d12f49c56"><div class="ttname"><a href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a></div><div class="ttdeci">include(AssembleExtensionSql) configure_file(mobilitydb_datagen.in.control $</div><div class="ttdef"><b>Definition:</b> CMakeLists.txt:28</div></div>
 </div><!-- fragment --><p> The program expects that the file <code>data/US.txt</code> extracted from the ZIP file above is located in the subdirecttory &lsquo;data&amp;rsquo;.</p>
 <div class="fragment"><div class="line">DROP TABLE IF EXISTS geonames_meos;</div>
 <div class="line">CREATE TABLE geonames_meos (</div>
-<div class="line">  geonameid <span class="keywordtype">int</span>,</div>
-<div class="line">  name <a class="code hl_struct" href="structvarlena.html">text</a>,</div>
-<div class="line">  admin1 <a class="code hl_struct" href="structvarlena.html">text</a>,</div>
-<div class="line">  geom geometry(Point, 5070),</div>
-<div class="line">  cluster integer);</div>
+<div class="line">geonameid <span class="keywordtype">int</span>,</div>
+<div class="line">name <a class="code hl_struct" href="structvarlena.html">text</a>,</div>
+<div class="line">admin1 <a class="code hl_struct" href="structvarlena.html">text</a>,</div>
+<div class="line">geom geometry(Point, 5070),</div>
+<div class="line">cluster integer);</div>
 <div class="line">COPY geonames_meos</div>
-<div class="line">  FROM <span class="stringliteral">&#39;/home/esteban/src/MobilityDB/meos/examples/data/geonames_new.csv&#39;</span></div>
-<div class="line">  DELIMITER <span class="charliteral">&#39;,&#39;</span> CSV HEADER;</div>
-<div class="ttc" id="astructvarlena_html"><div class="ttname"><a href="structvarlena.html">varlena</a></div><div class="ttdef"><b>Definition:</b> postgres_ext_defs.in.h:34</div></div>
+<div class="line">FROM <span class="stringliteral">&#39;/home/esteban/src/MobilityDB/meos/examples/data/geonames_new.csv&#39;</span></div>
+<div class="line">DELIMITER <span class="charliteral">&#39;,&#39;</span> CSV HEADER;</div>
+<div class="ttc" id="astructvarlena_html"><div class="ttname"><a href="structvarlena.html">varlena</a></div><div class="ttdef"><b>Definition:</b> postgres_ext_defs.in.h:48</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

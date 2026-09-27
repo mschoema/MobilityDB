@@ -81,7 +81,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A simple program that generates a given number of tgeompoint instants, assembles the instants into a sequence at the end of the generation process, and outputs the number of instants and the distance travelled.  
+<p>Assemble a temporal point sequence from generated instants.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
@@ -95,10 +95,10 @@ Macros</h2></td></tr>
 <tr class="separator:a5f7d4cd604165c01fe5d3ae058e81f2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e2ad94cb54f89d027c5768eafa9cf04"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tpoint__assemble_8c_a0e2ad94cb54f89d027c5768eafa9cf04.html#a0e2ad94cb54f89d027c5768eafa9cf04">MAX_LEN_INST</a>&#160;&#160;&#160;64</td></tr>
 <tr class="separator:a0e2ad94cb54f89d027c5768eafa9cf04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d3fac08d7731bdf3d2c4785339925aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tpoint__assemble_8c_a5d3fac08d7731bdf3d2c4785339925aa.html#a5d3fac08d7731bdf3d2c4785339925aa">MAX_NO_INSTS</a>&#160;&#160;&#160;1000000</td></tr>
-<tr class="separator:a5d3fac08d7731bdf3d2c4785339925aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tpoint__assemble_8c_afbe4a2478a752bedf912ba66f0ad8b11.html#afbe4a2478a752bedf912ba66f0ad8b11">NO_INSTS_BATCH</a>&#160;&#160;&#160;10000</td></tr>
-<tr class="separator:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d3bdbdbc33bcfce30075345d43f6bfb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tpoint__assemble_8c_a3d3bdbdbc33bcfce30075345d43f6bfb.html#a3d3bdbdbc33bcfce30075345d43f6bfb">MAX_NUM_INSTS</a>&#160;&#160;&#160;1000000</td></tr>
+<tr class="separator:a3d3bdbdbc33bcfce30075345d43f6bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c35632621ff795485e9a92b287d11aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tpoint__assemble_8c_a8c35632621ff795485e9a92b287d11aa.html#a8c35632621ff795485e9a92b287d11aa">NUM_INSTS_BATCH</a>&#160;&#160;&#160;10000</td></tr>
+<tr class="separator:a8c35632621ff795485e9a92b287d11aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -106,9 +106,11 @@ Functions</h2></td></tr>
 <tr class="separator:a840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >A simple program that generates a given number of tgeompoint instants, assembles the instants into a sequence at the end of the generation process, and outputs the number of instants and the distance travelled. </p>
+<div class="textblock"><p >Assemble a temporal point sequence from generated instants. </p>
+<p >A simple program that generates a given number of tgeompoint instants, assembles the instants into a sequence at the end of the generation process, and outputs the number of instants and the distance travelled.</p>
 <p >The instants are generated so they are not redundant, that is, all input instants will appear in the final sequence.</p>
-<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/include -o tpoint_assemble tpoint_assemble.c -L/usr/local/lib -lmeos</div>
+<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a> -o tpoint_assemble tpoint_assemble.c -L/usr/local/lib -lmeos</div>
+<div class="ttc" id="amobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56_html_a6e1b934a889b7b6fe98de44d12f49c56"><div class="ttname"><a href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a></div><div class="ttdeci">include(AssembleExtensionSql) configure_file(mobilitydb_datagen.in.control $</div><div class="ttdef"><b>Definition:</b> CMakeLists.txt:28</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A simple program that get the SRID of the geometries stored in the file <code>ways.csv</code> that has the content of the PostgreSQL table ways defined as follows.  
+<p>Output the geometry of a route of the road network of ways.csv.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
@@ -102,8 +102,8 @@ Macros</h2></td></tr>
 <tr class="separator:a34b326b90768a8a89e69d6bf367ed948"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac58386431fc4f90cd57ced06279f3a4b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="route__geom_8c_ac58386431fc4f90cd57ced06279f3a4b.html#ac58386431fc4f90cd57ced06279f3a4b">MAX_LEN_HEADER</a>&#160;&#160;&#160;1024</td></tr>
 <tr class="separator:ac58386431fc4f90cd57ced06279f3a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f9e0a573e58964b5c53eeb3d39d88a9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="route__geom_8c_a2f9e0a573e58964b5c53eeb3d39d88a9.html#a2f9e0a573e58964b5c53eeb3d39d88a9">NO_WAYS_BATCH</a>&#160;&#160;&#160;10</td></tr>
-<tr class="separator:a2f9e0a573e58964b5c53eeb3d39d88a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ba01f2be88ac697aca9d9377f21f235"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="route__geom_8c_a0ba01f2be88ac697aca9d9377f21f235.html#a0ba01f2be88ac697aca9d9377f21f235">NUM_WAYS_BATCH</a>&#160;&#160;&#160;10</td></tr>
+<tr class="separator:a0ba01f2be88ac697aca9d9377f21f235"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b5cba0b0b9b73eb1ce8afda91fe7be7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="route__geom_8c_a5b5cba0b0b9b73eb1ce8afda91fe7be7.html#a5b5cba0b0b9b73eb1ce8afda91fe7be7">ROUTE</a>&#160;&#160;&#160;20</td></tr>
 <tr class="separator:a5b5cba0b0b9b73eb1ce8afda91fe7be7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -113,14 +113,15 @@ Functions</h2></td></tr>
 <tr class="separator:a840291bc02cba5474a4cb46a9b9566fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >A simple program that get the SRID of the geometries stored in the file <code>ways.csv</code> that has the content of the PostgreSQL table ways defined as follows. </p>
-<div class="fragment"><div class="line">CREATE TABLE <span class="keyword">public</span>.ways (</div>
-<div class="line">  gid bigint NOT NULL,</div>
-<div class="line">  the_geom <span class="keyword">public</span>.geometry NOT NULL,</div>
-<div class="line">  length <span class="keywordtype">double</span> precision NOT NULL</div>
+<div class="textblock"><p >Output the geometry of a route of the road network of ways.csv. </p>
+<p >The file <code>ways.csv</code> has the content of the PostgreSQL table ways defined as follows </p><div class="fragment"><div class="line">CREATE TABLE <span class="keyword">public</span>.ways (</div>
+<div class="line">gid bigint NOT NULL,</div>
+<div class="line">the_geom <span class="keyword">public</span>.geometry NOT NULL,</div>
+<div class="line">length <span class="keywordtype">double</span> precision NOT NULL</div>
 <div class="line">);</div>
-</div><!-- fragment --><p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/include -o <a class="code hl_function" href="group__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f.html#gaafdab49c6282c6374bb2a7ebbf88504f">route_geom</a> <a class="code hl_function" href="group__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f.html#gaafdab49c6282c6374bb2a7ebbf88504f">route_geom</a>.c -L/usr/local/lib -lmeos</div>
-<div class="ttc" id="agroup__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f_html_gaafdab49c6282c6374bb2a7ebbf88504f"><div class="ttname"><a href="group__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f.html#gaafdab49c6282c6374bb2a7ebbf88504f">route_geom</a></div><div class="ttdeci">const GSERIALIZED * route_geom(int64 rid)</div><div class="ttdoc">Access the ways cache to get the geometry of a route identifier.</div><div class="ttdef"><b>Definition:</b> ways_meos.c:335</div></div>
+</div><!-- fragment --><p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a> -o <a class="code hl_function" href="group__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f.html#gaafdab49c6282c6374bb2a7ebbf88504f">route_geom</a> <a class="code hl_function" href="group__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f.html#gaafdab49c6282c6374bb2a7ebbf88504f">route_geom</a>.c -L/usr/local/lib -lmeos</div>
+<div class="ttc" id="agroup__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f_html_gaafdab49c6282c6374bb2a7ebbf88504f"><div class="ttname"><a href="group__meos__npoint__base__route_gaafdab49c6282c6374bb2a7ebbf88504f.html#gaafdab49c6282c6374bb2a7ebbf88504f">route_geom</a></div><div class="ttdeci">const GSERIALIZED * route_geom(int64 rid)</div><div class="ttdoc">Access the ways cache to get the geometry of a route identifier.</div><div class="ttdef"><b>Definition:</b> ways_meos.c:361</div></div>
+<div class="ttc" id="amobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56_html_a6e1b934a889b7b6fe98de44d12f49c56"><div class="ttname"><a href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a></div><div class="ttdeci">include(AssembleExtensionSql) configure_file(mobilitydb_datagen.in.control $</div><div class="ttdef"><b>Definition:</b> CMakeLists.txt:28</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

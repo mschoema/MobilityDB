@@ -79,11 +79,12 @@ $(function() {
    <td valign="top">
       <div class="navtab">
         <table>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_ga534e04ba384cb2be3c6fc543a814b2bc.html#ga534e04ba384cb2be3c6fc543a814b2bc">mindistance_tcbuffer_tcbuffer</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_ga3f1a2cd84b24fb3b6d16db37f41e4772.html#ga3f1a2cd84b24fb3b6d16db37f41e4772">mindistance_tcbufferarr_tcbufferarr</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_ga430689361e686387f0597d2e60c9b69c.html#ga430689361e686387f0597d2e60c9b69c">nad_tcbuffer_cbuffer</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_gaf99ed4bf225ebcbafeb06261026b20a6.html#gaf99ed4bf225ebcbafeb06261026b20a6">nad_tcbuffer_geo</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_ga73a8c4a111e286f6cf98c85a952cd0f1.html#ga73a8c4a111e286f6cf98c85a952cd0f1">nad_tcbuffer_stbox</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_gafc4a6e48cd8e549335a1c5617af212d3.html#gafc4a6e48cd8e549335a1c5617af212d3">nad_tcbuffer_tcbuffer</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_gab9893c35eaf76ec24d5860743687a9a6.html#gab9893c35eaf76ec24d5860743687a9a6">nad_tpose_stbox</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_gaeb4759ea745bd902cc8e9c6af7fb66c8.html#gaeb4759ea745bd902cc8e9c6af7fb66c8">nai_tcbuffer_cbuffer</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_ga0243e1a9a06e0bdec8e736070fed50b0.html#ga0243e1a9a06e0bdec8e736070fed50b0">nai_tcbuffer_geo</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__cbuffer__dist_gad05451cf8c3051e86d4dddb688ceecb6.html#gad05451cf8c3051e86d4dddb688ceecb6">nai_tcbuffer_tcbuffer</a></td></tr>
@@ -123,7 +124,8 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p>Return the temporal distance between a temporal circular buffer and a geometry @csqlfn <a class="el" href="group__mobilitydb__cbuffer__dist_gaec3d1e7cad1fd0dbd8afbc55eb3ac86d.html#gaec3d1e7cad1fd0dbd8afbc55eb3ac86d" title="Return the temporal distance between a temporal circular buffer and a geometry point @sqlfn tDistance...">Tdistance_tcbuffer_geo()</a> </p>
+<p>Return the temporal distance between a temporal circular buffer and a geometry. </p>
+<p >The geometry is decomposed into its boundary edges (straight and circular-arc), the same decomposition <a class="el" href="group__meos__cbuffer__dist_gaf99ed4bf225ebcbafeb06261026b20a6.html#gaf99ed4bf225ebcbafeb06261026b20a6" title="Return the nearest approach distance of a temporal circular buffer and a geometry.">nad_tcbuffer_geo</a> and #nearestApproachInstant use, and the distance to the full geometry is computed exactly rather than to its minimum bounding circle. A geometry of a type the native kernels do not cover falls back to the bounding-circle approximation, mirroring the other analytic distance kernels of this file. @csqlfn <a class="el" href="group__mobilitydb__cbuffer__dist_gaec3d1e7cad1fd0dbd8afbc55eb3ac86d.html#gaec3d1e7cad1fd0dbd8afbc55eb3ac86d" title="Return the temporal distance between a temporal circular buffer and a geometry point @sqlfn tDistance...">Tdistance_tcbuffer_geo()</a> <a class="el" href="group__mobilitydb__cbuffer__dist_gaaeff652980362409e81ed8361c043566.html#gaaeff652980362409e81ed8361c043566" title="Return the temporal distance between a geometry and a temporal circular buffer @sqlfn tDistance()">Tdistance_geo_tcbuffer()</a> </p>
 
 </div>
 </div>

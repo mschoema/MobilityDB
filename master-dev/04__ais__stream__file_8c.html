@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A simple program that reads AIS data from a CSV file, accumulates the observations in main memory and send the temporal values to an output file when they reach a given number of instants in order to free the memory and ingest the newest observations.  
+<p>Stream AIS observations read from a CSV file into an output file.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdio.h&gt;</code><br />
 <code>#include &lt;stdlib.h&gt;</code><br />
@@ -104,12 +104,12 @@ Macros</h2></td></tr>
 <tr class="separator:ac58386431fc4f90cd57ced06279f3a4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae302030b17248d1efec220ff052f847e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__stream__file_8c_ae302030b17248d1efec220ff052f847e.html#ae302030b17248d1efec220ff052f847e">MAX_LEN_POINT</a>&#160;&#160;&#160;64</td></tr>
 <tr class="separator:ae302030b17248d1efec220ff052f847e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0335bb1d05262470ea621a0a4a2a233"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__stream__file_8c_aa0335bb1d05262470ea621a0a4a2a233.html#aa0335bb1d05262470ea621a0a4a2a233">MAX_NO_TRIPS</a>&#160;&#160;&#160;5</td></tr>
-<tr class="separator:aa0335bb1d05262470ea621a0a4a2a233"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__stream__file_8c_afbe4a2478a752bedf912ba66f0ad8b11.html#afbe4a2478a752bedf912ba66f0ad8b11">NO_INSTS_BATCH</a>&#160;&#160;&#160;1000</td></tr>
-<tr class="separator:afbe4a2478a752bedf912ba66f0ad8b11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac98a8cdd8f5fe0495c022d5d639f22d1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__stream__file_8c_ac98a8cdd8f5fe0495c022d5d639f22d1.html#ac98a8cdd8f5fe0495c022d5d639f22d1">NO_INSTS_KEEP</a>&#160;&#160;&#160;2</td></tr>
-<tr class="separator:ac98a8cdd8f5fe0495c022d5d639f22d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a716ede0d484ea7ad85e69a0dd14e5ba6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__stream__file_8c_a716ede0d484ea7ad85e69a0dd14e5ba6.html#a716ede0d484ea7ad85e69a0dd14e5ba6">MAX_NUM_TRIPS</a>&#160;&#160;&#160;5</td></tr>
+<tr class="separator:a716ede0d484ea7ad85e69a0dd14e5ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c35632621ff795485e9a92b287d11aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__stream__file_8c_a8c35632621ff795485e9a92b287d11aa.html#a8c35632621ff795485e9a92b287d11aa">NUM_INSTS_BATCH</a>&#160;&#160;&#160;1000</td></tr>
+<tr class="separator:a8c35632621ff795485e9a92b287d11aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ab976dbe71fa4c686dfcf3d3406799b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="04__ais__stream__file_8c_a2ab976dbe71fa4c686dfcf3d3406799b.html#a2ab976dbe71fa4c686dfcf3d3406799b">NUM_INSTS_KEEP</a>&#160;&#160;&#160;2</td></tr>
+<tr class="separator:a2ab976dbe71fa4c686dfcf3d3406799b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -117,9 +117,11 @@ Functions</h2></td></tr>
 <tr class="separator:a3c04138a5bfe5d72780bb7e82a18e627"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >A simple program that reads AIS data from a CSV file, accumulates the observations in main memory and send the temporal values to an output file when they reach a given number of instants in order to free the memory and ingest the newest observations. </p>
+<div class="textblock"><p >Stream AIS observations read from a CSV file into an output file. </p>
+<p >A simple program that reads AIS data from a CSV file, accumulates the observations in main memory and send the temporal values to an output file when they reach a given number of instants in order to free the memory and ingest the newest observations.</p>
 <p >This program is similar to <code>04_ais_stream_db</code> but illustrates the use of an output file. In this setting, the expandable data structures accumulate the observations that have been received so far and append them to the file. Depending on application requirements and the available memory, the accumulated temporal values must be sent regularly to the file.</p>
-<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/include -o 04_ais_stream_file 04_ais_stream_file.c -L/usr/local/lib -lmeos</div>
+<p >The program can be build as follows </p><div class="fragment"><div class="line">gcc -Wall -g -I/usr/local/<a class="code hl_function" href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a> -o 04_ais_stream_file 04_ais_stream_file.c -L/usr/local/lib -lmeos</div>
+<div class="ttc" id="amobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56_html_a6e1b934a889b7b6fe98de44d12f49c56"><div class="ttname"><a href="mobilitydb_2datagen_2CMakeLists_8txt_a6e1b934a889b7b6fe98de44d12f49c56.html#a6e1b934a889b7b6fe98de44d12f49c56">include</a></div><div class="ttdeci">include(AssembleExtensionSql) configure_file(mobilitydb_datagen.in.control $</div><div class="ttdef"><b>Definition:</b> CMakeLists.txt:28</div></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
