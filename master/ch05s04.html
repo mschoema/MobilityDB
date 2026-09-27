@@ -1,4 +1,4 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Comparisons</title><link rel="stylesheet" type="text/css" href="docbook.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="MobilityDB 1.3 User's Manual"><link rel="up" href="ch05.html" title="Chapter 5. Temporal Types (Part 2)"><link rel="prev" href="ch05s03.html" title="Bounding Box Operators"><link rel="next" href="ch05s05.html" title="Miscellaneous"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Comparisons</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s03.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Temporal Types (Part 2)</th><td width="20%" align="right"> <a accesskey="n" href="ch05s05.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ttype_comparisons"></a>Comparisons</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="id1343"></a>Traditional Comparisons</h3></div></div></div><p>The traditional comparison operators (<code class="varname">=</code>, <code class="varname">&lt;</code>, and so on) require that the left and right operands be of the same base type. Excepted equality  and inequality, the other comparison operators are not useful in the real world but allow B-tree indexes to be constructed on temporal types. These operators compare the bounding periods (see <a class="xref" href="ch02s10.html" title="Comparisons">the section called “Comparisons”</a>), then the bounding boxes (see <a class="xref" href="ch03s10.html" title="Comparisons">the section called “Comparisons”</a>) and if those are equal, then the comparison depends on the subtype. For instant values, they compare first the timestamps and if those are equal, compare the values. For sequence values, they compare the first N instants, where N is the minimum of the number of composing instants of both values. Finally, for sequence set values, they compare the first N sequence values, where N is the minimum of the number of composing sequences of both values.</p><p>The equality and inequality operators consider the equivalent representation for different subtypes as shown next.
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Comparisons</title><link rel="stylesheet" type="text/css" href="docbook.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="MobilityDB 1.4 User's Manual"><link rel="up" href="ch05.html" title="Chapter 5. Temporal Types (Part 2)"><link rel="prev" href="ch05s03.html" title="Bounding Box Operators"><link rel="next" href="ch05s05.html" title="Miscellaneous"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Comparisons</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch05s03.html">Prev</a> </td><th width="60%" align="center">Chapter 5. Temporal Types (Part 2)</th><td width="20%" align="right"> <a accesskey="n" href="ch05s05.html">Next</a></td></tr></table><hr></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="ttype_comparisons"></a>Comparisons</h2></div></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="id1343"></a>Traditional Comparisons</h3></div></div></div><p>The traditional comparison operators (<code class="varname">=</code>, <code class="varname">&lt;</code>, and so on) require that the left and right operands be of the same base type. Excepted equality  and inequality, the other comparison operators are not useful in the real world but allow B-tree indexes to be constructed on temporal types. These operators compare the bounding periods (see <a class="xref" href="ch02s10.html" title="Comparisons">the section called “Comparisons”</a>), then the bounding boxes (see <a class="xref" href="ch03s10.html" title="Comparisons">the section called “Comparisons”</a>) and if those are equal, then the comparison depends on the subtype. For instant values, they compare first the timestamps and if those are equal, compare the values. For sequence values, they compare the first N instants, where N is the minimum of the number of composing instants of both values. Finally, for sequence set values, they compare the first N sequence values, where N is the minimum of the number of composing sequences of both values.</p><p>The equality and inequality operators consider the equivalent representation for different subtypes as shown next.
 				</p><pre class="programlisting">
 SELECT tint '1@2001-01-01' = tint '{1@2001-01-01}';
 -- true
@@ -13,7 +13,10 @@ SELECT tgeography '[Point(1 1)@2001-01-01, Linestring(1 1,2 2)@2001-01-02]' =
   tgeography '{[Point(1 1)@2001-01-01, Linestring(1 1,2 2)@2001-01-02]}';
 -- true
 </pre><p>
-			</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="ttype_eq"></a><a class="indexterm" name="id4664"></a><a class="indexterm" name="id4667"></a><a class="indexterm" name="id4670"></a><a class="indexterm" name="id4673"></a><a class="indexterm" name="id4676"></a><a class="indexterm" name="id4679"></a><a class="indexterm" name="id4682"></a><p>Traditional comparisons</p><p><code class="varname">ttype {=, &lt;&gt;, &lt;, &gt;, &lt;=, &gt;=} ttype → boolean</code></p><p><code class="varname">temporal_cmp(ttype,ttype) → int</code></p><p>Function <code class="varname">temporal_cmp</code> returns -1, 0, or 1 depending on whether the first argument is, respectively, less than, equal to, or greater than the second one.</p><pre class="programlisting">
+			</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="ttype_eq"></a><a class="indexterm" name="id4807"></a><a class="indexterm" name="id4810"></a><a class="indexterm" name="id4813"></a><a class="indexterm" name="id4816"></a><a class="indexterm" name="id4819"></a><a class="indexterm" name="id4822"></a><a class="indexterm" name="id4825"></a><p>Traditional comparisons</p><pre class="programlisting">
+ttype {=, &lt;&gt;, &lt;, &gt;, &lt;=, &gt;=} ttype → boolean
+cmp(ttype,ttype) → int
+</pre><p>Function <code class="varname">cmp</code> returns -1, 0, or 1 depending on whether the first argument is, respectively, less than, equal to, or greater than the second one.</p><pre class="programlisting">
 SELECT tint '[1@2001-01-01, 1@2001-01-04)' = tint '[2@2001-01-03, 2@2001-01-05)';
 -- false
 SELECT tint '[1@2001-01-01, 1@2001-01-04)' &lt;&gt; tint '[2@2001-01-03, 2@2001-01-05)';
@@ -22,24 +25,41 @@ SELECT tint '[1@2001-01-01, 1@2001-01-04)' &lt; tint '[2@2001-01-03, 2@2001-01-0
 -- true
 SELECT ttfloat '[1@2001-01-01, 1@2001-01-04)' &gt; ttfloat '[2@2001-01-03, 2@2001-01-05)';
 -- false
-SELECT tint '[1@2001-01-01, 1@2001-01-04)' &lt;= tint '[2@2001-01-03, 2@2001-01-05)';
+SELECT tbigint '[1@2001-01-01, 1@2001-01-04)' &lt;= tbigint '[2@2001-01-03, 2@2001-01-05)';
 -- true
-SELECT tint '[1@2001-01-01, 1@2001-01-04)' &gt;= tint '[2@2001-01-03, 2@2001-01-05)';
+SELECT tbigint '[1@2001-01-01, 1@2001-01-04)' &gt;= tbigint '[2@2001-01-03, 2@2001-01-05)';
 -- false
-SELECT temporal_cmp(tfloat '[1@2001-01-01, 1@2001-01-04)', '[2@2001-01-03, 2@2001-01-05)');
+SELECT cmp(tfloat '[1@2001-01-01, 1@2001-01-04)', '[2@2001-01-03, 2@2001-01-05)');
 -- -1
+</pre></li><li class="listitem"><a name="ttype_hash"></a><a class="indexterm" name="id4834"></a><a class="indexterm" name="id4837"></a><p>Hash values</p><pre class="programlisting">
+hash(ttype) → int
+hashExtended(ttype,seed bigint) → bigint
+</pre><p>Function <code class="varname">hash</code> returns a 32-bit hash value and function <code class="varname">hashExtended</code> a 64-bit hash value computed with the given seed. Equal values have equal hash values, which is what hash indexes, hash joins, and hash aggregation rely on; this holds across subtypes, so that an instant has the hash value of a sequence or sequence set holding only that instant.</p><pre class="programlisting">
+SELECT hash(tint '1@2001-01-01') = hash(tint '{1@2001-01-01}');
+-- true
+SELECT hash(tfloat '1.5@2001-01-01') = hash(tfloat '{[1.5@2001-01-01]}');
+-- true
+SELECT hash(tgeompoint '{Point(1 1)@2001-01-01, Point(2 2)@2001-01-02}') =
+  hash(tgeompoint '{[Point(1 1)@2001-01-01], [Point(2 2)@2001-01-02]}');
+-- true
+SELECT hashExtended(tint '[1@2001-01-01, 2@2001-01-02]', 0) &lt;&gt;
+  hashExtended(tint '[1@2001-01-01, 2@2001-01-02]', 1);
+-- true
 </pre></li></ul></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="ever_always_comparison"></a>Ever and Always Comparisons</h3></div></div></div><p>
 				A possible generalization of the traditional comparison operators (<code class="varname">=</code>, <code class="varname">&lt;&gt;</code>, <code class="varname">&lt;</code>, <code class="varname">&lt;=</code>, etc.) to temporal types consists in determining whether the comparison is ever or always true. In this case, the result is a Boolean value. MobilityDB provides operators to test whether the comparison of a temporal value and a value of the base type or two temporal values is ever or always true. These operators are denoted by prefixing the traditional comparison operators with, respectively, <code class="varname">?</code> (ever) and <code class="varname">%</code> (always). Some examples are <code class="varname">?=</code>, <code class="varname">%&lt;&gt;</code>, or <code class="varname">?&lt;=</code>. Ever and always equality and non-equality are available for all temporal types, while ever and always inequalities are only available for temporal types whose base type has a total order defined, that is, <code class="varname">tint</code>, <code class="varname">tfloat</code>, or <code class="varname">ttext</code>. The ever and always comparisons are inverse operators: for example, <code class="varname">?=</code> is the inverse of <code class="varname">%&lt;&gt;</code>, and <code class="varname">?&gt;</code> is the inverse of <code class="varname">%&lt;=</code>.
-			</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="ttype_eveq"></a><a class="indexterm" name="id4714"></a><a class="indexterm" name="id4717"></a><a class="indexterm" name="id4720"></a><a class="indexterm" name="id4723"></a><a class="indexterm" name="id4726"></a><a class="indexterm" name="id4729"></a><a class="indexterm" name="id4732"></a><a class="indexterm" name="id4735"></a><a class="indexterm" name="id4738"></a><a class="indexterm" name="id4741"></a><a class="indexterm" name="id4744"></a><a class="indexterm" name="id4747"></a><p>Ever and always comparisons</p><p><code class="varname">{base,ttype} {?=, ?&lt;&gt;, ?&lt;, ?&gt;, ?&lt;=, ?&gt;=} {base,ttype} → boolean</code></p><p><code class="varname">{base,ttype} {%=, %&lt;&gt;, %&lt;, %&gt;, %&lt;=, %&gt;=} {base,ttype} → boolean</code></p><p>The operators do not take into account whether the bounds are inclusive or not.</p><pre class="programlisting">
+			</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="ttype_ever_always"></a><a class="indexterm" name="id4867"></a><a class="indexterm" name="id4870"></a><a class="indexterm" name="id4873"></a><a class="indexterm" name="id4876"></a><a class="indexterm" name="id4879"></a><a class="indexterm" name="id4882"></a><a class="indexterm" name="id4885"></a><a class="indexterm" name="id4888"></a><a class="indexterm" name="id4891"></a><a class="indexterm" name="id4894"></a><a class="indexterm" name="id4897"></a><a class="indexterm" name="id4900"></a><p>Ever and always comparisons</p><pre class="programlisting">
+{base,ttype} {?=, ?&lt;&gt;, ?&lt;, ?&gt;, ?&lt;=, ?&gt;=} {base,ttype} → boolean
+{base,ttype} {%=, %&lt;&gt;, %&lt;, %&gt;, %&lt;=, %&gt;=} {base,ttype} → boolean
+</pre><p>The operators do not take into account whether the bounds are inclusive or not.</p><pre class="programlisting">
 SELECT tint '[1@2001-01-01, 3@2001-01-04]' ?= 2;
 -- false
-SELECT tgeometry '[Point(0 0)@2001-01-01, Linestring(0 0,1 1)@2001-01-04]' ?=
-  geometry 'Linestring(1 1,0 0)';
+SELECT tgeometry '[Point(0 0)@2001-01-01,
+  Linestring(0 0,1 1)@2001-01-04]' ?= geometry 'Linestring(1 1,0 0)';
 -- true
 SELECT tfloat '[1@2001-01-01, 1@2001-01-04)' %= 1;
 -- true
-SELECT tgeometry '[Linestring(0 0,1 1)@2001-01-01, Linestring(1 1,0 0)@2001-01-04)' %=
-  geometry 'Linestring(0 0,1 1)';
+SELECT tgeometry '[Linestring(0 0,1 1)@2001-01-01,
+  Linestring(1 1,0 0)@2001-01-04)' %= geometry 'Linestring(0 0,1 1)';
 -- true
 </pre><pre class="programlisting">
 SELECT tfloat '[1@2001-01-01, 3@2001-01-04)' ?&lt;&gt; 2;
@@ -68,22 +88,24 @@ SELECT tint '[1@2001-01-01, 1@2001-01-05]' ?&lt;= 2;
 SELECT tfloat '[1@2001-01-01, 1@2001-01-05)' %&lt;= 4;
 -- true
 </pre><pre class="programlisting">
-SELECT ttext '{[AAA@2001-01-01, AAA@2001-01-03), [BBB@2001-01-04, BBB@2001-01-05)}'
-   ?&gt; 'AAA'::text;
+SELECT ttext '{[AAA@2001-01-01, AAA@2001-01-03),
+  [BBB@2001-01-04, BBB@2001-01-05)}' ?&gt; 'AAA'::text;
 -- true
-SELECT ttext '{[AAA@2001-01-01, AAA@2001-01-03), [BBB@2001-01-04, BBB@2001-01-05)}'
-   %&gt; 'AAA'::text;
+SELECT ttext '{[AAA@2001-01-01, AAA@2001-01-03),
+  [BBB@2001-01-04, BBB@2001-01-05)}' %&gt; 'AAA'::text;
 -- false
-</pre></li></ul></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="id1344"></a>Temporal Comparisons</h3></div></div></div><p>Another possible generalization of the traditional comparison operators (<code class="varname">=</code>, <code class="varname">&lt;&gt;</code>, <code class="varname">&lt;</code>, <code class="varname">&lt;=</code>,  etc.) to temporal types consists in determining whether the comparison is true or false at each instant. In this case, the result is a temporal Boolean. The temporal comparison operators are denoted by prefixing the traditional comparison operators with <code class="varname">#</code>. Some examples are <code class="varname">#=</code> or <code class="varname">#&lt;=</code>. Temporal equality and non-equality are available for all temporal types, while temporal inequalities are only available for temporal types whose base type has a total order defined, that is, <code class="varname">tint</code>, <code class="varname">tfloat</code>, or <code class="varname">ttext</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="ttype_teq"></a><a class="indexterm" name="id4776"></a><a class="indexterm" name="id4779"></a><a class="indexterm" name="id4782"></a><a class="indexterm" name="id4785"></a><a class="indexterm" name="id4788"></a><a class="indexterm" name="id4791"></a><p>Temporal comparisons</p><p><code class="varname">{base,ttype} {#=, #&lt;&gt;, #&lt;, #&gt;, #&lt;=, #&gt;=} {base,ttype} → boolean</code></p><pre class="programlisting">
+</pre></li></ul></div></div><div class="sect2"><div class="titlepage"><div><div><h3 class="title"><a name="id1344"></a>Temporal Comparisons</h3></div></div></div><p>Another possible generalization of the traditional comparison operators (<code class="varname">=</code>, <code class="varname">&lt;&gt;</code>, <code class="varname">&lt;</code>, <code class="varname">&lt;=</code>,  etc.) to temporal types consists in determining whether the comparison is true or false at each instant. In this case, the result is a temporal Boolean. The temporal comparison operators are denoted by prefixing the traditional comparison operators with <code class="varname">#</code>. Some examples are <code class="varname">#=</code> or <code class="varname">#&lt;=</code>. Temporal equality and non-equality are available for all temporal types, while temporal inequalities are only available for temporal types whose base type has a total order defined, that is, <code class="varname">tint</code>, <code class="varname">tfloat</code>, or <code class="varname">ttext</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="ttype_tcomp"></a><a class="indexterm" name="id4926"></a><a class="indexterm" name="id4929"></a><a class="indexterm" name="id4932"></a><a class="indexterm" name="id4935"></a><a class="indexterm" name="id4938"></a><a class="indexterm" name="id4941"></a><p>Temporal comparisons</p><pre class="programlisting">
+{base,ttype} {#=, #&lt;&gt;, #&lt;, #&gt;, #&lt;=, #&gt;=} {base,ttype} → boolean
+</pre><pre class="programlisting">
 SELECT tfloat '[1@2001-01-01, 2@2001-01-04)' #= 3;
 -- {[f@2001-01-01, f@2001-01-04)}
 SELECT tfloat '[1@2001-01-01, 4@2001-01-04)' #= tfloat '[4@2001-01-02, 1@2001-01-05)';
 -- {[f@2001-01-02, t@2001-01-03], (f@2001-01-03, f@2001-01-04)}
-SELECT tgeompoint '[Point(0 0)@2001-01-01, Point(2 2)@2001-01-03)' #=
-  geometry 'Point(1 1)';
+SELECT tgeompoint '[Point(0 0)@2001-01-01,
+  Point(2 2)@2001-01-03)' #= geometry 'Point(1 1)';
 -- {[f@2001-01-01, t@2001-01-02], (f@2001-01-02, f@2001-01-03)}
-SELECT tgeometry '[Point(0 0)@2001-01-01, Linestring(1 1,2 2)@2001-01-03]' #=
-  geometry 'Linestring(2 2,1 1)';
+SELECT tgeometry '[Point(0 0)@2001-01-01,
+  Linestring(1 1,2 2)@2001-01-03]' #= geometry 'Linestring(2 2,1 1)';
 -- {[f@2001-01-01, t@2001-01-03]}
 </pre><pre class="programlisting">
 SELECT tfloat '[1@2001-01-01, 4@2001-01-04)' #&lt;&gt; 2;

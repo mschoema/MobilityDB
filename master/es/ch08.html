@@ -1,5 +1,8 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Capítulo 8. Tipos temporales geométricos (Parte 2)</title><link rel="stylesheet" type="text/css" href="docbook.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="MobilityDB 1.3 Manual de usuario"><link rel="up" href="index.html" title="MobilityDB 1.3 Manual de usuario"><link rel="prev" href="ch07s06.html" title="Transformaciones"><link rel="next" href="ch08s02.html" title="Sistema de referencia espacial"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Capítulo 8. Tipos temporales geométricos (Parte 2)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch07s06.html">Anterior</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch08s02.html">Siguiente</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="tgeo_p2"></a>Capítulo 8. Tipos temporales geométricos (Parte 2)</h1></div></div></div><div class="toc"><p><b>Tabla de contenidos</b></p><dl class="toc"><dt><span class="sect1"><a href="ch08.html#tgeo_restrictions">Restricciones</a></span></dt><dt><span class="sect1"><a href="ch08s02.html">Sistema de referencia espacial</a></span></dt><dt><span class="sect1"><a href="ch08s03.html">Operaciones de cuadro delimitador</a></span></dt><dt><span class="sect1"><a href="ch08s04.html">Operaciones de distancia</a></span></dt><dt><span class="sect1"><a href="ch08s05.html">Relaciones espaciales</a></span></dt><dd><dl><dt><span class="sect2"><a href="ch08s05.html#id792">Relaciones alguna vez o siempre</a></span></dt><dt><span class="sect2"><a href="ch08s05.html#id793">Relaciones espaciotemporales</a></span></dt></dl></dd></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tgeo_restrictions"></a>Restricciones</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="tgeo_atGeometry"></a><a class="indexterm" name="id5455"></a><a class="indexterm" name="id5458"></a><p>Restringir a (al complemento de) una geometría, un lapso Z y/o un período <span class="inlinemediaobject"><img src="../images/cube.svg" width="13"></span>
-</p><p><code class="varname">atGeometry(tgeom,geometry[,zspan]) → tgeom</code></p><p><code class="varname">minusGeometry(tgeom,geometry[,zspan]) → tgeom</code></p><p>La geometría debe ser 2D y el cálculo con respecto a ella se realiza en 2D. El resultado conserva la dimensión Z del punto temporal, si existe.</p><pre class="programlisting">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Capítulo 8. Tipos temporales geométricos (Parte 2)</title><link rel="stylesheet" type="text/css" href="docbook.css"><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot"><link rel="home" href="index.html" title="MobilityDB 1.4 Manual de usuario"><link rel="up" href="index.html" title="MobilityDB 1.4 Manual de usuario"><link rel="prev" href="ch07s07.html" title="Transformaciones"><link rel="next" href="ch08s02.html" title="Sistema de referencia espacial"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Capítulo 8. Tipos temporales geométricos (Parte 2)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch07s07.html">Anterior</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch08s02.html">Siguiente</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a name="tgeo_p2"></a>Capítulo 8. Tipos temporales geométricos (Parte 2)</h1></div></div></div><div class="toc"><p><b>Tabla de contenidos</b></p><dl class="toc"><dt><span class="sect1"><a href="ch08.html#tgeo_restrictions">Restricciones</a></span></dt><dt><span class="sect1"><a href="ch08s02.html">Sistema de referencia espacial</a></span></dt><dt><span class="sect1"><a href="ch08s03.html">Operaciones de cuadro delimitador</a></span></dt><dt><span class="sect1"><a href="ch08s04.html">Operaciones de distancia</a></span></dt><dt><span class="sect1"><a href="ch08s05.html">Relaciones siempre y alguna vez</a></span></dt><dt><span class="sect1"><a href="ch08s06.html">Relaciones espaciotemporales</a></span></dt></dl></div><div class="sect1"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tgeo_restrictions"></a>Restricciones</h2></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="tgeo_atGeometry"></a><a class="indexterm" name="id5667"></a><a class="indexterm" name="id5670"></a><p>Restringe a (al complemento de) una geometría <span class="inlinemediaobject"><img src="../images/cube.svg" width="13"></span>
+</p><pre class="programlisting">
+atGeometry(tgeom,geometry) → tgeom
+minusGeometry(tgeom,geometry) → tgeom
+</pre><p>La geometría debe ser 2D y el cálculo con respecto a ella se realiza en 2D. El resultado conserva la dimensión Z del punto temporal, si existe.</p><p>Un punto geodésico se restringe a una <code class="varname">geography</code>, que debe ser un polígono o un multipolígono, y el cálculo se realiza sobre la esfera: el punto recorre el círculo máximo entre dos posiciones y la región está delimitada por los círculos máximos que pasan por sus propios vértices, de modo que el viaje entra y sale donde esos caminos se cruzan. La diferencia crece con la latitud, ya que un viaje a lo largo de un paralelo se sitúa bastante al norte de él.</p><pre class="programlisting">
 SELECT asText(atGeometry(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04)',
   geometry 'Polygon((1 1,1 2,2 2,2 1,1 1))'));
 -- {"[POINT(1 1)@2001-01-02, POINT(2 2)@2001-01-03]"}
@@ -7,9 +10,9 @@ SELECT astext(atGeometry(tgeompoint '[Point(0 0 0)@2001-01-01, Point(4 4 4)@2001
   geometry 'Polygon((1 1,1 2,2 2,2 1,1 1))'));
 -- {[POINT Z (1 1 1)@2001-01-02, POINT Z (2 2 2)@2001-01-03]}
 SELECT asText(atGeometry(tgeompoint '[Point(1 1 1)@2001-01-01, Point(3 1 1)@2001-01-03,
-  Point(3 1 3)@2001-01-05]', 'Polygon((2 0,2 2,2 4,4 0,2 0))', '[0,2]'));
--- {[POINT Z (2 1 1)@2001-01-02, POINT Z (3 1 1)@2001-01-03, POINT Z (3 1 2)@2001-01-04]}
-SELECT asText(atGeometry(tgeometry 'Linestring(1 1,10 1)@2001-01-01', 
+  Point(3 1 3)@2001-01-05]', 'Polygon((2 0,2 2,2 4,4 0,2 0))'));
+-- {[POINT Z (2 1 1)@2001-01-02, POINT Z (3 1 1)@2001-01-03, POINT Z (3 1 3)@2001-01-05]}
+SELECT asText(atGeometry(tgeometry 'Linestring(1 1,10 1)@2001-01-01',
   'Polygon((0 0,0 5,5 5,5 0,0 0))'));
 -- LINESTRING(1 1,5 1)@2001-01-01
 </pre><pre class="programlisting">
@@ -22,21 +25,34 @@ SELECT astext(minusGeometry(tgeompoint '[Point(0 0 0)@2001-01-01,
 /* {[POINT Z (0 0 0)@2001-01-01, POINT Z (1 1 1)@2001-01-02),
    (POINT Z (2 2 2)@2001-01-03, POINT Z (4 4 4)@2001-01-05]} */
 SELECT asText(minusGeometry(tgeompoint '[Point(1 1 1)@2001-01-01, Point(3 1 1)@2001-01-03,
-  Point(3 1 3)@2001-01-05]', 'Polygon((2 0,2 2,2 4,4 0,2 0))', '[0,2]'));
-/* {[POINT Z (1 1 1)@2001-01-01, POINT Z (2 1 1)@2001-01-02),
-    (POINT Z (3 1 2)@2001-01-04, POINT Z (3 1 3)@2001-01-05]} */
-SELECT asText(minusGeometry(tgeometry 'Linestring(1 1,10 1)@2001-01-01', 
+  Point(3 1 3)@2001-01-05]', 'Polygon((2 0,2 2,2 4,4 0,2 0))'));
+-- {[POINT Z (1 1 1)@2001-01-01, POINT Z (2 1 1)@2001-01-02)}
+SELECT asText(minusGeometry(tgeometry 'Linestring(1 1,10 1)@2001-01-01',
   'Polygon((0 0,0 5,5 5,5 0,0 0))'));
 -- LINESTRING(5 1,10 1)@2001-01-01
-</pre></li><li class="listitem"><a name="tgeo_atStbox"></a><a class="indexterm" name="id5477"></a><a class="indexterm" name="id5480"></a><p>Restringir a (al complemento de) un <code class="varname">stbox</code> <span class="inlinemediaobject"><img src="../images/cube.svg" width="13"></span>
-</p><p><code class="varname">atStbox(tgeom,stbox,borderInc bool=true) → tgeompoint</code></p><p><code class="varname">minusStbox(tgeom,stbox,borderInc bool=true) → tgeompoint</code></p><p>El tercer argumento opcional se utiliza para mosaicos multidimensionales (ver <a class="xref" href="ch09s05.html" title="Mosaicos multidimensionales">“Mosaicos multidimensionales”</a>) para excluir el borde superior de los mosaicos cuando un valor temporal se divide en varios mosaicos, de modo que todos los fragmentos de la geometría temporal sean exclusivos.</p><pre class="programlisting">
+</pre><pre class="programlisting">
+SELECT asText(atGeometry(tgeogpoint 'SRID=4326;[Point(-170 65)@2001-01-01,
+  Point(-100 65)@2001-01-03]',
+  geography 'SRID=4326;Polygon((-150 60,-150 70,-120 70,-120 60,-150 60))'), 6);
+/* {[POINT(-150 68.423603)@2001-01-01 14:39:22.550164,
+   POINT(-120 68.423603)@2001-01-02 09:20:37.449835]} */
+</pre></li><li class="listitem"><a name="tgeo_atStbox"></a><a class="indexterm" name="id5689"></a><a class="indexterm" name="id5692"></a><p>Restringe a (al complemento de) un <code class="varname">stbox</code> <span class="inlinemediaobject"><img src="../images/cube.svg" width="13"></span>
+</p><pre class="programlisting">
+atStbox(tgeom,stbox,borderInc boolean=true) → tgeompoint
+minusStbox(tgeom,stbox,borderInc boolean=true) → tgeompoint
+</pre><p>El tercer argumento opcional se utiliza para mosaicos multidimensionales (ver <a class="xref" href="ch09s06.html" title="Mosaicos multidimensionales">“Mosaicos multidimensionales”</a>) para excluir el borde superior de los mosaicos cuando un valor temporal se divide en varios mosaicos, de modo que todos los fragmentos de la geometría temporal sean exclusivos.</p><p>Un punto temporal se restringe en 3D. La dimensión Z se tiene en cuenta únicamente cuando tanto el punto temporal como la caja la tienen, de modo que se pueden mezclar argumentos 2D y 3D, y el resultado conserva la dimensión Z del punto temporal. El cuerpo de una geometría temporal, en cambio, se recorta en 2D: una caja que contiene coordenadas rechaza una geometría temporal que tiene dimensión Z, mientras que una caja que contiene únicamente un período la restringe en el tiempo como para cualquier otro tipo temporal. La restricción de un <code class="varname">tgeography</code> a una caja espaciotemporal no está implementada.</p><p>Un punto temporal geodésico recorre el círculo máximo entre dos posiciones, y la caja lo contiene donde ese círculo entra en ella y sale de ella: un viaje de <code class="varname">Point(10 60)</code> a <code class="varname">Point(50 60)</code> alcanza la latitud 61.518762, y un viaje que cruza el antimeridiano recorre las longitudes por el camino corto. Dos cajas que se encuentran en un cruce indican el mismo instante para él, de modo que las piezas de un viaje contienen el período del viaje y sus posiciones.</p><pre class="programlisting">
+SELECT asText(atStbox(tgeogpoint '[Point(10 60)@2001-01-01, Point(50 60)@2001-01-02]',
+  stbox 'SRID=4326;GEODSTBOX X((0 55),(60 61))', false), 6);
+/* {[POINT(10 60)@2001-01-01, POINT(18.168064 61)@2001-01-01 05:02:50.433397),
+   [POINT(41.831936 61)@2001-01-01 18:57:09.566602, POINT(50 60)@2001-01-02]} */
+</pre><pre class="programlisting">
 SELECT asText(atStbox(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04)',
   stbox 'STBOX XT(((0,0),(2,2)),[2001-01-02, 2001-01-04])'));
 -- {[POINT(1 1)@2001-01-02, POINT(2 2)@2001-01-03]}
 SELECT asText(atStbox(tgeompoint '[Point(1 1 1)@2001-01-01, Point(3 3 3)@2001-01-03,
   Point(3 3 2)@2001-01-04, Point(3 3 7)@2001-01-09]', stbox 'STBOX Z((2,2,2),(3,3,3))'));
 /* {[POINT Z (2 2 2)@2001-01-02, POINT Z (3 3 3)@2001-01-03, POINT Z (3 3 2)@2001-01-04,
-  POINT Z (3 3 3)@2001-01-05]} */
+   POINT Z (3 3 3)@2001-01-05]} */
 SELECT asText(atStbox(tgeometry '[Point(1 1)@2001-01-01, Linestring(1 1,3 3)@2001-01-03,
   Point(2 2)@2001-01-04, Linestring(3 3,4 4)@2001-01-09]', stbox 'STBOX X((2,2),(3,3))'));
 -- {[LINESTRING(2 2,3 3)@2001-01-03, POINT(2 2)@2001-01-04, POINT(3 3)@2001-01-09]}
@@ -47,10 +63,30 @@ SELECT asText(minusStbox(tgeompoint '[Point(1 1)@2001-01-01, Point(4 4)@2001-01-
 SELECT asText(minusStbox(tgeompoint '[Point(1 1 1)@2001-01-01, Point(3 3 3)@2001-01-03,
   Point(3 3 2)@2001-01-04, Point(3 3 7)@2001-01-09]', stbox 'STBOX Z((2,2,2),(3,3,3))'));
 /* {[POINT Z (1 1 1)@2001-01-01, POINT Z (2 2 2)@2001-01-02), 
-    (POINT Z (3 3 3)@2001-01-05, POINT Z (3 3 7)@2001-01-09]} */
-SELECT asText(minusStbox(tgeometry '[Point(1 1)@2001-01-01, 
-  Linestring(1 1,3 3)@2001-01-03, Point(2 2)@2001-01-04, 
-  Linestring(1 1,4 4)@2001-01-09]', stbox 'STBOX X((2,2),(3,3))'));
+   (POINT Z (3 3 3)@2001-01-05, POINT Z (3 3 7)@2001-01-09]} */
+SELECT asText(minusStbox(tgeometry '[Point(1 1)@2001-01-01,
+  Linestring(1 1,3 3)@2001-01-03, Point(2 2)@2001-01-04, Linestring(1 1,4 4)@2001-01-09]',
+  stbox 'STBOX X((2,2),(3,3))'));
 /* {[POINT(1 1)@2001-01-01, LINESTRING(1 1,2 2)@2001-01-03, 
    LINESTRING(1 1,2 2)@2001-01-04),[MULTILINESTRING((1 1,2 2),(3 3,4 4))@2001-01-09]} */
-</pre></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch07s06.html">Anterior</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch08s02.html">Siguiente</a></td></tr><tr><td width="40%" align="left" valign="top">Transformaciones </td><td width="20%" align="center"><a accesskey="h" href="index.html">Inicio</a></td><td width="40%" align="right" valign="top"> Sistema de referencia espacial</td></tr></table></div></body></html>
+</pre></li><li class="listitem"><a name="tgeo_atElevation"></a><a class="indexterm" name="id5716"></a><a class="indexterm" name="id5719"></a><p>Restringe a (al complemento de) un rango de altitud <span class="inlinemediaobject"><img src="../images/cube.svg" width="13"></span>
+</p><pre class="programlisting">
+atElevation(tgeom,zspan) → tgeom
+minusElevation(tgeom,zspan) → tgeom
+</pre><p>La altitud de un punto temporal es su coordenada Z, que varía linealmente en el tiempo tanto si el punto es planar como si es geodésico, de modo que los períodos que el rango admite son los mismos para ambos. Las posiciones en los límites de esos períodos no lo son: un punto geodésico recorre el círculo máximo entre dos posiciones y alcanza allí la altitud de un límite, y no sobre la línea recta en longitud y latitud.</p><pre class="programlisting">
+SELECT astext(atElevation(tgeompoint '[Point(1 1 1)@2001-01-01, Point(4 4 4)@2001-01-04,
+  Point(1 1 1)@2001-01-07]', floatspan '[2,3]'));
+/* {[POINT Z (2 2 2)@2001-01-02, POINT Z (3 3 3)@2001-01-03],
+   [POINT Z (3 3 3)@2001-01-05, POINT Z (2 2 2)@2001-01-06]} */
+SELECT astext(minusElevation(tgeompoint '[Point(1 1 1)@2001-01-01,
+  Point(4 4 4)@2001-01-04, Point(1 1 1)@2001-01-07]', floatspan '[2,3]'));
+/* {[POINT Z (1 1 1)@2001-01-01, POINT Z (2 2 2)@2001-01-02),
+   (POINT Z (3 3 3)@2001-01-03, POINT Z (4 4 4)@2001-01-04,
+   POINT Z (3 3 3)@2001-01-05), (POINT Z (2 2 2)@2001-01-06,
+   POINT Z (1 1 1)@2001-01-07]} */
+</pre><pre class="programlisting">
+SELECT asText(atElevation(tgeogpoint 'SRID=4326;[Point(1 1 1)@2001-01-01,
+  Point(4 4 4)@2001-01-04, Point(1 1 1)@2001-01-07]', floatspan '[2,3]'), 6);
+/* {[POINT Z (1.998577 2.00071 2)@2001-01-02, POINT Z (2.998373 3.000812 3)@2001-01-03],
+   [POINT Z (2.998373 3.000812 3)@2001-01-05, POINT Z (1.998577 2.00071 2)@2001-01-06]} */
+</pre></li></ul></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch07s07.html">Anterior</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch08s02.html">Siguiente</a></td></tr><tr><td width="40%" align="left" valign="top">Transformaciones </td><td width="20%" align="center"><a accesskey="h" href="index.html">Inicio</a></td><td width="40%" align="right" valign="top"> Sistema de referencia espacial</td></tr></table></div></body></html>
