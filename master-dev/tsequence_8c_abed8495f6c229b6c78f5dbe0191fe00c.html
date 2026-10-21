@@ -80,13 +80,14 @@ $(function() {
       <div class="navtab">
         <table>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_a82ad2c52b0954e554171396f5e5d5f95.html#a82ad2c52b0954e554171396f5e5d5f95">bbox_expand</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="tsequence_8c_ac28f37abd43d59e06cccbeca3252de78.html#ac28f37abd43d59e06cccbeca3252de78">datum_collinear</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="tsequence_8c_ae89e0d6131036296d043dc78eb50be6e.html#ae89e0d6131036296d043dc78eb50be6e">datum_collinear</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_ab322321a1ad15defa1526fa12b6a0ed9.html#ab322321a1ad15defa1526fa12b6a0ed9">datumsegm_interpolate</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_af79398096177afb12cb858fe045ee7ac.html#af79398096177afb12cb858fe045ee7ac">datumsegm_locate</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="tsequence_8c_af8a650df80b0202a27afdcb65a4c62f7.html#af8a650df80b0202a27afdcb65a4c62f7">duration_split</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_af686b9d58cfbd3f457235685f0dba9b6.html#af686b9d58cfbd3f457235685f0dba9b6">ensure_increasing_timestamps</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_a1754bd6c791c9727861ea8de89280177.html#a1754bd6c791c9727861ea8de89280177">ensure_valid_tinstarr</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_a4ecf017d12a31b0f1def37e6c287d0d7.html#a4ecf017d12a31b0f1def37e6c287d0d7">ensure_valid_tinstarr_common</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="tsequence_8c_a67cea36de80f30b05f67f0eb53e06c08.html#a67cea36de80f30b05f67f0eb53e06c08">float_collinear</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="tsequence_8c_a3c8bfcdb29ca44344e40c5965fc8eba7.html#a3c8bfcdb29ca44344e40c5965fc8eba7">float_collinear</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_add08b1765391fa989d07ff554a8fff47.html#add08b1765391fa989d07ff554a8fff47">floatsegm_interpolate</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_aa5006cc439784fd85fbd3355806071d4.html#aa5006cc439784fd85fbd3355806071d4">floatsegm_locate</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tsequence_8c_af5452c417f03be7074d6ef29baefff6e.html#af5452c417f03be7074d6ef29baefff6e">intersection_tcontseq_tdiscseq</a></td></tr>
@@ -183,7 +184,7 @@ $(function() {
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a>&#160;</td>
+          <td class="paramtype">TimestampTz&#160;</td>
           <td class="paramname"><em>t</em>&#160;</td>
         </tr>
         <tr>
@@ -198,12 +199,14 @@ $(function() {
 <p >If the timestamp is contained in a temporal sequence, the index of the segment containing the timestamp is returned in the output parameter. Otherwise, return -1.</p>
 <p >For example, given a value composed of 3 sequences and a timestamp, the value returned in the output parameter is as follows: </p><div class="fragment"><div class="line">           0     1     2     3</div>
 <div class="line">           |-----|-----|-----|</div>
-<div class="line">1)    t^                             =&gt; result = -1</div>
-<div class="line">2)        t^                         =&gt; result = 0 <span class="keywordflow">if</span> the lower bound is inclusive, -1 otherwise</div>
-<div class="line">3)              t^                   =&gt; result = 1</div>
-<div class="line">4)                 t^                =&gt; result = 1</div>
-<div class="line">5)                          t^       =&gt; result = 3 <span class="keywordflow">if</span> the upper bound is inclusive, -1 otherwise</div>
-<div class="line">6)                             t^    =&gt; result = -1</div>
+<div class="line">1)    <a class="code hl_variable" href="trgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44.html#abb5993ac027732cab8badd32f1507f44">t</a>^                             =&gt; result = -1</div>
+<div class="line">2)        <a class="code hl_variable" href="trgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44.html#abb5993ac027732cab8badd32f1507f44">t</a>^                         =&gt; result = 0 <span class="keywordflow">if</span> the lower bound <a class="code hl_variable" href="trgeo__distance_8txt_af053ff65b5890312933da01148b62f23.html#af053ff65b5890312933da01148b62f23">is</a> inclusive, -1 otherwise</div>
+<div class="line">3)              <a class="code hl_variable" href="trgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44.html#abb5993ac027732cab8badd32f1507f44">t</a>^                   =&gt; result = 1</div>
+<div class="line">4)                 <a class="code hl_variable" href="trgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44.html#abb5993ac027732cab8badd32f1507f44">t</a>^                =&gt; result = 1</div>
+<div class="line">5)                          <a class="code hl_variable" href="trgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44.html#abb5993ac027732cab8badd32f1507f44">t</a>^       =&gt; result = 3 <span class="keywordflow">if</span> the upper bound <a class="code hl_variable" href="trgeo__distance_8txt_af053ff65b5890312933da01148b62f23.html#af053ff65b5890312933da01148b62f23">is</a> inclusive, -1 otherwise</div>
+<div class="line">6)                             <a class="code hl_variable" href="trgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44.html#abb5993ac027732cab8badd32f1507f44">t</a>^    =&gt; result = -1</div>
+<div class="ttc" id="atrgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44_html_abb5993ac027732cab8badd32f1507f44"><div class="ttname"><a href="trgeo__distance_8txt_abb5993ac027732cab8badd32f1507f44.html#abb5993ac027732cab8badd32f1507f44">t</a></div><div class="ttdeci">meos src rgeo trgeo_distance txt Temporal Distance for Rigid a temporal point or another temporal rigid geometry The algorithm follows the paper of Sakr and Zimanyi[1] It follows the pair of closest and it gets the distance from this pair This file adds three things to the the extrema of the distance and the times of contact *The solver finds all the roots of a with a proof for each part of the interval The paper uses a numerical method and assumes that the method finds all the roots *The two bodies can overlap Then the distance is zero The paper does not handle this case The walk over the closest features and the complexity results of the paper do not change Motion A rigid geometry is a reference polygon and a temporal pose In a segment of the temporal the time t goes from and the pose changes linearly A point a of body relative to the rotation center of moves as cA is the rotation center at t</div><div class="ttdef"><b>Definition:</b> trgeo_distance.txt:39</div></div>
+<div class="ttc" id="atrgeo__distance_8txt_af053ff65b5890312933da01148b62f23_html_af053ff65b5890312933da01148b62f23"><div class="ttname"><a href="trgeo__distance_8txt_af053ff65b5890312933da01148b62f23.html#af053ff65b5890312933da01148b62f23">is</a></div><div class="ttdeci">meos src rgeo trgeo_distance txt Temporal Distance for Rigid a temporal point or another temporal rigid geometry The algorithm follows the paper of Sakr and Zimanyi[1] It follows the pair of closest and it gets the distance from this pair This file adds three things to the the extrema of the distance and the times of contact *The solver finds all the roots of a with a proof for each part of the interval The paper uses a numerical method and assumes that the method finds all the roots *The two bodies can overlap Then the distance is zero The paper does not handle this case The walk over the closest features and the complexity results of the paper do not change Motion A rigid geometry is a reference polygon and a temporal pose In a segment of the temporal the time t goes from and the pose changes linearly A point a of body relative to the rotation center of moves as cA is the rotation center at dA is the displacement of the and wA is the rotation in the segment This is thus the lengths and directions of its edges and the radii of its vertices are constants The notation is</div><div class="ttdef"><b>Definition:</b> trgeo_distance.txt:47</div></div>
 </div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">seq</td><td><a class="el" href="structTemporal.html" title="Structure to represent the common structure of temporal values of any temporal subtype.">Temporal</a> continuous sequence </td></tr>

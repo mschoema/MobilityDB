@@ -79,6 +79,9 @@ $(function() {
    <td valign="top">
       <div class="navtab">
         <table>
+          <tr><td class="navtab"><a class="navtab" href="group__mobilitydb__pose__base__inout_ga286c3c26051ec5bae99fe784a340aac0.html#ga286c3c26051ec5bae99fe784a340aac0">Geopose_frame_is_geographic</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__mobilitydb__pose__base__inout_ga5dcbca5308099244c3a8ae661b4a7beb.html#ga5dcbca5308099244c3a8ae661b4a7beb">Geopose_frame_name</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__mobilitydb__pose__base__inout_gae9e04c2a3efd0113ee2acf9cb66b153d.html#gae9e04c2a3efd0113ee2acf9cb66b153d">Geopose_frame_srid</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__mobilitydb__pose__base__inout_ga701bed27a180131cf5f2f50019ef2417.html#ga701bed27a180131cf5f2f50019ef2417">Geopose_frames</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__mobilitydb__pose__base__inout_gac93df64631781bb5c666143ebf59bebd.html#gac93df64631781bb5c666143ebf59bebd">Npoint_as_ewkb</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__mobilitydb__pose__base__inout_ga53d144fcc135e80dabdf5885b83a924c.html#ga53d144fcc135e80dabdf5885b83a924c">Pose_as_ewkb</a></td></tr>
@@ -105,7 +108,7 @@ $(function() {
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a> Pose_from_ewkt </td>
+          <td class="memname">Datum Pose_from_ewkt </td>
           <td>(</td>
           <td class="paramtype">PG_FUNCTION_ARGS&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -114,8 +117,7 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p>Return a pose from its Extended Well-Known Text (EWKT) representation. </p>
-<dl class="section note"><dt>Note</dt><dd>This just does the same thing as the SQL function pose_in, except it has to handle a 'text' input. First, unwrap the text into a cstring, then do as pose_in @sqlfn poseFromEWKT(), poseFromEWKT() </dd></dl>
+<p>Return a pose from its Well-Known Text (WKT) or Extended Well-Known Text (EWKT) representation @sqlfn poseFromText(), poseFromEWKT() </p>
 
 </div>
 </div>

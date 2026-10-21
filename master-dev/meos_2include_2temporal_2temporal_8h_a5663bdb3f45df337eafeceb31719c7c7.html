@@ -117,6 +117,7 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a0058188227536584f1e301dba6699d34.html#a0058188227536584f1e301dba6699d34">ensure_has_Z</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a9048b14cf14f7ac35f594cb2f25d8858.html#a9048b14cf14f7ac35f594cb2f25d8858">ensure_linear_interp</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a990a8ebaa2b5dc8173bbb4cb9da32c0c.html#a990a8ebaa2b5dc8173bbb4cb9da32c0c">ensure_nonlinear_interp</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a96e3b2d6b749b450fc70910ca5694fbe.html#a96e3b2d6b749b450fc70910ca5694fbe">ensure_not_empty_array</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a3bae2c723588ef30df40c1674a3f7556.html#a3bae2c723588ef30df40c1674a3f7556">ensure_not_nan</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_ae01e8c051317adcd3455f966c9ccbb22.html#ae01e8c051317adcd3455f966c9ccbb22">ensure_not_negative</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a93191ae70d2fea53bb018378bd8f8a15.html#a93191ae70d2fea53bb018378bd8f8a15">ensure_not_negative_datum</a></td></tr>
@@ -147,6 +148,7 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a95febca84b9b6b5b9cfd278e44ffc56f.html#a95febca84b9b6b5b9cfd278e44ffc56f">INVERT</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a0f175497f6345122d6436c3ec25bd8c0.html#a0f175497f6345122d6436c3ec25bd8c0">INVERT_NO</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_aef8d6394b9ea795a4df77f59e1bb687c.html#aef8d6394b9ea795a4df77f59e1bb687c">JAN_3_2000</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_ab62143368d5ba3ff4c157f773810b963.html#ab62143368d5ba3ff4c157f773810b963">meos_check_for_interrupts</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a390788067e16536aadb3c44552d90557.html#a390788067e16536aadb3c44552d90557">MEOS_EPSILON</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_a2cccf336d0d61b6accce64cad7c85bb1.html#a2cccf336d0d61b6accce64cad7c85bb1">MEOS_FP_EQ</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2include_2temporal_2temporal_8h_ae0d4de8ade5915bf7e173a4be35af0af.html#ae0d4de8ade5915bf7e173a4be35af0af">MEOS_FP_GE</a></td></tr>
@@ -272,10 +274,9 @@ $(function() {
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">  <span class="keywordflow">do</span> { \</div>
-<div class="line">    if ((<a class="code hl_typedef" href="postgres__ext__defs_8in_8h_a63b9e65d334cab40c90475a99dc8018f.html#a63b9e65d334cab40c90475a99dc8018f">Pointer</a>) (ptrsrc) != (<a class="code hl_typedef" href="postgres__ext__defs_8in_8h_a63b9e65d334cab40c90475a99dc8018f.html#a63b9e65d334cab40c90475a99dc8018f">Pointer</a>) (ptrori)) \</div>
+<div class="line">    if ((Pointer) (ptrsrc) != (Pointer) (ptrori)) \</div>
 <div class="line">      pfree(ptrsrc); \</div>
 <div class="line">  } <span class="keywordflow">while</span> (0)</div>
-<div class="ttc" id="apostgres__ext__defs_8in_8h_a63b9e65d334cab40c90475a99dc8018f_html_a63b9e65d334cab40c90475a99dc8018f"><div class="ttname"><a href="postgres__ext__defs_8in_8h_a63b9e65d334cab40c90475a99dc8018f.html#a63b9e65d334cab40c90475a99dc8018f">Pointer</a></div><div class="ttdeci">char * Pointer</div><div class="ttdef"><b>Definition:</b> postgres_ext_defs.in.h:14</div></div>
 </div><!-- fragment -->
 <p>This macro is based on PG_FREE_IF_COPY, except that it accepts two pointers. </p>
 <p >See PG_FREE_IF_COPY comment in src/include/fmgr.h in postgres source code for more details. This macro is the same as POSTGIS_FREE_IF_COPY_P. </p>

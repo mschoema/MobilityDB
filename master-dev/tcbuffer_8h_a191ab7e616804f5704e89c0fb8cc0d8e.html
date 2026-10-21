@@ -113,55 +113,55 @@ $(function() {
         <tr>
           <td class="memname">int tcbuffersegm_tdwithin_turnpt </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a>&#160;</td>
+          <td class="paramtype">Datum&#160;</td>
           <td class="paramname"><em>start1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a>&#160;</td>
+          <td class="paramtype">Datum&#160;</td>
           <td class="paramname"><em>end1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a>&#160;</td>
+          <td class="paramtype">Datum&#160;</td>
           <td class="paramname"><em>start2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a>&#160;</td>
+          <td class="paramtype">Datum&#160;</td>
           <td class="paramname"><em>end2</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a43879eb52e27b2413d7a05056a173ca6.html#a43879eb52e27b2413d7a05056a173ca6">Datum</a>&#160;</td>
+          <td class="paramtype">Datum&#160;</td>
           <td class="paramname"><em>dist</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a>&#160;</td>
+          <td class="paramtype">TimestampTz&#160;</td>
           <td class="paramname"><em>lower</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a>&#160;</td>
+          <td class="paramtype">TimestampTz&#160;</td>
           <td class="paramname"><em>upper</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a> *&#160;</td>
+          <td class="paramtype">TimestampTz *&#160;</td>
           <td class="paramname"><em>t1</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="postgres__ext__defs_8in_8h_a0cec666f7ba136f78730d20675c0cffe.html#a0cec666f7ba136f78730d20675c0cffe">TimestampTz</a> *&#160;</td>
+          <td class="paramtype">TimestampTz *&#160;</td>
           <td class="paramname"><em>t2</em>&#160;</td>
         </tr>
         <tr>
@@ -173,7 +173,7 @@ $(function() {
 </div><div class="memdoc">
 
 <p>Return 1 or 2 if two temporal circular buffer segments are within a distance during a sub-period of the segment, return 0 otherwise. </p>
-<p >Unlike <a class="el" href="meos_2src_2cbuffer_2tcbuffer_8c_ab3e58d559198cc6a317cd0187e019eee.html#ab3e58d559198cc6a317cd0187e019eee" title="Return 1 or 2 if two temporal circular buffer segments are within a distance during the output period...">tcbuffersegm_dwithin_turnpt</a>, which returns the instants at which the distance equals <code>dist</code> (used to split the temporal distance), this returns the sub-interval <code>[t1, t2]</code> of <code>[lower, upper]</code> during which the two segments are within <code>dist</code>, so the temporal <code>tDwithin</code> boolean is true on a continuous interval rather than only at the crossing instant. It is derived from the crossings together with the within status at the two segment endpoints. </p><dl class="params"><dt>Parameters</dt><dd>
+<p >Unlike <a class="el" href="meos_2src_2cbuffer_2tcbuffer_8c_ab3e58d559198cc6a317cd0187e019eee.html#ab3e58d559198cc6a317cd0187e019eee" title="Return 1 or 2 if two temporal circular buffer segments are within a distance during the output period...">tcbuffersegm_dwithin_turnpt</a>, which returns the instants at which the distance equals <code>dist</code> (used to split the temporal distance), this returns the sub-interval <code>[t1, t2]</code> of <code>[lower, upper]</code> during which the two segments are within <code>dist</code>, so the temporal <code>tDwithin</code> boolean is true on a continuous interval rather than only at the crossing instant. It is derived from the crossings together with the within status at the two segment endpoints, which is read by the predicate the instants themselves are read with. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">start1,end1</td><td>Circular buffers defining the first segment </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">start2,end2</td><td>Circular buffers defining the second segment </td></tr>
