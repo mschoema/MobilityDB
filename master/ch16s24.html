@@ -7,7 +7,7 @@ SELECT getValues(tquadbin(traj, 8));
 SELECT rasterTileValueQuadbin(traj, band_1, 256, 256, block::quadbin, 'float32', 0,
   false) FROM elevation_raquet
 WHERE block IN (SELECT unnest(getValues(tquadbin(traj, 8)))::bigint);
-</pre><p>The restriction and predicate operators that close the section compose <code class="varname">rasterValue</code> with the standard MobilityDB temporal restriction and predicate functions. They accept an optional <code class="varname">band</code> argument (default 1) and call <code class="varname">rasterValue</code> exactly once per invocation.</p><p>A raster function takes the name of its PostGIS raster counterpart with the <code class="varname">ST_</code> prefix removed, and the names and defaults of its arguments. One signature answers each operation, so a PostGIS form that only fixes an argument of another is written through that other form. A name the SQL standard reserves takes the type as a prefix, so <code class="varname">ST_Value</code> is <code class="varname">rasterValue</code>, and the Well-Known Binary functions take the names every MobilityDB type takes.</p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th align="left">PostGIS raster</th><th align="left">MobilityDB</th></tr></thead><tbody><tr><td align="left"><code class="varname">ST_Value</code></td><td align="left"><code class="varname">rasterValue</code></td></tr><tr><td align="left"><code class="varname">ST_Clip</code></td><td align="left"><code class="varname">clip</code></td></tr><tr><td align="left"><code class="varname">ST_Transform</code></td><td align="left"><code class="varname">transform</code></td></tr><tr><td align="left"><code class="varname">ST_Rescale</code></td><td align="left"><code class="varname">rescale</code></td></tr><tr><td align="left"><code class="varname">ST_Reclass</code></td><td align="left"><code class="varname">reclass</code></td></tr><tr><td align="left"><code class="varname">ST_SummaryStats</code></td><td align="left"><code class="varname">summaryStats</code></td></tr><tr><td align="left"><code class="varname">ST_DumpAsPolygons</code></td><td align="left"><code class="varname">dumpAsPolygons</code></td></tr><tr><td align="left"><code class="varname">ST_NumBands</code>, <code class="varname">ST_Width</code>, <code class="varname">ST_Height</code>, <code class="varname">ST_SRID</code></td><td align="left"><code class="varname">numBands</code>, <code class="varname">width</code>, <code class="varname">height</code>, <code class="varname">SRID</code></td></tr><tr><td align="left"><code class="varname">ST_UpperLeftX</code>, <code class="varname">ST_UpperLeftY</code>, <code class="varname">ST_ScaleX</code>, <code class="varname">ST_ScaleY</code>, <code class="varname">ST_SkewX</code>, <code class="varname">ST_SkewY</code></td><td align="left"><code class="varname">upperLeftX</code>, <code class="varname">upperLeftY</code>, <code class="varname">scaleX</code>, <code class="varname">scaleY</code>, <code class="varname">skewX</code>, <code class="varname">skewY</code></td></tr><tr><td align="left"><code class="varname">ST_BandPixelType</code>, <code class="varname">ST_BandNoDataValue</code></td><td align="left"><code class="varname">bandPixelType</code>, <code class="varname">bandNoDataValue</code></td></tr><tr><td align="left"><code class="varname">ST_AsBinary</code>, <code class="varname">ST_AsHexWKB</code></td><td align="left"><code class="varname">asBinary</code>, <code class="varname">asHexWKB</code></td></tr><tr><td align="left"><code class="varname">ST_RastFromWKB</code>, <code class="varname">ST_RastFromHexWKB</code></td><td align="left"><code class="varname">rasterFromBinary</code>, <code class="varname">rasterFromHexWKB</code></td></tr></tbody></table></div><p><code class="varname">asBinary</code> and <code class="varname">asHexWKB</code> take a byte order where PostGIS takes <code class="varname">outasin</code>, and without one answer the bytes of <code class="varname">ST_AsBinary</code> and <code class="varname">ST_AsHexWKB</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="raster_rasterValue"></a><a class="indexterm" name="id14146"></a><p>Read a raster band along a trajectory</p><pre class="programlisting">
+</pre><p>The restriction and predicate operators that close the section compose <code class="varname">rasterValue</code> with the standard MobilityDB temporal restriction and predicate functions. They accept an optional <code class="varname">band</code> argument (default 1) and call <code class="varname">rasterValue</code> exactly once per invocation.</p><p>A raster function takes the name of its PostGIS raster counterpart with the <code class="varname">ST_</code> prefix removed, and the names and defaults of its arguments. One signature answers each operation, so a PostGIS form that only fixes an argument of another is written through that other form. A name the SQL standard reserves takes the type as a prefix, so <code class="varname">ST_Value</code> is <code class="varname">rasterValue</code>, and the Well-Known Binary functions take the names every MobilityDB type takes.</p><div class="informaltable"><table class="informaltable" border="1"><colgroup><col><col></colgroup><thead><tr><th align="left">PostGIS raster</th><th align="left">MobilityDB</th></tr></thead><tbody><tr><td align="left"><code class="varname">ST_Value</code></td><td align="left"><code class="varname">rasterValue</code></td></tr><tr><td align="left"><code class="varname">ST_Clip</code></td><td align="left"><code class="varname">clip</code></td></tr><tr><td align="left"><code class="varname">ST_Transform</code></td><td align="left"><code class="varname">transform</code></td></tr><tr><td align="left"><code class="varname">ST_Rescale</code></td><td align="left"><code class="varname">rescale</code></td></tr><tr><td align="left"><code class="varname">ST_Reclass</code></td><td align="left"><code class="varname">reclass</code></td></tr><tr><td align="left"><code class="varname">ST_SummaryStats</code></td><td align="left"><code class="varname">summaryStats</code></td></tr><tr><td align="left"><code class="varname">ST_DumpAsPolygons</code></td><td align="left"><code class="varname">dumpAsPolygons</code></td></tr><tr><td align="left"><code class="varname">ST_NumBands</code>, <code class="varname">ST_Width</code>, <code class="varname">ST_Height</code>, <code class="varname">ST_SRID</code></td><td align="left"><code class="varname">numBands</code>, <code class="varname">width</code>, <code class="varname">height</code>, <code class="varname">SRID</code></td></tr><tr><td align="left"><code class="varname">ST_UpperLeftX</code>, <code class="varname">ST_UpperLeftY</code>, <code class="varname">ST_ScaleX</code>, <code class="varname">ST_ScaleY</code>, <code class="varname">ST_SkewX</code>, <code class="varname">ST_SkewY</code></td><td align="left"><code class="varname">upperLeftX</code>, <code class="varname">upperLeftY</code>, <code class="varname">scaleX</code>, <code class="varname">scaleY</code>, <code class="varname">skewX</code>, <code class="varname">skewY</code></td></tr><tr><td align="left"><code class="varname">ST_BandPixelType</code>, <code class="varname">ST_BandNoDataValue</code></td><td align="left"><code class="varname">bandPixelType</code>, <code class="varname">bandNoDataValue</code></td></tr><tr><td align="left"><code class="varname">ST_AsBinary</code>, <code class="varname">ST_AsHexWKB</code></td><td align="left"><code class="varname">asBinary</code>, <code class="varname">asHexWKB</code></td></tr><tr><td align="left"><code class="varname">ST_RastFromWKB</code>, <code class="varname">ST_RastFromHexWKB</code></td><td align="left"><code class="varname">rasterFromBinary</code>, <code class="varname">rasterFromHexWKB</code></td></tr></tbody></table></div><p><code class="varname">asBinary</code> and <code class="varname">asHexWKB</code> take a byte order where PostGIS takes <code class="varname">outasin</code>, and without one answer the bytes of <code class="varname">ST_AsBinary</code> and <code class="varname">ST_AsHexWKB</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><a name="raster_rasterValue"></a><a class="indexterm" name="id15395"></a><p>Read a raster band along a trajectory</p><pre class="programlisting">
 rasterValue(tgeompoint,rast raster,band integer=1,exclude_nodata_value boolean=true,
   resample text='nearest') → tfloat
 rasterValue(tgeompoint,path text,band integer=1) → tfloat
@@ -40,7 +40,7 @@ SELECT tripid, avgValue(rasterValue(trip, elev)) AS mean_elev FROM trips,
 -- Trips that crossed terrain above 200 m
 SELECT tripid FROM trips, elevation_raster
 WHERE atSpan(rasterValue(trip, elev), floatspan '[200, 9999]') IS NOT NULL;
-</pre><p>A raster loaded as a table of tiles, as <code class="varname">raster2pgsql -t</code> loads it, is read along a trajectory by merging the reads of its tiles with <code class="varname">mergeAgg</code>. A position lies in a pixel of one tile, so the reads of the tiles hold disjoint times, and their merge answers the read of the raster the tiles cover, a trip crossing from one tile to the next included.</p><pre class="programlisting">
+</pre><p>A raster loaded as a table of tiles, as <code class="varname">raster2pgsql -t</code> loads it, is read along a trajectory by merging the reads of its tiles with <code class="varname">merge</code>. A position lies in a pixel of one tile, so the reads of the tiles hold disjoint times, and their merge answers the read of the raster the tiles cover, a trip crossing from one tile to the next included.</p><pre class="programlisting">
 -- A 4x4 raster read along a trip whole, and as its four tiles of 2x2 pixels
 WITH r AS (
   SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(4, 4, 0.0, 4.0, 1.0, -1.0, 0.0, 0.0,
@@ -52,11 +52,89 @@ WITH r AS (
 t AS (
   SELECT tgeompoint 'SRID=4326;[POINT(0.5 3.5)@2001-01-01, POINT(3.5 0.5)@2001-01-02]'
     AS trip )
-SELECT mergeAgg(rasterValue(trip, tile)) = (SELECT rasterValue(trip, rast) FROM t, r)
+SELECT merge(rasterValue(trip, tile)) = (SELECT rasterValue(trip, rast) FROM t, r)
 FROM t, r, ST_Tile(rast, 2, 2) AS tile;
 -- true
-</pre></li><li class="listitem"><a name="raster_reclass"></a><a class="indexterm" name="id14177"></a><p>Return a raster whose band holds the classes an expression maps its values to</p><pre class="programlisting">
-reclass(raster,nband integer,reclassexpr text,pixeltype text,nodataval float8=NULL)
+</pre></li><li class="listitem"><a name="raster_valueCount"></a><a class="indexterm" name="id15426"></a><p>Return the number of pixels of a raster band holding each value</p><pre class="programlisting">
+valueCount(rast raster,nband integer=1,exclude_nodata_value boolean=true,
+  searchvalues float[]=NULL,roundto float=0) → setof (value float,count integer)
+valueCount(rast raster,nband integer,searchvalues float[],roundto float=0)
+  → setof (value float,count integer)
+valueCount(rast raster,searchvalues float[],roundto float=0)
+  → setof (value float,count integer)
+valueCount(rast raster,nband integer,exclude_nodata_value boolean,searchvalue float,
+  roundto float=0) → integer
+valueCount(rast raster,nband integer,searchvalue float,roundto float=0) → integer
+valueCount(rast raster,searchvalue float,roundto float=0) → integer
+</pre><p>The histogram of PostGIS's <code class="varname">ST_ValueCount</code>, with its arguments and defaults: one row for each distinct value of the band, or one for each search value, which counts zero where no pixel holds it, and the number of pixels holding one value in the forms taking a single search value. A value is rounded to the nearest multiple of <code class="varname">roundto</code> before it is counted where <code class="varname">roundto</code> is positive. A band whose every pixel is nodata answers no row where nodata is excluded, and a band the raster does not have raises an error where PostGIS answers <code class="varname">NULL</code>. The forms of PostGIS reading a raster column of a table query the database, so they stay PostGIS's.</p><pre class="programlisting">
+WITH rast AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
+    4326), '32BF'::text, 0.0::float8, -9999.0::float8), 1, 1, 1,
+    ARRAY[[1.24, 1.26, -9999], [2, 2, 2], [3, 1.24, 2]]::double precision[][]) AS r )
+SELECT round(value::numeric, 2), count
+FROM rast, valueCount(r, 1, true, NULL::float[], 0.1) ORDER BY 1;
+-- 1.20 | 2
+-- 1.30 | 1
+-- 2.00 | 4
+-- 3.00 | 1
+</pre></li><li class="listitem"><a name="raster_valuePercent"></a><a class="indexterm" name="id15438"></a><p>Return the share of the pixels of a raster band holding each value</p><pre class="programlisting">
+valuePercent(rast raster,nband integer=1,exclude_nodata_value boolean=true,
+  searchvalues float[]=NULL,roundto float=0) → setof (value float,percent float)
+valuePercent(rast raster,nband integer,searchvalues float[],roundto float=0)
+  → setof (value float,percent float)
+valuePercent(rast raster,searchvalues float[],roundto float=0)
+  → setof (value float,percent float)
+valuePercent(rast raster,nband integer,exclude_nodata_value boolean,
+  searchvalue float,roundto float=0) → float
+valuePercent(rast raster,nband integer,searchvalue float,roundto float=0) → float
+valuePercent(rast raster,searchvalue float,roundto float=0) → float
+</pre><p>The share of PostGIS's <code class="varname">ST_ValuePercent</code>, between 0 and 1, of the pixels <a class="link" href="ch16s24.html#raster_valueCount"><code class="varname">valueCount</code></a> reads, with the same arguments and forms. Where no pixel is read, the share of a search value is zero divided by zero, <code class="varname">NaN</code>, as for PostGIS.</p><pre class="programlisting">
+WITH rast AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
+    4326), '32BF'::text, 0.0::float8, -9999.0::float8), 1, 1, 1,
+    ARRAY[[1.24, 1.26, -9999], [2, 2, 2], [3, 1.24, 2]]::double precision[][]) AS r )
+SELECT valuePercent(r, 2::float), valuePercent(r, 3::float) FROM rast;
+-- 0.5 | 0.125
+</pre></li><li class="listitem"><a name="raster_sameAlignment"></a><a class="indexterm" name="id15450"></a><p>Return true if rasters lie on the same grid</p><pre class="programlisting">
+sameAlignment(rast1 raster,rast2 raster) → boolean
+sameAlignment(raster) → boolean
+sameAlignment(raster) → boolean
+</pre><p>The test of PostGIS's <code class="varname">ST_SameAlignment</code>: two rasters are aligned when they have the same scale and skew and a pixel corner of one falls on a pixel corner of the other, so that their pixels can be combined one to one. The aggregate answers whether every raster of a column is aligned with the first, skipping a <code class="varname">NULL</code> raster as <code class="varname">setUnion</code> skips a <code class="varname">NULL</code> set, where PostGIS answers <code class="varname">NULL</code>; over no raster it answers <code class="varname">NULL</code>. Rasters of different SRIDs raise an error, where PostGIS answers false with a notice.</p><pre class="programlisting">
+WITH r AS (SELECT
+  ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0, 4326) AS base,
+  ST_MakeEmptyRaster(3, 3, 1.0, 3.0, 1.0, -1.0, 0.0, 0.0, 4326) AS east1,
+  ST_MakeEmptyRaster(3, 3, 0.5, 3.0, 1.0, -1.0, 0.0, 0.0, 4326) AS easthalf)
+SELECT sameAlignment(base, east1), sameAlignment(base, easthalf),
+  (SELECT sameAlignment(x) FROM (VALUES (base), (east1), (easthalf)) t(x))
+FROM r;
+-- t | f | f
+</pre></li><li class="listitem"><a name="raster_notSameAlignmentReason"></a><a class="indexterm" name="id15464"></a><p>Return why two rasters do not lie on the same grid</p><pre class="programlisting">
+notSameAlignmentReason(rast1 raster,rast2 raster) → text
+</pre><p>The reason of PostGIS's <code class="varname">ST_NotSameAlignmentReason</code>, in its words: the first property in which the grids differ, or that the rasters are aligned.</p><pre class="programlisting">
+WITH r AS (SELECT
+  ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0, 4326) AS base,
+  ST_MakeEmptyRaster(3, 3, 0.5, 3.0, 1.0, -1.0, 0.0, 0.0, 4326) AS easthalf,
+  ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 2.0, -1.0, 0.0, 0.0, 4326) AS scalex2)
+SELECT notSameAlignmentReason(base, easthalf), notSameAlignmentReason(base, scalex2)
+FROM r;
+-- The rasters (pixel corner coordinates) are not aligned |
+--   The rasters have different scales on the X axis
+</pre></li><li class="listitem"><a name="raster_rasterUnion"></a><a class="indexterm" name="id15473"></a><p>Return the union of the rasters of a column</p><pre class="programlisting">
+rasterUnion(raster) → raster
+rasterUnion(raster,nband integer) → raster
+rasterUnion(raster,uniontype text) → raster
+rasterUnion(raster,nband integer,uniontype text) → raster
+</pre><p>The aggregate of PostGIS's <code class="varname">ST_Union</code> over rasters, named as <code class="varname">geoUnion</code> names the union of geometries, since <code class="varname">union</code> is a keyword of SQL. The result covers the union of the extents of the rasters, each pixel the pixel operation of the pixels holding a value there: <code class="varname">LAST</code>, the default, <code class="varname">FIRST</code>, <code class="varname">MIN</code>, <code class="varname">MAX</code>, <code class="varname">COUNT</code>, <code class="varname">SUM</code>, <code class="varname">MEAN</code> or <code class="varname">RANGE</code>, regardless of case. Without <code class="varname">nband</code> every band is united, a band a raster lacks read as nodata; with <code class="varname">nband</code> only that band, which every raster must hold. The pixel type and the nodata value are those of the band read first, and a count is an unsigned 32-bit band without a nodata value. A <code class="varname">NULL</code> raster is skipped, and over no raster the aggregate answers <code class="varname">NULL</code>. The aggregate runs in parallel, the unions of the workers combined, where PostGIS's has no combine function; <code class="varname">LAST</code> and <code class="varname">FIRST</code> depend on the order of the rasters, which an <code class="varname">ORDER BY</code> in the aggregate fixes. Rasters of different SRIDs or on different grids raise an error, and so does a pixel operation outside these, which PostGIS reads as <code class="varname">LAST</code>.</p><pre class="programlisting">
+WITH tiles AS (
+  SELECT 1 AS id, ST_AddBand(ST_MakeEmptyRaster(2, 2, 0.0, 2.0, 1.0, -1.0, 0.0, 0.0, 3857),
+    '32BF'::text, 1.0::float8, -9999.0::float8) AS r
+  UNION ALL
+  SELECT 2, ST_AddBand(ST_MakeEmptyRaster(2, 2, 1.0, 1.0, 1.0, -1.0, 0.0, 0.0, 3857),
+    '32BF'::text, 3.0::float8, -9999.0::float8) )
+SELECT ST_DumpValues(rasterUnion(r, 'MEAN' ORDER BY id), 1) FROM tiles;
+-- {{1,1,NULL},{1,2,3},{NULL,3,3}}
+</pre></li><li class="listitem"><a name="raster_reclass"></a><a class="indexterm" name="id15500"></a><p>Return a raster whose band holds the classes an expression maps its values to</p><pre class="programlisting">
+reclass(raster,nband integer,reclassexpr text,pixeltype text,nodataval float=NULL)
   → raster
 </pre><p>The expression follows the grammar of the PostGIS <code class="varname">ST_Reclass</code>: a comma-separated list of mappings, each a source range and a destination around a colon, a range being one value or two around a dash. A range written plainly includes its low end and excludes its high end, while <code class="varname">(</code> excludes the low end and <code class="varname">]</code> includes the high end, so <code class="varname">0-50</code> leaves 50 unmapped where <code class="varname">[50-100]</code> takes it. A pixel no range takes holds the nodata value of the resulting band, or zero when the band states none. That band has the pixel type <code class="varname">pixeltype</code>, named as PostGIS raster names it, such as <code class="varname">8BUI</code>, and states no nodata value when <code class="varname">nodataval</code> is left out. The raster keeps its grid and its other bands, so the classes can be read along a trajectory with <a class="link" href="ch16s24.html#raster_rasterValue"><code class="varname">rasterValue</code></a>.</p><pre class="programlisting">
 -- Build a 3x3 synthetic elevation raster (SRID 4326, 1 degree pixels)
@@ -81,9 +159,94 @@ SELECT rasterValue(tgeompoint 'SRID=4326;{POINT(0.5 2.5)@2001-01-01,
   POINT(1.5 1.5)@2001-01-02, POINT(2.5 0.5)@2001-01-03}',
   reclass(r, 1, '0-50:1, [50-100]:2', '8BUI', 0))::text FROM rast;
 -- {1@2001-01-01, 2@2001-01-02, 2@2001-01-03}
-</pre></li><li class="listitem"><a name="raster_clip"></a><a class="indexterm" name="id14195"></a><p>Return a raster keeping the pixels of another that a geometry covers</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_rasterAdd"></a><a class="indexterm" name="id15518"></a><a class="indexterm" name="id15521"></a><a class="indexterm" name="id15524"></a><a class="indexterm" name="id15527"></a><p>Addition, subtraction, multiplication, and division of rasters, pixel by pixel</p><pre class="programlisting">
+{float,raster} {+, -, *, /} {float,raster} → raster
+</pre><p>A raster takes the arithmetic operators of a temporal number, so a derived raster is written as the expression it is, such as <code class="varname">(nir - red) / (nir + red)</code> or <code class="varname">depth - 8.5</code>, where PostGIS writes it as the expression of <code class="varname">ST_MapAlgebra</code>. Every band of the result has the pixel type <code class="varname">64BF</code>, whatever the pixel types of the operands, so a pixel holds the arithmetic as computed: a negative difference of two unsigned bands, a product beyond their range, and a ratio between zero and one are kept rather than clamped or truncated, and <a class="link" href="ch16s24.html#raster_reclass"><code class="varname">reclass</code></a> narrows the result where a smaller pixel type is needed. Two rasters are operated band by band over the pixels they share, as two temporal numbers are over the time they share: they are to have the same reference system, the same grid, and the same number of bands, and two rasters sharing no pixel have no result. A pixel that is nodata in either operand is nodata in the result, which takes the nodata value of the first operand stating one and states none when neither does, so a result of zero is a value. A division by zero raises an error, whether the divisor is a number or a pixel. The functions behind the operators are <code class="varname">rasterAdd</code>, <code class="varname">rasterSub</code>, <code class="varname">rasterMul</code>, and <code class="varname">rasterDiv</code>.</p><pre class="programlisting">
+-- The normalized difference of two unsigned 16-bit bands
+WITH bands AS (
+  SELECT
+    ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
+      4326), '16BUI'::text, 0.0::float8, NULL::float8), 1, 1, 1,
+      ARRAY[[3000, 500, 2000], [4000, 1000, 6000], [100, 0, 65535]]
+        ::double precision[][]) AS nir,
+    ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
+      4326), '16BUI'::text, 0.0::float8, NULL::float8), 1, 1, 1,
+      ARRAY[[1000, 1500, 2000], [1000, 3000, 2000], [300, 1, 0]]
+        ::double precision[][]) AS red )
+SELECT ST_BandPixelType((nir - red) / (nir + red), 1),
+  ST_DumpValues((nir - red) / (nir + red), 1)
+FROM bands;
+-- 64BF | {{0.5,-0.5,0},{0.6,-0.5,0.5},{-0.5,-1,1}}
+-- Read a derived raster along a trajectory: the depth under a vessel of draught 8.5
+WITH rast AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
+    4326), '32BF'::text, 0.0::float8, NULL::float8), 1, 1, 1,
+    ARRAY[[10.0::float4, 20.0::float4, 30.0::float4],
+    [40.0::float4, 50.0::float4, 60.0::float4],
+    [70.0::float4, 80.0::float4, 90.0::float4]]) AS depth )
+SELECT rasterValue(tgeompoint 'SRID=4326;[POINT(0.5 2.5)@2001-01-01,
+  POINT(2.5 2.5)@2001-01-02, POINT(0.5 0.5)@2001-01-03]', depth - 8.5)::text
+FROM rast;
+-- Interp=Step;[1.5@2001-01-01 00:00:00+00, 11.5@2001-01-01 06:00:00+00,
+--   21.5@2001-01-01 18:00:00+00, 41.5@2001-01-02 06:00:00+00,
+--   61.5@2001-01-02 18:00:00+00, 61.5@2001-01-03 00:00:00+00]
+</pre></li><li class="listitem"><a name="raster_slope"></a><a class="indexterm" name="id15545"></a><p>Return the slope of a raster band, pixel by pixel</p><pre class="programlisting">
+slope(rast raster,nband integer=1,pixeltype text='32BF',units text='DEGREES',
+  scale float=1.0,interpolate_nodata boolean=false) → raster
+slope(rast raster,nband integer,customextent raster,pixeltype text='32BF',
+  units text='DEGREES',scale float=1.0,interpolate_nodata boolean=false) → raster
+</pre><p>The slope of PostGIS's <code class="varname">ST_Slope</code>, with its arguments and defaults: the gradients of each pixel are read from its eight neighbours, a neighbour that is nodata or lies outside the raster taking the value of the pixel, and a nodata pixel stays nodata. The units are <code class="varname">DEGREES</code>, <code class="varname">RADIANS</code> or <code class="varname">PERCENT</code>, read by their first three letters regardless of case, and units outside these raise an error; PostGIS answers radians in degrees. The scale is the ratio of the vertical units to the horizontal ones, such as 111120 for elevations in meters over a grid in degrees. Where <code class="varname">interpolate_nodata</code> is true, a nodata pixel first takes the mean of its neighbours weighted by the inverse of their distances, as PostGIS's <code class="varname">ST_InvDistWeight4ma</code> computes it. The result takes the grid of <code class="varname">customextent</code> where it is given.</p><pre class="programlisting">
+-- A plane rising by 1 for each pixel to the east
+WITH plane AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
+    4326), '32BF'::text, 0.0::float8, NULL::float8), 1, 1, 1,
+    ARRAY[[0, 1, 2], [0, 1, 2], [0, 1, 2]]::double precision[][]) AS r )
+SELECT ST_Value(slope(r), 2, 2), ST_Value(slope(r, units =&gt; 'PERCENT'), 2, 2)
+FROM plane;
+-- 45 | 100
+</pre></li><li class="listitem"><a name="raster_tri"></a><a class="indexterm" name="id15560"></a><p>Return the terrain ruggedness index of a raster band, pixel by pixel</p><pre class="programlisting">
+tri(rast raster,nband integer=1,pixeltype text='32BF',interpolate_nodata boolean=false)
+  → raster
+tri(rast raster,nband integer,customextent raster,pixeltype text='32BF',
+  interpolate_nodata boolean=false) → raster
+</pre><p>The index of PostGIS's <code class="varname">ST_TRI</code>, with its arguments and defaults: the mean of the absolute differences between a pixel and its eight neighbours, read as <a class="link" href="ch16s24.html#raster_slope"><code class="varname">slope</code></a> reads them.</p><pre class="programlisting">
+WITH dem AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(4, 4, 0.0, 4.0, 1.0, -1.0, 0.0, 0.0,
+    3857), '32BF'::text, 0.0::float8, -9999.0::float8), 1, 1, 1,
+    ARRAY[[10, 20, 30, 40], [15, 25, -9999, 45], [20, 30, 40, 50],
+    [25, 35, 45, 55]]::double precision[][]) AS r )
+SELECT ST_DumpValues(tri(r), 1) FROM dem;
+-- {{3.75,3.75,5,1.875},{5,7.5,NULL,3.75},{5,8.125,8.125,3.125},{2.5,5.625,5.625,3.75}}
+</pre></li><li class="listitem"><a name="raster_tpi"></a><a class="indexterm" name="id15571"></a><p>Return the topographic position index of a raster band, pixel by pixel</p><pre class="programlisting">
+tpi(rast raster,nband integer=1,pixeltype text='32BF',interpolate_nodata boolean=false)
+  → raster
+tpi(rast raster,nband integer,customextent raster,pixeltype text='32BF',
+  interpolate_nodata boolean=false) → raster
+</pre><p>The index of PostGIS's <code class="varname">ST_TPI</code>, with its arguments and defaults: the value of a pixel minus the mean of its eight neighbours, read as <a class="link" href="ch16s24.html#raster_slope"><code class="varname">slope</code></a> reads them.</p><pre class="programlisting">
+WITH dem AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(4, 4, 0.0, 4.0, 1.0, -1.0, 0.0, 0.0,
+    3857), '32BF'::text, 0.0::float8, -9999.0::float8), 1, 1, 1,
+    ARRAY[[10, 20, 30, 40], [15, 25, -9999, 45], [20, 30, 40, 50],
+    [25, 35, 45, 55]]::double precision[][]) AS r )
+SELECT ST_DumpValues(tpi(r, interpolate_nodata =&gt; true), 1) FROM dem;
+-- {{-3.75,-1.875,-1.875,1.25},{-3.75,0,0,3.75},{-3.75,0,0,3.75},{-1.25,1.875,1.875,3.75}}
+</pre></li><li class="listitem"><a name="raster_mapAlgebra"></a><a class="indexterm" name="id15582"></a><p>Return a statistic of the neighbourhood of each pixel of a raster band</p><pre class="programlisting">
+mapAlgebra(rast raster,nband integer,stat text,pixeltype text=NULL,
+  extenttype text='FIRST',customextent raster=NULL,distancex integer=0,
+  distancey integer=0) → raster
+</pre><p>The focal statistics of PostGIS's <code class="varname">ST_MapAlgebra</code> with the callbacks <code class="varname">ST_Min4ma</code>, <code class="varname">ST_Max4ma</code>, <code class="varname">ST_Sum4ma</code>, <code class="varname">ST_Mean4ma</code>, <code class="varname">ST_Range4ma</code> and <code class="varname">ST_StdDev4ma</code>, with its arguments and defaults, the callback named by its statistic: <code class="varname">MIN</code>, <code class="varname">MAX</code>, <code class="varname">SUM</code>, <code class="varname">MEAN</code>, <code class="varname">RANGE</code> or <code class="varname">STDDEV</code>, regardless of case, as <code class="varname">ST_Union</code> names its operations. The neighbourhood of a pixel extends <code class="varname">distancex</code> pixels to the west and to the east and <code class="varname">distancey</code> pixels to the north and to the south; its nodata pixels, and those outside the raster, are skipped. The sum of no pixel is 0, every other statistic of no pixel is nodata, and the standard deviation is the sample one. As for PostGIS, a neighbourhood whose distance is zero along one axis only is the pixel alone. A pixel type left NULL is the one of the band, and the result keeps the nodata value of the band, or its minimum value where it states none. Every extent type but <code class="varname">CUSTOM</code> is the extent of the raster, and <code class="varname">CUSTOM</code> takes the grid of <code class="varname">customextent</code>. A statistic or an extent type outside these raises an error, where PostGIS reads an unknown extent type as <code class="varname">INTERSECTION</code>.</p><pre class="programlisting">
+WITH dem AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(4, 4, 0.0, 4.0, 1.0, -1.0, 0.0, 0.0,
+    3857), '32BF'::text, 0.0::float8, -9999.0::float8), 1, 1, 1,
+    ARRAY[[10, 20, 30, 40], [15, 25, -9999, 45], [20, 30, 40, 50],
+    [25, 35, 45, 55]]::double precision[][]) AS r )
+SELECT ST_DumpValues(mapAlgebra(r, 1, 'MEAN', '64BF', distancex =&gt; 1, distancey =&gt; 1), 1)
+FROM dem;
+-- {{17.5,20,32,38.333333333333336},{20,23.75,35,41},{25,29.375,40.625,47},
+--  {27.5,32.5,42.5,47.5}}
+</pre></li><li class="listitem"><a name="raster_clip"></a><a class="indexterm" name="id15610"></a><p>Return a raster keeping the pixels of another that a geometry covers</p><pre class="programlisting">
 clip(raster,geom geometry,crop boolean=true,touched boolean=false) → raster
-clip(raster,nband integer[],geom geometry,nodataval float8[]=NULL,crop boolean=true,
+clip(raster,nband integer[],geom geometry,nodataval float[]=NULL,crop boolean=true,
   touched boolean=false) → raster
 </pre><p>Every band is read against a mask the geometry is burnt into, as the PostGIS <code class="varname">ST_Clip</code> reads it: a pixel the geometry does not cover answers the nodata value of its band, and the smallest value its pixel type holds when the band declares none. With <code class="varname">crop</code> the result carries the extent the raster and the geometry share, and otherwise the extent of the raster. The geometry is in the reference system of the raster; one in another system raises an error. With <code class="varname">nband</code> the result keeps the bands named, every band when it is NULL, <code class="varname">nodataval</code> states the nodata value of the pixels the geometry does not cover, one for every band or one per band, and with <code class="varname">touched</code> a pixel the geometry touches is kept where otherwise only one whose centre it covers is.</p><pre class="programlisting">
 -- Build a 3x3 synthetic elevation raster (SRID 4326, 1 degree pixels)
@@ -99,12 +262,15 @@ SELECT ST_DumpValues(clip(r, geometry 'SRID=4326;POLYGON((0 1,2 1,2 3,0 3,0 1))'
   AS kept_extent
 FROM rast;
 -- {{10,20},{40,50}} | {{10,20,NULL},{40,50,NULL},{NULL,NULL,NULL}}
-</pre></li><li class="listitem"><a name="raster_transform"></a><a class="indexterm" name="id14208"></a><p>Return a raster stated in another spatial reference system</p><pre class="programlisting">
-transform(raster,srid integer,algorithm text='NearestNeighbour',maxerr float8=0.125,
-  scalex float8=0,scaley float8=0) → raster
+</pre></li><li class="listitem"><a name="raster_transform"></a><a class="indexterm" name="id15623"></a><a class="indexterm" name="id15626"></a><p>Return a raster stated in another spatial reference system</p><pre class="programlisting">
+transform(raster,srid integer,algorithm text='NearestNeighbour',maxerr float=0.125,
+  scalex float=0,scaley float=0) → raster
 transform(raster,alignto raster,algorithm text='NearestNeighbour',
-  maxerr float8=0.125) → raster
-</pre><p>Every band is carried into the target system and resampled onto the grid the reprojection implies, through the same GDAL warp as the PostGIS <code class="varname">ST_Transform</code>, so the result states the same coverage read through another system. The algorithm is one of <code class="varname">NearestNeighbour</code>, <code class="varname">Bilinear</code>, <code class="varname">Cubic</code>, <code class="varname">CubicSpline</code>, <code class="varname">Lanczos</code>, <code class="varname">Max</code> and <code class="varname">Min</code>, named without regard to case, and <code class="varname">maxerr</code> is the error in input pixels the warp may commit, 0 for an exact calculation. <code class="varname">scalex</code> and <code class="varname">scaley</code> state the pixel size of the result, 0 letting the warp derive it, and <code class="varname">alignto</code> takes the reference system, the pixel size, the grid origin and the skew of another raster, so the result lies on its grid.</p><pre class="programlisting">
+  maxerr float=0.125) → raster
+transformPipeline(raster,pipeline text,srid integer=0,is_forward boolean=true,
+  algorithm text='NearestNeighbour',maxerr float=0.125,scalex float=0,
+  scaley float=0) → raster
+</pre><p>Every band is carried into the target system and resampled onto the grid the reprojection implies, through the same GDAL warp as the PostGIS <code class="varname">ST_Transform</code>, so the result states the same coverage read through another system. The algorithm is one of <code class="varname">NearestNeighbour</code>, <code class="varname">Bilinear</code>, <code class="varname">Cubic</code>, <code class="varname">CubicSpline</code>, <code class="varname">Lanczos</code>, <code class="varname">Max</code> and <code class="varname">Min</code>, named without regard to case, and <code class="varname">maxerr</code> is the error in input pixels the warp may commit, 0 for an exact calculation. <code class="varname">scalex</code> and <code class="varname">scaley</code> state the pixel size of the result, 0 letting the warp derive it, and <code class="varname">alignto</code> takes the reference system, the pixel size, the grid origin and the skew of another raster, so the result lies on its grid.</p><p>The <code class="varname">transformPipeline</code> function carries the raster through a coordinate operation, stated as a PROJ string, a WKT or an authority code such as <code class="varname">urn:ogc:def:coordinateOperation:EPSG::16031</code>, instead of the one GDAL derives from the two systems, and reads it as the geometry <code class="varname">transformPipeline</code> does: longitude first and in degrees. The result states the reference system given by <code class="varname">srid</code>, 0 by default. By default the operation is applied forward; setting <code class="varname">is_forward</code> to false applies its inverse. The remaining arguments are those of <code class="varname">transform</code>, so an operation GDAL would derive answers as <code class="varname">transform</code> to the same system.</p><pre class="programlisting">
 -- Build a 3x3 synthetic elevation raster (SRID 4326, 1 degree pixels)
 WITH rast AS (
   SELECT ST_SetValues(ST_AddBand( ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
@@ -116,9 +282,21 @@ SELECT SRID(transform(r, 3857)) AS srid, width(transform(r, 3857)) AS width,
   height(transform(r, 3857)) AS height
 FROM rast;
 -- 3857 | 3 | 3
-</pre></li><li class="listitem"><a name="raster_rescale"></a><a class="indexterm" name="id14228"></a><p>Return a raster resampled to another pixel size</p><pre class="programlisting">
-rescale(raster,scalex float8,scaley float8,algorithm text='NearestNeighbour',
-  maxerr float8=0.125) → raster
+-- Build a 3x3 synthetic elevation raster (SRID 4326, 1 degree pixels)
+WITH rast AS (
+  SELECT ST_SetValues(ST_AddBand( ST_MakeEmptyRaster(3, 3, 0.0, 3.0, 1.0, -1.0, 0.0, 0.0,
+    4326), '32BF'::text, 0.0::float8, -9999::float8), 1, 1, 1,
+    ARRAY[[10.0::float4, 20.0::float4, 30.0::float4],
+    [40.0::float4, 50.0::float4, 60.0::float4],
+    [70.0::float4, 80.0::float4, 90.0::float4]]) AS r )
+SELECT SRID(transformPipeline(r, '+proj=utm +zone=31 +ellps=WGS84', 32631)) AS srid,
+  width(transformPipeline(r, '+proj=utm +zone=31 +ellps=WGS84', 32631)) AS width,
+  height(transformPipeline(r, '+proj=utm +zone=31 +ellps=WGS84', 32631)) AS height
+FROM rast;
+-- 32631 | 3 | 3
+</pre></li><li class="listitem"><a name="raster_rescale"></a><a class="indexterm" name="id15654"></a><p>Return a raster resampled to another pixel size</p><pre class="programlisting">
+rescale(raster,scalex float,scaley float,algorithm text='NearestNeighbour',
+  maxerr float=0.125) → raster
 </pre><p>The result keeps the reference system and the upper left corner of the raster and states its coverage on a grid of the pixel size asked for, through the same GDAL warp as the PostGIS <code class="varname">ST_Rescale</code>, so a coarser scale reads fewer pixels over the same ground. The scales are in the units of the raster's reference system, and the algorithm and the error are those of <a class="link" href="ch16s24.html#raster_transform"><code class="varname">transform</code></a>.</p><pre class="programlisting">
 -- Build a 3x3 synthetic elevation raster (SRID 4326, 1 degree pixels)
 WITH rast AS (
@@ -132,7 +310,7 @@ SELECT width(rescale(r, 0.5, -0.5)) AS width,
   scaleX(rescale(r, 0.5, -0.5)) AS scalex
 FROM rast;
 -- 6 | 6 | 0.5
-</pre></li><li class="listitem"><a name="raster_summaryStats"></a><a class="indexterm" name="id14239"></a><p>Return the statistics of the pixels of a raster band</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_summaryStats"></a><a class="indexterm" name="id15665"></a><p>Return the statistics of the pixels of a raster band</p><pre class="programlisting">
 summaryStats(raster,nband integer=1,exclude_nodata_value boolean=true) → summarystats
 </pre><p>The band is read once and answers the PostGIS <code class="varname">summarystats</code> record that <code class="varname">ST_SummaryStats</code> answers: the number of pixels counted, and the sum, mean, standard deviation, minimum and maximum of their values. Every pixel is read, so the answer is exact rather than sampled; the pixels the band states as nodata are left out unless <code class="varname">exclude_nodata_value</code> is false, and a band with no pixel to count answers a count of zero and no statistic.</p><pre class="programlisting">
 -- Build a 3x3 synthetic elevation raster (SRID 4326, 1 degree pixels)
@@ -144,7 +322,19 @@ WITH rast AS (
     [70.0::float4, 80.0::float4, 90.0::float4]]) AS r )
 SELECT (summaryStats(r)).* FROM rast;
 -- 9 | 450 | 50 | 25.81988897471611 | 10 | 90
-</pre></li><li class="listitem"><a name="raster_dumpAsPolygons"></a><a class="indexterm" name="id14250"></a><p>Return the polygons of a raster band, one for each group of pixels sharing a value <span class="inlinemediaobject"><img src="images/srf.svg" width="13"></span>
+</pre></li><li class="listitem"><a name="raster_summaryStatsAgg"></a><a class="indexterm" name="id15676"></a><p>Return the statistics of the pixels of a band over the rasters of a column</p><pre class="programlisting">
+summaryStatsAgg(raster,nband integer,exclude_nodata_value boolean) → summarystats
+summaryStatsAgg(raster,exclude_nodata_value boolean) → summarystats
+</pre><p>The aggregate of PostGIS's <code class="varname">ST_SummaryStatsAgg</code>, answering the <code class="varname">summarystats</code> record that <a class="link" href="ch16s24.html#raster_summaryStats"><code class="varname">summaryStats</code></a> answers for one raster over every pixel of the band of the rasters, the band 1 where <code class="varname">nband</code> is left out. Every pixel is read, as for <code class="varname">summaryStats</code>, so the forms take no sample percentage and the standard deviation is the one of every pixel rather than of a sample. A <code class="varname">NULL</code> raster is skipped, over no raster the aggregate answers <code class="varname">NULL</code>, and rasters with no pixel to count answer a count of zero and no statistic. The aggregate runs in parallel, the statistics of the workers combined, where PostGIS's has no combine function. A band a raster does not have raises an error, where PostGIS skips the raster.</p><pre class="programlisting">
+WITH tiles AS (
+  SELECT ST_AddBand(ST_MakeEmptyRaster(2, 2, 0.0, 2.0, 1.0, -1.0, 0.0, 0.0, 3857),
+    '32BF'::text, 1.0::float8, -9999.0::float8) AS r
+  UNION ALL
+  SELECT ST_AddBand(ST_MakeEmptyRaster(2, 2, 1.0, 1.0, 1.0, -1.0, 0.0, 0.0, 3857),
+    '32BF'::text, 3.0::float8, -9999.0::float8) )
+SELECT (summaryStatsAgg(r, 1, true)).* FROM tiles;
+-- 8 | 16 | 2 | 1 | 1 | 3
+</pre></li><li class="listitem"><a name="raster_dumpAsPolygons"></a><a class="indexterm" name="id15692"></a><p>Return the polygons of a raster band, one for each group of pixels sharing a value <span class="inlinemediaobject"><img src="images/srf.svg" width="13"></span>
 
 </p><pre class="programlisting">
 dumpAsPolygons(raster,band integer=1,exclude_nodata_value boolean=true) → {geomval}
@@ -161,23 +351,47 @@ FROM rast, dumpAsPolygons(reclass(r, 1, '0-50:1, [50-100]:2', '8BUI', 0))
 ORDER BY val;
 -- 1 | POLYGON((0 3,0 1,1 1,1 2,3 2,3 3,0 3))
 -- 2 | POLYGON((1 2,1 1,0 1,0 0,3 0,3 2,1 2))
-</pre></li><li class="listitem"><a name="raster_rasterTileValue"></a><a class="indexterm" name="id14269"></a><p>Sample a <code class="varname">raquet</code> raster tile along a trajectory</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_pixelAsPoints"></a><a class="indexterm" name="id15711"></a><p>Return the pixels of a raster band as points <span class="inlinemediaobject"><img src="images/srf.svg" width="13"></span>
+
+</p><pre class="programlisting">
+pixelAsPoints(rast raster,band integer=1,exclude_nodata_value boolean=true)
+  → setof (geom geometry,val float,x integer,y integer)
+</pre><p>The points of PostGIS's <code class="varname">ST_PixelAsPoints</code>: for each pixel, row by row, its upper-left corner in the reference system of the raster, its value, and its column and row, starting at 1. The pixels the band states as nodata are left out unless <code class="varname">exclude_nodata_value</code> is false, in which case they keep the value the band holds for them, and a band stating no nodata value leaves none out. A band the raster does not have raises an error, where PostGIS answers no row.</p><pre class="programlisting">
+WITH rast AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 2, 10.0, 20.0, 2.0, -1.0, 0.0, 0.0,
+    3857), '32BF'::text, 0.0::float8, -9999.0::float8), 1, 1, 1,
+    ARRAY[[1.5, -9999, 3], [4, 5, 6]]::double precision[][]) AS r )
+SELECT ST_AsText(geom), val, x, y FROM rast, pixelAsPoints(r) LIMIT 2;
+-- POINT(10 20) | 1.5 | 1 | 1
+-- POINT(14 20) |   3 | 3 | 1
+</pre></li><li class="listitem"><a name="raster_dumpValues"></a><a class="indexterm" name="id15728"></a><p>Return the values of the bands of a raster as arrays</p><pre class="programlisting">
+dumpValues(rast raster,nband integer[]=NULL,exclude_nodata_value boolean=true)
+  → setof (nband integer,valarray float[])
+dumpValues(rast raster,nband integer,exclude_nodata_value boolean=true) → float[]
+</pre><p>The values of PostGIS's <code class="varname">ST_DumpValues</code>: an array per band, a row of the array per row of the raster, in the order of the bands given in <code class="varname">nband</code>, every band when it is <code class="varname">NULL</code>; the form with one band answers its array alone. A pixel the band states as nodata is <code class="varname">NULL</code> unless <code class="varname">exclude_nodata_value</code> is false, in which case it is the value the band holds for it. A band the raster does not have, or a <code class="varname">NULL</code> band number, raises an error, where PostGIS answers no row or skips it.</p><pre class="programlisting">
+WITH rast AS (
+  SELECT ST_SetValues(ST_AddBand(ST_MakeEmptyRaster(3, 2, 10.0, 20.0, 2.0, -1.0, 0.0, 0.0,
+    3857), '32BF'::text, 0.0::float8, -9999.0::float8), 1, 1, 1,
+    ARRAY[[1.5, -9999, 3], [4, 5, 6]]::double precision[][]) AS r )
+SELECT dumpValues(r, 1), dumpValues(r, 1, false) FROM rast;
+-- {{1.5,NULL,3},{4,5,6}} | {{1.5,-9999,3},{4,5,6}}
+</pre></li><li class="listitem"><a name="raster_rasterTileValue"></a><a class="indexterm" name="id15742"></a><p>Sample a <code class="varname">raquet</code> raster tile along a trajectory</p><pre class="programlisting">
 rasterTileValue(tgeompoint,rast raquet) → tfloat
 </pre><p>Reads the tile along <code class="varname">traj</code> (SRID 4326) as <a class="link" href="ch16s24.html#raster_rasterValue"><code class="varname">rasterValue</code></a> reads a raster, returning the pixel values as a <code class="varname">tfloat</code>. This is the typed equivalent of <a class="link" href="ch16s24.html#raster_rasterTileValueQuadbin"><code class="varname">rasterTileValueQuadbin</code></a>: the dimensions, QUADBIN cell, pixel type and nodata handling are taken from the <code class="varname">raquet</code> value instead of from separate arguments. Returns <code class="varname">NULL</code> when the trip never meets a pixel of the tile carrying data.</p><pre class="programlisting">
 -- Sample pre-packaged raquet tiles along ship trajectories
 SELECT t.tripid, rasterTileValue(t.trip, r.tile)
 FROM trips t JOIN elevation_tiles r
   ON r.quadbin IN (SELECT unnest(getValues(tquadbin(t.trip, 8))));
-</pre></li><li class="listitem"><a name="raster_rasterTileValueArray"></a><a class="indexterm" name="id14286"></a><p>Sample an array of <code class="varname">raquet</code> raster tiles along a trajectory</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_rasterTileValueArray"></a><a class="indexterm" name="id15759"></a><p>Sample an array of <code class="varname">raquet</code> raster tiles along a trajectory</p><pre class="programlisting">
 rasterTileValue(tgeompoint,rast raquet[]) → tfloat
 </pre><p>Reads every tile of <code class="varname">rast</code> along <code class="varname">traj</code> (SRID 4326) and returns the pixel values as a single <code class="varname">tfloat</code>. A trajectory that leaves one tile is covered by several of them, each answering the part of the trip over it. Tiles of one zoom level partition the plane, so they answer disjoint times. Tiles of different zoom levels overlap, and where two of them answer the same time the value of the tile of higher zoom is kept, that being the one carrying the finer resolution. Returns <code class="varname">NULL</code> when the trip never meets a pixel of a tile carrying data.</p><pre class="programlisting">
 -- Sample a trajectory across every tile it crosses, in one value
 SELECT t.tripid, rasterTileValue(t.trip, array_agg(r.tile)) FROM trips t
 JOIN elevation_tiles r ON r.quadbin IN (SELECT unnest(getValues(tquadbin(t.trip, 8))))
 GROUP BY t.tripid, t.trip;
-</pre></li><li class="listitem"><a name="raster_rasterTileValueQuadbin"></a><a class="indexterm" name="id14299"></a><p>Sample a Raquet raster chip along a trajectory using a QUADBIN cell for georeferencing</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_rasterTileValueQuadbin"></a><a class="indexterm" name="id15772"></a><p>Sample a Raquet raster chip along a trajectory using a QUADBIN cell for georeferencing</p><pre class="programlisting">
 rasterTileValueQuadbin(tgeompoint,pixels bytea,width integer,height integer,
-  quadbin,pixtype text,nodata float8,has_nodata boolean) → tfloat
+  quadbin,pixtype text,nodata float,has_nodata boolean) → tfloat
 </pre><p>Reads a row-major single-band pixel array along <code class="varname">traj</code> (SRID 4326), as <a class="link" href="ch16s24.html#raster_rasterValue"><code class="varname">rasterValue</code></a> reads a raster. The tile georeferencing (bounding box, pixel-to-coordinate mapping) is derived from <code class="varname">quadbin</code> alone via the Web-Mercator slippy-tile transform. The <code class="varname">pixtype</code> argument must be one of <code class="varname">uint8</code>, <code class="varname">int8</code>, <code class="varname">uint16</code>, <code class="varname">int16</code>, <code class="varname">uint32</code>, <code class="varname">int32</code>, <code class="varname">uint64</code>, <code class="varname">int64</code>, <code class="varname">float16</code>, <code class="varname">float32</code>, or <code class="varname">float64</code>. When <code class="varname">has_nodata</code> is true, a pixel equal to <code class="varname">nodata</code> carries no value. Returns <code class="varname">NULL</code> when the trip never meets a pixel carrying data.</p><pre class="programlisting">
 -- Sample the 256 x 256 float32 elevation tiles of a Raquet table, stating no
 -- nodata value, along every ship trajectory
@@ -189,7 +403,7 @@ JOIN elevation_raquet r
 SELECT t.tripid, avgValue(rasterTileValueQuadbin(t.trip, 
   r.band_1, 256, 256, r.block::quadbin, 'int16', -9999, true)) AS mean_sst FROM trips t
 JOIN sst_raquet r ON r.block IN (SELECT unnest(getValues(tquadbin(t.trip, 6)))::bigint);
-</pre></li><li class="listitem"><a name="raster_atRasterValue"></a><a class="indexterm" name="id14326"></a><p>Return the part of a trajectory where the raster value it reads falls inside a float range</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_atRasterValue"></a><a class="indexterm" name="id15799"></a><p>Return the part of a trajectory where the raster value it reads falls inside a float range</p><pre class="programlisting">
 atRasterValue(tgeompoint,rast raster,vspan floatspan,band integer=1) → tgeompoint
 atRasterValue(tgeompoint,path text,vspan floatspan,band integer=1) → tgeompoint
 </pre><p>Reads <code class="varname">rasterValue</code> along <code class="varname">traj</code> and returns the sub-trajectory restricted to the times when the pixel value lies within <code class="varname">vspan</code>. Returns <code class="varname">NULL</code> when no time satisfies the condition. The form taking <code class="varname">path</code> reads a raster file on the server, as the corresponding form of <a class="link" href="ch16s24.html#raster_rasterValue"><code class="varname">rasterValue</code></a> does.</p><pre class="programlisting">
@@ -204,21 +418,21 @@ SELECT asText(atRasterValue(tgeompoint 'SRID=4326;
   floatspan '[40, 90]')) FROM rast;
 /* {[POINT(1 2)@2001-01-01 12:00:00, POINT(1.5 1.5)@2001-01-02,
    POINT(0.5 0.5)@2001-01-03]} */
-</pre></li><li class="listitem"><a name="raster_minusRasterValue"></a><a class="indexterm" name="id14341"></a><p>Return the part of a trajectory where the raster value it reads falls outside a float range</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_minusRasterValue"></a><a class="indexterm" name="id15814"></a><p>Return the part of a trajectory where the raster value it reads falls outside a float range</p><pre class="programlisting">
 minusRasterValue(tgeompoint,rast raster,vspan floatspan,band integer=1) → tgeompoint
 minusRasterValue(tgeompoint,path text,vspan floatspan,band integer=1) → tgeompoint
 </pre><p>The complement of <code class="varname">atRasterValue</code>: returns the sub-trajectory restricted to the times when the pixel value lies outside <code class="varname">vspan</code>. Returns <code class="varname">NULL</code> when the pixel value lies within <code class="varname">vspan</code> at every time. The form taking <code class="varname">path</code> reads a raster file on the server, as the corresponding form of <a class="link" href="ch16s24.html#raster_rasterValue"><code class="varname">rasterValue</code></a> does.</p><pre class="programlisting">
 -- Keep only the instant whose raster value (10) is below 40
 SELECT asText(minusRasterValue(traj, elev_raster, floatspan '[40, 9999]')) FROM trips,
   elevation_raster;
-</pre></li><li class="listitem"><a name="raster_eRasterValue"></a><a class="indexterm" name="id14356"></a><p>Return true if the trajectory ever reads a raster pixel value inside a float range</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_eRasterValue"></a><a class="indexterm" name="id15829"></a><p>Return true if the trajectory ever reads a raster pixel value inside a float range</p><pre class="programlisting">
 eRasterValue(tgeompoint,rast raster,vspan floatspan,band integer=1) → boolean
 eRasterValue(tgeompoint,path text,vspan floatspan,band integer=1) → boolean
 </pre><p>Returns <code class="varname">true</code> when <code class="varname">traj</code> ever reads a pixel value within <code class="varname">vspan</code>, <code class="varname">false</code> otherwise. Returns <code class="varname">NULL</code> only when the input is <code class="varname">NULL</code>. The form taking <code class="varname">path</code> reads a raster file on the server, as the corresponding form of <a class="link" href="ch16s24.html#raster_rasterValue"><code class="varname">rasterValue</code></a> does.</p><pre class="programlisting">
 -- Trips that ever crossed terrain above 200 m
 SELECT tripid FROM trips,
   elevation_raster WHERE eRasterValue(trip, elev_raster, floatspan '[200, 9999]');
-</pre></li><li class="listitem"><a name="raster_aRasterValue"></a><a class="indexterm" name="id14373"></a><p>Return true if every pixel value the trajectory reads over the raster lies inside a float range</p><pre class="programlisting">
+</pre></li><li class="listitem"><a name="raster_aRasterValue"></a><a class="indexterm" name="id15846"></a><p>Return true if every pixel value the trajectory reads over the raster lies inside a float range</p><pre class="programlisting">
 aRasterValue(tgeompoint,rast raster,vspan floatspan,band integer=1) → boolean
 aRasterValue(tgeompoint,path text,vspan floatspan,band integer=1) → boolean
 </pre><p>Returns <code class="varname">true</code> when every pixel value <code class="varname">traj</code> reads over the raster lies within <code class="varname">vspan</code>, <code class="varname">false</code> when at least one does not. Returns <code class="varname">NULL</code> only when the input is <code class="varname">NULL</code>. The form taking <code class="varname">path</code> reads a raster file on the server, as the corresponding form of <a class="link" href="ch16s24.html#raster_rasterValue"><code class="varname">rasterValue</code></a> does.</p><pre class="programlisting">
