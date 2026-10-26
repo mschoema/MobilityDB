@@ -29,19 +29,19 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeompoint_rtree_idx;
-DROP INDEX IF EXISTS tbl_tgeogpoint_rtree_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint_rtree_060_tpoint_topops_idx;
+DROP INDEX IF EXISTS tbl_tgeogpoint_rtree_060_tpoint_topops_idx;
 
-DROP INDEX IF EXISTS tbl_tgeompoint_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tgeogpoint_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint_quadtree_060_tpoint_topops_idx;
+DROP INDEX IF EXISTS tbl_tgeogpoint_quadtree_060_tpoint_topops_idx;
 
-DROP INDEX IF EXISTS tbl_tgeompoint_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tgeogpoint_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint_kdtree_060_tpoint_topops_idx;
+DROP INDEX IF EXISTS tbl_tgeogpoint_kdtree_060_tpoint_topops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_topops;
-CREATE TABLE test_topops(
+CREATE TEMP TABLE test_topops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -175,8 +175,8 @@ SELECT '~=', 'tgeogpoint', 'tgeogpoint', COUNT(*) FROM tbl_tgeogpoint t1, tbl_tg
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeompoint_rtree_idx ON tbl_tgeompoint USING GIST(temp);
-CREATE INDEX tbl_tgeogpoint_rtree_idx ON tbl_tgeogpoint USING GIST(temp);
+CREATE INDEX tbl_tgeompoint_rtree_060_tpoint_topops_idx ON tbl_tgeompoint USING GIST(temp);
+CREATE INDEX tbl_tgeogpoint_rtree_060_tpoint_topops_idx ON tbl_tgeogpoint USING GIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tgeompoint
@@ -352,13 +352,13 @@ WHERE op = '~=' AND leftarg = 'tgeogpoint' AND rightarg = 'tgeogpoint';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeompoint_rtree_idx;
-DROP INDEX tbl_tgeogpoint_rtree_idx;
+DROP INDEX tbl_tgeompoint_rtree_060_tpoint_topops_idx;
+DROP INDEX tbl_tgeogpoint_rtree_060_tpoint_topops_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeompoint_quadtree_idx ON tbl_tgeompoint USING SPGIST(temp);
-CREATE INDEX tbl_tgeogpoint_quadtree_idx ON tbl_tgeogpoint USING SPGIST(temp);
+CREATE INDEX tbl_tgeompoint_quadtree_060_tpoint_topops_idx ON tbl_tgeompoint USING SPGIST(temp);
+CREATE INDEX tbl_tgeogpoint_quadtree_060_tpoint_topops_idx ON tbl_tgeogpoint USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tgeompoint
@@ -534,13 +534,13 @@ WHERE op = '~=' AND leftarg = 'tgeogpoint' AND rightarg = 'tgeogpoint';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeompoint_quadtree_idx;
-DROP INDEX tbl_tgeogpoint_quadtree_idx;
+DROP INDEX tbl_tgeompoint_quadtree_060_tpoint_topops_idx;
+DROP INDEX tbl_tgeogpoint_quadtree_060_tpoint_topops_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeompoint_kdtree_idx ON tbl_tgeompoint USING SPGIST(temp tgeompoint_kdtree_ops);
-CREATE INDEX tbl_tgeogpoint_kdtree_idx ON tbl_tgeogpoint USING SPGIST(temp tgeogpoint_kdtree_ops);
+CREATE INDEX tbl_tgeompoint_kdtree_060_tpoint_topops_idx ON tbl_tgeompoint USING SPGIST(temp tgeompoint_kdtree_ops);
+CREATE INDEX tbl_tgeogpoint_kdtree_060_tpoint_topops_idx ON tbl_tgeogpoint USING SPGIST(temp tgeogpoint_kdtree_ops);
 
 -------------------------------------------------------------------------------
 -- <type> op tgeompoint
@@ -716,8 +716,8 @@ WHERE op = '~=' AND leftarg = 'tgeogpoint' AND rightarg = 'tgeogpoint';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeompoint_kdtree_idx;
-DROP INDEX tbl_tgeogpoint_kdtree_idx;
+DROP INDEX tbl_tgeompoint_kdtree_060_tpoint_topops_idx;
+DROP INDEX tbl_tgeogpoint_kdtree_060_tpoint_topops_idx;
 
 -------------------------------------------------------------------------------
 

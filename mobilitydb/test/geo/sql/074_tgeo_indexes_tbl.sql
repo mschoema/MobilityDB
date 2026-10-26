@@ -27,16 +27,12 @@
 --
 -------------------------------------------------------------------------------
 
-CREATE TABLE test AS
+CREATE TEMP TABLE test AS
 SELECT NULL::tgeometry FROM generate_series(1, 10);
 ANALYZE test;
 DROP TABLE test;
 
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tgeometry3D_big;
-ANALYZE tbl_tgeography3D_big;
-
 DROP INDEX IF EXISTS tbl_tgeometry3D_big_rtree_idx;
 DROP INDEX IF EXISTS tbl_tgeography3D_big_rtree_idx;
 
@@ -283,16 +279,12 @@ DROP INDEX IF EXISTS tbl_tgeometry3D_big_kdtree_idx;
 DROP INDEX IF EXISTS tbl_tgeography3D_big_kdtree_idx;
 
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tgeometry;
-ANALYZE tbl_tgeometry3D;
-
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeometry_rtree_idx;
-DROP INDEX IF EXISTS tbl_tgeometry3D_rtree_idx;
-CREATE INDEX tbl_tgeometry_rtree_idx ON tbl_tgeometry USING GIST(temp);
-CREATE INDEX tbl_tgeometry3D_rtree_idx ON tbl_tgeometry3D USING GIST(temp);
+DROP INDEX IF EXISTS tbl_tgeometry_rtree_074_tgeo_indexes_idx;
+DROP INDEX IF EXISTS tbl_tgeometry3D_rtree_074_tgeo_indexes_idx;
+CREATE INDEX tbl_tgeometry_rtree_074_tgeo_indexes_idx ON tbl_tgeometry USING GIST(temp);
+CREATE INDEX tbl_tgeometry3D_rtree_074_tgeo_indexes_idx ON tbl_tgeometry3D USING GIST(temp);
 
 -- EXPLAIN ANALYZE
 WITH test AS (
@@ -315,15 +307,15 @@ SELECT round(distance, 6) FROM test;
 WITH test AS (
   SELECT temp |=| geography 'SRID=7844;Point(1 1)' AS distance FROM tbl_tgeography ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
-DROP INDEX tbl_tgeometry_rtree_idx;
-DROP INDEX tbl_tgeometry3D_rtree_idx;
+DROP INDEX tbl_tgeometry_rtree_074_tgeo_indexes_idx;
+DROP INDEX tbl_tgeometry3D_rtree_074_tgeo_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeometry_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tgeometry3D_quadtree_idx;
-CREATE INDEX tbl_tgeometry_quadtree_idx ON tbl_tgeometry USING SPGIST(temp);
-CREATE INDEX tbl_tgeometry3D_quadtree_idx ON tbl_tgeometry3D USING SPGIST(temp);
+DROP INDEX IF EXISTS tbl_tgeometry_quadtree_074_tgeo_indexes_idx;
+DROP INDEX IF EXISTS tbl_tgeometry3D_quadtree_074_tgeo_indexes_idx;
+CREATE INDEX tbl_tgeometry_quadtree_074_tgeo_indexes_idx ON tbl_tgeometry USING SPGIST(temp);
+CREATE INDEX tbl_tgeometry3D_quadtree_074_tgeo_indexes_idx ON tbl_tgeometry3D USING SPGIST(temp);
 
 -- EXPLAIN ANALYZE
 WITH test AS (
@@ -346,13 +338,13 @@ SELECT round(distance, 6) FROM test;
 WITH test AS (
   SELECT temp |=| geography 'SRID=7844;Point(1 1)' AS distance FROM tbl_tgeography ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
-DROP INDEX tbl_tgeometry_quadtree_idx;
-DROP INDEX tbl_tgeometry3D_quadtree_idx;
+DROP INDEX tbl_tgeometry_quadtree_074_tgeo_indexes_idx;
+DROP INDEX tbl_tgeometry3D_quadtree_074_tgeo_indexes_idx;
 
 -------------------------------------------------------------------------------
 -- Coverage of all the same and order by logic in SP-GiST indexes
 
-CREATE TABLE tbl_tgeometry3D_big_allthesame AS SELECT k, tgeometry(geometry 'Point(5 5 5)', t) AS temp FROM tbl_tstzspan_big;
+CREATE TEMP TABLE tbl_tgeometry3D_big_allthesame AS SELECT k, tgeometry(geometry 'Point(5 5 5)', t) AS temp FROM tbl_tstzspan_big;
 CREATE INDEX tbl_tgeometry3D_big_allthesame_quadtree_idx ON tbl_tgeometry3D_big_allthesame USING SPGIST(temp);
 ANALYZE tbl_tgeometry3D_big_allthesame;
 

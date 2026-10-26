@@ -30,26 +30,22 @@
 -- File span_ops.c
 -- Tests of operators for span types.
 -------------------------------------------------------------------------------
-ANALYZE tbl_intspan_big;
-ANALYZE tbl_floatspan_big;
-ANALYZE tbl_datespan_big;
-ANALYZE tbl_tstzspan_big;
 DROP INDEX IF EXISTS tbl_intspan_big_rtree_idx;
 NOTICE:  index "tbl_intspan_big_rtree_idx" does not exist, skipping
 DROP INDEX IF EXISTS tbl_floatspan_big_rtree_idx;
 NOTICE:  index "tbl_floatspan_big_rtree_idx" does not exist, skipping
 DROP INDEX IF EXISTS tbl_datespan_big_rtree_idx;
 NOTICE:  index "tbl_datespan_big_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tstzspan_big_rtree_idx;
-NOTICE:  index "tbl_tstzspan_big_rtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tstzspan_big_rtree_011_span_indexes_idx;
+NOTICE:  index "tbl_tstzspan_big_rtree_011_span_indexes_idx" does not exist, skipping
 DROP INDEX IF EXISTS tbl_intspan_big_quadtree_idx;
 NOTICE:  index "tbl_intspan_big_quadtree_idx" does not exist, skipping
 DROP INDEX IF EXISTS tbl_floatspan_big_quadtree_idx;
 NOTICE:  index "tbl_floatspan_big_quadtree_idx" does not exist, skipping
 DROP INDEX IF EXISTS tbl_datespan_big_quadtree_idx;
 NOTICE:  index "tbl_datespan_big_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tstzspan_big_quadtree_idx;
-NOTICE:  index "tbl_tstzspan_big_quadtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tstzspan_big_quadtree_011_span_indexes_idx;
+NOTICE:  index "tbl_tstzspan_big_quadtree_011_span_indexes_idx" does not exist, skipping
 DROP INDEX IF EXISTS tbl_intspan_big_kdtree_idx;
 NOTICE:  index "tbl_intspan_big_kdtree_idx" does not exist, skipping
 DROP INDEX IF EXISTS tbl_floatspan_big_kdtree_idx;
@@ -61,7 +57,7 @@ NOTICE:  index "tbl_tstzspan_big_kdtree_idx" does not exist, skipping
 -------------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_idxops;
 NOTICE:  table "test_idxops" does not exist, skipping
-CREATE TABLE test_idxops(
+CREATE TEMP TABLE test_idxops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -255,7 +251,7 @@ SELECT t <-> tstzspan '[2002-06-01,2002-07-01]' FROM tbl_tstzspan_big ORDER BY 1
 CREATE INDEX tbl_intspan_big_rtree_idx ON tbl_intspan_big USING GIST(i);
 CREATE INDEX tbl_floatspan_big_rtree_idx ON tbl_floatspan_big USING GIST(f);
 CREATE INDEX tbl_datespan_big_rtree_idx ON tbl_datespan_big USING GIST(d);
-CREATE INDEX tbl_tstzspan_big_rtree_idx ON tbl_tstzspan_big USING GIST(t);
+CREATE INDEX tbl_tstzspan_big_rtree_011_span_indexes_idx ON tbl_tstzspan_big USING GIST(t);
 UPDATE test_idxops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_intspan_big WHERE i @> 50 )
 WHERE op = '@>' AND leftarg = 'intspan' AND rightarg = 'int';
@@ -491,14 +487,14 @@ SELECT t <-> tstzspan '[2002-06-01,2002-07-01]' FROM tbl_tstzspan_big ORDER BY 1
 DROP INDEX IF EXISTS tbl_intspan_big_rtree_idx;
 DROP INDEX IF EXISTS tbl_floatspan_big_rtree_idx;
 DROP INDEX IF EXISTS tbl_datespan_big_rtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_big_rtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_big_rtree_011_span_indexes_idx;
 -------------------------------------------------------------------------------
 -- Quad-tree Index
 -------------------------------------------------------------------------------
 CREATE INDEX tbl_intspan_big_quadtree_idx ON tbl_intspan_big USING SPGIST(i);
 CREATE INDEX tbl_floatspan_big_quadtree_idx ON tbl_floatspan_big USING SPGIST(f);
 CREATE INDEX tbl_datespan_big_quadtree_idx ON tbl_datespan_big USING SPGIST(d);
-CREATE INDEX tbl_tstzspan_big_quadtree_idx ON tbl_tstzspan_big USING SPGIST(t);
+CREATE INDEX tbl_tstzspan_big_quadtree_011_span_indexes_idx ON tbl_tstzspan_big USING SPGIST(t);
 UPDATE test_idxops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_intspan_big WHERE i @> 50 )
 WHERE op = '@>' AND leftarg = 'intspan' AND rightarg = 'int';
@@ -751,7 +747,7 @@ RESET enable_seqscan;
 DROP INDEX IF EXISTS tbl_intspan_big_quadtree_idx;
 DROP INDEX IF EXISTS tbl_floatspan_big_quadtree_idx;
 DROP INDEX IF EXISTS tbl_datespan_big_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_big_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_big_quadtree_011_span_indexes_idx;
 -------------------------------------------------------------------------------
 -- K-d Tree Index
 -------------------------------------------------------------------------------
@@ -1028,7 +1024,7 @@ DROP TABLE test_idxops;
 -- distance per ordering key from the parent node span. A table of identical
 -- values is what builds such a node.
 -------------------------------------------------------------------------------
-CREATE TABLE tbl_tstzspan_allthesame AS
+CREATE TEMP TABLE tbl_tstzspan_allthesame AS
   SELECT k, tstzspan '[2001-01-01, 2001-01-02]' AS t FROM generate_series(1, 1000) k;
 CREATE INDEX tbl_tstzspan_allthesame_quadtree_idx ON tbl_tstzspan_allthesame
   USING SPGIST(t);

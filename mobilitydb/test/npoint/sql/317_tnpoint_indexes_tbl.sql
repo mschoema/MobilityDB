@@ -29,9 +29,6 @@
 
 -- Index correctness tests for tnpoint on tbl_tnpoint_big (1 000 rows).
 -- Modeled on mobilitydb/test/cbuffer/sql/166_tcbuffer_indexes_tbl.
-
-ANALYZE tbl_tnpoint_big;
-
 DROP INDEX IF EXISTS tbl_tnpoint_big_rtree_idx;
 DROP INDEX IF EXISTS tbl_tnpoint_big_quadtree_idx;
 DROP INDEX IF EXISTS tbl_tnpoint_big_kdtree_idx;
@@ -123,11 +120,8 @@ SELECT COUNT(*) FROM tbl_tnpoint_big WHERE temp -|- tnpoint '[Npoint(1, 0.2)@200
 -------------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS tbl_tnpoint_big_kdtree_idx;
-
-ANALYZE tbl_tnpoint;
-
-DROP INDEX IF EXISTS tbl_tnpoint_rtree_idx;
-CREATE INDEX tbl_tnpoint_rtree_idx ON tbl_tnpoint USING GIST(temp);
+DROP INDEX IF EXISTS tbl_tnpoint_rtree_317_tnpoint_indexes_idx;
+CREATE INDEX tbl_tnpoint_rtree_317_tnpoint_indexes_idx ON tbl_tnpoint USING GIST(temp);
 
 WITH test AS (
   SELECT temp |=| tnpoint '[Npoint(1, 0.2)@2001-06-01, Npoint(1, 0.5)@2001-07-01]' AS distance
@@ -142,10 +136,10 @@ WITH test AS (
   FROM tbl_tnpoint ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
 
-DROP INDEX tbl_tnpoint_rtree_idx;
+DROP INDEX tbl_tnpoint_rtree_317_tnpoint_indexes_idx;
 
-DROP INDEX IF EXISTS tbl_tnpoint_quadtree_idx;
-CREATE INDEX tbl_tnpoint_quadtree_idx ON tbl_tnpoint USING SPGIST(temp);
+DROP INDEX IF EXISTS tbl_tnpoint_quadtree_317_tnpoint_indexes_idx;
+CREATE INDEX tbl_tnpoint_quadtree_317_tnpoint_indexes_idx ON tbl_tnpoint USING SPGIST(temp);
 
 WITH test AS (
   SELECT temp |=| tnpoint '[Npoint(1, 0.2)@2001-06-01, Npoint(1, 0.5)@2001-07-01]' AS distance
@@ -160,12 +154,12 @@ WITH test AS (
   FROM tbl_tnpoint ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
 
-DROP INDEX tbl_tnpoint_quadtree_idx;
+DROP INDEX tbl_tnpoint_quadtree_317_tnpoint_indexes_idx;
 
 -------------------------------------------------------------------------------
 -- Coverage of all the same and order by logic in SP-GiST indexes
 
-CREATE TABLE tbl_tnpoint_big_allthesame AS
+CREATE TEMP TABLE tbl_tnpoint_big_allthesame AS
   SELECT k, tnpoint(npoint 'Npoint(1, 0.5)', t) AS temp
   FROM tbl_tstzspan_big;
 CREATE INDEX tbl_tnpoint_big_allthesame_quadtree_idx ON tbl_tnpoint_big_allthesame USING SPGIST(temp);

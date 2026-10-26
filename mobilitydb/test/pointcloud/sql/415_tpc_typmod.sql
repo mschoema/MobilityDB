@@ -29,11 +29,8 @@
 
 -- Column-level pcid pinning via PG typmod for tpcpoint / tpcpatch.
 
--- Set up a second pcid so we can probe both match and mismatch paths.
--- Mirrors pcid=1's schema (the test fixture's only registered schema)
--- so PC_MakePoint succeeds for either.
-INSERT INTO pointcloud_formats (pcid, srid, schema)
-SELECT 2, srid, schema FROM pointcloud_formats WHERE pcid = 1;
+-- pcid 2, which the setup registers as a copy of the schema of pcid 1,
+-- probes both match and mismatch paths
 
 -------------------------------------------------------------------------------
 -- typmod_in / typmod_out — error cases
@@ -53,7 +50,7 @@ SELECT NULL::tpcpoint(1, 2);
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS tbl_typmod;
-CREATE TABLE tbl_typmod (
+CREATE TEMP TABLE tbl_typmod (
   trj1 tpcpoint(1),
   trj2 tpcpoint(2),
   pat1 tpcpatch(1),
@@ -127,6 +124,5 @@ SELECT format_type(atttypid, atttypmod) FROM pg_attribute
 -------------------------------------------------------------------------------
 
 DROP TABLE tbl_typmod;
-DELETE FROM pointcloud_formats WHERE pcid = 2;
 
 -------------------------------------------------------------------------------

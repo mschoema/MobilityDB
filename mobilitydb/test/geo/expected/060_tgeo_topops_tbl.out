@@ -27,22 +27,22 @@
 --
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tgeometry_rtree_idx;
-NOTICE:  index "tbl_tgeometry_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeography_rtree_idx;
-NOTICE:  index "tbl_tgeography_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeometry_quadtree_idx;
-NOTICE:  index "tbl_tgeometry_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeography_quadtree_idx;
-NOTICE:  index "tbl_tgeography_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeometry_kdtree_idx;
-NOTICE:  index "tbl_tgeometry_kdtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeography_kdtree_idx;
-NOTICE:  index "tbl_tgeography_kdtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeometry_rtree_060_tgeo_topops_idx;
+NOTICE:  index "tbl_tgeometry_rtree_060_tgeo_topops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeography_rtree_060_tgeo_topops_idx;
+NOTICE:  index "tbl_tgeography_rtree_060_tgeo_topops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeometry_quadtree_060_tgeo_topops_idx;
+NOTICE:  index "tbl_tgeometry_quadtree_060_tgeo_topops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeography_quadtree_060_tgeo_topops_idx;
+NOTICE:  index "tbl_tgeography_quadtree_060_tgeo_topops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeometry_kdtree_060_tgeo_topops_idx;
+NOTICE:  index "tbl_tgeometry_kdtree_060_tgeo_topops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeography_kdtree_060_tgeo_topops_idx;
+NOTICE:  index "tbl_tgeography_kdtree_060_tgeo_topops_idx" does not exist, skipping
 -------------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_topops;
 NOTICE:  table "test_topops" does not exist, skipping
-CREATE TABLE test_topops(
+CREATE TEMP TABLE test_topops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -160,8 +160,8 @@ SELECT '-|-', 'tgeography', 'tgeography', COUNT(*) FROM tbl_tgeography t1, tbl_t
 INSERT INTO test_topops(op, leftarg, rightarg, no_idx)
 SELECT '~=', 'tgeography', 'tgeography', COUNT(*) FROM tbl_tgeography t1, tbl_tgeography t2 WHERE t1.temp ~= t2.temp;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeometry_rtree_idx ON tbl_tgeometry USING GIST(temp);
-CREATE INDEX tbl_tgeography_rtree_idx ON tbl_tgeography USING GIST(temp);
+CREATE INDEX tbl_tgeometry_rtree_060_tgeo_topops_idx ON tbl_tgeometry USING GIST(temp);
+CREATE INDEX tbl_tgeography_rtree_060_tgeo_topops_idx ON tbl_tgeography USING GIST(temp);
 -------------------------------------------------------------------------------
 -- <type> op tgeometry
 UPDATE test_topops
@@ -321,11 +321,11 @@ UPDATE test_topops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tgeography t1, tbl_tgeography t2 WHERE t1.temp ~= t2.temp )
 WHERE op = '~=' AND leftarg = 'tgeography' AND rightarg = 'tgeography';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeometry_rtree_idx;
-DROP INDEX tbl_tgeography_rtree_idx;
+DROP INDEX tbl_tgeometry_rtree_060_tgeo_topops_idx;
+DROP INDEX tbl_tgeography_rtree_060_tgeo_topops_idx;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeometry_quadtree_idx ON tbl_tgeometry USING SPGIST(temp);
-CREATE INDEX tbl_tgeography_quadtree_idx ON tbl_tgeography USING SPGIST(temp);
+CREATE INDEX tbl_tgeometry_quadtree_060_tgeo_topops_idx ON tbl_tgeometry USING SPGIST(temp);
+CREATE INDEX tbl_tgeography_quadtree_060_tgeo_topops_idx ON tbl_tgeography USING SPGIST(temp);
 -------------------------------------------------------------------------------
 -- <type> op tgeometry
 UPDATE test_topops
@@ -485,11 +485,11 @@ UPDATE test_topops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tgeography t1, tbl_tgeography t2 WHERE t1.temp ~= t2.temp )
 WHERE op = '~=' AND leftarg = 'tgeography' AND rightarg = 'tgeography';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeometry_quadtree_idx;
-DROP INDEX tbl_tgeography_quadtree_idx;
+DROP INDEX tbl_tgeometry_quadtree_060_tgeo_topops_idx;
+DROP INDEX tbl_tgeography_quadtree_060_tgeo_topops_idx;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeometry_kdtree_idx ON tbl_tgeometry USING SPGIST(temp tgeometry_kdtree_ops);
-CREATE INDEX tbl_tgeography_kdtree_idx ON tbl_tgeography USING SPGIST(temp tgeography_kdtree_ops);
+CREATE INDEX tbl_tgeometry_kdtree_060_tgeo_topops_idx ON tbl_tgeometry USING SPGIST(temp tgeometry_kdtree_ops);
+CREATE INDEX tbl_tgeography_kdtree_060_tgeo_topops_idx ON tbl_tgeography USING SPGIST(temp tgeography_kdtree_ops);
 -------------------------------------------------------------------------------
 -- <type> op tgeometry
 UPDATE test_topops
@@ -649,8 +649,8 @@ UPDATE test_topops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tgeography t1, tbl_tgeography t2 WHERE t1.temp ~= t2.temp )
 WHERE op = '~=' AND leftarg = 'tgeography' AND rightarg = 'tgeography';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeometry_kdtree_idx;
-DROP INDEX tbl_tgeography_kdtree_idx;
+DROP INDEX tbl_tgeometry_kdtree_060_tgeo_topops_idx;
+DROP INDEX tbl_tgeography_kdtree_060_tgeo_topops_idx;
 -------------------------------------------------------------------------------
 SELECT * FROM test_topops
 WHERE no_idx <> rtree_idx OR no_idx <> quadtree_idx OR no_idx <> kdtree_idx OR

@@ -29,14 +29,14 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tpose_rtree_idx;
-DROP INDEX IF EXISTS tbl_tpose_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tpose_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tpose_rtree_108_tpose_topops_idx;
+DROP INDEX IF EXISTS tbl_tpose_quadtree_108_tpose_topops_idx;
+DROP INDEX IF EXISTS tbl_tpose_kdtree_108_tpose_topops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE if exists test_tpose_topops;
-CREATE TABLE test_tpose_topops(
+CREATE TEMP TABLE test_tpose_topops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -109,7 +109,7 @@ SELECT '-|-', 'tpose', 'tpose', COUNT(*) FROM tbl_tpose2d t1, tbl_tpose2d t2 WHE
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tpose_rtree_idx ON tbl_tpose2d USING GIST(temp);
+CREATE INDEX tbl_tpose_rtree_108_tpose_topops_idx ON tbl_tpose2d USING GIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tpose
@@ -199,8 +199,8 @@ WHERE op = '-|-' and leftarg = 'tpose' and rightarg = 'tpose';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tpose_rtree_idx;
-CREATE INDEX tbl_tpose_quadtree_idx ON tbl_tpose2d USING SPGIST(temp);
+DROP INDEX tbl_tpose_rtree_108_tpose_topops_idx;
+CREATE INDEX tbl_tpose_quadtree_108_tpose_topops_idx ON tbl_tpose2d USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tpose
@@ -290,8 +290,8 @@ WHERE op = '-|-' and leftarg = 'tpose' and rightarg = 'tpose';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tpose_quadtree_idx;
-CREATE INDEX tbl_tpose_kdtree_idx ON tbl_tpose2d USING SPGIST(temp tpose_kdtree_ops);
+DROP INDEX tbl_tpose_quadtree_108_tpose_topops_idx;
+CREATE INDEX tbl_tpose_kdtree_108_tpose_topops_idx ON tbl_tpose2d USING SPGIST(temp tpose_kdtree_ops);
 
 -------------------------------------------------------------------------------
 -- <type> op tpose
@@ -381,7 +381,7 @@ WHERE op = '-|-' and leftarg = 'tpose' and rightarg = 'tpose';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tpose_kdtree_idx;
+DROP INDEX tbl_tpose_kdtree_108_tpose_topops_idx;
 
 -------------------------------------------------------------------------------
 

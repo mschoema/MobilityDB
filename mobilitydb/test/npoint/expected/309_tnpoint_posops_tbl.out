@@ -27,16 +27,16 @@
 --
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tnpoint_rtree_idx;
-NOTICE:  index "tbl_tnpoint_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tnpoint_quadtree_idx;
-NOTICE:  index "tbl_tnpoint_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tnpoint_kdtree_idx;
-NOTICE:  index "tbl_tnpoint_kdtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tnpoint_rtree_309_tnpoint_posops_idx;
+NOTICE:  index "tbl_tnpoint_rtree_309_tnpoint_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tnpoint_quadtree_309_tnpoint_posops_idx;
+NOTICE:  index "tbl_tnpoint_quadtree_309_tnpoint_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tnpoint_kdtree_309_tnpoint_posops_idx;
+NOTICE:  index "tbl_tnpoint_kdtree_309_tnpoint_posops_idx" does not exist, skipping
 -------------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_tnpoint_posops;
 NOTICE:  table "test_tnpoint_posops" does not exist, skipping
-CREATE TABLE test_tnpoint_posops(
+CREATE TEMP TABLE test_tnpoint_posops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -88,7 +88,7 @@ SELECT '&<#', 'tnpoint', 'tnpoint', COUNT(*) FROM tbl_tnpoint t1, tbl_tnpoint t2
 INSERT INTO test_tnpoint_posops(op, leftarg, rightarg, no_idx)
 SELECT '#&>', 'tnpoint', 'tnpoint', COUNT(*) FROM tbl_tnpoint t1, tbl_tnpoint t2 WHERE t1.temp #&> t2.temp;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tnpoint_rtree_idx ON tbl_tnpoint USING GIST(temp);
+CREATE INDEX tbl_tnpoint_rtree_309_tnpoint_posops_idx ON tbl_tnpoint USING GIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_tnpoint_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tnpoint WHERE t <<# temp )
@@ -152,8 +152,8 @@ UPDATE test_tnpoint_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tnpoint t1, tbl_tnpoint t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tnpoint' and rightarg = 'tnpoint';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tnpoint_rtree_idx;
-CREATE INDEX tbl_tnpoint_quadtree_idx ON tbl_tnpoint USING SPGIST(temp);
+DROP INDEX tbl_tnpoint_rtree_309_tnpoint_posops_idx;
+CREATE INDEX tbl_tnpoint_quadtree_309_tnpoint_posops_idx ON tbl_tnpoint USING SPGIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_tnpoint_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tnpoint WHERE t <<# temp )
@@ -217,8 +217,8 @@ UPDATE test_tnpoint_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tnpoint t1, tbl_tnpoint t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tnpoint' and rightarg = 'tnpoint';
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tnpoint_quadtree_idx;
-CREATE INDEX tbl_tnpoint_kdtree_idx ON tbl_tnpoint USING SPGIST(temp tnpoint_kdtree_ops);
+DROP INDEX IF EXISTS tbl_tnpoint_quadtree_309_tnpoint_posops_idx;
+CREATE INDEX tbl_tnpoint_kdtree_309_tnpoint_posops_idx ON tbl_tnpoint USING SPGIST(temp tnpoint_kdtree_ops);
 -------------------------------------------------------------------------------
 UPDATE test_tnpoint_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tnpoint WHERE t <<# temp )
@@ -282,7 +282,7 @@ UPDATE test_tnpoint_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tnpoint t1, tbl_tnpoint t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tnpoint' and rightarg = 'tnpoint';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tnpoint_kdtree_idx;
+DROP INDEX tbl_tnpoint_kdtree_309_tnpoint_posops_idx;
 -------------------------------------------------------------------------------
 SELECT * FROM test_tnpoint_posops
 WHERE no_idx <> rtree_idx OR no_idx <> quadtree_idx OR no_idx <> kdtree_idx OR

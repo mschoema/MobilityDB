@@ -29,19 +29,19 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeompoint3D_rtree_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint3D_rtree_060_tpoint_topops3d_idx;
 DROP INDEX IF EXISTS tbl_tgeogpoint3D_rtree_idx;
 
-DROP INDEX IF EXISTS tbl_tgeompoint3D_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint3D_quadtree_060_tpoint_topops3d_idx;
 DROP INDEX IF EXISTS tbl_tgeogpoint3D_quadtree_idx;
 
-DROP INDEX IF EXISTS tbl_tgeompoint3D_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint3D_kdtree_060_tpoint_topops3d_idx;
 DROP INDEX IF EXISTS tbl_tgeogpoint3D_kdtree_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_topops3d;
-CREATE TABLE test_topops3d(
+CREATE TEMP TABLE test_topops3d(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -175,7 +175,7 @@ SELECT '~=', 'tgeogpoint3D', 'tgeogpoint3D', COUNT(*) FROM tbl_tgeogpoint3D t1, 
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeompoint3D_rtree_idx ON tbl_tgeompoint3D USING GIST(temp);
+CREATE INDEX tbl_tgeompoint3D_rtree_060_tpoint_topops3d_idx ON tbl_tgeompoint3D USING GIST(temp);
 CREATE INDEX tbl_tgeogpoint3D_rtree_idx ON tbl_tgeogpoint3D USING GIST(temp);
 
 -------------------------------------------------------------------------------
@@ -352,12 +352,12 @@ WHERE op = '~=' AND leftarg = 'tgeogpoint3D' AND rightarg = 'tgeogpoint3D';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeompoint3D_rtree_idx;
+DROP INDEX tbl_tgeompoint3D_rtree_060_tpoint_topops3d_idx;
 DROP INDEX tbl_tgeogpoint3D_rtree_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeompoint3D_quadtree_idx ON tbl_tgeompoint3D USING SPGIST(temp);
+CREATE INDEX tbl_tgeompoint3D_quadtree_060_tpoint_topops3d_idx ON tbl_tgeompoint3D USING SPGIST(temp);
 CREATE INDEX tbl_tgeogpoint3D_quadtree_idx ON tbl_tgeogpoint3D USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
@@ -534,12 +534,12 @@ WHERE op = '~=' AND leftarg = 'tgeogpoint3D' AND rightarg = 'tgeogpoint3D';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeompoint3D_quadtree_idx;
+DROP INDEX tbl_tgeompoint3D_quadtree_060_tpoint_topops3d_idx;
 DROP INDEX tbl_tgeogpoint3D_quadtree_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeompoint3D_kdtree_idx ON tbl_tgeompoint3D USING SPGIST(temp tgeompoint_kdtree_ops);
+CREATE INDEX tbl_tgeompoint3D_kdtree_060_tpoint_topops3d_idx ON tbl_tgeompoint3D USING SPGIST(temp tgeompoint_kdtree_ops);
 CREATE INDEX tbl_tgeogpoint3D_kdtree_idx ON tbl_tgeogpoint3D USING SPGIST(temp tgeogpoint_kdtree_ops);
 
 -------------------------------------------------------------------------------
@@ -716,7 +716,7 @@ WHERE op = '~=' AND leftarg = 'tgeogpoint3D' AND rightarg = 'tgeogpoint3D';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeompoint3D_kdtree_idx;
+DROP INDEX tbl_tgeompoint3D_kdtree_060_tpoint_topops3d_idx;
 DROP INDEX tbl_tgeogpoint3D_kdtree_idx;
 
 -------------------------------------------------------------------------------

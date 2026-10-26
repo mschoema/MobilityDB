@@ -27,33 +27,27 @@
 --
 -------------------------------------------------------------------------------
 
-CREATE TABLE test AS
+CREATE TEMP TABLE test AS
 SELECT NULL::ttext FROM generate_series(1, 10);
 ANALYZE test;
 DROP TABLE test;
 
-CREATE TABLE test AS
+CREATE TEMP TABLE test AS
 SELECT NULL::tfloat UNION SELECT tfloat '1@2001-01-01';
 ANALYZE test;
 DROP TABLE test;
 
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tbool_big;
-ANALYZE tbl_tint_big;
-ANALYZE tbl_tfloat_big;
-ANALYZE tbl_ttext_big;
-
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tbool_big_rtree_idx;
-DROP INDEX IF EXISTS tbl_tint_big_rtree_idx;
-DROP INDEX IF EXISTS tbl_tfloat_big_rtree_idx;
+DROP INDEX IF EXISTS tbl_tbool_big_rtree_044_temporal_indexes_idx;
+DROP INDEX IF EXISTS tbl_tint_big_rtree_044_temporal_indexes_idx;
+DROP INDEX IF EXISTS tbl_tfloat_big_rtree_044_temporal_indexes_idx;
 DROP INDEX IF EXISTS tbl_ttext_big_rtree_idx;
 
-DROP INDEX IF EXISTS tbl_tbool_big_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tint_big_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tfloat_big_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tbool_big_quadtree_044_temporal_indexes_idx;
+DROP INDEX IF EXISTS tbl_tint_big_quadtree_044_temporal_indexes_idx;
+DROP INDEX IF EXISTS tbl_tfloat_big_quadtree_044_temporal_indexes_idx;
 DROP INDEX IF EXISTS tbl_ttext_big_quadtree_idx;
 
 DROP INDEX IF EXISTS tbl_tbool_big_kdtree_idx;
@@ -64,7 +58,7 @@ DROP INDEX IF EXISTS tbl_ttext_big_kdtree_idx;
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_idxops;
-CREATE TABLE test_idxops(
+CREATE TEMP TABLE test_idxops(
   op TEXT,
   leftarg TEXT,
   rightarg TEXT,
@@ -404,9 +398,9 @@ SELECT '#&>', 'ttext', 'ttext', COUNT(*) FROM tbl_ttext_big WHERE temp #&> ttext
 -- R-Tree Index
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tbool_big_rtree_idx ON tbl_tbool_big USING GIST(temp);
-CREATE INDEX tbl_tint_big_rtree_idx ON tbl_tint_big USING GIST(temp);
-CREATE INDEX tbl_tfloat_big_rtree_idx ON tbl_tfloat_big USING GIST(temp);
+CREATE INDEX tbl_tbool_big_rtree_044_temporal_indexes_idx ON tbl_tbool_big USING GIST(temp);
+CREATE INDEX tbl_tint_big_rtree_044_temporal_indexes_idx ON tbl_tint_big USING GIST(temp);
+CREATE INDEX tbl_tfloat_big_rtree_044_temporal_indexes_idx ON tbl_tfloat_big USING GIST(temp);
 CREATE INDEX tbl_ttext_big_rtree_idx ON tbl_ttext_big USING GIST(temp);
 
 -------------------------------------------------------------------------------
@@ -889,18 +883,18 @@ SELECT COUNT(*) FROM tbl_tint_big WHERE tint '[1@2001-01-01, 10@2001-02-01]' &< 
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tbool_big_rtree_idx;
-DROP INDEX tbl_tint_big_rtree_idx;
-DROP INDEX tbl_tfloat_big_rtree_idx;
+DROP INDEX tbl_tbool_big_rtree_044_temporal_indexes_idx;
+DROP INDEX tbl_tint_big_rtree_044_temporal_indexes_idx;
+DROP INDEX tbl_tfloat_big_rtree_044_temporal_indexes_idx;
 DROP INDEX tbl_ttext_big_rtree_idx;
 
 -------------------------------------------------------------------------------
 -- Quad-tree Index
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tbool_big_quadtree_idx ON tbl_tbool_big USING SPGIST(temp);
-CREATE INDEX tbl_tint_big_quadtree_idx ON tbl_tint_big USING SPGIST(temp);
-CREATE INDEX tbl_tfloat_big_quadtree_idx ON tbl_tfloat_big USING SPGIST(temp);
+CREATE INDEX tbl_tbool_big_quadtree_044_temporal_indexes_idx ON tbl_tbool_big USING SPGIST(temp);
+CREATE INDEX tbl_tint_big_quadtree_044_temporal_indexes_idx ON tbl_tint_big USING SPGIST(temp);
+CREATE INDEX tbl_tfloat_big_quadtree_044_temporal_indexes_idx ON tbl_tfloat_big USING SPGIST(temp);
 CREATE INDEX tbl_ttext_big_quadtree_idx ON tbl_ttext_big USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
@@ -1377,9 +1371,9 @@ WHERE op = '#&>' AND leftarg = 'ttext' AND rightarg = 'ttext';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tbool_big_quadtree_idx;
-DROP INDEX tbl_tint_big_quadtree_idx;
-DROP INDEX tbl_tfloat_big_quadtree_idx;
+DROP INDEX tbl_tbool_big_quadtree_044_temporal_indexes_idx;
+DROP INDEX tbl_tint_big_quadtree_044_temporal_indexes_idx;
+DROP INDEX tbl_tfloat_big_quadtree_044_temporal_indexes_idx;
 DROP INDEX tbl_ttext_big_quadtree_idx;
 
 -------------------------------------------------------------------------------
@@ -1879,8 +1873,8 @@ DROP TABLE test_idxops;
 -------------------------------------------------------------------------------
 -- Index support functions
 
-CREATE INDEX tbl_tint_big_rtree_idx ON tbl_tint_big USING GIST(temp);
-CREATE INDEX tbl_tfloat_big_rtree_idx ON tbl_tfloat_big USING GIST(temp);
+CREATE INDEX tbl_tint_big_rtree_044_temporal_indexes_idx ON tbl_tint_big USING GIST(temp);
+CREATE INDEX tbl_tfloat_big_rtree_044_temporal_indexes_idx ON tbl_tfloat_big USING GIST(temp);
 
 -- EXPLAIN ANALYZE
 SELECT temp |=| intspan '[90,100]'::tbox FROM tbl_tint_big ORDER BY 1 LIMIT 3;
@@ -1893,13 +1887,13 @@ WITH test AS (
   SELECT temp |=| tfloat '[1.5@2001-06-01, 2.5@2001-07-01]' AS distance FROM tbl_tfloat_big ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
 
-DROP INDEX tbl_tint_big_rtree_idx;
-DROP INDEX tbl_tfloat_big_rtree_idx;
+DROP INDEX tbl_tint_big_rtree_044_temporal_indexes_idx;
+DROP INDEX tbl_tfloat_big_rtree_044_temporal_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tint_big_quadtree_idx ON tbl_tint_big USING SPGIST(temp);
-CREATE INDEX tbl_tfloat_big_quadtree_idx ON tbl_tfloat_big USING SPGIST(temp);
+CREATE INDEX tbl_tint_big_quadtree_044_temporal_indexes_idx ON tbl_tint_big USING SPGIST(temp);
+CREATE INDEX tbl_tfloat_big_quadtree_044_temporal_indexes_idx ON tbl_tfloat_big USING SPGIST(temp);
 
 -- EXPLAIN ANALYZE
 SELECT temp |=| intspan '[90,100]'::tbox FROM tbl_tint_big ORDER BY 1 LIMIT 3;
@@ -1912,13 +1906,13 @@ WITH test AS (
   SELECT temp |=| tfloat '[1.5@2001-06-01, 2.5@2001-07-01]' AS distance FROM tbl_tfloat_big ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
 
-DROP INDEX tbl_tint_big_quadtree_idx;
-DROP INDEX tbl_tfloat_big_quadtree_idx;
+DROP INDEX tbl_tint_big_quadtree_044_temporal_indexes_idx;
+DROP INDEX tbl_tfloat_big_quadtree_044_temporal_indexes_idx;
 
 -------------------------------------------------------------------------------
 -- Coverage of all the same and order by logic in SP-GiST indexes
 
-CREATE TABLE tbl_tint_big_allthesame AS SELECT k, tint(5, t) AS temp FROM tbl_tstzspan_big;
+CREATE TEMP TABLE tbl_tint_big_allthesame AS SELECT k, tint(5, t) AS temp FROM tbl_tstzspan_big;
 CREATE INDEX tbl_tint_big_allthesame_quadtree_idx ON tbl_tint_big_allthesame USING SPGIST(temp);
 ANALYZE tbl_tint_big_allthesame;
 
@@ -1928,7 +1922,7 @@ DROP TABLE tbl_tint_big_allthesame;
 
 -------------------------------------------------------------------------------
 
-CREATE TABLE tbl_tbigint_big_allthesame AS SELECT k, tbigint(5, t) AS temp FROM tbl_tstzspan_big;
+CREATE TEMP TABLE tbl_tbigint_big_allthesame AS SELECT k, tbigint(5, t) AS temp FROM tbl_tstzspan_big;
 CREATE INDEX tbl_tbigint_big_allthesame_quadtree_idx ON tbl_tbigint_big_allthesame USING SPGIST(temp);
 ANALYZE tbl_tbigint_big_allthesame;
 
@@ -1938,7 +1932,7 @@ DROP TABLE tbl_tbigint_big_allthesame;
 
 -------------------------------------------------------------------------------
 
-CREATE TABLE tbl_tfloat_big_allthesame AS SELECT k, tfloat(5.0, t) AS temp FROM tbl_tstzspan_big;
+CREATE TEMP TABLE tbl_tfloat_big_allthesame AS SELECT k, tfloat(5.0, t) AS temp FROM tbl_tstzspan_big;
 CREATE INDEX tbl_tfloat_big_allthesame_quadtree_idx ON tbl_tfloat_big_allthesame USING SPGIST(temp);
 ANALYZE tbl_tfloat_big_allthesame;
 
@@ -1949,9 +1943,6 @@ DROP TABLE tbl_tfloat_big_allthesame;
 -------------------------------------------------------------------------------
 -- Big integer temporal type SP-GiST (quad-tree and k-d tree) index coverage
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tbigint_big;
-
 CREATE INDEX tbl_tbigint_big_quadtree_idx ON tbl_tbigint_big USING SPGIST(temp);
 
 SELECT COUNT(*) FROM tbl_tbigint_big WHERE temp && bigintspan '[1,3]';
@@ -1991,7 +1982,7 @@ DROP INDEX tbl_tbigint_big_kdtree_idx;
 -- values is what builds such a node.
 -------------------------------------------------------------------------------
 
-CREATE TABLE tbl_tfloat_allthesame AS
+CREATE TEMP TABLE tbl_tfloat_allthesame AS
   SELECT k, tfloat '5.5@2001-01-01' AS temp FROM generate_series(1, 1000) k;
 CREATE INDEX tbl_tfloat_allthesame_quadtree_idx ON tbl_tfloat_allthesame
   USING SPGIST(temp);

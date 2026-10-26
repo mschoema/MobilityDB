@@ -174,8 +174,8 @@ SELECT COUNT(*) FROM tbl_tgeogpoint3D t1, tbl_tgeogpoint3D t2 WHERE aDwithin(t1.
 
 -- Test index support function for ever spatial relationships
 
-CREATE INDEX tbl_tgeompoint_rtree_idx ON tbl_tgeompoint USING gist(temp);
-CREATE INDEX tbl_tgeogpoint_rtree_idx ON tbl_tgeogpoint USING gist(temp);
+CREATE INDEX tbl_tgeompoint_rtree_070_tpoint_spatialrels_idx ON tbl_tgeompoint USING gist(temp);
+CREATE INDEX tbl_tgeogpoint_rtree_070_tpoint_spatialrels_idx ON tbl_tgeogpoint USING gist(temp);
 
 SELECT COUNT(*) FROM tbl_tgeompoint WHERE eContains(geometry 'Polygon((0 0,0 5,5 5,5 0,0 0))', temp);
 
@@ -235,14 +235,14 @@ SELECT COUNT(*) FROM tbl_tgeogpoint WHERE eDwithin(temp, tgeogpoint '[Point(0 0)
 -- PostGIS ST_Buffer() function which is performed by GEOS
 SELECT COUNT(*) FROM tbl_tgeogpoint WHERE aDwithin(temp, tgeogpoint '[Point(0 0)@2001-01-01, Point(5 5)@2001-02-01]', 5);
 
-DROP INDEX tbl_tgeompoint_rtree_idx;
-DROP INDEX tbl_tgeogpoint_rtree_idx;
+DROP INDEX tbl_tgeompoint_rtree_070_tpoint_spatialrels_idx;
+DROP INDEX tbl_tgeogpoint_rtree_070_tpoint_spatialrels_idx;
 
 -------------------------------------------------------------------------------
 -- Test index support function for ever spatial relationships
 
-CREATE INDEX tbl_tgeompoint_quadtree_idx ON tbl_tgeompoint USING spgist(temp);
-CREATE INDEX tbl_tgeogpoint_quadtree_idx ON tbl_tgeogpoint USING spgist(temp);
+CREATE INDEX tbl_tgeompoint_quadtree_070_tpoint_spatialrels_idx ON tbl_tgeompoint USING spgist(temp);
+CREATE INDEX tbl_tgeogpoint_quadtree_070_tpoint_spatialrels_idx ON tbl_tgeogpoint USING spgist(temp);
 
 SELECT COUNT(*) FROM tbl_tgeompoint WHERE eContains(geometry 'Polygon((0 0,0 5,5 5,5 0,0 0))', temp);
 
@@ -302,8 +302,8 @@ SELECT COUNT(*) FROM tbl_tgeogpoint WHERE eDwithin(temp, tgeogpoint '[Point(0 0)
 -- PostGIS ST_Buffer() function which is performed by GEOS
 SELECT COUNT(*) FROM tbl_tgeogpoint WHERE aDwithin(temp, tgeogpoint '[Point(0 0)@2001-01-01, Point(5 5)@2001-02-01]', 5);
 
-DROP INDEX tbl_tgeompoint_quadtree_idx;
-DROP INDEX tbl_tgeogpoint_quadtree_idx;
+DROP INDEX tbl_tgeompoint_quadtree_070_tpoint_spatialrels_idx;
+DROP INDEX tbl_tgeogpoint_quadtree_070_tpoint_spatialrels_idx;
 
 -------------------------------------------------------------------------------
 

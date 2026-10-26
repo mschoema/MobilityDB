@@ -29,14 +29,14 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tcbuffer_rtree_idx;
-DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tcbuffer_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tcbuffer_rtree_209_tcbuffer_posops_idx;
+DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_209_tcbuffer_posops_idx;
+DROP INDEX IF EXISTS tbl_tcbuffer_kdtree_209_tcbuffer_posops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_tcbuffer_posops;
-CREATE TABLE test_tcbuffer_posops(
+CREATE TEMP TABLE test_tcbuffer_posops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -97,7 +97,7 @@ SELECT '#&>', 'tcbuffer', 'tcbuffer', COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffe
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tcbuffer_rtree_idx ON tbl_tcbuffer USING GIST(temp);
+CREATE INDEX tbl_tcbuffer_rtree_209_tcbuffer_posops_idx ON tbl_tcbuffer USING GIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -170,8 +170,8 @@ WHERE op = '#&>' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tcbuffer_rtree_idx;
-CREATE INDEX tbl_tcbuffer_quadtree_idx ON tbl_tcbuffer USING SPGIST(temp);
+DROP INDEX tbl_tcbuffer_rtree_209_tcbuffer_posops_idx;
+CREATE INDEX tbl_tcbuffer_quadtree_209_tcbuffer_posops_idx ON tbl_tcbuffer USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -244,8 +244,8 @@ WHERE op = '#&>' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_idx;
-CREATE INDEX tbl_tcbuffer_kdtree_idx ON tbl_tcbuffer USING SPGIST(temp tcbuffer_kdtree_ops);
+DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_209_tcbuffer_posops_idx;
+CREATE INDEX tbl_tcbuffer_kdtree_209_tcbuffer_posops_idx ON tbl_tcbuffer USING SPGIST(temp tcbuffer_kdtree_ops);
 
 -------------------------------------------------------------------------------
 
@@ -318,7 +318,7 @@ WHERE op = '#&>' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tcbuffer_kdtree_idx;
+DROP INDEX tbl_tcbuffer_kdtree_209_tcbuffer_posops_idx;
 
 -------------------------------------------------------------------------------
 

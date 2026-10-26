@@ -35,7 +35,7 @@
 
 \copy tbl_tpcbox TO 'tbl_tpcbox' (FORMAT BINARY);
 DROP TABLE IF EXISTS tbl_tpcbox_tmp;
-CREATE TABLE tbl_tpcbox_tmp AS TABLE tbl_tpcbox WITH NO DATA;
+CREATE TEMP TABLE tbl_tpcbox_tmp AS TABLE tbl_tpcbox WITH NO DATA;
 \copy tbl_tpcbox_tmp FROM 'tbl_tpcbox' (FORMAT BINARY);
 SELECT COUNT(*) FROM tbl_tpcbox t1, tbl_tpcbox_tmp t2 WHERE t1.k = t2.k AND t1.b <> t2.b;
 DROP TABLE tbl_tpcbox_tmp;
@@ -162,9 +162,7 @@ RESET enable_bitmapscan;
 
 -- The index key of a box keeps its bounds and drops the schema identifier,
 -- so a box of another schema is answered by the operator on the value.
-INSERT INTO pointcloud_formats (pcid, srid, schema)
-SELECT 2, srid, schema FROM pointcloud_formats WHERE pcid = 1;
-CREATE TABLE tbl_tpcbox_pcid AS
+CREATE TEMP TABLE tbl_tpcbox_pcid AS
   SELECT 1 AS k, tpcboxZT(20, 0, 0, 30, 10, 10,
     tstzspan '[2001-01-01, 2001-12-31]', 2) AS b;
 CREATE INDEX tbl_tpcbox_pcid_quadtree_idx ON tbl_tpcbox_pcid USING spgist(b);
@@ -173,6 +171,5 @@ SELECT COUNT(*) FROM tbl_tpcbox_pcid WHERE b >> tpcboxZT(0, 0, 0, 10, 10, 10,
   tstzspan '[2001-01-01, 2001-12-31]', 1);
 RESET enable_seqscan;
 DROP TABLE tbl_tpcbox_pcid;
-DELETE FROM pointcloud_formats WHERE pcid = 2;
 
 -------------------------------------------------------------------------------

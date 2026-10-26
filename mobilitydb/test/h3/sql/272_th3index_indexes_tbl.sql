@@ -28,9 +28,6 @@
 -------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
-
-ANALYZE tbl_th3index_big;
-
 -----------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS tbl_th3index_big_rtree_idx;
@@ -40,7 +37,7 @@ DROP INDEX IF EXISTS tbl_th3index_big_kdtree_idx;
 -----------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_th3index_idx;
-CREATE TABLE test_th3index_idx(
+CREATE TEMP TABLE test_th3index_idx(
   op char(3),
   leftarg text,
   rightarg text,
@@ -85,8 +82,6 @@ SELECT '#>>', 'stbox', 'th3index', COUNT(*) FROM tbl_geodstbox, tbl_th3index_big
 -----------------------------------------------------------------------------
 
 CREATE INDEX tbl_th3index_big_rtree_idx ON tbl_th3index_big USING GIST(temp);
-ANALYZE tbl_th3index_big;
-
 -----------------------------------------------------------------------------
 
 UPDATE test_th3index_idx
@@ -136,8 +131,6 @@ WHERE op = '#>>' AND leftarg = 'stbox' AND rightarg = 'th3index';
 
 DROP INDEX tbl_th3index_big_rtree_idx;
 CREATE INDEX tbl_th3index_big_quadtree_idx ON tbl_th3index_big USING SPGIST(temp);
-ANALYZE tbl_th3index_big;
-
 -----------------------------------------------------------------------------
 
 UPDATE test_th3index_idx
@@ -187,8 +180,6 @@ WHERE op = '#>>' AND leftarg = 'stbox' AND rightarg = 'th3index';
 
 DROP INDEX tbl_th3index_big_quadtree_idx;
 CREATE INDEX tbl_th3index_big_kdtree_idx ON tbl_th3index_big USING SPGIST(temp th3index_kdtree_ops);
-ANALYZE tbl_th3index_big;
-
 -----------------------------------------------------------------------------
 
 UPDATE test_th3index_idx

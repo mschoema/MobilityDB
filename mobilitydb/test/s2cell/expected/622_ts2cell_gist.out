@@ -29,7 +29,7 @@
 -- The two index classes of a ts2cell. The key is the stbox, as it is for every
 -- cell index, so a table indexed either way answers a bounding-box query with
 -- the rows a sequential scan gives.
-CREATE TABLE tbl_ts2cell_idx AS
+CREATE TEMP TABLE tbl_ts2cell_idx AS
 SELECT k, ts2cell(geoToS2Cell(geography(ST_SetSRID(ST_MakePoint(
     4.0 + k * 0.01, 50.0 + k * 0.01), 4326)), 12),
   timestamptz '2001-01-01' + k * interval '1 hour') AS temp

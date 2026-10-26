@@ -29,14 +29,14 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_trgeometry_rtree_idx;
-DROP INDEX IF EXISTS tbl_trgeometry_quadtree_idx;
-DROP INDEX IF EXISTS tbl_trgeometry_kdtree_idx;
+DROP INDEX IF EXISTS tbl_trgeometry_rtree_157_trgeo_posops_idx;
+DROP INDEX IF EXISTS tbl_trgeometry_quadtree_157_trgeo_posops_idx;
+DROP INDEX IF EXISTS tbl_trgeometry_kdtree_157_trgeo_posops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_trgeometry_posops;
-CREATE TABLE test_trgeometry_posops(
+CREATE TEMP TABLE test_trgeometry_posops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -97,7 +97,7 @@ SELECT '#&>', 'trgeometry', 'trgeometry', COUNT(*) FROM tbl_trgeometry2d t1, tbl
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_trgeometry_rtree_idx ON tbl_trgeometry2d USING GIST(temp);
+CREATE INDEX tbl_trgeometry_rtree_157_trgeo_posops_idx ON tbl_trgeometry2d USING GIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -170,8 +170,8 @@ WHERE op = '#&>' and leftarg = 'trgeometry' and rightarg = 'trgeometry';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_trgeometry_rtree_idx;
-CREATE INDEX tbl_trgeometry_quadtree_idx ON tbl_trgeometry2d USING SPGIST(temp);
+DROP INDEX tbl_trgeometry_rtree_157_trgeo_posops_idx;
+CREATE INDEX tbl_trgeometry_quadtree_157_trgeo_posops_idx ON tbl_trgeometry2d USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -244,8 +244,8 @@ WHERE op = '#&>' and leftarg = 'trgeometry' and rightarg = 'trgeometry';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_trgeometry_quadtree_idx;
-CREATE INDEX tbl_trgeometry_kdtree_idx ON tbl_trgeometry2d USING SPGIST(temp trgeometry_kdtree_ops);
+DROP INDEX IF EXISTS tbl_trgeometry_quadtree_157_trgeo_posops_idx;
+CREATE INDEX tbl_trgeometry_kdtree_157_trgeo_posops_idx ON tbl_trgeometry2d USING SPGIST(temp trgeometry_kdtree_ops);
 
 -------------------------------------------------------------------------------
 
@@ -318,7 +318,7 @@ WHERE op = '#&>' and leftarg = 'trgeometry' and rightarg = 'trgeometry';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_trgeometry_kdtree_idx;
+DROP INDEX tbl_trgeometry_kdtree_157_trgeo_posops_idx;
 
 -------------------------------------------------------------------------------
 

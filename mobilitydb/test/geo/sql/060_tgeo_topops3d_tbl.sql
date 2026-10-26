@@ -29,19 +29,19 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeometry3D_rtree_idx;
+DROP INDEX IF EXISTS tbl_tgeometry3D_rtree_060_tgeo_topops3d_idx;
 DROP INDEX IF EXISTS tbl_tgeography3D_rtree_idx;
 
-DROP INDEX IF EXISTS tbl_tgeometry3D_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tgeometry3D_quadtree_060_tgeo_topops3d_idx;
 DROP INDEX IF EXISTS tbl_tgeography3D_quadtree_idx;
 
-DROP INDEX IF EXISTS tbl_tgeometry3D_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tgeometry3D_kdtree_060_tgeo_topops3d_idx;
 DROP INDEX IF EXISTS tbl_tgeography3D_kdtree_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_topops3d;
-CREATE TABLE test_topops3d(
+CREATE TEMP TABLE test_topops3d(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -175,7 +175,7 @@ SELECT '~=', 'tgeography3D', 'tgeography3D', COUNT(*) FROM tbl_tgeography3D t1, 
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeometry3D_rtree_idx ON tbl_tgeometry3D USING GIST(temp);
+CREATE INDEX tbl_tgeometry3D_rtree_060_tgeo_topops3d_idx ON tbl_tgeometry3D USING GIST(temp);
 CREATE INDEX tbl_tgeography3D_rtree_idx ON tbl_tgeography3D USING GIST(temp);
 
 -------------------------------------------------------------------------------
@@ -352,12 +352,12 @@ WHERE op = '~=' AND leftarg = 'tgeography3D' AND rightarg = 'tgeography3D';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeometry3D_rtree_idx;
+DROP INDEX tbl_tgeometry3D_rtree_060_tgeo_topops3d_idx;
 DROP INDEX tbl_tgeography3D_rtree_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeometry3D_quadtree_idx ON tbl_tgeometry3D USING SPGIST(temp);
+CREATE INDEX tbl_tgeometry3D_quadtree_060_tgeo_topops3d_idx ON tbl_tgeometry3D USING SPGIST(temp);
 CREATE INDEX tbl_tgeography3D_quadtree_idx ON tbl_tgeography3D USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
@@ -534,12 +534,12 @@ WHERE op = '~=' AND leftarg = 'tgeography3D' AND rightarg = 'tgeography3D';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeometry3D_quadtree_idx;
+DROP INDEX tbl_tgeometry3D_quadtree_060_tgeo_topops3d_idx;
 DROP INDEX tbl_tgeography3D_quadtree_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeometry3D_kdtree_idx ON tbl_tgeometry3D USING SPGIST(temp tgeometry_kdtree_ops);
+CREATE INDEX tbl_tgeometry3D_kdtree_060_tgeo_topops3d_idx ON tbl_tgeometry3D USING SPGIST(temp tgeometry_kdtree_ops);
 CREATE INDEX tbl_tgeography3D_kdtree_idx ON tbl_tgeography3D USING SPGIST(temp tgeography_kdtree_ops);
 
 -------------------------------------------------------------------------------
@@ -716,7 +716,7 @@ WHERE op = '~=' AND leftarg = 'tgeography3D' AND rightarg = 'tgeography3D';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeometry3D_kdtree_idx;
+DROP INDEX tbl_tgeometry3D_kdtree_060_tgeo_topops3d_idx;
 DROP INDEX tbl_tgeography3D_kdtree_idx;
 
 -------------------------------------------------------------------------------

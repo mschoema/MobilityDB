@@ -31,20 +31,16 @@
 -- File span_ops.c
 -- Tests of operators for span types.
 -------------------------------------------------------------------------------
+DROP INDEX IF EXISTS tbl_intspanset_rtree_012_spanset_indexes_idx;
+DROP INDEX IF EXISTS tbl_floatspanset_rtree_012_spanset_indexes_idx;
 
-ANALYZE tbl_intspanset;
-ANALYZE tbl_floatspanset;
-
-DROP INDEX IF EXISTS tbl_intspanset_rtree_idx;
-DROP INDEX IF EXISTS tbl_floatspanset_rtree_idx;
-
-DROP INDEX IF EXISTS tbl_intspanset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_floatspanset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_intspanset_quadtree_012_spanset_indexes_idx;
+DROP INDEX IF EXISTS tbl_floatspanset_quadtree_012_spanset_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspanset_rtree_idx ON tbl_intspanset USING GIST(i);
-CREATE INDEX tbl_floatspanset_rtree_idx ON tbl_floatspanset USING GIST(f);
+CREATE INDEX tbl_intspanset_rtree_012_spanset_indexes_idx ON tbl_intspanset USING GIST(i);
+CREATE INDEX tbl_floatspanset_rtree_012_spanset_indexes_idx ON tbl_floatspanset USING GIST(f);
 
 SELECT COUNT(*) FROM tbl_intspanset WHERE i @> 50;
 SELECT COUNT(*) FROM tbl_intspanset WHERE i -|- 96;
@@ -83,13 +79,13 @@ SELECT COUNT(*) FROM tbl_floatspanset WHERE f &> floatspan '[85, 95]';
 SELECT round((f <-> 101.0), 6) FROM tbl_floatspanset ORDER BY 1 LIMIT 3;
 SELECT round((f <-> floatspan '[101,105]'), 6) FROM tbl_floatspanset ORDER BY 1 LIMIT 3;
 
-DROP INDEX IF EXISTS tbl_intspanset_rtree_idx;
-DROP INDEX IF EXISTS tbl_floatspanset_rtree_idx;
+DROP INDEX IF EXISTS tbl_intspanset_rtree_012_spanset_indexes_idx;
+DROP INDEX IF EXISTS tbl_floatspanset_rtree_012_spanset_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspanset_quadtree_idx ON tbl_intspanset USING SPGIST(i);
-CREATE INDEX tbl_floatspanset_quadtree_idx ON tbl_floatspanset USING SPGIST(f);
+CREATE INDEX tbl_intspanset_quadtree_012_spanset_indexes_idx ON tbl_intspanset USING SPGIST(i);
+CREATE INDEX tbl_floatspanset_quadtree_012_spanset_indexes_idx ON tbl_floatspanset USING SPGIST(f);
 
 SELECT COUNT(*) FROM tbl_intspanset WHERE i @> 50;
 SELECT COUNT(*) FROM tbl_intspanset WHERE i -|- 96;
@@ -128,7 +124,7 @@ SELECT COUNT(*) FROM tbl_floatspanset WHERE f &> floatspan '[85, 95]';
 SELECT round((f <-> 101.0), 6) FROM tbl_floatspanset ORDER BY 1 LIMIT 3;
 SELECT round((f <-> floatspan '[101,105]'), 6) FROM tbl_floatspanset ORDER BY 1 LIMIT 3;
 
-DROP INDEX IF EXISTS tbl_intspanset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_floatspanset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_intspanset_quadtree_012_spanset_indexes_idx;
+DROP INDEX IF EXISTS tbl_floatspanset_quadtree_012_spanset_indexes_idx;
 
 -------------------------------------------------------------------------------

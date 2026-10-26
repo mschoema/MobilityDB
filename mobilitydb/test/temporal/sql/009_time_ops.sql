@@ -388,24 +388,22 @@ SELECT tstzspanset '{[2001-01-03, 2001-01-04],[2001-01-07, 2001-01-08]}' <-> tst
 
 -------------------------------------------------------------------------------
 -- Nearest neighbor search
-ANALYZE tbl_tstzspan_big;
-
-CREATE INDEX tbl_tstzspan_big_quadtree_idx ON tbl_tstzspan_big USING SPGIST(t);
+CREATE INDEX tbl_tstzspan_big_quadtree_009_time_ops_idx ON tbl_tstzspan_big USING SPGIST(t);
 
 -- EXPLAIN ANALYZE
 SELECT t <-> timestamptz '2001-06-01' FROM tbl_tstzspan_big ORDER BY 1 LIMIT 3;
 SELECT t <-> tstzspan '[2001-06-01, 2001-07-01]' FROM tbl_tstzspan_big ORDER BY 1 LIMIT 3;
 SELECT t <-> tstzspanset '{[2001-01-01, 2001-01-15], [2001-02-01, 2001-02-15]}' FROM tbl_tstzspan_big ORDER BY 1 LIMIT 3;
 
-DROP INDEX tbl_tstzspan_big_quadtree_idx;
+DROP INDEX tbl_tstzspan_big_quadtree_009_time_ops_idx;
 
 -------------------------------------------------------------------------------
 -- RESTRICTION SELECTIVITY
 -- Test index support function
 
 CREATE INDEX tbl_tstzset_big_rtree_idx ON tbl_tstzset_big USING gist(t);
-CREATE INDEX tbl_tstzspan_big_rtree_idx ON tbl_tstzspan_big USING gist(t);
-CREATE INDEX tbl_tstzspanset_big_rtree_idx ON tbl_tstzspanset_big USING gist(t);
+CREATE INDEX tbl_tstzspan_big_rtree_009_time_ops_idx ON tbl_tstzspan_big USING gist(t);
+CREATE INDEX tbl_tstzspanset_big_rtree_009_time_ops_idx ON tbl_tstzspanset_big USING gist(t);
 
 -- EXPLAIN ANALYZE
 SELECT COUNT(*) FROM tbl_tstzset_big WHERE t && tstzset '{2001-06-01, 2001-07-01}';
@@ -443,16 +441,16 @@ SELECT COUNT(*) FROM tbl_tstzspan_big WHERE tstzspanset '{[2001-06-01, 2001-07-0
 SELECT COUNT(*) FROM tbl_tstzspanset_big WHERE tstzspanset '{[2001-06-01, 2001-07-01]}' <@ t;
 
 DROP INDEX tbl_tstzset_big_rtree_idx;
-DROP INDEX tbl_tstzspan_big_rtree_idx;
-DROP INDEX tbl_tstzspanset_big_rtree_idx;
+DROP INDEX tbl_tstzspan_big_rtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspanset_big_rtree_009_time_ops_idx;
 
 -------------------------------------------------------------------------------
 -- JOIN SELECTIVITY
 -- Test index support function
 
-CREATE INDEX tbl_tstzset_rtree_idx ON tbl_tstzset USING gist(t);
-CREATE INDEX tbl_tstzspan_rtree_idx ON tbl_tstzspan USING gist(t);
-CREATE INDEX tbl_tstzspanset_rtree_idx ON tbl_tstzspanset USING gist(t);
+CREATE INDEX tbl_tstzset_rtree_009_time_ops_idx ON tbl_tstzset USING gist(t);
+CREATE INDEX tbl_tstzspan_rtree_009_time_ops_idx ON tbl_tstzspan USING gist(t);
+CREATE INDEX tbl_tstzspanset_rtree_009_time_ops_idx ON tbl_tstzspanset USING gist(t);
 
 -- EXPLAIN ANALYZE
 SELECT COUNT(*) FROM tbl_tstzset t1, tbl_tstzset t2 WHERE t1.t && t2.t;
@@ -479,17 +477,17 @@ SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspan t2 WHERE t1.t <@ t2.t;
 SELECT COUNT(*) FROM tbl_tstzspan t1, tbl_tstzspanset t2 WHERE t1.t <@ t2.t;
 SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspanset t2 WHERE t1.t <@ t2.t;
 
-DROP INDEX tbl_tstzset_rtree_idx;
-DROP INDEX tbl_tstzspan_rtree_idx;
-DROP INDEX tbl_tstzspanset_rtree_idx;
+DROP INDEX tbl_tstzset_rtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspan_rtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspanset_rtree_009_time_ops_idx;
 
 -------------------------------------------------------------------------------
 -- RESTRICTION SELECTIVITY
 -- Test index support function
 
 CREATE INDEX tbl_tstzset_big_quadtree_idx ON tbl_tstzset_big USING spgist(t);
-CREATE INDEX tbl_tstzspan_big_quadtree_idx ON tbl_tstzspan_big USING spgist(t);
-CREATE INDEX tbl_tstzspanset_big_quadtree_idx ON tbl_tstzspanset_big USING spgist(t);
+CREATE INDEX tbl_tstzspan_big_quadtree_009_time_ops_idx ON tbl_tstzspan_big USING spgist(t);
+CREATE INDEX tbl_tstzspanset_big_quadtree_009_time_ops_idx ON tbl_tstzspanset_big USING spgist(t);
 
 -- EXPLAIN ANALYZE
 SELECT COUNT(*) FROM tbl_tstzset_big WHERE t && tstzset '{2001-06-01, 2001-07-01}';
@@ -527,16 +525,16 @@ SELECT COUNT(*) FROM tbl_tstzspan_big WHERE tstzspanset '{[2001-06-01, 2001-07-0
 SELECT COUNT(*) FROM tbl_tstzspanset_big WHERE tstzspanset '{[2001-06-01, 2001-07-01]}' <@ t;
 
 DROP INDEX tbl_tstzset_big_quadtree_idx;
-DROP INDEX tbl_tstzspan_big_quadtree_idx;
-DROP INDEX tbl_tstzspanset_big_quadtree_idx;
+DROP INDEX tbl_tstzspan_big_quadtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspanset_big_quadtree_009_time_ops_idx;
 
 -------------------------------------------------------------------------------
 -- JOIN SELECTIVITY
 -- Test index support function
 
-CREATE INDEX tbl_tstzset_quadtree_idx ON tbl_tstzset USING gist(t);
-CREATE INDEX tbl_tstzspan_quadtree_idx ON tbl_tstzspan USING gist(t);
-CREATE INDEX tbl_tstzspanset_quadtree_idx ON tbl_tstzspanset USING gist(t);
+CREATE INDEX tbl_tstzset_quadtree_009_time_ops_idx ON tbl_tstzset USING gist(t);
+CREATE INDEX tbl_tstzspan_quadtree_009_time_ops_idx ON tbl_tstzspan USING gist(t);
+CREATE INDEX tbl_tstzspanset_quadtree_009_time_ops_idx ON tbl_tstzspanset USING gist(t);
 
 -- EXPLAIN ANALYZE
 SELECT COUNT(*) FROM tbl_tstzset t1, tbl_tstzset t2 WHERE t1.t && t2.t;
@@ -585,17 +583,17 @@ SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspanset t2 WHERE t1.t <@ t2.t;
 SELECT COUNT(*) FROM tbl_tstzspan t1, tbl_tstzspan t2 WHERE t1.t <@ t2.t;
 SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspanset t2 WHERE t1.t <@ t2.t;
 
-DROP INDEX tbl_tstzset_quadtree_idx;
-DROP INDEX tbl_tstzspan_quadtree_idx;
-DROP INDEX tbl_tstzspanset_quadtree_idx;
+DROP INDEX tbl_tstzset_quadtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspan_quadtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspanset_quadtree_009_time_ops_idx;
 
 -------------------------------------------------------------------------------
 -- JOIN SELECTIVITY
 -- Test index support function
 
-CREATE INDEX tbl_tstzset_quadtree_idx ON tbl_tstzset USING spgist(t);
-CREATE INDEX tbl_tstzspan_quadtree_idx ON tbl_tstzspan USING spgist(t);
-CREATE INDEX tbl_tstzspanset_quadtree_idx ON tbl_tstzspanset USING spgist(t);
+CREATE INDEX tbl_tstzset_quadtree_009_time_ops_idx ON tbl_tstzset USING spgist(t);
+CREATE INDEX tbl_tstzspan_quadtree_009_time_ops_idx ON tbl_tstzspan USING spgist(t);
+CREATE INDEX tbl_tstzspanset_quadtree_009_time_ops_idx ON tbl_tstzspanset USING spgist(t);
 
 -- EXPLAIN ANALYZE
 SELECT COUNT(*) FROM tbl_tstzset t1, tbl_tstzset t2 WHERE t1.t && t2.t;
@@ -624,8 +622,8 @@ SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspan t2 WHERE t1.t <@ t2.t;
 SELECT COUNT(*) FROM tbl_tstzspan t1, tbl_tstzspanset t2 WHERE t1.t <@ t2.t;
 SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspanset t2 WHERE t1.t <@ t2.t;
 
-DROP INDEX tbl_tstzset_quadtree_idx;
-DROP INDEX tbl_tstzspan_quadtree_idx;
-DROP INDEX tbl_tstzspanset_quadtree_idx;
+DROP INDEX tbl_tstzset_quadtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspan_quadtree_009_time_ops_idx;
+DROP INDEX tbl_tstzspanset_quadtree_009_time_ops_idx;
 
 -------------------------------------------------------------------------------

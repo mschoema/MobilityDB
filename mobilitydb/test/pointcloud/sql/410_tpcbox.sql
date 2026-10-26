@@ -31,11 +31,10 @@
 -- topological predicates, comparison operators).
 
 -- A box reads its reference system off the schema its pcid names, so every
--- pcid constructed with below names one. Schema 2 states the same reference
--- system as schema 1, which is what leaves the schemas themselves as the only
--- thing two such boxes disagree about; schema 5 states a different one.
-INSERT INTO pointcloud_formats (pcid, srid, schema)
-SELECT 2, srid, schema FROM pointcloud_formats WHERE pcid = 1;
+-- pcid constructed with below names one. Schema 2, registered by the setup,
+-- states the same reference system as schema 1, which is what leaves the
+-- schemas themselves as the only thing two such boxes disagree about; schema
+-- 5 states a different one.
 INSERT INTO pointcloud_formats (pcid, srid, schema)
 SELECT 5, 4326, schema FROM pointcloud_formats WHERE pcid = 1;
 
@@ -350,6 +349,6 @@ SELECT setSRID(tpcboxT(tstzspan '[2024-01-01, 2024-01-02]', 5), 3857);
 
 -------------------------------------------------------------------------------
 
-DELETE FROM pointcloud_formats WHERE pcid IN (2, 5);
+DELETE FROM pointcloud_formats WHERE pcid = 5;
 
 -------------------------------------------------------------------------------

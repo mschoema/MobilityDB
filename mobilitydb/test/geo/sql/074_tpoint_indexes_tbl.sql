@@ -27,16 +27,12 @@
 --
 -------------------------------------------------------------------------------
 
-CREATE TABLE test AS
+CREATE TEMP TABLE test AS
 SELECT NULL::tgeompoint FROM generate_series(1, 10);
 ANALYZE test;
 DROP TABLE test;
 
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tgeompoint3D_big;
-ANALYZE tbl_tgeogpoint3D_big;
-
 DROP INDEX IF EXISTS tbl_tgeompoint3D_big_rtree_idx;
 DROP INDEX IF EXISTS tbl_tgeogpoint3D_big_rtree_idx;
 
@@ -283,16 +279,12 @@ DROP INDEX IF EXISTS tbl_tgeompoint3D_big_kdtree_idx;
 DROP INDEX IF EXISTS tbl_tgeogpoint3D_big_kdtree_idx;
 
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tgeompoint;
-ANALYZE tbl_tgeompoint3D;
-
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeompoint_rtree_idx;
-DROP INDEX IF EXISTS tbl_tgeompoint3D_rtree_idx;
-CREATE INDEX tbl_tgeompoint_rtree_idx ON tbl_tgeompoint USING GIST(temp);
-CREATE INDEX tbl_tgeompoint3D_rtree_idx ON tbl_tgeompoint3D USING GIST(temp);
+DROP INDEX IF EXISTS tbl_tgeompoint_rtree_074_tpoint_indexes_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint3D_rtree_074_tpoint_indexes_idx;
+CREATE INDEX tbl_tgeompoint_rtree_074_tpoint_indexes_idx ON tbl_tgeompoint USING GIST(temp);
+CREATE INDEX tbl_tgeompoint3D_rtree_074_tpoint_indexes_idx ON tbl_tgeompoint3D USING GIST(temp);
 
 -- EXPLAIN ANALYZE
 WITH test AS (
@@ -319,15 +311,15 @@ SELECT round(distance, 6) FROM test;
 WITH test AS (
   SELECT temp |=| geometry 'Polygon empty' AS distance FROM tbl_tgeompoint ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
-DROP INDEX tbl_tgeompoint_rtree_idx;
-DROP INDEX tbl_tgeompoint3D_rtree_idx;
+DROP INDEX tbl_tgeompoint_rtree_074_tpoint_indexes_idx;
+DROP INDEX tbl_tgeompoint3D_rtree_074_tpoint_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeompoint_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tgeompoint3D_quadtree_idx;
-CREATE INDEX tbl_tgeompoint_quadtree_idx ON tbl_tgeompoint USING SPGIST(temp);
-CREATE INDEX tbl_tgeompoint3D_quadtree_idx ON tbl_tgeompoint3D USING SPGIST(temp);
+DROP INDEX IF EXISTS tbl_tgeompoint_quadtree_074_tpoint_indexes_idx;
+DROP INDEX IF EXISTS tbl_tgeompoint3D_quadtree_074_tpoint_indexes_idx;
+CREATE INDEX tbl_tgeompoint_quadtree_074_tpoint_indexes_idx ON tbl_tgeompoint USING SPGIST(temp);
+CREATE INDEX tbl_tgeompoint3D_quadtree_074_tpoint_indexes_idx ON tbl_tgeompoint3D USING SPGIST(temp);
 
 -- EXPLAIN ANALYZE
 WITH test AS (
@@ -354,13 +346,13 @@ SELECT round(distance, 6) FROM test;
 WITH test AS (
   SELECT temp |=| geometry 'Polygon empty' AS distance FROM tbl_tgeompoint ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
-DROP INDEX tbl_tgeompoint_quadtree_idx;
-DROP INDEX tbl_tgeompoint3D_quadtree_idx;
+DROP INDEX tbl_tgeompoint_quadtree_074_tpoint_indexes_idx;
+DROP INDEX tbl_tgeompoint3D_quadtree_074_tpoint_indexes_idx;
 
 -------------------------------------------------------------------------------
 -- Coverage of all the same and order by logic in SP-GiST indexes
 
-CREATE TABLE tbl_tgeompoint3D_big_allthesame AS SELECT k, tgeompoint(geometry 'Point(5 5 5)', t) AS temp FROM tbl_tstzspan_big;
+CREATE TEMP TABLE tbl_tgeompoint3D_big_allthesame AS SELECT k, tgeompoint(geometry 'Point(5 5 5)', t) AS temp FROM tbl_tstzspan_big;
 CREATE INDEX tbl_tgeompoint3D_big_allthesame_quadtree_idx ON tbl_tgeompoint3D_big_allthesame USING SPGIST(temp);
 ANALYZE tbl_tgeompoint3D_big_allthesame;
 
@@ -377,7 +369,7 @@ DROP TABLE tbl_tgeompoint3D_big_allthesame;
 -- values is what builds such a node.
 -------------------------------------------------------------------------------
 
-CREATE TABLE tbl_tgeompoint_allthesame AS
+CREATE TEMP TABLE tbl_tgeompoint_allthesame AS
   SELECT k, tgeompoint 'Point(5 5)@2001-01-01' AS temp
   FROM generate_series(1, 1000) k;
 CREATE INDEX tbl_tgeompoint_allthesame_quadtree_idx ON tbl_tgeompoint_allthesame
@@ -407,7 +399,7 @@ DECLARE n int; s bigint; i bigint; bad bigint := 0;
 BEGIN
   FOREACH n IN ARRAY ARRAY[200, 300, 400, 800, 1200] LOOP
     DROP TABLE IF EXISTS tbl_gist_bound_inc;
-    EXECUTE format($f$CREATE TABLE tbl_gist_bound_inc AS
+    EXECUTE format($f$CREATE TEMP TABLE tbl_gist_bound_inc AS
       SELECT i AS k, tgeompoint(format('[Point(%%s %%s)@%%s, Point(%%s %%s)@%%s)',
         i %% 97, (i * 7) %% 89,
         timestamptz '2001-01-01' + (i || ' minutes')::interval,

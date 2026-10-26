@@ -69,8 +69,8 @@ SELECT tgeometry 'Point(1 1)@2001-01-01' #= tgeometry 'Point(1 1 1)@2001-01-01';
 
 -- Test index support function for ever/always equal and intersects<Time>
 
-CREATE INDEX tbl_tgeometry_rtree_idx ON tbl_tgeometry USING gist(temp);
-CREATE INDEX tbl_tgeography_rtree_idx ON tbl_tgeography USING gist(temp);
+CREATE INDEX tbl_tgeometry_rtree_054_tgeo_compops_idx ON tbl_tgeometry USING gist(temp);
+CREATE INDEX tbl_tgeography_rtree_054_tgeo_compops_idx ON tbl_tgeography USING gist(temp);
 
 -- EXPLAIN ANALYZE
 SELECT COUNT(*) FROM tbl_tgeometry WHERE temp ?= geometry 'SRID=3812;Point(1 1)';
@@ -79,15 +79,15 @@ SELECT COUNT(*) FROM tbl_tgeography WHERE temp ?= geography 'SRID=7844;Point(1.5
 SELECT COUNT(*) FROM tbl_tgeometry WHERE temp %= geometry 'SRID=3812;Point(1 1)';
 SELECT COUNT(*) FROM tbl_tgeography WHERE temp %= geography 'SRID=7844;Point(1.5 1.5)';
 
-DROP INDEX tbl_tgeometry_rtree_idx;
-DROP INDEX tbl_tgeography_rtree_idx;
+DROP INDEX tbl_tgeometry_rtree_054_tgeo_compops_idx;
+DROP INDEX tbl_tgeography_rtree_054_tgeo_compops_idx;
 
 -------------------------------------------------------------------------------
 
 -- Test index support function for ever/always equal and intersects<Time>
 
-CREATE INDEX tbl_tgeometry_quadtree_idx ON tbl_tgeometry USING spgist(temp);
-CREATE INDEX tbl_tgeography_quadtree_idx ON tbl_tgeography USING spgist(temp);
+CREATE INDEX tbl_tgeometry_quadtree_054_tgeo_compops_idx ON tbl_tgeometry USING spgist(temp);
+CREATE INDEX tbl_tgeography_quadtree_054_tgeo_compops_idx ON tbl_tgeography USING spgist(temp);
 
 -- EXPLAIN ANALYZE
 SELECT COUNT(*) FROM tbl_tgeometry WHERE temp ?= geometry 'SRID=3812;Point(1 1)';
@@ -96,8 +96,8 @@ SELECT COUNT(*) FROM tbl_tgeography WHERE temp ?= geography 'SRID=7844;Point(1.5
 SELECT COUNT(*) FROM tbl_tgeometry WHERE temp %= geometry 'SRID=3812;Point(1 1)';
 SELECT COUNT(*) FROM tbl_tgeography WHERE temp %= geography 'SRID=7844;Point(1.5 1.5)';
 
-DROP INDEX tbl_tgeometry_quadtree_idx;
-DROP INDEX tbl_tgeography_quadtree_idx;
+DROP INDEX tbl_tgeometry_quadtree_054_tgeo_compops_idx;
+DROP INDEX tbl_tgeography_quadtree_054_tgeo_compops_idx;
 
 -------------------------------------------------------------------------------
 -- Temporal equal

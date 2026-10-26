@@ -27,16 +27,16 @@
 --
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tgeompoint3D_rtree_idx;
-NOTICE:  index "tbl_tgeompoint3d_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeompoint3D_quadtree_idx;
-NOTICE:  index "tbl_tgeompoint3d_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeompoint3D_kdtree_idx;
-NOTICE:  index "tbl_tgeompoint3d_kdtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeompoint3D_rtree_062_tpoint_posops3d_idx;
+NOTICE:  index "tbl_tgeompoint3d_rtree_062_tpoint_posops3d_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeompoint3D_quadtree_062_tpoint_posops3d_idx;
+NOTICE:  index "tbl_tgeompoint3d_quadtree_062_tpoint_posops3d_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeompoint3D_kdtree_062_tpoint_posops3d_idx;
+NOTICE:  index "tbl_tgeompoint3d_kdtree_062_tpoint_posops3d_idx" does not exist, skipping
 -------------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_posops3d;
 NOTICE:  table "test_posops3d" does not exist, skipping
-create TABLE test_posops3d(
+create TEMP TABLE test_posops3d(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -114,7 +114,7 @@ SELECT '&<#', 'tgeogpoint3D', 'tstzspan', COUNT(*) FROM tbl_tgeogpoint3D, tbl_ts
 INSERT INTO test_posops3d(op, leftarg, rightarg, no_idx)
 SELECT '#&>', 'tgeogpoint3D', 'tstzspan', COUNT(*) FROM tbl_tgeogpoint3D, tbl_tstzspan WHERE temp #&> t;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeompoint3D_rtree_idx ON tbl_tgeompoint3D USING GIST(temp);
+CREATE INDEX tbl_tgeompoint3D_rtree_062_tpoint_posops3d_idx ON tbl_tgeompoint3D USING GIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_posops3d
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tgeompoint3D WHERE t <<# temp )
@@ -216,9 +216,9 @@ UPDATE test_posops3d
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tgeogpoint3D, tbl_tstzspan WHERE temp #&> t )
 WHERE op = '#&>' AND leftarg = 'tgeogpoint3D' AND rightarg = 'tstzspan';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeompoint3D_rtree_idx;
+DROP INDEX tbl_tgeompoint3D_rtree_062_tpoint_posops3d_idx;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeompoint3D_quadtree_idx ON tbl_tgeompoint3D USING SPGIST(temp);
+CREATE INDEX tbl_tgeompoint3D_quadtree_062_tpoint_posops3d_idx ON tbl_tgeompoint3D USING SPGIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_posops3d
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tgeompoint3D WHERE t <<# temp )
@@ -320,12 +320,12 @@ UPDATE test_posops3d
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tgeogpoint3D, tbl_tstzspan WHERE temp #&> t )
 WHERE op = '#&>' AND leftarg = 'tgeogpoint3D' AND rightarg = 'tstzspan';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeompoint3D_quadtree_idx;
+DROP INDEX tbl_tgeompoint3D_quadtree_062_tpoint_posops3d_idx;
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeompoint3D_rtree_idx;
-ERROR:  index "tbl_tgeompoint3d_rtree_idx" does not exist
+DROP INDEX tbl_tgeompoint3D_rtree_062_tpoint_posops3d_idx;
+ERROR:  index "tbl_tgeompoint3d_rtree_062_tpoint_posops3d_idx" does not exist
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeompoint3D_kdtree_idx ON tbl_tgeompoint3D USING SPGIST(temp tgeompoint_kdtree_ops);
+CREATE INDEX tbl_tgeompoint3D_kdtree_062_tpoint_posops3d_idx ON tbl_tgeompoint3D USING SPGIST(temp tgeompoint_kdtree_ops);
 -------------------------------------------------------------------------------
 UPDATE test_posops3d
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tgeompoint3D WHERE t <<# temp )
@@ -427,7 +427,7 @@ UPDATE test_posops3d
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tgeogpoint3D, tbl_tstzspan WHERE temp #&> t )
 WHERE op = '#&>' AND leftarg = 'tgeogpoint3D' AND rightarg = 'tstzspan';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeompoint3D_kdtree_idx;
+DROP INDEX tbl_tgeompoint3D_kdtree_062_tpoint_posops3d_idx;
 -------------------------------------------------------------------------------
 SELECT * FROM test_posops3d
 WHERE no_idx <> rtree_idx OR no_idx <> quadtree_idx OR no_idx <> kdtree_idx OR

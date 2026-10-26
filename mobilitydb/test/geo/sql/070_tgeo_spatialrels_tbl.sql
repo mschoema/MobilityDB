@@ -189,8 +189,8 @@ SELECT COUNT(*) FROM tbl_tgeography3D t1, tbl_tgeography3D t2 WHERE aDwithin(t1.
 
 -- Test index support function for ever spatial relationships
 
-CREATE INDEX tbl_tgeometry_rtree_idx ON tbl_tgeometry USING gist(temp);
-CREATE INDEX tbl_tgeography_rtree_idx ON tbl_tgeography USING gist(temp);
+CREATE INDEX tbl_tgeometry_rtree_070_tgeo_spatialrels_idx ON tbl_tgeometry USING gist(temp);
+CREATE INDEX tbl_tgeography_rtree_070_tgeo_spatialrels_idx ON tbl_tgeography USING gist(temp);
 
 SELECT COUNT(*) FROM tbl_tgeometry WHERE eContains(geometry 'SRID=3812;Polygon((0 0,0 5,5 5,5 0,0 0))', temp);
 
@@ -250,14 +250,14 @@ SELECT COUNT(*) FROM tbl_tgeography WHERE eDwithin(temp, tgeography 'SRID=7844;[
 -- PostGIS ST_Buffer() function which is performed by GEOS
 SELECT COUNT(*) FROM tbl_tgeography WHERE aDwithin(temp, tgeography 'SRID=7844;[Point(0 0)@2001-01-01, Point(5 5)@2001-02-01]', 5);
 
-DROP INDEX tbl_tgeometry_rtree_idx;
-DROP INDEX tbl_tgeography_rtree_idx;
+DROP INDEX tbl_tgeometry_rtree_070_tgeo_spatialrels_idx;
+DROP INDEX tbl_tgeography_rtree_070_tgeo_spatialrels_idx;
 
 -------------------------------------------------------------------------------
 -- Test index support function for ever spatial relationships
 
-CREATE INDEX tbl_tgeometry_quadtree_idx ON tbl_tgeometry USING spgist(temp);
-CREATE INDEX tbl_tgeography_quadtree_idx ON tbl_tgeography USING spgist(temp);
+CREATE INDEX tbl_tgeometry_quadtree_070_tgeo_spatialrels_idx ON tbl_tgeometry USING spgist(temp);
+CREATE INDEX tbl_tgeography_quadtree_070_tgeo_spatialrels_idx ON tbl_tgeography USING spgist(temp);
 
 SELECT COUNT(*) FROM tbl_tgeometry WHERE eContains(geometry 'SRID=3812;Polygon((0 0,0 5,5 5,5 0,0 0))', temp);
 
@@ -317,8 +317,8 @@ SELECT COUNT(*) FROM tbl_tgeography WHERE eDwithin(temp, tgeography 'SRID=7844;[
 -- PostGIS ST_Buffer() function which is performed by GEOS
 SELECT COUNT(*) FROM tbl_tgeography WHERE aDwithin(temp, tgeography 'SRID=7844;[Point(0 0)@2001-01-01, Point(5 5)@2001-02-01]', 5);
 
-DROP INDEX tbl_tgeometry_quadtree_idx;
-DROP INDEX tbl_tgeography_quadtree_idx;
+DROP INDEX tbl_tgeometry_quadtree_070_tgeo_spatialrels_idx;
+DROP INDEX tbl_tgeography_quadtree_070_tgeo_spatialrels_idx;
 
 -------------------------------------------------------------------------------
 

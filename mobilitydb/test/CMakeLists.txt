@@ -28,7 +28,10 @@
 # The suite runs with pg_regress, see scripts/regress.cmake. Each module
 # registers its tests with mobilitydb_add_tests, and the schedule lists the
 # setup scripts of every module, which create and load the tables the tests
-# read, before the tests.
+# read, before the tests. The tests run concurrently, so a test creates its
+# scratch tables as temporary tables, gives the indexes it creates on the
+# tables of the setup scripts names no other test gives, and analyzes no table
+# of the setup scripts.
 
 # The temporary instance of the tests lies in tmptest under the build
 # directory, unless another directory is given at configure time
@@ -121,10 +124,26 @@ get_property(MOBILITYDB_TEST_SETUPS GLOBAL PROPERTY MOBILITYDB_TEST_SETUPS)
 get_property(_tests GLOBAL PROPERTY MOBILITYDB_TESTS)
 get_property(MOBILITYDB_TEST_DIRS GLOBAL PROPERTY MOBILITYDB_TEST_DIRS)
 
+# The setup scripts run one after the other, and then the tests in groups
+# that run concurrently, each group after the previous one
 set(_schedule "")
-foreach(_test ${MOBILITYDB_TEST_SETUPS} ${_tests})
+foreach(_test ${MOBILITYDB_TEST_SETUPS})
   string(APPEND _schedule "test: ${_test}\n")
 endforeach()
+set(_group "")
+foreach(_test ${_tests})
+  list(APPEND _group ${_test})
+  list(LENGTH _group _length)
+  if(_length EQUAL 20)
+    list(JOIN _group " " _group)
+    string(APPEND _schedule "test: ${_group}\n")
+    set(_group "")
+  endif()
+endforeach()
+if(_group)
+  list(JOIN _group " " _group)
+  string(APPEND _schedule "test: ${_group}\n")
+endif()
 file(WRITE ${MOBILITYDB_REGRESS_DIR}/schedule "${_schedule}")
 
 # The settings of the temporary instance

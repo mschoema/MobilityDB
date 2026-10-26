@@ -33,7 +33,7 @@
 
 \copy tbl_tnpoint TO 'tbl_tnpoint' (FORMAT BINARY);
 DROP TABLE IF EXISTS tbl_tnpoint_tmp;
-CREATE TABLE tbl_tnpoint_tmp AS TABLE tbl_tnpoint WITH NO DATA;
+CREATE TEMP TABLE tbl_tnpoint_tmp AS TABLE tbl_tnpoint WITH NO DATA;
 \copy tbl_tnpoint_tmp FROM 'tbl_tnpoint' (FORMAT BINARY);
 SELECT COUNT(*) FROM tbl_tnpoint t1, tbl_tnpoint_tmp t2 WHERE t1.k = t2.k AND t1.temp <> t2.temp;
 DROP TABLE tbl_tnpoint_tmp;
@@ -59,7 +59,7 @@ SELECT MAX(getPosition(startValue(temp))) FROM test;
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS tbl_tnpointinst_test;
-CREATE TABLE tbl_tnpointinst_test AS SELECT k, unnest(instants(seq)) AS inst FROM tbl_tnpoint_seq;
+CREATE TEMP TABLE tbl_tnpointinst_test AS SELECT k, unnest(instants(seq)) AS inst FROM tbl_tnpoint_seq;
 WITH temp AS (
   SELECT numSequences(tnpointSeqSetGaps(array_agg(inst ORDER BY getTime(inst)), '5 minutes'::interval, 5.0))
   FROM tbl_tnpointinst_test GROUP BY k )
@@ -297,25 +297,25 @@ SELECT MAX(hash(temp)) FROM tbl_tnpoint;
 -------------------------------------------------------------------------------
 -- Test index support function for ever/always equal and intersects<Time>
 
-CREATE INDEX tbl_tnpoint_rtree_idx ON tbl_tnpoint USING gist(temp);
+CREATE INDEX tbl_tnpoint_rtree_302_tnpoint_idx ON tbl_tnpoint USING gist(temp);
 
 -- EXPLAIN ANALYZE
 -- SELECT COUNT(*) FROM tbl_tnpoint WHERE temp ?= 'NPoint(1, 0.1)';
 
 -- SELECT COUNT(*) FROM tbl_tnpoint WHERE temp %= 'NPoint(1, 0.1)';
 
-DROP INDEX tbl_tnpoint_rtree_idx;
+DROP INDEX tbl_tnpoint_rtree_302_tnpoint_idx;
 
 -------------------------------------------------------------------------------
 -- Test index support function for ever/always equal and intersects<Time>
 
-CREATE INDEX tbl_tnpoint_quadtree_idx ON tbl_tnpoint USING spgist(temp);
+CREATE INDEX tbl_tnpoint_quadtree_302_tnpoint_idx ON tbl_tnpoint USING spgist(temp);
 
 -- EXPLAIN ANALYZE
 -- SELECT COUNT(*) FROM tbl_tnpoint WHERE temp ?= 'NPoint(1, 0.1)';
 
 -- SELECT COUNT(*) FROM tbl_tnpoint WHERE temp %= 'NPoint(1, 0.1)';
 
-DROP INDEX tbl_tnpoint_quadtree_idx;
+DROP INDEX tbl_tnpoint_quadtree_302_tnpoint_idx;
 
 -------------------------------------------------------------------------------

@@ -29,14 +29,14 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tnpoint_rtree_idx;
-DROP INDEX IF EXISTS tbl_tnpoint_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tnpoint_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tnpoint_rtree_308_tnpoint_topops_idx;
+DROP INDEX IF EXISTS tbl_tnpoint_quadtree_308_tnpoint_topops_idx;
+DROP INDEX IF EXISTS tbl_tnpoint_kdtree_308_tnpoint_topops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE if exists test_tnpoint_topops;
-CREATE TABLE test_tnpoint_topops(
+CREATE TEMP TABLE test_tnpoint_topops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -109,7 +109,7 @@ SELECT '-|-', 'tnpoint', 'tnpoint', COUNT(*) FROM tbl_tnpoint t1, tbl_tnpoint t2
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tnpoint_rtree_idx ON tbl_tnpoint USING GIST(temp);
+CREATE INDEX tbl_tnpoint_rtree_308_tnpoint_topops_idx ON tbl_tnpoint USING GIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tnpoint
@@ -199,8 +199,8 @@ WHERE op = '-|-' and leftarg = 'tnpoint' and rightarg = 'tnpoint';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tnpoint_rtree_idx;
-CREATE INDEX tbl_tnpoint_quadtree_idx ON tbl_tnpoint USING SPGIST(temp);
+DROP INDEX tbl_tnpoint_rtree_308_tnpoint_topops_idx;
+CREATE INDEX tbl_tnpoint_quadtree_308_tnpoint_topops_idx ON tbl_tnpoint USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tnpoint
@@ -290,8 +290,8 @@ WHERE op = '-|-' and leftarg = 'tnpoint' and rightarg = 'tnpoint';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tnpoint_quadtree_idx;
-CREATE INDEX tbl_tnpoint_kdtree_idx ON tbl_tnpoint USING SPGIST(temp tnpoint_kdtree_ops);
+DROP INDEX tbl_tnpoint_quadtree_308_tnpoint_topops_idx;
+CREATE INDEX tbl_tnpoint_kdtree_308_tnpoint_topops_idx ON tbl_tnpoint USING SPGIST(temp tnpoint_kdtree_ops);
 
 -------------------------------------------------------------------------------
 -- <type> op tnpoint
@@ -381,7 +381,7 @@ WHERE op = '-|-' and leftarg = 'tnpoint' and rightarg = 'tnpoint';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tnpoint_kdtree_idx;
+DROP INDEX tbl_tnpoint_kdtree_308_tnpoint_topops_idx;
 
 -------------------------------------------------------------------------------
 

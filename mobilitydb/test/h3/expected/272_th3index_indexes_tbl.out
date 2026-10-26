@@ -27,7 +27,6 @@
 --
 -------------------------------------------------------------------------------
 -----------------------------------------------------------------------------
-ANALYZE tbl_th3index_big;
 -----------------------------------------------------------------------------
 DROP INDEX IF EXISTS tbl_th3index_big_rtree_idx;
 NOTICE:  index "tbl_th3index_big_rtree_idx" does not exist, skipping
@@ -38,7 +37,7 @@ NOTICE:  index "tbl_th3index_big_kdtree_idx" does not exist, skipping
 -----------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_th3index_idx;
 NOTICE:  table "test_th3index_idx" does not exist, skipping
-CREATE TABLE test_th3index_idx(
+CREATE TEMP TABLE test_th3index_idx(
   op char(3),
   leftarg text,
   rightarg text,
@@ -79,7 +78,6 @@ INSERT INTO test_th3index_idx(op, leftarg, rightarg, no_idx)
 SELECT '#>>', 'stbox', 'th3index', COUNT(*) FROM tbl_geodstbox, tbl_th3index_big WHERE b #>> temp;
 -----------------------------------------------------------------------------
 CREATE INDEX tbl_th3index_big_rtree_idx ON tbl_th3index_big USING GIST(temp);
-ANALYZE tbl_th3index_big;
 -----------------------------------------------------------------------------
 UPDATE test_th3index_idx
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_geodstbox, tbl_th3index_big WHERE b && temp )
@@ -126,7 +124,6 @@ WHERE op = '#>>' AND leftarg = 'stbox' AND rightarg = 'th3index';
 -----------------------------------------------------------------------------
 DROP INDEX tbl_th3index_big_rtree_idx;
 CREATE INDEX tbl_th3index_big_quadtree_idx ON tbl_th3index_big USING SPGIST(temp);
-ANALYZE tbl_th3index_big;
 -----------------------------------------------------------------------------
 UPDATE test_th3index_idx
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_geodstbox, tbl_th3index_big WHERE b && temp )
@@ -173,7 +170,6 @@ WHERE op = '#>>' AND leftarg = 'stbox' AND rightarg = 'th3index';
 -----------------------------------------------------------------------------
 DROP INDEX tbl_th3index_big_quadtree_idx;
 CREATE INDEX tbl_th3index_big_kdtree_idx ON tbl_th3index_big USING SPGIST(temp th3index_kdtree_ops);
-ANALYZE tbl_th3index_big;
 -----------------------------------------------------------------------------
 UPDATE test_th3index_idx
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_geodstbox, tbl_th3index_big WHERE b && temp )

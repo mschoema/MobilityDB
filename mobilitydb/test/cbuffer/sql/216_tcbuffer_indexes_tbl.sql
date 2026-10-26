@@ -41,9 +41,6 @@
 
 -------------------------------------------------------------------------------
 -- Sanity: ANALYZE catches any planner-stat skew before indexed runs
-
-ANALYZE tbl_tcbuffer_big;
-
 DROP INDEX IF EXISTS tbl_tcbuffer_big_rtree_idx;
 DROP INDEX IF EXISTS tbl_tcbuffer_big_quadtree_idx;
 DROP INDEX IF EXISTS tbl_tcbuffer_big_kdtree_idx;
@@ -183,11 +180,8 @@ DROP INDEX IF EXISTS tbl_tcbuffer_big_kdtree_idx;
 -------------------------------------------------------------------------------
 -- 4. KNN ordered-search via |=| on the small tbl_tcbuffer (rtree + quadtree)
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tcbuffer;
-
-DROP INDEX IF EXISTS tbl_tcbuffer_rtree_idx;
-CREATE INDEX tbl_tcbuffer_rtree_idx ON tbl_tcbuffer USING GIST(temp);
+DROP INDEX IF EXISTS tbl_tcbuffer_rtree_216_tcbuffer_indexes_idx;
+CREATE INDEX tbl_tcbuffer_rtree_216_tcbuffer_indexes_idx ON tbl_tcbuffer USING GIST(temp);
 
 WITH test AS (
   SELECT temp |=| tcbuffer 'SRID=3812;[Cbuffer(Point(0 0), 1)@2001-06-01, Cbuffer(Point(50 50), 5)@2001-07-01]' AS distance
@@ -207,12 +201,12 @@ WITH test AS (
   FROM tbl_tcbuffer ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
 
-DROP INDEX tbl_tcbuffer_rtree_idx;
+DROP INDEX tbl_tcbuffer_rtree_216_tcbuffer_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_idx;
-CREATE INDEX tbl_tcbuffer_quadtree_idx ON tbl_tcbuffer USING SPGIST(temp);
+DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_216_tcbuffer_indexes_idx;
+CREATE INDEX tbl_tcbuffer_quadtree_216_tcbuffer_indexes_idx ON tbl_tcbuffer USING SPGIST(temp);
 
 WITH test AS (
   SELECT temp |=| tcbuffer 'SRID=3812;[Cbuffer(Point(0 0), 1)@2001-06-01, Cbuffer(Point(50 50), 5)@2001-07-01]' AS distance
@@ -232,7 +226,7 @@ WITH test AS (
   FROM tbl_tcbuffer ORDER BY 1 LIMIT 3 )
 SELECT round(distance, 6) FROM test;
 
-DROP INDEX tbl_tcbuffer_quadtree_idx;
+DROP INDEX tbl_tcbuffer_quadtree_216_tcbuffer_indexes_idx;
 
 -------------------------------------------------------------------------------
 -- 5. SP-GiST "all the same" balancing edge case
@@ -241,7 +235,7 @@ DROP INDEX tbl_tcbuffer_quadtree_idx;
 -- tcbuffer value. SP-GiST quadtree must split a node where all keys are
 -- equal — exercises the same-key fallback path in the picksplit function.
 
-CREATE TABLE tbl_tcbuffer_big_allthesame AS
+CREATE TEMP TABLE tbl_tcbuffer_big_allthesame AS
   SELECT k, tcbuffer(cbuffer 'SRID=3812;Cbuffer(Point(5 5), 1)', t) AS temp
   FROM tbl_tstzspan_big;
 CREATE INDEX tbl_tcbuffer_big_allthesame_quadtree_idx ON tbl_tcbuffer_big_allthesame USING SPGIST(temp);

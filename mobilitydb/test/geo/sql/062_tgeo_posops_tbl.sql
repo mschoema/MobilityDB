@@ -29,19 +29,19 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tgeometry_rtree_idx;
-DROP INDEX IF EXISTS tbl_tgeography_rtree_idx;
+DROP INDEX IF EXISTS tbl_tgeometry_rtree_062_tgeo_posops_idx;
+DROP INDEX IF EXISTS tbl_tgeography_rtree_062_tgeo_posops_idx;
 
-DROP INDEX IF EXISTS tbl_tgeometry_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tgeography_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tgeometry_quadtree_062_tgeo_posops_idx;
+DROP INDEX IF EXISTS tbl_tgeography_quadtree_062_tgeo_posops_idx;
 
-DROP INDEX IF EXISTS tbl_tgeometry_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tgeography_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tgeometry_kdtree_062_tgeo_posops_idx;
+DROP INDEX IF EXISTS tbl_tgeography_kdtree_062_tgeo_posops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_posops;
-CREATE TABLE test_posops(
+CREATE TEMP TABLE test_posops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -134,8 +134,8 @@ SELECT '#&>', 'tgeography', 'tgeography', COUNT(*) FROM tbl_tgeography t1, tbl_t
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeometry_rtree_idx ON tbl_tgeometry USING GIST(temp);
-CREATE INDEX tbl_tgeography_rtree_idx ON tbl_tgeography USING GIST(temp);
+CREATE INDEX tbl_tgeometry_rtree_062_tgeo_posops_idx ON tbl_tgeometry USING GIST(temp);
+CREATE INDEX tbl_tgeography_rtree_062_tgeo_posops_idx ON tbl_tgeography USING GIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -251,13 +251,13 @@ WHERE op = '#&>' AND leftarg = 'tgeography' AND rightarg = 'tgeography';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeometry_rtree_idx;
-DROP INDEX tbl_tgeography_rtree_idx;
+DROP INDEX tbl_tgeometry_rtree_062_tgeo_posops_idx;
+DROP INDEX tbl_tgeography_rtree_062_tgeo_posops_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeometry_quadtree_idx ON tbl_tgeometry USING SPGIST(temp);
-CREATE INDEX tbl_tgeography_quadtree_idx ON tbl_tgeography USING SPGIST(temp);
+CREATE INDEX tbl_tgeometry_quadtree_062_tgeo_posops_idx ON tbl_tgeometry USING SPGIST(temp);
+CREATE INDEX tbl_tgeography_quadtree_062_tgeo_posops_idx ON tbl_tgeography USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -374,13 +374,13 @@ WHERE op = '#&>' AND leftarg = 'tgeography' AND rightarg = 'tgeography';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeometry_quadtree_idx;
-DROP INDEX tbl_tgeography_quadtree_idx;
+DROP INDEX tbl_tgeometry_quadtree_062_tgeo_posops_idx;
+DROP INDEX tbl_tgeography_quadtree_062_tgeo_posops_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tgeometry_kdtree_idx ON tbl_tgeometry USING SPGIST(temp tgeometry_kdtree_ops);
-CREATE INDEX tbl_tgeography_kdtree_idx ON tbl_tgeography USING SPGIST(temp tgeography_kdtree_ops);
+CREATE INDEX tbl_tgeometry_kdtree_062_tgeo_posops_idx ON tbl_tgeometry USING SPGIST(temp tgeometry_kdtree_ops);
+CREATE INDEX tbl_tgeography_kdtree_062_tgeo_posops_idx ON tbl_tgeography USING SPGIST(temp tgeography_kdtree_ops);
 
 -------------------------------------------------------------------------------
 
@@ -496,8 +496,8 @@ WHERE op = '#&>' AND leftarg = 'tgeography' AND rightarg = 'tgeography';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tgeometry_kdtree_idx;
-DROP INDEX tbl_tgeography_kdtree_idx;
+DROP INDEX tbl_tgeometry_kdtree_062_tgeo_posops_idx;
+DROP INDEX tbl_tgeography_kdtree_062_tgeo_posops_idx;
 
 -------------------------------------------------------------------------------
 

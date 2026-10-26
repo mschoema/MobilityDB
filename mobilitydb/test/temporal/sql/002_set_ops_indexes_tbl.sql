@@ -32,28 +32,28 @@
 -- Tests of operators that involve indexes for set types.
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_intset_rtree_idx;
+DROP INDEX IF EXISTS tbl_intset_rtree_002_set_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintset_rtree_idx;
 DROP INDEX IF EXISTS tbl_floatset_rtree_idx;
 DROP INDEX IF EXISTS tbl_dateset_rtree_idx;
-DROP INDEX IF EXISTS tbl_tstzset_rtree_idx;
+DROP INDEX IF EXISTS tbl_tstzset_rtree_002_set_ops_indexes_idx;
 
-DROP INDEX IF EXISTS tbl_intset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_intset_quadtree_002_set_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintset_quadtree_idx;
 DROP INDEX IF EXISTS tbl_floatset_quadtree_idx;
 DROP INDEX IF EXISTS tbl_dateset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tstzset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tstzset_quadtree_002_set_ops_indexes_idx;
 
 DROP INDEX IF EXISTS tbl_bigintset_kdtree_idx;
-DROP INDEX IF EXISTS tbl_intset_kdtree_idx;
+DROP INDEX IF EXISTS tbl_intset_kdtree_002_set_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_floatset_kdtree_idx;
 DROP INDEX IF EXISTS tbl_dateset_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tstzset_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tstzset_kdtree_002_set_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_setops;
-CREATE TABLE test_setops(
+CREATE TEMP TABLE test_setops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -221,11 +221,11 @@ SELECT '=', 'tstzset', 'tstzset', COUNT(*) FROM tbl_tstzset t1, tbl_tstzset t2 W
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intset_rtree_idx ON tbl_intset USING GIST(i);
+CREATE INDEX tbl_intset_rtree_002_set_ops_indexes_idx ON tbl_intset USING GIST(i);
 CREATE INDEX tbl_bigintset_rtree_idx ON tbl_bigintset USING GIST(b);
 CREATE INDEX tbl_floatset_rtree_idx ON tbl_floatset USING GIST(f);
 CREATE INDEX tbl_dateset_rtree_idx ON tbl_dateset USING GIST(d);
-CREATE INDEX tbl_tstzset_rtree_idx ON tbl_tstzset USING GIST(t);
+CREATE INDEX tbl_tstzset_rtree_002_set_ops_indexes_idx ON tbl_tstzset USING GIST(t);
 
 -------------------------------------------------------------------------------
 
@@ -455,19 +455,19 @@ WHERE op = '=' AND leftarg = 'tstzset' AND rightarg = 'tstzset';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intset_rtree_idx;
+DROP INDEX tbl_intset_rtree_002_set_ops_indexes_idx;
 DROP INDEX tbl_bigintset_rtree_idx;
 DROP INDEX tbl_floatset_rtree_idx;
 DROP INDEX tbl_dateset_rtree_idx;
-DROP INDEX tbl_tstzset_rtree_idx;
+DROP INDEX tbl_tstzset_rtree_002_set_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intset_quadtree_idx ON tbl_intset USING SPGIST(i);
+CREATE INDEX tbl_intset_quadtree_002_set_ops_indexes_idx ON tbl_intset USING SPGIST(i);
 CREATE INDEX tbl_bigintset_quadtree_idx ON tbl_bigintset USING SPGIST(b);
 CREATE INDEX tbl_floatset_quadtree_idx ON tbl_floatset USING SPGIST(f);
 CREATE INDEX tbl_dateset_quadtree_idx ON tbl_dateset USING SPGIST(d);
-CREATE INDEX tbl_tstzset_quadtree_idx ON tbl_tstzset USING SPGIST(t);
+CREATE INDEX tbl_tstzset_quadtree_002_set_ops_indexes_idx ON tbl_tstzset USING SPGIST(t);
 
 -------------------------------------------------------------------------------
 
@@ -697,19 +697,19 @@ WHERE op = '=' AND leftarg = 'tstzset' AND rightarg = 'tstzset';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intset_quadtree_idx;
+DROP INDEX tbl_intset_quadtree_002_set_ops_indexes_idx;
 DROP INDEX tbl_bigintset_quadtree_idx;
 DROP INDEX tbl_floatset_quadtree_idx;
 DROP INDEX tbl_dateset_quadtree_idx;
-DROP INDEX tbl_tstzset_quadtree_idx;
+DROP INDEX tbl_tstzset_quadtree_002_set_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intset_kdtree_idx ON tbl_intset USING SPGIST(i intset_kdtree_ops);
+CREATE INDEX tbl_intset_kdtree_002_set_ops_indexes_idx ON tbl_intset USING SPGIST(i intset_kdtree_ops);
 CREATE INDEX tbl_bigintset_kdtree_idx ON tbl_bigintset USING SPGIST(b bigintset_kdtree_ops);
 CREATE INDEX tbl_floatset_kdtree_idx ON tbl_floatset USING SPGIST(f floatset_kdtree_ops);
 CREATE INDEX tbl_dateset_kdtree_idx ON tbl_dateset USING SPGIST(d dateset_kdtree_ops);
-CREATE INDEX tbl_tstzset_kdtree_idx ON tbl_tstzset USING SPGIST(t tstzset_kdtree_ops);
+CREATE INDEX tbl_tstzset_kdtree_002_set_ops_indexes_idx ON tbl_tstzset USING SPGIST(t tstzset_kdtree_ops);
 
 -------------------------------------------------------------------------------
 
@@ -942,11 +942,11 @@ WHERE op = '=' AND leftarg = 'tstzset' AND rightarg = 'tstzset';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intset_kdtree_idx;
+DROP INDEX tbl_intset_kdtree_002_set_ops_indexes_idx;
 DROP INDEX tbl_bigintset_kdtree_idx;
 DROP INDEX tbl_floatset_kdtree_idx;
 DROP INDEX tbl_dateset_kdtree_idx;
-DROP INDEX tbl_tstzset_kdtree_idx;
+DROP INDEX tbl_tstzset_kdtree_002_set_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 

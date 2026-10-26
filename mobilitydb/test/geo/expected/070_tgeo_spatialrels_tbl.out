@@ -563,8 +563,8 @@ SELECT COUNT(*) FROM tbl_tgeography3D t1, tbl_tgeography3D t2 WHERE aDwithin(t1.
 
 -------------------------------------------------------------------------------
 -- Test index support function for ever spatial relationships
-CREATE INDEX tbl_tgeometry_rtree_idx ON tbl_tgeometry USING gist(temp);
-CREATE INDEX tbl_tgeography_rtree_idx ON tbl_tgeography USING gist(temp);
+CREATE INDEX tbl_tgeometry_rtree_070_tgeo_spatialrels_idx ON tbl_tgeometry USING gist(temp);
+CREATE INDEX tbl_tgeography_rtree_070_tgeo_spatialrels_idx ON tbl_tgeography USING gist(temp);
 SELECT COUNT(*) FROM tbl_tgeometry WHERE eContains(geometry 'SRID=3812;Polygon((0 0,0 5,5 5,5 0,0 0))', temp);
  count 
 -------
@@ -737,12 +737,12 @@ SELECT COUNT(*) FROM tbl_tgeography WHERE aDwithin(temp, tgeography 'SRID=7844;[
      0
 (1 row)
 
-DROP INDEX tbl_tgeometry_rtree_idx;
-DROP INDEX tbl_tgeography_rtree_idx;
+DROP INDEX tbl_tgeometry_rtree_070_tgeo_spatialrels_idx;
+DROP INDEX tbl_tgeography_rtree_070_tgeo_spatialrels_idx;
 -------------------------------------------------------------------------------
 -- Test index support function for ever spatial relationships
-CREATE INDEX tbl_tgeometry_quadtree_idx ON tbl_tgeometry USING spgist(temp);
-CREATE INDEX tbl_tgeography_quadtree_idx ON tbl_tgeography USING spgist(temp);
+CREATE INDEX tbl_tgeometry_quadtree_070_tgeo_spatialrels_idx ON tbl_tgeometry USING spgist(temp);
+CREATE INDEX tbl_tgeography_quadtree_070_tgeo_spatialrels_idx ON tbl_tgeography USING spgist(temp);
 SELECT COUNT(*) FROM tbl_tgeometry WHERE eContains(geometry 'SRID=3812;Polygon((0 0,0 5,5 5,5 0,0 0))', temp);
  count 
 -------
@@ -915,8 +915,8 @@ SELECT COUNT(*) FROM tbl_tgeography WHERE aDwithin(temp, tgeography 'SRID=7844;[
      0
 (1 row)
 
-DROP INDEX tbl_tgeometry_quadtree_idx;
-DROP INDEX tbl_tgeography_quadtree_idx;
+DROP INDEX tbl_tgeometry_quadtree_070_tgeo_spatialrels_idx;
+DROP INDEX tbl_tgeography_quadtree_070_tgeo_spatialrels_idx;
 -------------------------------------------------------------------------------
 -- END;
 -- $$ LANGUAGE 'plpgsql';

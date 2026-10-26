@@ -29,9 +29,6 @@
 
 -- Index correctness tests for tpose on tbl_tpose2d (100 rows, SRID 5676).
 -- Modeled on mobilitydb/test/cbuffer/sql/166_tcbuffer_indexes_tbl.
-
-ANALYZE tbl_tpose2d;
-
 DROP INDEX IF EXISTS tbl_tpose2d_rtree_idx;
 DROP INDEX IF EXISTS tbl_tpose2d_quadtree_idx;
 DROP INDEX IF EXISTS tbl_tpose2d_kdtree_idx;
@@ -152,15 +149,12 @@ DROP INDEX tbl_tpose2d_quadtree_idx;
 -------------------------------------------------------------------------------
 -- 5. Z-axis position operators on tbl_tpose3d
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tpose3d;
-
 DROP INDEX IF EXISTS tbl_tpose3d_rtree_idx;
 DROP INDEX IF EXISTS tbl_tpose3d_quadtree_idx;
 DROP INDEX IF EXISTS tbl_tpose3d_kdtree_idx;
 
 DROP TABLE IF EXISTS test_zaxis;
-CREATE TABLE test_zaxis(
+CREATE TEMP TABLE test_zaxis(
   op TEXT,
   no_idx BIGINT,
   rtree_idx BIGINT,

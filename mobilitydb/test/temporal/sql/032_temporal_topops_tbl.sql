@@ -29,25 +29,25 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tbool_rtree_idx;
-DROP INDEX IF EXISTS tbl_tint_rtree_idx;
-DROP INDEX IF EXISTS tbl_tfloat_rtree_idx;
-DROP INDEX IF EXISTS tbl_ttext_rtree_idx;
+DROP INDEX IF EXISTS tbl_tbool_rtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_tint_rtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_tfloat_rtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_ttext_rtree_032_temporal_topops_idx;
 
-DROP INDEX IF EXISTS tbl_tbool_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tint_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tfloat_quadtree_idx;
-DROP INDEX IF EXISTS tbl_ttext_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tbool_quadtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_tint_quadtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_tfloat_quadtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_ttext_quadtree_032_temporal_topops_idx;
 
-DROP INDEX IF EXISTS tbl_tbool_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tint_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tfloat_kdtree_idx;
-DROP INDEX IF EXISTS tbl_ttext_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tbool_kdtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_tint_kdtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_tfloat_kdtree_032_temporal_topops_idx;
+DROP INDEX IF EXISTS tbl_ttext_kdtree_032_temporal_topops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_topops;
-CREATE TABLE test_topops(
+CREATE TEMP TABLE test_topops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -274,10 +274,10 @@ SELECT '~=', 'ttext', 'ttext', COUNT(*) FROM tbl_ttext t1, tbl_ttext t2 WHERE t1
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tbool_rtree_idx ON tbl_tbool USING GIST(temp);
-CREATE INDEX tbl_tint_rtree_idx ON tbl_tint USING GIST(temp);
-CREATE INDEX tbl_tfloat_rtree_idx ON tbl_tfloat USING GIST(temp);
-CREATE INDEX tbl_ttext_rtree_idx ON tbl_ttext USING GIST(temp);
+CREATE INDEX tbl_tbool_rtree_032_temporal_topops_idx ON tbl_tbool USING GIST(temp);
+CREATE INDEX tbl_tint_rtree_032_temporal_topops_idx ON tbl_tint USING GIST(temp);
+CREATE INDEX tbl_tfloat_rtree_032_temporal_topops_idx ON tbl_tfloat USING GIST(temp);
+CREATE INDEX tbl_ttext_rtree_032_temporal_topops_idx ON tbl_ttext USING GIST(temp);
 
 -------------------------------------------------------------------------------
 -- Overlaps
@@ -588,17 +588,17 @@ WHERE op = '~=' AND leftarg = 'ttext' AND rightarg = 'ttext';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tbool_rtree_idx;
-DROP INDEX tbl_tint_rtree_idx;
-DROP INDEX tbl_tfloat_rtree_idx;
-DROP INDEX tbl_ttext_rtree_idx;
+DROP INDEX tbl_tbool_rtree_032_temporal_topops_idx;
+DROP INDEX tbl_tint_rtree_032_temporal_topops_idx;
+DROP INDEX tbl_tfloat_rtree_032_temporal_topops_idx;
+DROP INDEX tbl_ttext_rtree_032_temporal_topops_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tbool_quadtree_idx ON tbl_tbool USING SPGIST(temp);
-CREATE INDEX tbl_tint_quadtree_idx ON tbl_tint USING SPGIST(temp);
-CREATE INDEX tbl_tfloat_quadtree_idx ON tbl_tfloat USING SPGIST(temp);
-CREATE INDEX tbl_ttext_quadtree_idx ON tbl_ttext USING SPGIST(temp);
+CREATE INDEX tbl_tbool_quadtree_032_temporal_topops_idx ON tbl_tbool USING SPGIST(temp);
+CREATE INDEX tbl_tint_quadtree_032_temporal_topops_idx ON tbl_tint USING SPGIST(temp);
+CREATE INDEX tbl_tfloat_quadtree_032_temporal_topops_idx ON tbl_tfloat USING SPGIST(temp);
+CREATE INDEX tbl_ttext_quadtree_032_temporal_topops_idx ON tbl_ttext USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 -- Overlaps
@@ -919,17 +919,17 @@ WHERE op = '~=' AND leftarg = 'ttext' AND rightarg = 'ttext';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tbool_quadtree_idx;
-DROP INDEX tbl_tint_quadtree_idx;
-DROP INDEX tbl_tfloat_quadtree_idx;
-DROP INDEX tbl_ttext_quadtree_idx;
+DROP INDEX tbl_tbool_quadtree_032_temporal_topops_idx;
+DROP INDEX tbl_tint_quadtree_032_temporal_topops_idx;
+DROP INDEX tbl_tfloat_quadtree_032_temporal_topops_idx;
+DROP INDEX tbl_ttext_quadtree_032_temporal_topops_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tbool_kdtree_idx ON tbl_tbool USING SPGIST(temp tbool_kdtree_ops);
-CREATE INDEX tbl_tint_kdtree_idx ON tbl_tint USING SPGIST(temp tint_kdtree_ops);
-CREATE INDEX tbl_tfloat_kdtree_idx ON tbl_tfloat USING SPGIST(temp tfloat_kdtree_ops);
-CREATE INDEX tbl_ttext_kdtree_idx ON tbl_ttext USING SPGIST(temp ttext_kdtree_ops);
+CREATE INDEX tbl_tbool_kdtree_032_temporal_topops_idx ON tbl_tbool USING SPGIST(temp tbool_kdtree_ops);
+CREATE INDEX tbl_tint_kdtree_032_temporal_topops_idx ON tbl_tint USING SPGIST(temp tint_kdtree_ops);
+CREATE INDEX tbl_tfloat_kdtree_032_temporal_topops_idx ON tbl_tfloat USING SPGIST(temp tfloat_kdtree_ops);
+CREATE INDEX tbl_ttext_kdtree_032_temporal_topops_idx ON tbl_ttext USING SPGIST(temp ttext_kdtree_ops);
 
 -------------------------------------------------------------------------------
 -- Overlaps
@@ -1248,10 +1248,10 @@ UPDATE test_topops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_ttext t1, tbl_ttext t2 WHERE t1.temp ~= t2.temp )
 WHERE op = '~=' AND leftarg = 'ttext' AND rightarg = 'ttext';
 
-DROP INDEX tbl_tbool_kdtree_idx;
-DROP INDEX tbl_tint_kdtree_idx;
-DROP INDEX tbl_tfloat_kdtree_idx;
-DROP INDEX tbl_ttext_kdtree_idx;
+DROP INDEX tbl_tbool_kdtree_032_temporal_topops_idx;
+DROP INDEX tbl_tint_kdtree_032_temporal_topops_idx;
+DROP INDEX tbl_tfloat_kdtree_032_temporal_topops_idx;
+DROP INDEX tbl_ttext_kdtree_032_temporal_topops_idx;
 
 -------------------------------------------------------------------------------
 

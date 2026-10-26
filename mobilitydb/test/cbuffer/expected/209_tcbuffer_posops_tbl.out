@@ -27,16 +27,16 @@
 --
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tcbuffer_rtree_idx;
-NOTICE:  index "tbl_tcbuffer_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_idx;
-NOTICE:  index "tbl_tcbuffer_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tcbuffer_kdtree_idx;
-NOTICE:  index "tbl_tcbuffer_kdtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tcbuffer_rtree_209_tcbuffer_posops_idx;
+NOTICE:  index "tbl_tcbuffer_rtree_209_tcbuffer_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_209_tcbuffer_posops_idx;
+NOTICE:  index "tbl_tcbuffer_quadtree_209_tcbuffer_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tcbuffer_kdtree_209_tcbuffer_posops_idx;
+NOTICE:  index "tbl_tcbuffer_kdtree_209_tcbuffer_posops_idx" does not exist, skipping
 -------------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_tcbuffer_posops;
 NOTICE:  table "test_tcbuffer_posops" does not exist, skipping
-CREATE TABLE test_tcbuffer_posops(
+CREATE TEMP TABLE test_tcbuffer_posops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -88,7 +88,7 @@ SELECT '&<#', 'tcbuffer', 'tcbuffer', COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffe
 INSERT INTO test_tcbuffer_posops(op, leftarg, rightarg, no_idx)
 SELECT '#&>', 'tcbuffer', 'tcbuffer', COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE t1.temp #&> t2.temp;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tcbuffer_rtree_idx ON tbl_tcbuffer USING GIST(temp);
+CREATE INDEX tbl_tcbuffer_rtree_209_tcbuffer_posops_idx ON tbl_tcbuffer USING GIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_tcbuffer_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tcbuffer WHERE t <<# temp )
@@ -152,8 +152,8 @@ UPDATE test_tcbuffer_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tcbuffer_rtree_idx;
-CREATE INDEX tbl_tcbuffer_quadtree_idx ON tbl_tcbuffer USING SPGIST(temp);
+DROP INDEX tbl_tcbuffer_rtree_209_tcbuffer_posops_idx;
+CREATE INDEX tbl_tcbuffer_quadtree_209_tcbuffer_posops_idx ON tbl_tcbuffer USING SPGIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_tcbuffer_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tcbuffer WHERE t <<# temp )
@@ -217,8 +217,8 @@ UPDATE test_tcbuffer_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_idx;
-CREATE INDEX tbl_tcbuffer_kdtree_idx ON tbl_tcbuffer USING SPGIST(temp tcbuffer_kdtree_ops);
+DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_209_tcbuffer_posops_idx;
+CREATE INDEX tbl_tcbuffer_kdtree_209_tcbuffer_posops_idx ON tbl_tcbuffer USING SPGIST(temp tcbuffer_kdtree_ops);
 -------------------------------------------------------------------------------
 UPDATE test_tcbuffer_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tcbuffer WHERE t <<# temp )
@@ -282,7 +282,7 @@ UPDATE test_tcbuffer_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tcbuffer_kdtree_idx;
+DROP INDEX tbl_tcbuffer_kdtree_209_tcbuffer_posops_idx;
 -------------------------------------------------------------------------------
 SELECT * FROM test_tcbuffer_posops
 WHERE no_idx <> rtree_idx OR no_idx <> quadtree_idx OR no_idx <> kdtree_idx OR

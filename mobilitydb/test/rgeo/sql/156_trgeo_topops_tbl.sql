@@ -29,14 +29,14 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_trgeometry_rtree_idx;
-DROP INDEX IF EXISTS tbl_trgeometry_quadtree_idx;
-DROP INDEX IF EXISTS tbl_trgeometry_kdtree_idx;
+DROP INDEX IF EXISTS tbl_trgeometry_rtree_156_trgeo_topops_idx;
+DROP INDEX IF EXISTS tbl_trgeometry_quadtree_156_trgeo_topops_idx;
+DROP INDEX IF EXISTS tbl_trgeometry_kdtree_156_trgeo_topops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE if exists test_trgeometry_topops;
-CREATE TABLE test_trgeometry_topops(
+CREATE TEMP TABLE test_trgeometry_topops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -109,7 +109,7 @@ SELECT '-|-', 'trgeometry', 'trgeometry', COUNT(*) FROM tbl_trgeometry2d t1, tbl
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_trgeometry_rtree_idx ON tbl_trgeometry2d USING GIST(temp);
+CREATE INDEX tbl_trgeometry_rtree_156_trgeo_topops_idx ON tbl_trgeometry2d USING GIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op trgeometry
@@ -199,8 +199,8 @@ WHERE op = '-|-' and leftarg = 'trgeometry' and rightarg = 'trgeometry';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_trgeometry_rtree_idx;
-CREATE INDEX tbl_trgeometry_quadtree_idx ON tbl_trgeometry2d USING SPGIST(temp);
+DROP INDEX tbl_trgeometry_rtree_156_trgeo_topops_idx;
+CREATE INDEX tbl_trgeometry_quadtree_156_trgeo_topops_idx ON tbl_trgeometry2d USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op trgeometry
@@ -290,8 +290,8 @@ WHERE op = '-|-' and leftarg = 'trgeometry' and rightarg = 'trgeometry';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_trgeometry_quadtree_idx;
-CREATE INDEX tbl_trgeometry_kdtree_idx ON tbl_trgeometry2d USING SPGIST(temp trgeometry_kdtree_ops);
+DROP INDEX tbl_trgeometry_quadtree_156_trgeo_topops_idx;
+CREATE INDEX tbl_trgeometry_kdtree_156_trgeo_topops_idx ON tbl_trgeometry2d USING SPGIST(temp trgeometry_kdtree_ops);
 
 -------------------------------------------------------------------------------
 -- <type> op trgeometry
@@ -381,7 +381,7 @@ WHERE op = '-|-' and leftarg = 'trgeometry' and rightarg = 'trgeometry';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_trgeometry_kdtree_idx;
+DROP INDEX tbl_trgeometry_kdtree_156_trgeo_topops_idx;
 
 -------------------------------------------------------------------------------
 

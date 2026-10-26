@@ -31,28 +31,28 @@
 -- Tests of operators for span types.
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_intspanset_rtree_idx;
+DROP INDEX IF EXISTS tbl_intspanset_rtree_009_spanset_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintspanset_rtree_idx;
-DROP INDEX IF EXISTS tbl_floatspanset_rtree_idx;
+DROP INDEX IF EXISTS tbl_floatspanset_rtree_009_spanset_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_datezspanset_rtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspanset_rtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspanset_rtree_009_spanset_ops_indexes_idx;
 
-DROP INDEX IF EXISTS tbl_intspanset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_intspanset_quadtree_009_spanset_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintspanset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_floatspanset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_floatspanset_quadtree_009_spanset_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_datespanset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspanset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspanset_quadtree_009_spanset_ops_indexes_idx;
 
-DROP INDEX IF EXISTS tbl_intspanset_kdtree_idx;
+DROP INDEX IF EXISTS tbl_intspanset_kdtree_009_spanset_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintspanset_kdtree_idx;
 DROP INDEX IF EXISTS tbl_floatspanset_kdtree_idx;
 DROP INDEX IF EXISTS tbl_datespanset_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspanset_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspanset_kdtree_009_spanset_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_spansetops;
-CREATE TABLE test_spansetops(
+CREATE TEMP TABLE test_spansetops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -487,11 +487,11 @@ SELECT '=', 'tstzspanset', 'tstzspanset', COUNT(*) FROM tbl_tstzspanset t1, tbl_
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspanset_rtree_idx ON tbl_intspanset USING GIST(i);
+CREATE INDEX tbl_intspanset_rtree_009_spanset_ops_indexes_idx ON tbl_intspanset USING GIST(i);
 CREATE INDEX tbl_bigintspanset_rtree_idx ON tbl_bigintspanset USING GIST(b);
-CREATE INDEX tbl_floatspanset_rtree_idx ON tbl_floatspanset USING GIST(f);
+CREATE INDEX tbl_floatspanset_rtree_009_spanset_ops_indexes_idx ON tbl_floatspanset USING GIST(f);
 CREATE INDEX tbl_datespanset_rtree_idx ON tbl_datespanset USING GIST(d);
-CREATE INDEX tbl_tstzspanset_rtree_idx ON tbl_tstzspanset USING GIST(t);
+CREATE INDEX tbl_tstzspanset_rtree_009_spanset_ops_indexes_idx ON tbl_tstzspanset USING GIST(t);
 
 -------------------------------------------------------------------------------
 
@@ -1100,19 +1100,19 @@ WHERE op = '=' AND leftarg = 'tstzspanset' AND rightarg = 'tstzspanset';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intspanset_rtree_idx;
+DROP INDEX tbl_intspanset_rtree_009_spanset_ops_indexes_idx;
 DROP INDEX tbl_bigintspanset_rtree_idx;
-DROP INDEX tbl_floatspanset_rtree_idx;
+DROP INDEX tbl_floatspanset_rtree_009_spanset_ops_indexes_idx;
 DROP INDEX tbl_datespanset_rtree_idx;
-DROP INDEX tbl_tstzspanset_rtree_idx;
+DROP INDEX tbl_tstzspanset_rtree_009_spanset_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspanset_quadtree_idx ON tbl_intspanset USING SPGIST(i);
+CREATE INDEX tbl_intspanset_quadtree_009_spanset_ops_indexes_idx ON tbl_intspanset USING SPGIST(i);
 CREATE INDEX tbl_bigintspanset_quadtree_idx ON tbl_bigintspanset USING SPGIST(b);
-CREATE INDEX tbl_floatspanset_quadtree_idx ON tbl_floatspanset USING SPGIST(f);
+CREATE INDEX tbl_floatspanset_quadtree_009_spanset_ops_indexes_idx ON tbl_floatspanset USING SPGIST(f);
 CREATE INDEX tbl_datespanset_quadtree_idx ON tbl_datespanset USING SPGIST(d);
-CREATE INDEX tbl_tstzspanset_quadtree_idx ON tbl_tstzspanset USING SPGIST(t);
+CREATE INDEX tbl_tstzspanset_quadtree_009_spanset_ops_indexes_idx ON tbl_tstzspanset USING SPGIST(t);
 
 -------------------------------------------------------------------------------
 
@@ -1721,19 +1721,19 @@ WHERE op = '=' AND leftarg = 'tstzspanset' AND rightarg = 'tstzspanset';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intspanset_quadtree_idx;
+DROP INDEX tbl_intspanset_quadtree_009_spanset_ops_indexes_idx;
 DROP INDEX tbl_bigintspanset_quadtree_idx;
-DROP INDEX tbl_floatspanset_quadtree_idx;
+DROP INDEX tbl_floatspanset_quadtree_009_spanset_ops_indexes_idx;
 DROP INDEX tbl_datespanset_quadtree_idx;
-DROP INDEX tbl_tstzspanset_quadtree_idx;
+DROP INDEX tbl_tstzspanset_quadtree_009_spanset_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspanset_kdtree_idx ON tbl_intspanset USING SPGIST(i intspanset_kdtree_ops);
+CREATE INDEX tbl_intspanset_kdtree_009_spanset_ops_indexes_idx ON tbl_intspanset USING SPGIST(i intspanset_kdtree_ops);
 CREATE INDEX tbl_bigintspanset_kdtree_idx ON tbl_bigintspanset USING SPGIST(b bigintspanset_kdtree_ops);
 CREATE INDEX tbl_floatspanset_kdtree_idx ON tbl_floatspanset USING SPGIST(f floatspanset_kdtree_ops);
 CREATE INDEX tbl_datespanset_kdtree_idx ON tbl_datespanset USING SPGIST(d datespanset_kdtree_ops);
-CREATE INDEX tbl_tstzspanset_kdtree_idx ON tbl_tstzspanset USING SPGIST(t tstzspanset_kdtree_ops);
+CREATE INDEX tbl_tstzspanset_kdtree_009_spanset_ops_indexes_idx ON tbl_tstzspanset USING SPGIST(t tstzspanset_kdtree_ops);
 
 -------------------------------------------------------------------------------
 
@@ -2342,11 +2342,11 @@ WHERE op = '=' AND leftarg = 'tstzspanset' AND rightarg = 'tstzspanset';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intspanset_kdtree_idx;
+DROP INDEX tbl_intspanset_kdtree_009_spanset_ops_indexes_idx;
 DROP INDEX tbl_bigintspanset_kdtree_idx;
 DROP INDEX tbl_floatspanset_kdtree_idx;
 DROP INDEX tbl_datespanset_kdtree_idx;
-DROP INDEX tbl_tstzspanset_kdtree_idx;
+DROP INDEX tbl_tstzspanset_kdtree_009_spanset_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 

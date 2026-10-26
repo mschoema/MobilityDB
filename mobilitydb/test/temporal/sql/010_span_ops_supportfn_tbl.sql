@@ -32,31 +32,31 @@
 -- without an index, whichever index the planner rewrites it into.
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_intset_rtree_idx;
-DROP INDEX IF EXISTS tbl_intspan_rtree_idx;
-DROP INDEX IF EXISTS tbl_intspanset_rtree_idx;
-DROP INDEX IF EXISTS tbl_tstzset_rtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_rtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspanset_rtree_idx;
+DROP INDEX IF EXISTS tbl_intset_rtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_intspan_rtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_intspanset_rtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzset_rtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_rtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzspanset_rtree_010_span_ops_supportfn_idx;
 
-DROP INDEX IF EXISTS tbl_intset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_intspan_quadtree_idx;
-DROP INDEX IF EXISTS tbl_intspanset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tstzset_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspanset_quadtree_idx;
+DROP INDEX IF EXISTS tbl_intset_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_intspan_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_intspanset_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzset_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzspanset_quadtree_010_span_ops_supportfn_idx;
 
-DROP INDEX IF EXISTS tbl_intset_kdtree_idx;
-DROP INDEX IF EXISTS tbl_intspan_kdtree_idx;
-DROP INDEX IF EXISTS tbl_intspanset_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tstzset_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspanset_kdtree_idx;
+DROP INDEX IF EXISTS tbl_intset_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_intspan_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_intspanset_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzset_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX IF EXISTS tbl_tstzspanset_kdtree_010_span_ops_supportfn_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_spansupport;
-CREATE TABLE test_spansupport(
+CREATE TEMP TABLE test_spansupport(
   func TEXT,
   leftarg TEXT,
   rightarg TEXT,
@@ -195,12 +195,12 @@ SELECT 'adjacent', 'tstzspan', 'tstzspanset', COUNT(*) FROM tbl_tstzspan t1, tbl
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intset_rtree_idx ON tbl_intset USING GIST(i);
-CREATE INDEX tbl_intspan_rtree_idx ON tbl_intspan USING GIST(i);
-CREATE INDEX tbl_intspanset_rtree_idx ON tbl_intspanset USING GIST(i);
-CREATE INDEX tbl_tstzset_rtree_idx ON tbl_tstzset USING GIST(t);
-CREATE INDEX tbl_tstzspan_rtree_idx ON tbl_tstzspan USING GIST(t);
-CREATE INDEX tbl_tstzspanset_rtree_idx ON tbl_tstzspanset USING GIST(t);
+CREATE INDEX tbl_intset_rtree_010_span_ops_supportfn_idx ON tbl_intset USING GIST(i);
+CREATE INDEX tbl_intspan_rtree_010_span_ops_supportfn_idx ON tbl_intspan USING GIST(i);
+CREATE INDEX tbl_intspanset_rtree_010_span_ops_supportfn_idx ON tbl_intspanset USING GIST(i);
+CREATE INDEX tbl_tstzset_rtree_010_span_ops_supportfn_idx ON tbl_tstzset USING GIST(t);
+CREATE INDEX tbl_tstzspan_rtree_010_span_ops_supportfn_idx ON tbl_tstzspan USING GIST(t);
+CREATE INDEX tbl_tstzspanset_rtree_010_span_ops_supportfn_idx ON tbl_tstzspanset USING GIST(t);
 
 UPDATE test_spansupport
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_intset t1, tbl_intset t2 WHERE setOverlaps(t1.i, t2.i) )
@@ -389,21 +389,21 @@ UPDATE test_spansupport
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan t1, tbl_tstzspanset t2 WHERE spanAdjacent(t1.t, t2.t) )
 WHERE func = 'adjacent' AND leftarg = 'tstzspan' AND rightarg = 'tstzspanset';
 
-DROP INDEX tbl_intset_rtree_idx;
-DROP INDEX tbl_intspan_rtree_idx;
-DROP INDEX tbl_intspanset_rtree_idx;
-DROP INDEX tbl_tstzset_rtree_idx;
-DROP INDEX tbl_tstzspan_rtree_idx;
-DROP INDEX tbl_tstzspanset_rtree_idx;
+DROP INDEX tbl_intset_rtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_intspan_rtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_intspanset_rtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzset_rtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzspan_rtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzspanset_rtree_010_span_ops_supportfn_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intset_quadtree_idx ON tbl_intset USING SPGIST(i);
-CREATE INDEX tbl_intspan_quadtree_idx ON tbl_intspan USING SPGIST(i);
-CREATE INDEX tbl_intspanset_quadtree_idx ON tbl_intspanset USING SPGIST(i);
-CREATE INDEX tbl_tstzset_quadtree_idx ON tbl_tstzset USING SPGIST(t);
-CREATE INDEX tbl_tstzspan_quadtree_idx ON tbl_tstzspan USING SPGIST(t);
-CREATE INDEX tbl_tstzspanset_quadtree_idx ON tbl_tstzspanset USING SPGIST(t);
+CREATE INDEX tbl_intset_quadtree_010_span_ops_supportfn_idx ON tbl_intset USING SPGIST(i);
+CREATE INDEX tbl_intspan_quadtree_010_span_ops_supportfn_idx ON tbl_intspan USING SPGIST(i);
+CREATE INDEX tbl_intspanset_quadtree_010_span_ops_supportfn_idx ON tbl_intspanset USING SPGIST(i);
+CREATE INDEX tbl_tstzset_quadtree_010_span_ops_supportfn_idx ON tbl_tstzset USING SPGIST(t);
+CREATE INDEX tbl_tstzspan_quadtree_010_span_ops_supportfn_idx ON tbl_tstzspan USING SPGIST(t);
+CREATE INDEX tbl_tstzspanset_quadtree_010_span_ops_supportfn_idx ON tbl_tstzspanset USING SPGIST(t);
 
 UPDATE test_spansupport
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_intset t1, tbl_intset t2 WHERE setOverlaps(t1.i, t2.i) )
@@ -592,21 +592,21 @@ UPDATE test_spansupport
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan t1, tbl_tstzspanset t2 WHERE spanAdjacent(t1.t, t2.t) )
 WHERE func = 'adjacent' AND leftarg = 'tstzspan' AND rightarg = 'tstzspanset';
 
-DROP INDEX tbl_intset_quadtree_idx;
-DROP INDEX tbl_intspan_quadtree_idx;
-DROP INDEX tbl_intspanset_quadtree_idx;
-DROP INDEX tbl_tstzset_quadtree_idx;
-DROP INDEX tbl_tstzspan_quadtree_idx;
-DROP INDEX tbl_tstzspanset_quadtree_idx;
+DROP INDEX tbl_intset_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_intspan_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_intspanset_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzset_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzspan_quadtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzspanset_quadtree_010_span_ops_supportfn_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intset_kdtree_idx ON tbl_intset USING SPGIST(i intset_kdtree_ops);
-CREATE INDEX tbl_intspan_kdtree_idx ON tbl_intspan USING SPGIST(i intspan_kdtree_ops);
-CREATE INDEX tbl_intspanset_kdtree_idx ON tbl_intspanset USING SPGIST(i intspanset_kdtree_ops);
-CREATE INDEX tbl_tstzset_kdtree_idx ON tbl_tstzset USING SPGIST(t tstzset_kdtree_ops);
-CREATE INDEX tbl_tstzspan_kdtree_idx ON tbl_tstzspan USING SPGIST(t tstzspan_kdtree_ops);
-CREATE INDEX tbl_tstzspanset_kdtree_idx ON tbl_tstzspanset USING SPGIST(t tstzspanset_kdtree_ops);
+CREATE INDEX tbl_intset_kdtree_010_span_ops_supportfn_idx ON tbl_intset USING SPGIST(i intset_kdtree_ops);
+CREATE INDEX tbl_intspan_kdtree_010_span_ops_supportfn_idx ON tbl_intspan USING SPGIST(i intspan_kdtree_ops);
+CREATE INDEX tbl_intspanset_kdtree_010_span_ops_supportfn_idx ON tbl_intspanset USING SPGIST(i intspanset_kdtree_ops);
+CREATE INDEX tbl_tstzset_kdtree_010_span_ops_supportfn_idx ON tbl_tstzset USING SPGIST(t tstzset_kdtree_ops);
+CREATE INDEX tbl_tstzspan_kdtree_010_span_ops_supportfn_idx ON tbl_tstzspan USING SPGIST(t tstzspan_kdtree_ops);
+CREATE INDEX tbl_tstzspanset_kdtree_010_span_ops_supportfn_idx ON tbl_tstzspanset USING SPGIST(t tstzspanset_kdtree_ops);
 
 UPDATE test_spansupport
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_intset t1, tbl_intset t2 WHERE setOverlaps(t1.i, t2.i) )
@@ -795,12 +795,12 @@ UPDATE test_spansupport
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan t1, tbl_tstzspanset t2 WHERE spanAdjacent(t1.t, t2.t) )
 WHERE func = 'adjacent' AND leftarg = 'tstzspan' AND rightarg = 'tstzspanset';
 
-DROP INDEX tbl_intset_kdtree_idx;
-DROP INDEX tbl_intspan_kdtree_idx;
-DROP INDEX tbl_intspanset_kdtree_idx;
-DROP INDEX tbl_tstzset_kdtree_idx;
-DROP INDEX tbl_tstzspan_kdtree_idx;
-DROP INDEX tbl_tstzspanset_kdtree_idx;
+DROP INDEX tbl_intset_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_intspan_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_intspanset_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzset_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzspan_kdtree_010_span_ops_supportfn_idx;
+DROP INDEX tbl_tstzspanset_kdtree_010_span_ops_supportfn_idx;
 
 -------------------------------------------------------------------------------
 

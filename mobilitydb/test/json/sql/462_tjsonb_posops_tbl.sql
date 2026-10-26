@@ -29,14 +29,14 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tjsonb_rtree_idx;
-DROP INDEX IF EXISTS tbl_tjsonb_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tjsonb_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tjsonb_rtree_462_tjsonb_posops_idx;
+DROP INDEX IF EXISTS tbl_tjsonb_quadtree_462_tjsonb_posops_idx;
+DROP INDEX IF EXISTS tbl_tjsonb_kdtree_462_tjsonb_posops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_tjsonb_posops;
-CREATE TABLE test_tjsonb_posops(
+CREATE TEMP TABLE test_tjsonb_posops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -77,7 +77,7 @@ SELECT '#&>', 'tjsonb', 'tjsonb', COUNT(*) FROM tbl_tjsonb t1, tbl_tjsonb t2 WHE
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tjsonb_rtree_idx ON tbl_tjsonb USING GIST(temp);
+CREATE INDEX tbl_tjsonb_rtree_462_tjsonb_posops_idx ON tbl_tjsonb USING GIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -122,8 +122,8 @@ WHERE op = '#&>' and leftarg = 'tjsonb' and rightarg = 'tjsonb';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tjsonb_rtree_idx;
-CREATE INDEX tbl_tjsonb_quadtree_idx ON tbl_tjsonb USING SPGIST(temp);
+DROP INDEX tbl_tjsonb_rtree_462_tjsonb_posops_idx;
+CREATE INDEX tbl_tjsonb_quadtree_462_tjsonb_posops_idx ON tbl_tjsonb USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 
@@ -168,8 +168,8 @@ WHERE op = '#&>' and leftarg = 'tjsonb' and rightarg = 'tjsonb';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tjsonb_quadtree_idx;
-CREATE INDEX tbl_tjsonb_kdtree_idx ON tbl_tjsonb USING SPGIST(temp tjsonb_kdtree_ops);
+DROP INDEX IF EXISTS tbl_tjsonb_quadtree_462_tjsonb_posops_idx;
+CREATE INDEX tbl_tjsonb_kdtree_462_tjsonb_posops_idx ON tbl_tjsonb USING SPGIST(temp tjsonb_kdtree_ops);
 
 -------------------------------------------------------------------------------
 
@@ -214,7 +214,7 @@ WHERE op = '#&>' and leftarg = 'tjsonb' and rightarg = 'tjsonb';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tjsonb_kdtree_idx;
+DROP INDEX tbl_tjsonb_kdtree_462_tjsonb_posops_idx;
 
 -------------------------------------------------------------------------------
 

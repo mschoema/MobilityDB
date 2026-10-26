@@ -31,28 +31,28 @@
 -- Tests of operators for span types.
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_intspan_rtree_idx;
+DROP INDEX IF EXISTS tbl_intspan_rtree_005_span_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintspan_rtree_idx;
 DROP INDEX IF EXISTS tbl_floatspan_rtree_idx;
 DROP INDEX IF EXISTS tbl_datespan_rtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_rtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_rtree_005_span_ops_indexes_idx;
 
-DROP INDEX IF EXISTS tbl_intspan_quadtree_idx;
+DROP INDEX IF EXISTS tbl_intspan_quadtree_005_span_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintspan_quadtree_idx;
 DROP INDEX IF EXISTS tbl_floatspan_quadtree_idx;
 DROP INDEX IF EXISTS tbl_datespan_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_quadtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_quadtree_005_span_ops_indexes_idx;
 
-DROP INDEX IF EXISTS tbl_intspan_kdtree_idx;
+DROP INDEX IF EXISTS tbl_intspan_kdtree_005_span_ops_indexes_idx;
 DROP INDEX IF EXISTS tbl_bigintspan_kdtree_idx;
 DROP INDEX IF EXISTS tbl_floatspan_kdtree_idx;
 DROP INDEX IF EXISTS tbl_datespan_kdtree_idx;
-DROP INDEX IF EXISTS tbl_tstzspan_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tstzspan_kdtree_005_span_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_spanops;
-CREATE TABLE test_spanops(
+CREATE TEMP TABLE test_spanops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -320,11 +320,11 @@ SELECT '#&>', 'tstzspan', 'tstzspan', COUNT(*) FROM tbl_tstzspan t1, tbl_tstzspa
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspan_rtree_idx ON tbl_intspan USING GIST(i);
+CREATE INDEX tbl_intspan_rtree_005_span_ops_indexes_idx ON tbl_intspan USING GIST(i);
 CREATE INDEX tbl_bigintspan_rtree_idx ON tbl_bigintspan USING GIST(b);
 CREATE INDEX tbl_floatspan_rtree_idx ON tbl_floatspan USING GIST(f);
 CREATE INDEX tbl_datespan_rtree_idx ON tbl_datespan USING GIST(d);
-CREATE INDEX tbl_tstzspan_rtree_idx ON tbl_tstzspan USING GIST(t);
+CREATE INDEX tbl_tstzspan_rtree_005_span_ops_indexes_idx ON tbl_tstzspan USING GIST(t);
 
 -------------------------------------------------------------------------------
 
@@ -684,19 +684,19 @@ WHERE op = '#&>' AND leftarg = 'tstzspan' AND rightarg = 'tstzspan';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intspan_rtree_idx;
+DROP INDEX tbl_intspan_rtree_005_span_ops_indexes_idx;
 DROP INDEX tbl_bigintspan_rtree_idx;
 DROP INDEX tbl_floatspan_rtree_idx;
 DROP INDEX tbl_datespan_rtree_idx;
-DROP INDEX tbl_tstzspan_rtree_idx;
+DROP INDEX tbl_tstzspan_rtree_005_span_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspan_quadtree_idx ON tbl_intspan USING SPGIST(i);
+CREATE INDEX tbl_intspan_quadtree_005_span_ops_indexes_idx ON tbl_intspan USING SPGIST(i);
 CREATE INDEX tbl_bigintspan_quadtree_idx ON tbl_bigintspan USING SPGIST(b);
 CREATE INDEX tbl_floatspan_quadtree_idx ON tbl_floatspan USING SPGIST(f);
 CREATE INDEX tbl_datespan_quadtree_idx ON tbl_datespan USING SPGIST(d);
-CREATE INDEX tbl_tstzspan_quadtree_idx ON tbl_tstzspan USING SPGIST(t);
+CREATE INDEX tbl_tstzspan_quadtree_005_span_ops_indexes_idx ON tbl_tstzspan USING SPGIST(t);
 
 -------------------------------------------------------------------------------
 
@@ -1056,19 +1056,19 @@ WHERE op = '#&>' AND leftarg = 'tstzspan' AND rightarg = 'tstzspan';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intspan_quadtree_idx;
+DROP INDEX tbl_intspan_quadtree_005_span_ops_indexes_idx;
 DROP INDEX tbl_bigintspan_quadtree_idx;
 DROP INDEX tbl_floatspan_quadtree_idx;
 DROP INDEX tbl_datespan_quadtree_idx;
-DROP INDEX tbl_tstzspan_quadtree_idx;
+DROP INDEX tbl_tstzspan_quadtree_005_span_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_intspan_kdtree_idx ON tbl_intspan USING SPGIST(i intspan_kdtree_ops);
+CREATE INDEX tbl_intspan_kdtree_005_span_ops_indexes_idx ON tbl_intspan USING SPGIST(i intspan_kdtree_ops);
 CREATE INDEX tbl_bigintspan_kdtree_idx ON tbl_bigintspan USING SPGIST(b bigintspan_kdtree_ops);
 CREATE INDEX tbl_floatspan_kdtree_idx ON tbl_floatspan USING SPGIST(f floatspan_kdtree_ops);
 CREATE INDEX tbl_datespan_kdtree_idx ON tbl_datespan USING SPGIST(d datespan_kdtree_ops);
-CREATE INDEX tbl_tstzspan_kdtree_idx ON tbl_tstzspan USING SPGIST(t tstzspan_kdtree_ops);
+CREATE INDEX tbl_tstzspan_kdtree_005_span_ops_indexes_idx ON tbl_tstzspan USING SPGIST(t tstzspan_kdtree_ops);
 
 -------------------------------------------------------------------------------
 
@@ -1428,10 +1428,10 @@ WHERE op = '#&>' AND leftarg = 'tstzspan' AND rightarg = 'tstzspan';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_intspan_kdtree_idx;
+DROP INDEX tbl_intspan_kdtree_005_span_ops_indexes_idx;
 DROP INDEX tbl_floatspan_kdtree_idx;
 DROP INDEX tbl_datespan_kdtree_idx;
-DROP INDEX tbl_tstzspan_kdtree_idx;
+DROP INDEX tbl_tstzspan_kdtree_005_span_ops_indexes_idx;
 
 -------------------------------------------------------------------------------
 

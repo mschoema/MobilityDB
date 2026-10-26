@@ -29,9 +29,6 @@
 
 -- Index correctness tests for trgeometry on tbl_trgeometry2d (SRID 5676).
 -- Modeled on mobilitydb/test/cbuffer/sql/166_tcbuffer_indexes_tbl.
-
-ANALYZE tbl_trgeometry2d;
-
 DROP INDEX IF EXISTS tbl_trgeometry2d_rtree_idx;
 DROP INDEX IF EXISTS tbl_trgeometry2d_quadtree_idx;
 DROP INDEX IF EXISTS tbl_trgeometry2d_kdtree_idx;
@@ -107,7 +104,7 @@ SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp ~= trgeometry :'TRG_LIT';
 -------------------------------------------------------------------------------
 -- Coverage of all the same and order by logic in SP-GiST indexes
 
-CREATE TABLE tbl_trgeometry_big_allthesame AS
+CREATE TEMP TABLE tbl_trgeometry_big_allthesame AS
   SELECT k, trgeometry(geometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1))',
     tpose(pose 'SRID=5676;Pose(Point(25 25), 0.3)', timeSpan(temp))) AS temp
   FROM tbl_trgeometry2d WHERE temp IS NOT NULL;
@@ -121,15 +118,12 @@ DROP TABLE tbl_trgeometry_big_allthesame;
 -------------------------------------------------------------------------------
 -- 5. Z-axis position operators on tbl_trgeometry3d
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_trgeometry3d;
-
 DROP INDEX IF EXISTS tbl_trgeometry3d_rtree_idx;
 DROP INDEX IF EXISTS tbl_trgeometry3d_quadtree_idx;
 DROP INDEX IF EXISTS tbl_trgeometry3d_kdtree_idx;
 
 DROP TABLE IF EXISTS test_zaxis;
-CREATE TABLE test_zaxis(
+CREATE TEMP TABLE test_zaxis(
   op TEXT,
   no_idx BIGINT,
   rtree_idx BIGINT,

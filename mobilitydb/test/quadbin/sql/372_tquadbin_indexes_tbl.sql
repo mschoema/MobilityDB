@@ -28,9 +28,6 @@
 -------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------
-
-ANALYZE tbl_tquadbin_big;
-
 -----------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS tbl_tquadbin_big_rtree_idx;
@@ -40,7 +37,7 @@ DROP INDEX IF EXISTS tbl_tquadbin_big_kdtree_idx;
 -----------------------------------------------------------------------------
 
 DROP TABLE IF EXISTS test_tquadbin_idx;
-CREATE TABLE test_tquadbin_idx(
+CREATE TEMP TABLE test_tquadbin_idx(
   op char(3),
   leftarg text,
   rightarg text,
@@ -85,8 +82,6 @@ SELECT '#>>', 'stbox', 'tquadbin', COUNT(*) FROM tbl_stbox_quadbin, tbl_tquadbin
 -----------------------------------------------------------------------------
 
 CREATE INDEX tbl_tquadbin_big_rtree_idx ON tbl_tquadbin_big USING GIST(temp);
-ANALYZE tbl_tquadbin_big;
-
 -----------------------------------------------------------------------------
 
 UPDATE test_tquadbin_idx
@@ -136,8 +131,6 @@ WHERE op = '#>>' AND leftarg = 'stbox' AND rightarg = 'tquadbin';
 
 DROP INDEX tbl_tquadbin_big_rtree_idx;
 CREATE INDEX tbl_tquadbin_big_quadtree_idx ON tbl_tquadbin_big USING SPGIST(temp);
-ANALYZE tbl_tquadbin_big;
-
 -----------------------------------------------------------------------------
 
 UPDATE test_tquadbin_idx
@@ -187,8 +180,6 @@ WHERE op = '#>>' AND leftarg = 'stbox' AND rightarg = 'tquadbin';
 
 DROP INDEX tbl_tquadbin_big_quadtree_idx;
 CREATE INDEX tbl_tquadbin_big_kdtree_idx ON tbl_tquadbin_big USING SPGIST(temp tquadbin_kdtree_ops);
-ANALYZE tbl_tquadbin_big;
-
 -----------------------------------------------------------------------------
 
 UPDATE test_tquadbin_idx

@@ -27,16 +27,16 @@
 --
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tjsonb_rtree_idx;
-NOTICE:  index "tbl_tjsonb_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tjsonb_quadtree_idx;
-NOTICE:  index "tbl_tjsonb_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tjsonb_kdtree_idx;
-NOTICE:  index "tbl_tjsonb_kdtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tjsonb_rtree_462_tjsonb_posops_idx;
+NOTICE:  index "tbl_tjsonb_rtree_462_tjsonb_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tjsonb_quadtree_462_tjsonb_posops_idx;
+NOTICE:  index "tbl_tjsonb_quadtree_462_tjsonb_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tjsonb_kdtree_462_tjsonb_posops_idx;
+NOTICE:  index "tbl_tjsonb_kdtree_462_tjsonb_posops_idx" does not exist, skipping
 -------------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_tjsonb_posops;
 NOTICE:  table "test_tjsonb_posops" does not exist, skipping
-CREATE TABLE test_tjsonb_posops(
+CREATE TEMP TABLE test_tjsonb_posops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -71,7 +71,7 @@ SELECT '&<#', 'tjsonb', 'tjsonb', COUNT(*) FROM tbl_tjsonb t1, tbl_tjsonb t2 WHE
 INSERT INTO test_tjsonb_posops(op, leftarg, rightarg, no_idx)
 SELECT '#&>', 'tjsonb', 'tjsonb', COUNT(*) FROM tbl_tjsonb t1, tbl_tjsonb t2 WHERE t1.temp #&> t2.temp;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tjsonb_rtree_idx ON tbl_tjsonb USING GIST(temp);
+CREATE INDEX tbl_tjsonb_rtree_462_tjsonb_posops_idx ON tbl_tjsonb USING GIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_tjsonb_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tjsonb WHERE t <<# temp )
@@ -110,8 +110,8 @@ UPDATE test_tjsonb_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tjsonb t1, tbl_tjsonb t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tjsonb' and rightarg = 'tjsonb';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tjsonb_rtree_idx;
-CREATE INDEX tbl_tjsonb_quadtree_idx ON tbl_tjsonb USING SPGIST(temp);
+DROP INDEX tbl_tjsonb_rtree_462_tjsonb_posops_idx;
+CREATE INDEX tbl_tjsonb_quadtree_462_tjsonb_posops_idx ON tbl_tjsonb USING SPGIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_tjsonb_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tjsonb WHERE t <<# temp )
@@ -150,8 +150,8 @@ UPDATE test_tjsonb_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tjsonb t1, tbl_tjsonb t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tjsonb' and rightarg = 'tjsonb';
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tjsonb_quadtree_idx;
-CREATE INDEX tbl_tjsonb_kdtree_idx ON tbl_tjsonb USING SPGIST(temp tjsonb_kdtree_ops);
+DROP INDEX IF EXISTS tbl_tjsonb_quadtree_462_tjsonb_posops_idx;
+CREATE INDEX tbl_tjsonb_kdtree_462_tjsonb_posops_idx ON tbl_tjsonb USING SPGIST(temp tjsonb_kdtree_ops);
 -------------------------------------------------------------------------------
 UPDATE test_tjsonb_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tjsonb WHERE t <<# temp )
@@ -190,7 +190,7 @@ UPDATE test_tjsonb_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tjsonb t1, tbl_tjsonb t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' and leftarg = 'tjsonb' and rightarg = 'tjsonb';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tjsonb_kdtree_idx;
+DROP INDEX tbl_tjsonb_kdtree_462_tjsonb_posops_idx;
 -------------------------------------------------------------------------------
 SELECT * FROM test_tjsonb_posops
 WHERE no_idx <> rtree_idx OR no_idx <> quadtree_idx OR no_idx <> kdtree_idx OR

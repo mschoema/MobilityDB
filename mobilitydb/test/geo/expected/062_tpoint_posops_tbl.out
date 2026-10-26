@@ -27,22 +27,22 @@
 --
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-DROP INDEX IF EXISTS tbl_tgeompoint_rtree_idx;
-NOTICE:  index "tbl_tgeompoint_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeogpoint_rtree_idx;
-NOTICE:  index "tbl_tgeogpoint_rtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeompoint_quadtree_idx;
-NOTICE:  index "tbl_tgeompoint_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeogpoint_quadtree_idx;
-NOTICE:  index "tbl_tgeogpoint_quadtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeompoint_kdtree_idx;
-NOTICE:  index "tbl_tgeompoint_kdtree_idx" does not exist, skipping
-DROP INDEX IF EXISTS tbl_tgeogpoint_kdtree_idx;
-NOTICE:  index "tbl_tgeogpoint_kdtree_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeompoint_rtree_062_tpoint_posops_idx;
+NOTICE:  index "tbl_tgeompoint_rtree_062_tpoint_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeogpoint_rtree_062_tpoint_posops_idx;
+NOTICE:  index "tbl_tgeogpoint_rtree_062_tpoint_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeompoint_quadtree_062_tpoint_posops_idx;
+NOTICE:  index "tbl_tgeompoint_quadtree_062_tpoint_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeogpoint_quadtree_062_tpoint_posops_idx;
+NOTICE:  index "tbl_tgeogpoint_quadtree_062_tpoint_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeompoint_kdtree_062_tpoint_posops_idx;
+NOTICE:  index "tbl_tgeompoint_kdtree_062_tpoint_posops_idx" does not exist, skipping
+DROP INDEX IF EXISTS tbl_tgeogpoint_kdtree_062_tpoint_posops_idx;
+NOTICE:  index "tbl_tgeogpoint_kdtree_062_tpoint_posops_idx" does not exist, skipping
 -------------------------------------------------------------------------------
 DROP TABLE IF EXISTS test_posops;
 NOTICE:  table "test_posops" does not exist, skipping
-CREATE TABLE test_posops(
+CREATE TEMP TABLE test_posops(
   op CHAR(3),
   leftarg TEXT,
   rightarg TEXT,
@@ -120,8 +120,8 @@ SELECT '&<#', 'tgeogpoint', 'tgeogpoint', COUNT(*) FROM tbl_tgeogpoint t1, tbl_t
 INSERT INTO test_posops(op, leftarg, rightarg, no_idx)
 SELECT '#&>', 'tgeogpoint', 'tgeogpoint', COUNT(*) FROM tbl_tgeogpoint t1, tbl_tgeogpoint t2 WHERE t1.temp #&> t2.temp;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeompoint_rtree_idx ON tbl_tgeompoint USING GIST(temp);
-CREATE INDEX tbl_tgeogpoint_rtree_idx ON tbl_tgeogpoint USING GIST(temp);
+CREATE INDEX tbl_tgeompoint_rtree_062_tpoint_posops_idx ON tbl_tgeompoint USING GIST(temp);
+CREATE INDEX tbl_tgeogpoint_rtree_062_tpoint_posops_idx ON tbl_tgeogpoint USING GIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tgeompoint WHERE t <<# temp )
@@ -223,11 +223,11 @@ UPDATE test_posops
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tgeogpoint t1, tbl_tgeogpoint t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' AND leftarg = 'tgeogpoint' AND rightarg = 'tgeogpoint';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeompoint_rtree_idx;
-DROP INDEX tbl_tgeogpoint_rtree_idx;
+DROP INDEX tbl_tgeompoint_rtree_062_tpoint_posops_idx;
+DROP INDEX tbl_tgeogpoint_rtree_062_tpoint_posops_idx;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeompoint_quadtree_idx ON tbl_tgeompoint USING SPGIST(temp);
-CREATE INDEX tbl_tgeogpoint_quadtree_idx ON tbl_tgeogpoint USING SPGIST(temp);
+CREATE INDEX tbl_tgeompoint_quadtree_062_tpoint_posops_idx ON tbl_tgeompoint USING SPGIST(temp);
+CREATE INDEX tbl_tgeogpoint_quadtree_062_tpoint_posops_idx ON tbl_tgeogpoint USING SPGIST(temp);
 -------------------------------------------------------------------------------
 UPDATE test_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tgeompoint WHERE t <<# temp )
@@ -329,11 +329,11 @@ UPDATE test_posops
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tgeogpoint t1, tbl_tgeogpoint t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' AND leftarg = 'tgeogpoint' AND rightarg = 'tgeogpoint';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeompoint_quadtree_idx;
-DROP INDEX tbl_tgeogpoint_quadtree_idx;
+DROP INDEX tbl_tgeompoint_quadtree_062_tpoint_posops_idx;
+DROP INDEX tbl_tgeogpoint_quadtree_062_tpoint_posops_idx;
 -------------------------------------------------------------------------------
-CREATE INDEX tbl_tgeompoint_kdtree_idx ON tbl_tgeompoint USING SPGIST(temp tgeompoint_kdtree_ops);
-CREATE INDEX tbl_tgeogpoint_kdtree_idx ON tbl_tgeogpoint USING SPGIST(temp tgeogpoint_kdtree_ops);
+CREATE INDEX tbl_tgeompoint_kdtree_062_tpoint_posops_idx ON tbl_tgeompoint USING SPGIST(temp tgeompoint_kdtree_ops);
+CREATE INDEX tbl_tgeogpoint_kdtree_062_tpoint_posops_idx ON tbl_tgeogpoint USING SPGIST(temp tgeogpoint_kdtree_ops);
 -------------------------------------------------------------------------------
 UPDATE test_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tstzspan, tbl_tgeompoint WHERE t <<# temp )
@@ -435,8 +435,8 @@ UPDATE test_posops
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tgeompoint t1, tbl_tgeompoint t2 WHERE t1.temp #&> t2.temp )
 WHERE op = '#&>' AND leftarg = 'tgeogpoint' AND rightarg = 'tgeogpoint';
 -------------------------------------------------------------------------------
-DROP INDEX tbl_tgeompoint_kdtree_idx;
-DROP INDEX tbl_tgeogpoint_kdtree_idx;
+DROP INDEX tbl_tgeompoint_kdtree_062_tpoint_posops_idx;
+DROP INDEX tbl_tgeogpoint_kdtree_062_tpoint_posops_idx;
 -------------------------------------------------------------------------------
 SELECT * FROM test_posops
 WHERE no_idx <> rtree_idx OR no_idx <> quadtree_idx OR no_idx <> kdtree_idx OR

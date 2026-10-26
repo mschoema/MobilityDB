@@ -29,14 +29,14 @@
 
 -------------------------------------------------------------------------------
 
-DROP INDEX IF EXISTS tbl_tcbuffer_rtree_idx;
-DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_idx;
-DROP INDEX IF EXISTS tbl_tcbuffer_kdtree_idx;
+DROP INDEX IF EXISTS tbl_tcbuffer_rtree_208_tcbuffer_topops_idx;
+DROP INDEX IF EXISTS tbl_tcbuffer_quadtree_208_tcbuffer_topops_idx;
+DROP INDEX IF EXISTS tbl_tcbuffer_kdtree_208_tcbuffer_topops_idx;
 
 -------------------------------------------------------------------------------
 
 DROP TABLE if exists test_tcbuffer_topops;
-CREATE TABLE test_tcbuffer_topops(
+CREATE TEMP TABLE test_tcbuffer_topops(
   op char(3),
   leftarg text,
   rightarg text,
@@ -109,7 +109,7 @@ SELECT '-|-', 'tcbuffer', 'tcbuffer', COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffe
 
 -------------------------------------------------------------------------------
 
-CREATE INDEX tbl_tcbuffer_rtree_idx ON tbl_tcbuffer USING GIST(temp);
+CREATE INDEX tbl_tcbuffer_rtree_208_tcbuffer_topops_idx ON tbl_tcbuffer USING GIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tcbuffer
@@ -199,8 +199,8 @@ WHERE op = '-|-' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tcbuffer_rtree_idx;
-CREATE INDEX tbl_tcbuffer_quadtree_idx ON tbl_tcbuffer USING SPGIST(temp);
+DROP INDEX tbl_tcbuffer_rtree_208_tcbuffer_topops_idx;
+CREATE INDEX tbl_tcbuffer_quadtree_208_tcbuffer_topops_idx ON tbl_tcbuffer USING SPGIST(temp);
 
 -------------------------------------------------------------------------------
 -- <type> op tcbuffer
@@ -290,8 +290,8 @@ WHERE op = '-|-' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tcbuffer_quadtree_idx;
-CREATE INDEX tbl_tcbuffer_kdtree_idx ON tbl_tcbuffer USING SPGIST(temp tcbuffer_kdtree_ops);
+DROP INDEX tbl_tcbuffer_quadtree_208_tcbuffer_topops_idx;
+CREATE INDEX tbl_tcbuffer_kdtree_208_tcbuffer_topops_idx ON tbl_tcbuffer USING SPGIST(temp tcbuffer_kdtree_ops);
 
 -------------------------------------------------------------------------------
 -- <type> op tcbuffer
@@ -381,7 +381,7 @@ WHERE op = '-|-' and leftarg = 'tcbuffer' and rightarg = 'tcbuffer';
 
 -------------------------------------------------------------------------------
 
-DROP INDEX tbl_tcbuffer_kdtree_idx;
+DROP INDEX tbl_tcbuffer_kdtree_208_tcbuffer_topops_idx;
 
 -------------------------------------------------------------------------------
 

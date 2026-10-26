@@ -107,20 +107,20 @@ SELECT tpcpointFromMFJSON(asMFJSON(tpcpointSeq(ARRAY[:p1, :p2]), 1, 0, 0)) =
 
 -- Scaled and offset integers, a double of 17 digits and the largest unsigned
 -- 16-bit intensity read back exactly
-INSERT INTO pointcloud_schemas (pcid, srid, compression) VALUES (92, 4326, 'none');
+INSERT INTO pointcloud_schemas (pcid, srid, compression) VALUES (95, 4326, 'none');
 INSERT INTO pointcloud_dimensions
     (pcid, dim_no, dim_name, interpretation, dim_scale, dim_offset) VALUES
-  (92, 1, 'X', 'int32_t', 0.01, 1000), (92, 2, 'Y', 'int32_t', 0.01, -500),
-  (92, 3, 'Z', 'double', 1, 0), (92, 4, 'Intensity', 'uint16_t', 1, 0);
-\set s1 'tpcpoint(pcpoint(92, ARRAY[1000.25, -499.99, 0.1, 17]::float[]), ''2024-01-01''::timestamptz)'
-\set s2 'tpcpoint(pcpoint(92, ARRAY[1003.5, -497.25, 123456.78901234568, 65535]::float[]), ''2024-01-02''::timestamptz)'
+  (95, 1, 'X', 'int32_t', 0.01, 1000), (95, 2, 'Y', 'int32_t', 0.01, -500),
+  (95, 3, 'Z', 'double', 1, 0), (95, 4, 'Intensity', 'uint16_t', 1, 0);
+\set s1 'tpcpoint(pcpoint(95, ARRAY[1000.25, -499.99, 0.1, 17]::float[]), ''2024-01-01''::timestamptz)'
+\set s2 'tpcpoint(pcpoint(95, ARRAY[1003.5, -497.25, 123456.78901234568, 65535]::float[]), ''2024-01-02''::timestamptz)'
 SELECT asMFJSON(:s1)::jsonb -> 'values';
 SELECT tpcpointFromMFJSON(asMFJSON(tpcpointSeq(ARRAY[:s1, :s2]))) =
   tpcpointSeq(ARRAY[:s1, :s2]);
 SELECT getDim(getValue(tpcpointFromMFJSON(asMFJSON(:s2))), 'Z') =
     123456.78901234568::float,
   getDim(getValue(tpcpointFromMFJSON(asMFJSON(:s2))), 'Intensity');
-DELETE FROM pointcloud_schemas WHERE pcid = 92;
+DELETE FROM pointcloud_schemas WHERE pcid = 95;
 
 -- A document stating the coordinates and not the values states no point
 SELECT tpcpointFromMFJSON('{"type":"MovingPCPoint","coordinates":[[1,2,3]],'
