@@ -1,11 +1,41 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-- GiST index test: build the index, run a few box-overlap queries
+-- and verify the answers match a sequential-scan plan.
+-------------------------------------------------------------------------------
+-- tpcpoint
+-------------------------------------------------------------------------------
 CREATE INDEX tbl_tpcpoint_gist_idx ON tbl_tpcpoint USING gist(temp);
-CREATE INDEX
+-- Index plan should match sequential scan for the same query.
 SET enable_seqscan = on;
-SET
 SET enable_indexscan = off;
-SET
 SET enable_bitmapscan = off;
-SET
 SELECT COUNT(*) AS seq_count FROM tbl_tpcpoint
 WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
   tstzspan '[2001-06-01, 2001-12-31]', 1);
@@ -15,11 +45,8 @@ WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
 (1 row)
 
 SET enable_seqscan = off;
-SET
 SET enable_indexscan = on;
-SET
 SET enable_bitmapscan = on;
-SET
 SELECT COUNT(*) AS idx_count FROM tbl_tpcpoint
 WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
   tstzspan '[2001-06-01, 2001-12-31]', 1);
@@ -29,21 +56,16 @@ WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
 (1 row)
 
 DROP INDEX tbl_tpcpoint_gist_idx;
-DROP INDEX
 RESET enable_seqscan;
-RESET
 RESET enable_indexscan;
-RESET
 RESET enable_bitmapscan;
-RESET
+-------------------------------------------------------------------------------
+-- tpcpatch
+-------------------------------------------------------------------------------
 CREATE INDEX tbl_tpcpatch_gist_idx ON tbl_tpcpatch USING gist(temp);
-CREATE INDEX
 SET enable_seqscan = on;
-SET
 SET enable_indexscan = off;
-SET
 SET enable_bitmapscan = off;
-SET
 SELECT COUNT(*) AS seq_count FROM tbl_tpcpatch
 WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
   tstzspan '[2001-06-01, 2001-12-31]', 1);
@@ -53,11 +75,8 @@ WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
 (1 row)
 
 SET enable_seqscan = off;
-SET
 SET enable_indexscan = on;
-SET
 SET enable_bitmapscan = on;
-SET
 SELECT COUNT(*) AS idx_count FROM tbl_tpcpatch
 WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
   tstzspan '[2001-06-01, 2001-12-31]', 1);
@@ -67,21 +86,18 @@ WHERE temp && tpcboxZT(0, 0, 0, 50, 50, 50,
 (1 row)
 
 DROP INDEX tbl_tpcpatch_gist_idx;
-DROP INDEX
 RESET enable_seqscan;
-RESET
 RESET enable_indexscan;
-RESET
 RESET enable_bitmapscan;
-RESET
+-------------------------------------------------------------------------------
+-- Operator-family coverage. For each operator the seqscan and indexed
+-- counts must match. This locks index correctness across the kinds of
+-- queries a real drone-LiDAR workload pivots on.
+-------------------------------------------------------------------------------
 CREATE INDEX tbl_tpcpatch_gist_idx ON tbl_tpcpatch USING gist(temp);
-CREATE INDEX
-SET enable_seqscan = on;
-SET
-SET enable_indexscan = off;
-SET
-SET enable_bitmapscan = off;
-SET
+-- &&  : bbox overlap (already covered above; repeated for symmetry).
+-- <@  : value's bbox contained in the query bbox.
+SET enable_seqscan = on;  SET enable_indexscan = off; SET enable_bitmapscan = off;
 SELECT COUNT(*) AS seq_contained FROM tbl_tpcpatch
 WHERE temp <@ tpcboxZT(-1000, -1000, -1000, 1000, 1000, 1000,
   tstzspan '[2001-01-01, 2002-01-01]', 1);
@@ -90,12 +106,7 @@ WHERE temp <@ tpcboxZT(-1000, -1000, -1000, 1000, 1000, 1000,
            100
 (1 row)
 
-SET enable_seqscan = off;
-SET
-SET enable_indexscan = on;
-SET
-SET enable_bitmapscan = on;
-SET
+SET enable_seqscan = off; SET enable_indexscan = on; SET enable_bitmapscan = on;
 SELECT COUNT(*) AS idx_contained FROM tbl_tpcpatch
 WHERE temp <@ tpcboxZT(-1000, -1000, -1000, 1000, 1000, 1000,
   tstzspan '[2001-01-01, 2002-01-01]', 1);
@@ -104,12 +115,8 @@ WHERE temp <@ tpcboxZT(-1000, -1000, -1000, 1000, 1000, 1000,
            100
 (1 row)
 
-SET enable_seqscan = on;
-SET
-SET enable_indexscan = off;
-SET
-SET enable_bitmapscan = off;
-SET
+-- <<# : strictly before (time)
+SET enable_seqscan = on;  SET enable_indexscan = off; SET enable_bitmapscan = off;
 SELECT COUNT(*) AS seq_before FROM tbl_tpcpatch
 WHERE temp <<# tpcboxZT(0, 0, 0, 100, 100, 100,
   tstzspan '[2001-12-15, 2002-01-01]', 1);
@@ -118,12 +125,7 @@ WHERE temp <<# tpcboxZT(0, 0, 0, 100, 100, 100,
          95
 (1 row)
 
-SET enable_seqscan = off;
-SET
-SET enable_indexscan = on;
-SET
-SET enable_bitmapscan = on;
-SET
+SET enable_seqscan = off; SET enable_indexscan = on; SET enable_bitmapscan = on;
 SELECT COUNT(*) AS idx_before FROM tbl_tpcpatch
 WHERE temp <<# tpcboxZT(0, 0, 0, 100, 100, 100,
   tstzspan '[2001-12-15, 2002-01-01]', 1);
@@ -132,12 +134,8 @@ WHERE temp <<# tpcboxZT(0, 0, 0, 100, 100, 100,
          95
 (1 row)
 
-SET enable_seqscan = on;
-SET
-SET enable_indexscan = off;
-SET
-SET enable_bitmapscan = off;
-SET
+-- << : strictly left (X)
+SET enable_seqscan = on;  SET enable_indexscan = off; SET enable_bitmapscan = off;
 SELECT COUNT(*) AS seq_left FROM tbl_tpcpatch
 WHERE temp << tpcboxZT(50, -1000, -1000, 1000, 1000, 1000,
   tstzspan '[2001-01-01, 2002-01-01]', 1);
@@ -146,12 +144,7 @@ WHERE temp << tpcboxZT(50, -1000, -1000, 1000, 1000, 1000,
         9
 (1 row)
 
-SET enable_seqscan = off;
-SET
-SET enable_indexscan = on;
-SET
-SET enable_bitmapscan = on;
-SET
+SET enable_seqscan = off; SET enable_indexscan = on; SET enable_bitmapscan = on;
 SELECT COUNT(*) AS idx_left FROM tbl_tpcpatch
 WHERE temp << tpcboxZT(50, -1000, -1000, 1000, 1000, 1000,
   tstzspan '[2001-01-01, 2002-01-01]', 1);
@@ -161,23 +154,18 @@ WHERE temp << tpcboxZT(50, -1000, -1000, 1000, 1000, 1000,
 (1 row)
 
 DROP INDEX tbl_tpcpatch_gist_idx;
-DROP INDEX
 RESET enable_seqscan;
-RESET
 RESET enable_indexscan;
-RESET
 RESET enable_bitmapscan;
-RESET
+-------------------------------------------------------------------------------
+-- Query arguments other than a tpcbox. The opclass declares members against
+-- tstzspan and against the temporal type itself, so the consistent method
+-- meets those types as the query and the counts it produces must equal the
+-- ones a scan produces.
+-------------------------------------------------------------------------------
 CREATE INDEX tbl_tpcpoint_gist_idx ON tbl_tpcpoint USING gist(temp);
-CREATE INDEX
 CREATE INDEX tbl_tpcpatch_gist_idx ON tbl_tpcpatch USING gist(temp);
-CREATE INDEX
-SET enable_seqscan = on;
-SET
-SET enable_indexscan = off;
-SET
-SET enable_bitmapscan = off;
-SET
+SET enable_seqscan = on;  SET enable_indexscan = off; SET enable_bitmapscan = off;
 SELECT COUNT(*) AS seq_span FROM tbl_tpcpoint
 WHERE temp && tstzspan '[2001-06-01, 2001-12-31]';
  seq_span 
@@ -206,12 +194,7 @@ WHERE t1.temp && (SELECT temp FROM tbl_tpcpoint WHERE temp IS NOT NULL ORDER BY 
         1
 (1 row)
 
-SET enable_seqscan = off;
-SET
-SET enable_indexscan = on;
-SET
-SET enable_bitmapscan = on;
-SET
+SET enable_seqscan = off; SET enable_indexscan = on; SET enable_bitmapscan = on;
 SELECT COUNT(*) AS idx_span FROM tbl_tpcpoint
 WHERE temp && tstzspan '[2001-06-01, 2001-12-31]';
  idx_span 
@@ -241,25 +224,19 @@ WHERE t1.temp && (SELECT temp FROM tbl_tpcpoint WHERE temp IS NOT NULL ORDER BY 
 (1 row)
 
 DROP INDEX tbl_tpcpoint_gist_idx;
-DROP INDEX
 DROP INDEX tbl_tpcpatch_gist_idx;
-DROP INDEX
 RESET enable_seqscan;
-RESET
 RESET enable_indexscan;
-RESET
 RESET enable_bitmapscan;
-RESET
+-------------------------------------------------------------------------------
+-- Functional call form. The planner support function rewrites a call such as
+-- overlaps(temp, box) into the indexable temp && box, so the counts a scan
+-- produces and the counts an index produces must agree for the call form
+-- exactly as they do for the operator form.
+-------------------------------------------------------------------------------
 CREATE INDEX tbl_tpcpoint_gist_idx ON tbl_tpcpoint USING gist(temp);
-CREATE INDEX
 CREATE INDEX tbl_tpcpatch_gist_idx ON tbl_tpcpatch USING gist(temp);
-CREATE INDEX
-SET enable_seqscan = on;
-SET
-SET enable_indexscan = off;
-SET
-SET enable_bitmapscan = off;
-SET
+SET enable_seqscan = on;  SET enable_indexscan = off; SET enable_bitmapscan = off;
 SELECT COUNT(*) AS seq_fn_box FROM tbl_tpcpoint
 WHERE tpcboxOverlaps(temp, tpcboxZT(0, 0, 0, 50, 50, 50,
   tstzspan '[2001-06-01, 2001-12-31]', 1));
@@ -283,12 +260,7 @@ WHERE tpcboxOverlaps(temp, tpcboxZT(0, 0, 0, 50, 50, 50,
            45
 (1 row)
 
-SET enable_seqscan = off;
-SET
-SET enable_indexscan = on;
-SET
-SET enable_bitmapscan = on;
-SET
+SET enable_seqscan = off; SET enable_indexscan = on; SET enable_bitmapscan = on;
 SELECT COUNT(*) AS idx_fn_box FROM tbl_tpcpoint
 WHERE tpcboxOverlaps(temp, tpcboxZT(0, 0, 0, 50, 50, 50,
   tstzspan '[2001-06-01, 2001-12-31]', 1));
@@ -313,16 +285,12 @@ WHERE tpcboxOverlaps(temp, tpcboxZT(0, 0, 0, 50, 50, 50,
 (1 row)
 
 DROP INDEX tbl_tpcpoint_gist_idx;
-DROP INDEX
 DROP INDEX tbl_tpcpatch_gist_idx;
-DROP INDEX
 RESET enable_seqscan;
-RESET
 RESET enable_indexscan;
-RESET
 RESET enable_bitmapscan;
-RESET
+-- typanalyze: ANALYZE must succeed on the temporal pointcloud columns; tspatial_analyze
+-- projects each TPCBox bounding box to an STBox for the spatial statistics
 ANALYZE tbl_tpcpoint;
-ANALYZE
 ANALYZE tbl_tpcpatch;
-ANALYZE
+-------------------------------------------------------------------------------

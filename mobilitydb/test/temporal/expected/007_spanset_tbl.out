@@ -1,12 +1,41 @@
-COPY  tbl_intspanset TO STDOUT (FORMAT BINARY);
-COPY 100
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Tests for the span set data type.
+-- File spanset.c
+--------------------------------------------------------------------------------
+-- Send/receive functions
+\copy tbl_intspanset TO 'tbl_intspanset' (FORMAT BINARY);
 DROP TABLE IF EXISTS tbl_intspanset_tmp;
 NOTICE:  table "tbl_intspanset_tmp" does not exist, skipping
-DROP TABLE
 CREATE TABLE tbl_intspanset_tmp AS TABLE tbl_intspanset WITH NO DATA;
-CREATE TABLE AS
-COPY  tbl_intspanset_tmp FROM STDIN (FORMAT BINARY);
-COPY 100
+\copy tbl_intspanset_tmp FROM 'tbl_intspanset' (FORMAT BINARY);
 SELECT COUNT(*) FROM tbl_intspanset t1, tbl_intspanset_tmp t2 WHERE t1.k = t2.k AND t1.i <> t2.i;
  count 
 -------
@@ -14,16 +43,11 @@ SELECT COUNT(*) FROM tbl_intspanset t1, tbl_intspanset_tmp t2 WHERE t1.k = t2.k 
 (1 row)
 
 DROP TABLE tbl_intspanset_tmp;
-DROP TABLE
-COPY  tbl_bigintspanset TO STDOUT (FORMAT BINARY);
-COPY 100
+\copy tbl_bigintspanset TO 'tbl_bigintspanset' (FORMAT BINARY);
 DROP TABLE IF EXISTS tbl_bigintspanset_tmp;
 NOTICE:  table "tbl_bigintspanset_tmp" does not exist, skipping
-DROP TABLE
 CREATE TABLE tbl_bigintspanset_tmp AS TABLE tbl_bigintspanset WITH NO DATA;
-CREATE TABLE AS
-COPY  tbl_bigintspanset_tmp FROM STDIN (FORMAT BINARY);
-COPY 100
+\copy tbl_bigintspanset_tmp FROM 'tbl_bigintspanset' (FORMAT BINARY);
 SELECT COUNT(*) FROM tbl_bigintspanset t1, tbl_bigintspanset_tmp t2 WHERE t1.k = t2.k AND t1.b <> t2.b;
  count 
 -------
@@ -31,16 +55,11 @@ SELECT COUNT(*) FROM tbl_bigintspanset t1, tbl_bigintspanset_tmp t2 WHERE t1.k =
 (1 row)
 
 DROP TABLE tbl_bigintspanset_tmp;
-DROP TABLE
-COPY  tbl_floatspanset TO STDOUT (FORMAT BINARY);
-COPY 100
+\copy tbl_floatspanset TO 'tbl_floatspanset' (FORMAT BINARY);
 DROP TABLE IF EXISTS tbl_floatspanset_tmp;
 NOTICE:  table "tbl_floatspanset_tmp" does not exist, skipping
-DROP TABLE
 CREATE TABLE tbl_floatspanset_tmp AS TABLE tbl_floatspanset WITH NO DATA;
-CREATE TABLE AS
-COPY  tbl_floatspanset_tmp FROM STDIN (FORMAT BINARY);
-COPY 100
+\copy tbl_floatspanset_tmp FROM 'tbl_floatspanset' (FORMAT BINARY);
 SELECT COUNT(*) FROM tbl_floatspanset t1, tbl_floatspanset_tmp t2 WHERE t1.k = t2.k AND t1.f <> t2.f;
  count 
 -------
@@ -48,16 +67,11 @@ SELECT COUNT(*) FROM tbl_floatspanset t1, tbl_floatspanset_tmp t2 WHERE t1.k = t
 (1 row)
 
 DROP TABLE tbl_floatspanset_tmp;
-DROP TABLE
-COPY  tbl_datespanset TO STDOUT (FORMAT BINARY);
-COPY 100
+\copy tbl_datespanset TO 'tbl_datespanset' (FORMAT BINARY);
 DROP TABLE IF EXISTS tbl_datespanset_tmp;
 NOTICE:  table "tbl_datespanset_tmp" does not exist, skipping
-DROP TABLE
 CREATE TABLE tbl_datespanset_tmp AS TABLE tbl_datespanset WITH NO DATA;
-CREATE TABLE AS
-COPY  tbl_datespanset_tmp FROM STDIN (FORMAT BINARY);
-COPY 100
+\copy tbl_datespanset_tmp FROM 'tbl_datespanset' (FORMAT BINARY);
 SELECT COUNT(*) FROM tbl_datespanset t1, tbl_datespanset_tmp t2 WHERE t1.k = t2.k AND t1.d <> t2.d;
  count 
 -------
@@ -65,16 +79,11 @@ SELECT COUNT(*) FROM tbl_datespanset t1, tbl_datespanset_tmp t2 WHERE t1.k = t2.
 (1 row)
 
 DROP TABLE tbl_datespanset_tmp;
-DROP TABLE
-COPY  tbl_tstzspanset TO STDOUT (FORMAT BINARY);
-COPY 100
+\copy tbl_tstzspanset TO 'tbl_tstzspanset' (FORMAT BINARY);
 DROP TABLE IF EXISTS tbl_tstzspanset_tmp;
 NOTICE:  table "tbl_tstzspanset_tmp" does not exist, skipping
-DROP TABLE
 CREATE TABLE tbl_tstzspanset_tmp AS TABLE tbl_tstzspanset WITH NO DATA;
-CREATE TABLE AS
-COPY  tbl_tstzspanset_tmp FROM STDIN (FORMAT BINARY);
-COPY 100
+\copy tbl_tstzspanset_tmp FROM 'tbl_tstzspanset' (FORMAT BINARY);
 SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspanset_tmp t2 WHERE t1.k = t2.k AND t1.t <> t2.t;
  count 
 -------
@@ -82,7 +91,7 @@ SELECT COUNT(*) FROM tbl_tstzspanset t1, tbl_tstzspanset_tmp t2 WHERE t1.k = t2.
 (1 row)
 
 DROP TABLE tbl_tstzspanset_tmp;
-DROP TABLE
+-- Input/output from/to WKB and HexWKB
 SELECT COUNT(*) FROM tbl_intspanset WHERE intspansetFromBinary(asBinary(i)) <> i;
  count 
 -------
@@ -173,6 +182,9 @@ SELECT COUNT(*) FROM tbl_tstzspanset WHERE tstzspansetFromText(asText(t)) <> asT
      0
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Conversions
+-------------------------------------------------------------------------------
 SELECT MAX(lower(spanset(i))) FROM tbl_intspan;
  max 
 -----
@@ -281,6 +293,9 @@ SELECT COUNT(*) FROM tbl_tstzspanset WHERE t <> (t::tstzmultirange)::tstzspanset
      0
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Accessor Functions
+-------------------------------------------------------------------------------
 SELECT MAX(memSize(i)) FROM tbl_intspanset;
  max 
 -----
@@ -392,27 +407,27 @@ SELECT MAX(width(f)) FROM tbl_floatspanset;
 (1 row)
 
 SELECT MAX(duration(d)) FROM tbl_datespanset;
-   max   
----------
- 68 days
+    max    
+-----------
+ @ 68 days
 (1 row)
 
 SELECT MAX(duration(d, true)) FROM tbl_datespanset;
-   max    
-----------
- 127 days
+    max     
+------------
+ @ 127 days
 (1 row)
 
 SELECT MAX(duration(t)) FROM tbl_tstzspanset;
-   max    
-----------
- 00:56:00
+    max    
+-----------
+ @ 56 mins
 (1 row)
 
 SELECT MAX(duration(t, true)) FROM tbl_tstzspanset;
-   max    
-----------
- 01:45:00
+       max        
+------------------
+ @ 1 hour 45 mins
 (1 row)
 
 SELECT MAX(numSpans(i)) FROM tbl_intspanset;
@@ -637,6 +652,9 @@ SELECT MAX(lower(radians(f))) FROM tbl_floatspanset;
  0.8261220427822861
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Comparison Functions
+-------------------------------------------------------------------------------
 SELECT COUNT(*) FROM tbl_intspanset t1, tbl_intspanset t2 WHERE cmp(t1.i, t2.i) = -1;
  count 
 -------
@@ -817,9 +835,13 @@ SELECT MAX(hashExtended(t, 1)) != 0 FROM tbl_tstzspanset;
  t
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Transformation Functions
+-------------------------------------------------------------------------------
 SELECT MAX(lower(round(f, 6))) FROM tbl_floatspanset;
     max    
 -----------
  47.333306
 (1 row)
 
+-------------------------------------------------------------------------------

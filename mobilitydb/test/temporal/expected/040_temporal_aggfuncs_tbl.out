@@ -1,3 +1,35 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Extent aggregate function
+-------------------------------------------------------------------------------
 SELECT extent(inst) FROM tbl_tbool_inst;
                             extent                            
 --------------------------------------------------------------
@@ -118,6 +150,9 @@ SELECT round(extent(temp), 6) FROM tbl_tfloat;
  TBOXFLOAT XT([1.029263, 99.917602],(Tue Jan 02 10:42:00 2001 PST, Sat Dec 22 00:07:00 2001 PST])
 (1 row)
 
+-------------------------------------------------------------------------------
+-- TemporalInst aggregate functions
+-------------------------------------------------------------------------------
 SELECT numInstants(tand(inst)) FROM tbl_tbool_inst;
  numinstants 
 -------------
@@ -454,6 +489,9 @@ SELECT k%10, numInstants(tcount(inst)) FROM tbl_ttext_inst GROUP BY k%10 ORDER B
         9 |          10
 (10 rows)
 
+-------------------------------------------------------------------------------
+-- Temporal discrete sequence aggregate functions
+-------------------------------------------------------------------------------
 SELECT numInstants(tand(ti)) FROM tbl_tbool_discseq;
  numinstants 
 -------------
@@ -790,6 +828,9 @@ SELECT k%10, numInstants(tcount(ti)) FROM tbl_ttext_discseq GROUP BY k%10 ORDER 
         9 |          47
 (10 rows)
 
+-------------------------------------------------------------------------------
+-- Temporal continuous sequence aggregate functions
+-------------------------------------------------------------------------------
 SELECT numSequences(tand(seq)) FROM tbl_tbool_seq;
  numsequences 
 --------------
@@ -1126,6 +1167,9 @@ SELECT k%10, numSequences(tcount(seq)) FROM tbl_ttext_seq GROUP BY k%10 ORDER BY
         9 |           10
 (10 rows)
 
+-------------------------------------------------------------------------------
+-- Temporal sequence set aggregate functions
+-------------------------------------------------------------------------------
 SELECT numSequences(tand(ss)) FROM tbl_tbool_seqset;
  numsequences 
 --------------
@@ -1462,6 +1506,7 @@ SELECT k%10, numSequences(tcount(ss)) FROM tbl_ttext_seqset GROUP BY k%10 ORDER 
         9 |           56
 (10 rows)
 
+-------------------------------------------------------------------------------
 WITH Temp AS (
   SELECT DISTINCT ON (getTimestamp(inst)) inst
   FROM tbl_tint_inst
@@ -1472,3 +1517,6 @@ SELECT numInstants(appendInstant(inst)) FROM temp;
           96
 (1 row)
 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+  

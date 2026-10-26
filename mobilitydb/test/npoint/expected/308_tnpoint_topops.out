@@ -1,3 +1,32 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 SELECT round(stbox(npoint 'NPoint(1,0.5)'), 6);
                              round                              
 ----------------------------------------------------------------
@@ -46,9 +75,11 @@ SELECT round(stbox(tnpoint '{[NPoint(1,0.4)@2001-01-01, NPoint(1,0.5)@2001-01-02
  SRID=5676;STBOX XT(((34.650693,25.103669),(71.258509,78.953813)),[Mon Jan 01 00:00:00 2001 PST, Fri Jan 05 00:00:00 2001 PST])
 (1 row)
 
+-------------------------------------------------------------------------------
 /* Errors */
 SELECT stbox 'STBOX X((1.0,2.0),(1.0,2.0))' && tnpoint 'NPoint(1,0.5)@2001-01-01';
 ERROR:  Operation on mixed SRID
+-------------------------------------------------------------------------------
 SELECT tstzspan '[2001-01-01,2001-01-02]' && tnpoint 'NPoint(1,0.5)@2001-01-01';
  ?column? 
 ----------
@@ -241,6 +272,7 @@ SELECT tnpoint '{[NPoint(1,0.4)@2001-01-01, NPoint(1,0.5)@2001-01-02, NPoint(1,0
  t
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT tstzspan '[2001-01-01,2001-01-02]' @> tnpoint 'NPoint(1,0.5)@2001-01-01';
  ?column? 
 ----------
@@ -433,6 +465,7 @@ SELECT tnpoint '{[NPoint(1,0.4)@2001-01-01, NPoint(1,0.5)@2001-01-02, NPoint(1,0
  t
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT tstzspan '[2001-01-01,2001-01-02]' <@ tnpoint 'NPoint(1,0.5)@2001-01-01';
  ?column? 
 ----------
@@ -625,6 +658,7 @@ SELECT tnpoint '{[NPoint(1,0.4)@2001-01-01, NPoint(1,0.5)@2001-01-02, NPoint(1,0
  t
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT tstzspan '[2001-01-01,2001-01-02]' ~= tnpoint 'NPoint(1,0.5)@2001-01-01';
  ?column? 
 ----------
@@ -817,6 +851,7 @@ SELECT tnpoint '{[NPoint(1,0.4)@2001-01-01, NPoint(1,0.5)@2001-01-02, NPoint(1,0
  t
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT tstzspan '[2001-01-01,2001-01-02]' -|- tnpoint 'NPoint(1,0.5)@2001-01-01';
  ?column? 
 ----------
@@ -1009,6 +1044,9 @@ SELECT tnpoint '{[NPoint(1,0.4)@2001-01-01, NPoint(1,0.5)@2001-01-02, NPoint(1,0
  f
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Selectivity tests
+-------------------------------------------------------------------------------
 SELECT COUNT(*) FROM tbl_tnpoint WHERE temp && stbox 'SRID=5676;STBOX X((0,0),(50,50))';
  count 
 -------
@@ -1021,3 +1059,4 @@ SELECT COUNT(*) FROM tbl_tnpoint WHERE temp && tnpoint '[Npoint(1,0.1)@2001-06-0
      7
 (1 row)
 
+-------------------------------------------------------------------------------

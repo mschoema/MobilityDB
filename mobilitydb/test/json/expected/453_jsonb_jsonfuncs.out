@@ -1,3 +1,36 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- JSON functions of JSONB values, each answering as the PostgreSQL function
+-- or operator it names
+-------------------------------------------------------------------------------
+-- Text input and output, against the type input and output functions
 SELECT jsonbFromText('{"b": [1, 2], "a": null}');
       jsonbfromtext       
 --------------------------
@@ -41,10 +74,13 @@ SELECT asText(jsonpathFromText('lax $.a.**{1 to last}'));
 (1 row)
 
 /* Errors */
+\set VERBOSITY terse
 SELECT jsonbFromText('{"a": }');
 ERROR:  invalid input syntax for type json
 SELECT jsonpathFromText('$.a ? (');
 ERROR:  syntax error at end of jsonpath input
+\set VERBOSITY default
+-- Accessors
 SELECT jsonbArrayLength(jsonb '[1, 2, 3]');
  jsonbarraylength 
 ------------------
@@ -114,6 +150,7 @@ SELECT jsonbExtractPath(jsonb '{"a": {"b": [10, 20]}}', ARRAY['a', 'b', '1']) =
  t
 (1 row)
 
+-- Set-returning functions
 SELECT * FROM jsonbArrayElements(jsonb '[1, "two", {"three": 3}]');
  jsonbarrayelements 
 --------------------
@@ -156,6 +193,7 @@ SELECT COUNT(*) FROM jsonbArrayElements(jsonb '[]');
      0
 (1 row)
 
+-- Existence and containment
 SELECT jsonbExists(jsonb '{"a": 1}', 'a'), jsonbExists(jsonb '{"a": 1}', 'b');
  jsonbexists | jsonbexists 
 -------------+-------------
@@ -193,6 +231,7 @@ SELECT jsonbContains(jsonb '{"a": 1, "b": 2}', jsonb '{"a": 1}') =
  t
 (1 row)
 
+-- Modifications
 SELECT jsonbConcat(jsonb '{"a": 1}', jsonb '{"b": 2}');
    jsonbconcat    
 ------------------
@@ -277,6 +316,7 @@ SELECT jsonbStripNulls(jsonb '{"a": null, "b": [1, null]}', true);
  {"b": [1]}
 (1 row)
 
+-- Path functions
 SELECT jsonbPathExists(jsonb '{"a": [1, 2, 3]}', '$.a[*] ? (@ > 2)');
  jsonbpathexists 
 -----------------
@@ -369,6 +409,7 @@ SELECT jsonbPathExists(jsonb '{"a": [1, 2, 3]}', '$.a[*] ? (@ > 2)') =
  t
 (1 row)
 
+-- Comparison functions
 SELECT eq(jsonb '{"a": 1}', jsonb '{"a": 1}'), ne(jsonb '1', jsonb '2');
  eq | ne 
 ----+----
@@ -409,3 +450,4 @@ SELECT hashExtended(jsonb '{"a": 1}', 7) =
  t
 (1 row)
 
+-------------------------------------------------------------------------------

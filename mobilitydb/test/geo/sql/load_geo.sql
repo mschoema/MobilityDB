@@ -1,0 +1,243 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+
+\getenv srcdir MOBILITYDB_SOURCE_DIR
+
+CREATE TABLE tbl_geography (
+    k integer,
+    g geography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geography.data'
+COPY tbl_geography (k, g) FROM :'filename';
+
+CREATE TABLE tbl_geography3D (
+    k integer,
+    g geography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geography3D.data'
+COPY tbl_geography3D (k, g) FROM :'filename';
+
+CREATE TABLE tbl_geographyset (
+    k integer,
+    g geogset
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geographyset.data'
+COPY tbl_geographyset (k, g) FROM :'filename';
+
+CREATE TABLE tbl_geography3Dset (
+    k integer,
+    g geogset
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geography3Dset.data'
+COPY tbl_geography3Dset (k, g) FROM :'filename';
+
+CREATE TABLE tbl_geometry (
+    k integer,
+    g geometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geometry.data'
+COPY tbl_geometry (k, g) FROM :'filename';
+
+CREATE TABLE tbl_geometry3D (
+    k integer,
+    g geometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geometry3D.data'
+COPY tbl_geometry3D (k, g) FROM :'filename';
+
+CREATE TABLE tbl_geometryset (
+    k integer,
+    g geomset
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geometryset.data'
+COPY tbl_geometryset (k, g) FROM :'filename';
+
+CREATE TABLE tbl_geometry3Dset (
+    k integer,
+    g geomset
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_geometry3Dset.data'
+COPY tbl_geometry3Dset (k, g) FROM :'filename';
+
+CREATE TABLE tbl_tgeography (
+    k integer,
+    temp tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography.data'
+COPY tbl_tgeography (k, temp) FROM :'filename';
+
+CREATE TABLE tbl_tgeography3D (
+    k integer,
+    temp tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography3D.data'
+COPY tbl_tgeography3D (k, temp) FROM :'filename';
+
+CREATE TABLE tbl_tgeography3D_big (
+    k integer,
+    temp tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography3D_big.data'
+COPY tbl_tgeography3D_big (k, temp) FROM :'filename';
+
+CREATE TABLE tbl_tgeography_discseq (
+    k integer,
+    ti tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography_discseq.data'
+COPY tbl_tgeography_discseq (k, ti) FROM :'filename';
+
+CREATE TABLE tbl_tgeography3D_discseq (
+    k integer,
+    ti tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography3D_discseq.data'
+COPY tbl_tgeography3D_discseq (k, ti) FROM :'filename';
+
+CREATE TABLE tbl_tgeography_inst (
+    k integer,
+    inst tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography_inst.data'
+COPY tbl_tgeography_inst (k, inst) FROM :'filename';
+
+CREATE TABLE tbl_tgeography3D_inst (
+    k integer,
+    inst tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography3D_inst.data'
+COPY tbl_tgeography3D_inst (k, inst) FROM :'filename';
+
+CREATE TABLE tbl_tgeography_seq (
+    k integer,
+    seq tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography_seq.data'
+COPY tbl_tgeography_seq (k, seq) FROM :'filename';
+
+CREATE TABLE tbl_tgeography3D_seq (
+    k integer,
+    seq tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography3D_seq.data'
+COPY tbl_tgeography3D_seq (k, seq) FROM :'filename';
+
+CREATE TABLE tbl_tgeography_seqset (
+    k integer,
+    ss tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography_seqset.data'
+COPY tbl_tgeography_seqset (k, ss) FROM :'filename';
+
+CREATE TABLE tbl_tgeography3D_seqset (
+    k integer,
+    ss tgeography
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeography3D_seqset.data'
+COPY tbl_tgeography3D_seqset (k, ss) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry (
+    k integer,
+    temp tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry.data'
+COPY tbl_tgeometry (k, temp) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry3D (
+    k integer,
+    temp tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry3D.data'
+COPY tbl_tgeometry3D (k, temp) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry3D_big (
+    k integer,
+    temp tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry3D_big.data'
+COPY tbl_tgeometry3D_big (k, temp) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry_discseq (
+    k integer,
+    ti tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry_discseq.data'
+COPY tbl_tgeometry_discseq (k, ti) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry3D_discseq (
+    k integer,
+    ti tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry3D_discseq.data'
+COPY tbl_tgeometry3D_discseq (k, ti) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry_inst (
+    k integer,
+    inst tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry_inst.data'
+COPY tbl_tgeometry_inst (k, inst) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry3D_inst (
+    k integer,
+    inst tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry3D_inst.data'
+COPY tbl_tgeometry3D_inst (k, inst) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry_seq (
+    k integer,
+    seq tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry_seq.data'
+COPY tbl_tgeometry_seq (k, seq) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry3D_seq (
+    k integer,
+    seq tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry3D_seq.data'
+COPY tbl_tgeometry3D_seq (k, seq) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry_seqset (
+    k integer,
+    ss tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry_seqset.data'
+COPY tbl_tgeometry_seqset (k, ss) FROM :'filename';
+
+CREATE TABLE tbl_tgeometry3D_seqset (
+    k integer,
+    ss tgeometry
+);
+\set filename :srcdir '/mobilitydb/test/geo/data/tbl_tgeometry3D_seqset.data'
+COPY tbl_tgeometry3D_seqset (k, ss) FROM :'filename';
+
+-- Launch the ANALYZE deamon to avoid that it is launched during the tests
+ANALYZE;

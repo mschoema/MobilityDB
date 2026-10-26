@@ -1,16 +1,49 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-- Index correctness tests for trgeometry on tbl_trgeometry2d (SRID 5676).
+-- Modeled on mobilitydb/test/cbuffer/sql/166_tcbuffer_indexes_tbl.
 ANALYZE tbl_trgeometry2d;
-ANALYZE
 DROP INDEX IF EXISTS tbl_trgeometry2d_rtree_idx;
 NOTICE:  index "tbl_trgeometry2d_rtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_trgeometry2d_quadtree_idx;
 NOTICE:  index "tbl_trgeometry2d_quadtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_trgeometry2d_kdtree_idx;
 NOTICE:  index "tbl_trgeometry2d_kdtree_idx" does not exist, skipping
-DROP INDEX
+-- Reusable trgeometry literal: small triangle Polygon stamped along
+-- a 2-instant pose path
+\set TRG_LIT 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]'
+\set GEOM_LIT 'SRID=5676;Point(25 25)'
+\set BBOX_LIT 'SRID=5676;STBOX XT(((0,0),(50,50)),[2001-01-01, 2001-12-31])'
+-------------------------------------------------------------------------------
+-- 1. rtree (GIST)
+-------------------------------------------------------------------------------
 CREATE INDEX tbl_trgeometry2d_rtree_idx ON tbl_trgeometry2d USING GIST(temp);
-CREATE INDEX
 SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <<# tstzspan '[2001-01-01, 2001-02-01]';
  count 
 -------
@@ -35,112 +68,113 @@ SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp #&> tstzspan '[2001-01-01, 2001
    100
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp < trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp < trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <= trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <= trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp > trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp > trgeometry :'TRG_LIT';
  count 
 -------
    100
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp >= trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp >= trgeometry :'TRG_LIT';
  count 
 -------
    100
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp && trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp && trgeometry :'TRG_LIT';
  count 
 -------
     64
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp @> trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp @> trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <@ trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <@ trgeometry :'TRG_LIT';
  count 
 -------
      1
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp ~= trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp ~= trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp -|- trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp -|- trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp << trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp << trgeometry :'TRG_LIT';
  count 
 -------
     17
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp &< trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp &< trgeometry :'TRG_LIT';
  count 
 -------
     39
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp >> trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp >> trgeometry :'TRG_LIT';
  count 
 -------
      8
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp &> trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp &> trgeometry :'TRG_LIT';
  count 
 -------
     20
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <<| trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <<| trgeometry :'TRG_LIT';
  count 
 -------
     21
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp &<| trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp &<| trgeometry :'TRG_LIT';
  count 
 -------
     31
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp |>> trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp |>> trgeometry :'TRG_LIT';
  count 
 -------
      7
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp |&> trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp |&> trgeometry :'TRG_LIT';
  count 
 -------
     17
 (1 row)
 
+-------------------------------------------------------------------------------
+-- 2. quadtree (SPGIST default)
+-------------------------------------------------------------------------------
 DROP INDEX IF EXISTS tbl_trgeometry2d_rtree_idx;
-DROP INDEX
 CREATE INDEX tbl_trgeometry2d_quadtree_idx ON tbl_trgeometry2d USING SPGIST(temp);
-CREATE INDEX
 SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <<# tstzspan '[2001-01-01, 2001-02-01]';
  count 
 -------
@@ -165,83 +199,81 @@ SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp #&> tstzspan '[2001-01-01, 2001
    100
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp && trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp && trgeometry :'TRG_LIT';
  count 
 -------
     64
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp @> trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp @> trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <@ trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <@ trgeometry :'TRG_LIT';
  count 
 -------
      1
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp ~= trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp ~= trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
+-------------------------------------------------------------------------------
+-- 3. kdtree (SPGIST trgeometry_kdtree_ops)
+-------------------------------------------------------------------------------
 DROP INDEX IF EXISTS tbl_trgeometry2d_quadtree_idx;
-DROP INDEX
 CREATE INDEX tbl_trgeometry2d_kdtree_idx ON tbl_trgeometry2d USING SPGIST(temp trgeometry_kdtree_ops);
-CREATE INDEX
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp && trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp && trgeometry :'TRG_LIT';
  count 
 -------
     64
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp @> trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp @> trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <@ trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp <@ trgeometry :'TRG_LIT';
  count 
 -------
      1
 (1 row)
 
-SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp ~= trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
+SELECT COUNT(*) FROM tbl_trgeometry2d WHERE temp ~= trgeometry :'TRG_LIT';
  count 
 -------
      0
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Coverage of all the same and order by logic in SP-GiST indexes
 CREATE TABLE tbl_trgeometry_big_allthesame AS
   SELECT k, trgeometry(geometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1))',
     tpose(pose 'SRID=5676;Pose(Point(25 25), 0.3)', timeSpan(temp))) AS temp
   FROM tbl_trgeometry2d WHERE temp IS NOT NULL;
-SELECT 100
 CREATE INDEX tbl_trgeometry_big_allthesame_quadtree_idx ON tbl_trgeometry_big_allthesame USING SPGIST(temp);
-CREATE INDEX
 ANALYZE tbl_trgeometry_big_allthesame;
-ANALYZE
+-- EXPLAIN ANALYZE
 DROP TABLE tbl_trgeometry_big_allthesame;
-DROP TABLE
+-------------------------------------------------------------------------------
+-- 5. Z-axis position operators on tbl_trgeometry3d
+-------------------------------------------------------------------------------
 ANALYZE tbl_trgeometry3d;
-ANALYZE
 DROP INDEX IF EXISTS tbl_trgeometry3d_rtree_idx;
 NOTICE:  index "tbl_trgeometry3d_rtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_trgeometry3d_quadtree_idx;
 NOTICE:  index "tbl_trgeometry3d_quadtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_trgeometry3d_kdtree_idx;
 NOTICE:  index "tbl_trgeometry3d_kdtree_idx" does not exist, skipping
-DROP INDEX
 DROP TABLE IF EXISTS test_zaxis;
 NOTICE:  table "test_zaxis" does not exist, skipping
-DROP TABLE
 CREATE TABLE test_zaxis(
   op TEXT,
   no_idx BIGINT,
@@ -249,79 +281,58 @@ CREATE TABLE test_zaxis(
   quadtree_idx BIGINT,
   kdtree_idx BIGINT
 );
-CREATE TABLE
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '<</', COUNT(*) FROM tbl_trgeometry3d WHERE temp <</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '&</', COUNT(*) FROM tbl_trgeometry3d WHERE temp &</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '/>>', COUNT(*) FROM tbl_trgeometry3d WHERE temp />> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '/&>', COUNT(*) FROM tbl_trgeometry3d WHERE temp /&> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 CREATE INDEX tbl_trgeometry3d_rtree_idx ON tbl_trgeometry3d USING GIST(temp);
-CREATE INDEX
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp <</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '<</';
-UPDATE 1
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp &</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '&</';
-UPDATE 1
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp />> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/>>';
-UPDATE 1
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp /&> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/&>';
-UPDATE 1
 DROP INDEX tbl_trgeometry3d_rtree_idx;
-DROP INDEX
 CREATE INDEX tbl_trgeometry3d_quadtree_idx ON tbl_trgeometry3d USING SPGIST(temp);
-CREATE INDEX
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp <</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '<</';
-UPDATE 1
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp &</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '&</';
-UPDATE 1
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp />> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/>>';
-UPDATE 1
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp /&> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/&>';
-UPDATE 1
 DROP INDEX tbl_trgeometry3d_quadtree_idx;
-DROP INDEX
 CREATE INDEX tbl_trgeometry3d_kdtree_idx ON tbl_trgeometry3d USING SPGIST(temp trgeometry_kdtree_ops);
-CREATE INDEX
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp <</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '<</';
-UPDATE 1
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp &</ stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '&</';
-UPDATE 1
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp />> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/>>';
-UPDATE 1
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_trgeometry3d WHERE temp /&> stbox 'SRID=5676;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/&>';
-UPDATE 1
 DROP INDEX tbl_trgeometry3d_kdtree_idx;
-DROP INDEX
+-- the operators that match at least one row: a mismatch test over
+-- predicates that match nothing would hold vacuously
 SELECT count(*) FILTER (WHERE no_idx > 0) AS matching, count(*) AS ops
 FROM test_zaxis;
  matching | ops 
@@ -338,4 +349,4 @@ ORDER BY op;
 (0 rows)
 
 DROP TABLE test_zaxis;
-DROP TABLE
+-------------------------------------------------------------------------------

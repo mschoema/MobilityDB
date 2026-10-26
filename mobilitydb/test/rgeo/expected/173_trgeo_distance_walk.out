@@ -1,3 +1,40 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Temporal distance computed by the closest-feature walk.
+--
+-- While the bodies overlap, the distance is zero.  The comparisons at the end
+-- check the nearest approach distance against the minimum of the distance at
+-- many sampled times, for rotating bodies.  This finds an algorithm that
+-- misses an extremum, which the other tests do not.
+-------------------------------------------------------------------------------
+-- A square sweeps over a point: the distance is zero from entry to exit
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-6 0),0)@2001-01-01, Pose(Point(6 0),0)@2001-01-02]',
   geometry 'Point(0 0.5)'), 6);
@@ -6,6 +43,7 @@ SELECT round(tDistance(
  [5@Mon Jan 01 00:00:00 2001 PST, 0@Mon Jan 01 10:00:00 2001 PST, 0@Mon Jan 01 14:00:00 2001 PST, 5@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- The same body rotating a quarter turn as it passes
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-6 0),0)@2001-01-01, Pose(Point(6 0),1.5707963267948966)@2001-01-02]',
   geometry 'Point(0 0.5)'), 6);
@@ -14,6 +52,7 @@ SELECT round(tDistance(
  [5@Mon Jan 01 00:00:00 2001 PST, 0@Mon Jan 01 10:14:26.007328 2001 PST, 0@Mon Jan 01 13:45:33.992672 2001 PST, 5@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- A point passing exactly through a corner of the body
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(2 -2),0)@2001-01-01, Pose(Point(-2 2),0)@2001-01-02]',
   geometry 'Point(0 0)'), 6);
@@ -22,6 +61,7 @@ SELECT round(tDistance(
  [1.414214@Mon Jan 01 00:00:00 2001 PST, 0@Mon Jan 01 06:00:00 2001 PST, 0@Mon Jan 01 18:00:00 2001 PST, 1.414214@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- Starting inside, and inside for the whole sequence
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(0 0),0)@2001-01-01, Pose(Point(4 0),0)@2001-01-02]',
   geometry 'Point(0 0)'), 6);
@@ -38,6 +78,7 @@ SELECT tDistance(
  [0@Mon Jan 01 00:00:00 2001 PST, 0@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- Step interpolation: the body holds its pose, and so does the distance
 SELECT round(tDistance(
   trgeometry 'Interp=Step;Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(0 0),0)@2001-01-01, Pose(Point(10 0),0.5)@2001-01-02]',
   geometry 'Point(5 3)'), 6);
@@ -46,6 +87,8 @@ SELECT round(tDistance(
  Interp=Step;[4.472136@Mon Jan 01 00:00:00 2001 PST, 4.476715@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- A body that is not convex is refused, also with step interpolation, so that
+-- the distance functions accept the same values in all cases
 SELECT tDistance(
   trgeometry 'Polygon((0 0,4 0,4 4,2 1,0 4,0 0));[Pose(Point(0 0),0)@2001-01-01, Pose(Point(10 0),0)@2001-01-02]',
   geometry 'Point(7 3)');
@@ -58,10 +101,16 @@ SELECT nearestApproachInstant(
   trgeometry 'Polygon((0 0,4 0,4 4,2 1,0 4,0 0));Pose(Point(0 0),0)@2001-01-01',
   geometry 'Point(7 3)');
 ERROR:  The distance of a temporal rigid geometry needs a reference geometry that is a convex polygon without holes
+-- A ring with a spike is not convex: the end of the spike changes the distance
 SELECT tDistance(
   trgeometry 'Polygon((0 0,3 0,2 0,2 2,0 2,0 0));[Pose(Point(0 0),0)@2001-01-01, Pose(Point(0 0),0)@2001-01-02]',
   geometry 'Point(4 0)');
 ERROR:  The distance of a temporal rigid geometry needs a reference geometry that is a convex polygon without holes
+-- A polygon with thousands of vertices that turns.  The walk takes about one
+-- step for each vertex that it passes.  A vertex points to the point during
+-- the turn, thus the nearest approach distance is sqrt(1.5^2 + 0.2^2) - 1.
+-- The result is exact, although the normalization of the temporal distance
+-- removes most of its instants, which are a few seconds apart.
 SELECT abs(nearestApproachDistance(
   trgeometry(ST_Buffer(geometry 'Point(0 0)', 1, 1250),
     tpose '[Pose(Point(0 0),0)@2001-01-01, Pose(Point(0 0),3.1)@2001-01-02]'),
@@ -71,6 +120,7 @@ SELECT abs(nearestApproachDistance(
  t
 (1 row)
 
+-- A sequence set is the distance of each of its sequences
 SELECT round(tDistance(
   trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));{[Pose(Point(0 0),0)@2001-01-01, Pose(Point(10 0),1)@2001-01-02], [Pose(Point(10 5),1)@2001-01-03, Pose(Point(0 5),-1)@2001-01-04]}',
   geometry 'Point(5 0.5)'), 6);
@@ -79,6 +129,7 @@ SELECT round(tDistance(
  {[3@Mon Jan 01 00:00:00 2001 PST, 1.666171@Mon Jan 01 03:17:00.248034 2001 PST, 0.107593@Mon Jan 01 07:20:42.907081 2001 PST, 0@Mon Jan 01 08:55:19.852086 2001 PST, 0@Mon Jan 01 12:42:06.783144 2001 PST, 0.569487@Mon Jan 01 14:29:15.290325 2001 PST, 4.158724@Tue Jan 02 00:00:00 2001 PST], [6.534372@Wed Jan 03 00:00:00 2001 PST, 6.380119@Wed Jan 03 00:52:59.057184 2001 PST, 6.112677@Wed Jan 03 02:04:16.268084 2001 PST, 4.5@Wed Jan 03 12:00:00 2001 PST, 4.170541@Wed Jan 03 14:33:58.794138 2001 PST, 3.608641@Wed Jan 03 18:29:07.52123 2001 PST, 4.112677@Wed Jan 03 21:55:43.731916 2001 PST, 4.380119@Wed Jan 03 23:07:00.942816 2001 PST, 4.554721@Thu Jan 04 00:00:00 2001 PST]}
 (1 row)
 
+-- Static polygons: a body crossing one, and a body turning past one
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-8 0),0)@2001-01-01, Pose(Point(8 0),0)@2001-01-02]',
   geometry 'Polygon((-0.5 -3,0.5 -3,0.5 3,-0.5 3,-0.5 -3))'), 6);
@@ -95,6 +146,7 @@ SELECT round(nearestApproachDistance(
  0.938447
 (1 row)
 
+-- Coordinates in the millions, as projected data has
 SELECT round(nearestApproachDistance(
   trgeometry 'Polygon((-2 -0.5,2 -0.5,2 0.5,-2 0.5,-2 -0.5));[Pose(Point(4000000 5000000),0)@2001-01-01, Pose(Point(4000010 5000000),1.5)@2001-01-02]',
   geometry 'Polygon((4000004 5000003,4000006 5000003,4000005 5000004,4000004 5000003))')::numeric, 6);
@@ -103,6 +155,8 @@ SELECT round(nearestApproachDistance(
  1.267125
 (1 row)
 
+-- Two moving bodies: crossing each other, and rotating in step with two faces
+-- parallel for the whole sequence
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-6 0),0)@2001-01-01, Pose(Point(6 0),0)@2001-01-02]',
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(6 0.5),0)@2001-01-01, Pose(Point(-6 0.5),0)@2001-01-02]'), 6);
@@ -119,6 +173,8 @@ SELECT round(tDistance(
  [4.914336@Mon Jan 01 00:00:00 2001 PST, 4.772736@Mon Jan 01 00:21:37.51743 2001 PST, 2.083403@Mon Jan 01 07:40:33.707541 2001 PST, 1.172069@Mon Jan 01 12:05:26.459439 2001 PST, 2.465745@Mon Jan 01 17:38:11.841296 2001 PST, 3.985703@Mon Jan 01 21:45:46.502816 2001 PST, 4.857743@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- Lines, multilines and multipolygons: the minimum of the distances to the
+-- segments or polygons
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-6 0),0)@2001-01-01, Pose(Point(6 0),1.5)@2001-01-02]',
   geometry 'Linestring(-5 4,0 2.5,5 4)'), 6);
@@ -143,6 +199,7 @@ SELECT round(tDistance(
  [2.828427@Mon Jan 01 00:00:00 2001 PST, 2@Mon Jan 01 04:00:00 2001 PST, 2@Mon Jan 01 10:00:00 2001 PST, 0@Mon Jan 01 14:00:00 2001 PST, 0@Mon Jan 01 20:00:00 2001 PST, 2@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- A static polygon that is not convex, or has holes, is refused
 SELECT tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-6 0),0)@2001-01-01, Pose(Point(6 0),0)@2001-01-02]',
   geometry 'Polygon((0 3,4 3,4 7,2 4,0 7,0 3))');
@@ -155,6 +212,8 @@ SELECT tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-6 0),0)@2001-01-01, Pose(Point(6 0),0)@2001-01-02]',
   geometry 'Polygon((0 3,3 3,2 3,2 5,0 5,0 3))');
 ERROR:  The distance of a temporal rigid geometry to a polygon that is not convex or has holes is not supported
+-- Temporal points: a moving point, and a point with step interpolation,
+-- whose distance jumps at each instant
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(0 0),0)@2001-01-01, Pose(Point(0 0),1.5)@2001-01-02]',
   tgeompoint '[Point(-4 3)@2001-01-01, Point(4 3)@2001-01-02]'), 6);
@@ -171,6 +230,7 @@ SELECT round(tDistance(
  {[5.385165@Mon Jan 01 00:00:00 2001 PST, 2@Mon Jan 01 10:00:00 2001 PST, 2@Mon Jan 01 14:00:00 2001 PST, 5.385165@Tue Jan 02 00:00:00 2001 PST), [6.403124@Tue Jan 02 00:00:00 2001 PST, 5@Tue Jan 02 16:00:00 2001 PST, 5@Wed Jan 03 00:00:00 2001 PST]}
 (1 row)
 
+-- Two rigid geometries, one with step interpolation
 SELECT round(tDistance(
   trgeometry 'Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(-6 0),0)@2001-01-01, Pose(Point(6 0),1)@2001-01-02, Pose(Point(6 6),1)@2001-01-03]',
   trgeometry 'Interp=Step;Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(0 4),0)@2001-01-01, Pose(Point(8 4),0)@2001-01-02, Pose(Point(8 4),0)@2001-01-03]'), 6);
@@ -179,6 +239,7 @@ SELECT round(tDistance(
  {[4.472136@Mon Jan 01 00:00:00 2001 PST, 1.706629@Mon Jan 01 08:51:21.555045 2001 PST, 1.62264@Mon Jan 01 13:21:30.615953 2001 PST, 1.621915@Mon Jan 01 13:28:01.116819 2001 PST, 2.045879@Mon Jan 01 16:15:37.516196 2001 PST, 4.828262@Tue Jan 02 00:00:00 2001 PST), [2.064715@Tue Jan 02 00:00:00 2001 PST, 0@Tue Jan 02 09:48:53.244146 2001 PST, 0@Tue Jan 02 21:10:25.0751 2001 PST, 0.381773@Wed Jan 03 00:00:00 2001 PST]}
 (1 row)
 
+-- Ever, always and temporal dwithin
 SELECT eDwithin(
   trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0),0)@2001-01-01, Pose(Point(10 0),0)@2001-01-02]',
   geometry 'Point(5 3)', 2.5),
@@ -225,6 +286,9 @@ SELECT tDwithin(
  {[f@Mon Jan 01 00:00:00 2001 PST, f@Tue Jan 02 00:00:00 2001 PST]}
 (1 row)
 
+-- A threshold equal to the nearest approach distance.  The distance reaches
+-- the threshold at one time but does not cross it, thus tDwithin is true at
+-- that time.
 WITH c AS MATERIALIZED (
   SELECT format('Polygon((-1 -1,1 -1,1 1,-1 1,-1 -1));[Pose(Point(0 %s),0.3)@2001-01-01, Pose(Point(0.5 %s),2.1)@2001-01-02]',
     k * 0.37, -k * 0.21)::trgeometry AS trg,
@@ -243,6 +307,8 @@ FROM c;
     20 |    20 |      20 |         20
 (1 row)
 
+-- tDwithin agrees with the distance at sampled times, for rotating bodies
+-- against lines
 WITH trg AS MATERIALIZED (
   SELECT k, (format('Polygon((-2 -1,2 -1,2 1,-2 1,-2 -1));[Pose(Point(-8 %s),%s)@2001-01-01, Pose(Point(8 %s),%s)@2001-01-02]',
     (k % 5) - 2, round(atan2(sin(k), cos(k))::numeric, 3),
@@ -266,6 +332,11 @@ FROM r;
      10 | t           |          10
 (1 row)
 
+-- Dense comparisons.  The bodies come from a fixed rule, so that the test is
+-- deterministic: convex polygons of five to seven vertices on an ellipse,
+-- that move and turn up to almost a half turn in each segment.  The CTEs are
+-- materialized so that each rigid geometry is parsed once, and not once for
+-- each sample.
 WITH body AS MATERIALIZED (
   SELECT k,
     ('Polygon((' || string_agg(format('%s %s',
@@ -335,3 +406,4 @@ FROM r;
     20 | t        | t          | t             |             11 |                9 |                  10
 (1 row)
 
+-------------------------------------------------------------------------------

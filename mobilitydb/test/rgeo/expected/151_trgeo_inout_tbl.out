@@ -1,3 +1,32 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 SELECT asText(round(temp, 6)) FROM tbl_trgeometry2d LIMIT 10;
                                                 astext                                                
 ------------------------------------------------------------------------------------------------------
@@ -34,6 +63,10 @@ SELECT asEWKT(array_agg(round(inst, 6) ORDER BY k)) FROM tbl_trgeometry2d_inst W
  {"SRID=5676;Pose(POINT(10.338692 -58.200485),0.030147)@Sun Sep 16 17:25:00 2001 PDT","SRID=5676;Pose(POINT(40.812993 -65.27354),-0.01145)@Fri Jan 26 05:01:00 2001 PST","SRID=5676;Pose(POINT(64.766535 3.870047),0.038801)@Mon Jul 23 18:04:00 2001 PDT","SRID=5676;Pose(POINT(-43.39073 30.899186),0.047687)@Sat Jun 09 19:49:00 2001 PDT","SRID=5676;Pose(POINT(94.429291 -85.982392),0.048)@Sun Feb 25 12:57:00 2001 PST","SRID=5676;Pose(POINT(93.844053 18.453379),0.047513)@Thu Aug 09 15:34:00 2001 PDT","SRID=5676;Pose(POINT(24.123425 -82.546097),0.035335)@Sun Sep 02 18:23:00 2001 PDT","SRID=5676;Pose(POINT(21.81614 91.148203),0.007283)@Tue Feb 27 04:30:00 2001 PST","SRID=5676;Pose(POINT(-16.010509 -68.742976),-0.023351)@Mon Feb 19 14:50:00 2001 PST","SRID=5676;Pose(POINT(-43.329488 -6.952507),0.03946)@Wed Jun 13 19:56:00 2001 PDT"}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Combination of input/output functions
+-- We need to add asText/asEWKT to avoid problems due to floating point precision
+-- The binary and MFJSON formats does not output the SRID
 SELECT DISTINCT asText(trgeometryFromText(asText(temp))) = asText(temp) FROM tbl_trgeometry2d;
  ?column? 
 ----------
@@ -70,6 +103,15 @@ SELECT DISTINCT trgeometryFromHexEWKB(asHexEWKB(temp)) = temp FROM tbl_trgeometr
  t
 (1 row)
 
+-------------------------------------------------------------------------------
+-- MF-JSON output of the temporal rigid geometry values coming from real AIS
+-- data, that is, a vessel outline moved and rotated along the recorded
+-- positions. The reference geometry and the poses keep the full precision of
+-- the source data, which is what exposes the output corruption reported at
+-- https://github.com/MobilityDB/MobilityDB/issues/850
+-- Every query below reports the rows whose output is not valid JSON or does
+-- not read back with the same shape, and must thus report zero
+-------------------------------------------------------------------------------
 SELECT count(*) FROM tbl_ais_trgeometry WHERE asMFJSON(temp)::jsonb IS NULL;
  count 
 -------
@@ -90,3 +132,4 @@ SELECT count(*) FROM tbl_ais_trgeometry
      0
 (1 row)
 
+-------------------------------------------------------------------------------

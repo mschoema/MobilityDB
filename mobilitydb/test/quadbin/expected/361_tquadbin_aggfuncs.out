@@ -1,3 +1,33 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-- extent(tquadbin): mixed temporal subtypes folded together, NULLs filtered
+-- round to 10 decimal places to suppress platform floating-point ULP differences
 SELECT round(extent(temp), 6) FROM ( VALUES
   (NULL::tquadbin),
   (tquadbin '480fffffffffffff@2001-01-01'),
@@ -16,6 +46,7 @@ SELECT round(extent(temp), 6) FROM ( VALUES
  SRID=4326;STBOX XT(((-180,-85.051129),(180,85.051129)),[Mon Jan 01 00:00:00 2001 PST, Tue Jan 02 00:00:00 2001 PST])
 (1 row)
 
+-- extent(tquadbin): linear sequence + step sequenceset over disjoint footprints
 SELECT round(extent(temp), 6) FROM ( VALUES
   (tquadbin '[480fffffffffffff@2001-01-01, 48427fffffffffff@2001-01-02]'),
   ('{[480fffffffffffff@2001-01-01, 48427fffffffffff@2001-01-02], [48a6227affffffff@2001-01-03, 48a6227affffffff@2001-01-04]}')) t(temp);
@@ -24,6 +55,7 @@ SELECT round(extent(temp), 6) FROM ( VALUES
  SRID=4326;STBOX XT(((-180,-85.051129),(180,85.051129)),[Mon Jan 01 00:00:00 2001 PST, Thu Jan 04 00:00:00 2001 PST])
 (1 row)
 
+-- extent(tquadbin): single row degenerate cases
 SELECT round(extent(temp), 6) FROM ( VALUES (tquadbin '480fffffffffffff@2001-01-01')) t(temp);
                                                         round                                                         
 ----------------------------------------------------------------------------------------------------------------------
@@ -36,6 +68,7 @@ SELECT round(extent(temp), 6) FROM ( VALUES (NULL::tquadbin)) t(temp);
  
 (1 row)
 
+-------------------------------------------------------------------------------
 WITH Temp(temp) AS (
   SELECT tquadbin '[480fffffffffffff@2001-01-01, 480fffffffffffff@2001-01-03]' UNION
   SELECT tquadbin '[48427fffffffffff@2001-01-02, 48427fffffffffff@2001-01-04]' )
@@ -54,6 +87,7 @@ SELECT wCount(Temp, interval '2 days') FROM Temp;
  {[1@Mon Jan 01 00:00:00 2001 PST, 2@Tue Jan 02 00:00:00 2001 PST, 2@Fri Jan 05 00:00:00 2001 PST], (1@Fri Jan 05 00:00:00 2001 PST, 1@Sat Jan 06 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT merge(temp) FROM (VALUES
   (tquadbin '480fffffffffffff@2001-01-01'),
   (tquadbin '48427fffffffffff@2001-01-02')) t(temp);
@@ -70,6 +104,7 @@ SELECT merge(temp) FROM (VALUES
  {480fffffffffffff@Mon Jan 01 00:00:00 2001 PST, 48427fffffffffff@Tue Jan 02 00:00:00 2001 PST}
 (1 row)
 
+-------------------------------------------------------------------------------
 WITH temp(inst) AS (
   SELECT tquadbin '480fffffffffffff@2001-01-01' UNION
   SELECT tquadbin '48427fffffffffff@2001-01-02' UNION
@@ -128,6 +163,7 @@ WITH temp(inst) AS (
   SELECT tquadbin '48427fffffffffff@2001-01-01' )
 SELECT asText(appendInstant(inst ORDER BY inst)) FROM temp;
 ERROR:  The temporal values have different value at their common timestamp Mon Jan 01 00:00:00 2001 PST
+-------------------------------------------------------------------------------
 WITH temp1(k, inst) AS (
   SELECT 1, tquadbin '480fffffffffffff@2001-01-01' UNION
   SELECT 2, tquadbin '48427fffffffffff@2001-01-02' UNION
@@ -162,3 +198,13 @@ SELECT asText(appendSequence(seq ORDER BY seq)) FROM temp2;
  {[480fffffffffffff@Mon Jan 01 00:00:00 2001 PST, 48427fffffffffff@Tue Jan 02 00:00:00 2001 PST], [48a6227affffffff@Wed Jan 03 00:00:00 2001 PST, 480fffffffffffff@Thu Jan 04 00:00:00 2001 PST], [48427fffffffffff@Fri Jan 05 00:00:00 2001 PST, 48a6227affffffff@Sat Jan 06 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- The bare aggregate and its Agg twin in ONE query
+--
+-- The two carry identical transition machinery, so PostgreSQL shares one
+-- transition state between them unless each declares FINALFUNC_MODIFY. Their
+-- finalfn frees the state, so a shared one is finalized twice. Asking for both
+-- at once is what exercises that, and the two must agree.
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------

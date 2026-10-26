@@ -1,3 +1,47 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Regression tests for the tquadbin temporal spatial-rel surface
+-- (364_tquadbin_tempspatialrels.in.sql).
+--
+-- Each function returns a tbool whose value at instant t is the static
+-- spatial relation applied to the boundary of the cell the value holds at t:
+-- take the boundary with cellToBoundary, cast it to tgeometry, and delegate to
+-- the temporal spatial-rel kernel of tgeometry
+-- (072_tgeo_tempspatialrels.in.sql). Each block checks that the direct tquadbin
+-- overload agrees with the equivalent manual chain.
+--
+-- The geometry operand is the boundary of one of the cells, so that the
+-- relations answer over the same ground the cells cover.
+--
+-------------------------------------------------------------------------------
+-- Test for NULL inputs since the functions are not STRICT
 SELECT tIntersects(NULL::geometry, tquadbin '480fffffffffffff@2001-01-01');
  tintersects 
 -------------
@@ -10,6 +54,9 @@ SELECT tIntersects(getValue(cellToBoundary(tquadbin '480fffffffffffff@2001-01-01
  
 (1 row)
 
+-------------------------------------------------------------------------------
+-- tContains, tCovers, tDisjoint, tIntersects, tTouches, tDwithin
+-------------------------------------------------------------------------------
 WITH t AS (
   SELECT tquadbin '{480fffffffffffff@2001-01-01, 481fffffffffffff@2001-01-02}' AS seq1,
          tquadbin '{481fffffffffffff@2001-01-01, 480fffffffffffff@2001-01-02}' AS seq2,
@@ -40,6 +87,9 @@ FROM t;
  t        | t        | t      | t         | t         | t       | t         | t         | t       | t        | t        | t      | t         | t         | t       | t         | t         | t
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Direct values
+-------------------------------------------------------------------------------
 SELECT tIntersects(tquadbin '{480fffffffffffff@2001-01-01, 481fffffffffffff@2001-01-02}',
   tquadbin '{480fffffffffffff@2001-01-01, 481fffffffffffff@2001-01-02}');
                            tintersects                            
@@ -54,3 +104,4 @@ SELECT tDisjoint(tquadbin '{480fffffffffffff@2001-01-01, 481fffffffffffff@2001-0
  {f@Mon Jan 01 00:00:00 2001 PST, f@Tue Jan 02 00:00:00 2001 PST}
 (1 row)
 
+-------------------------------------------------------------------------------

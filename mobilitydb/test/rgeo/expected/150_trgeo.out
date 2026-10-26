@@ -1,3 +1,34 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Input
+-------------------------------------------------------------------------------
 SELECT asText(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01');
                                     astext                                    
 ------------------------------------------------------------------------------
@@ -64,6 +95,7 @@ SELECT asText(trgeometry 'Polygon((1 1,2 2,3 1,1 1));  {  [  Pose(Point(1 1), 0.
  POLYGON((1 1,2 2,3 1,1 1));{[Pose(POINT(1 1),0.2)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.4)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.5)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.6)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-- Normalization
 SELECT asText(trgeometry 'Polygon((1 1,2 2,3 1,1 1));[Pose(Point(1 1), 0.3)@2001-01-01, Pose(Point(1 1), 0.4)@2001-01-02, Pose(Point(1 1), 0.5)@2001-01-03]');
                                                               astext                                                               
 -----------------------------------------------------------------------------------------------------------------------------------
@@ -76,6 +108,9 @@ SELECT asText(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.3)@200
  POLYGON((1 1,2 2,3 1,1 1));{[Pose(POINT(1 1),0.3)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.5)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.6)@Sat Jan 06 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Input/output in WKT, WKB and HexWKB representation
+-------------------------------------------------------------------------------
 SELECT asText(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.123456789)@2001-01-01', 6);
                                       astext                                       
 -----------------------------------------------------------------------------------
@@ -112,6 +147,7 @@ SELECT asText(trgeometry 'Interp=Step;Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 
  POLYGON((1 1,2 2,3 1,1 1));Interp=Step;{[Pose(POINT(1 1),0.123457)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.523457)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.123457)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.723457)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.723457)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT asEWKT(trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.123456789)@2001-01-01', 6);
                                            asewkt                                            
 ---------------------------------------------------------------------------------------------
@@ -148,6 +184,7 @@ SELECT asEWKT(trgeometry 'SRID=5676,Interp=Step;Polygon((1 1,2 2,3 1,1 1));{[Pos
  SRID=5676;POLYGON((1 1,2 2,3 1,1 1));Interp=Step;{[Pose(POINT(1 1),0.123457)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.523457)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.123457)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.723457)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.723457)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT asMFJSON(trgeometry 'SRID=5676;Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.123456789)@2001-01-01', 6);
                                                                                                                                           asmfjson                                                                                                                                           
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -184,6 +221,8 @@ SELECT asMFJSON(trgeometry 'SRID=5676,Interp=Step;Polygon((1 1,2 2,3 1,1 1));{[P
  {"type":"MovingRigidGeometry","crs":{"type":"Name","properties":{"name":"EPSG:5676"}},"geometry":{"type":"Polygon","coordinates":[[[1,1],[2,2],[3,1],[1,1]]]},"sequences":[{"values":[{"position":{"lat":1,"lon":1},"yaw":0.123456789},{"position":{"lat":1,"lon":1},"yaw":0.523456789},{"position":{"lat":1,"lon":1},"yaw":0.123456789}],"datetimes":["2001-01-01T00:00:00-08:00","2001-01-02T00:00:00-08:00","2001-01-03T00:00:00-08:00"],"lower_inc":true,"upper_inc":true},{"values":[{"position":{"lat":2,"lon":2},"yaw":0.723456789},{"position":{"lat":2,"lon":2},"yaw":0.723456789}],"datetimes":["2001-01-04T00:00:00-08:00","2001-01-05T00:00:00-08:00"],"lower_inc":true,"upper_inc":true}],"interpolation":"Step"}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Maximum decimal digits
 SELECT asText(trgeometryFromMFJSON(asMFJSON(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01')));
                                     astext                                    
 ------------------------------------------------------------------------------
@@ -328,6 +367,7 @@ SELECT asText(trgeometryFromBinary(asBinary(trgeometry 'Interp=Step;Polygon((1 1
  POLYGON((1 1,2 2,3 1,1 1));Interp=Step;{[Pose(POINT(1 1),0.2)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.4)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.5)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.6)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT asText(trgeometryFromHexEWKB(asHexEWKB(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01')));
                                     astext                                    
 ------------------------------------------------------------------------------
@@ -490,6 +530,9 @@ SELECT asText(trgeometryFromHexEWKB(asHexWKB(trgeometry 'Polygon((1 1,2 2,3 1,1 
  POLYGON((1 1,2 2,3 1,1 1));Pose(POINT(1 1),0.5)@Mon Jan 01 00:00:00 2001 PST
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Constructors
+-------------------------------------------------------------------------------
 SELECT asText(trgeometry('Polygon((1 1,2 2,3 1,1 1))', tpose(pose 'Pose(Point(1 1),0)', timestamp '2012-01-01')));
                                    astext                                   
 ----------------------------------------------------------------------------
@@ -520,10 +563,14 @@ SELECT numSequences(trgeometrySeqSetGaps(ARRAY[trgeometry 'Polygon((1 1,2 2,3 1,
             3
 (1 row)
 
+-- the instants of a sequence state one reference geometry
 SELECT asText(trgeometrySeq(ARRAY[trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1),0)@2012-01-01', 'Polygon((0 0,1 0,0 1,0 0));Pose(Point(2 2),1)@2012-02-01']));
 ERROR:  Operation on different reference geometries
 SELECT asText(trgeometrySeqSetGaps(ARRAY[trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1),0)@2012-01-01', 'Polygon((0 0,1 0,0 1,0 0));Pose(Point(2 2),1)@2012-02-01'], interval '1 month'));
 ERROR:  Operation on different reference geometries
+-------------------------------------------------------------------------------
+-- Transformation functions
+-------------------------------------------------------------------------------
 SELECT asText(trgeometryInst(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01'));
                                     astext                                    
 ------------------------------------------------------------------------------
@@ -638,6 +685,9 @@ SELECT asText(round(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.
  POLYGON((1 1,2 2,3 1,1 1));{[Pose(POINT(1 1),0.123457)@Sun Jan 01 00:00:00 2012 PST, Pose(POINT(1 1),0.5)@Mon Jan 02 00:00:00 2012 PST)}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Append functions
+-------------------------------------------------------------------------------
 SELECT asText(appendInstant(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01', trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.7)@2001-01-02'));
                                                               astext                                                               
 -----------------------------------------------------------------------------------------------------------------------------------
@@ -662,6 +712,7 @@ SELECT asText(appendInstant(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(
  POLYGON((1 1,2 2,3 1,1 1));{[Pose(POINT(1 1),0.2)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.4)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.5)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.6)@Fri Jan 05 00:00:00 2001 PST, Pose(POINT(2 2),0.7)@Sat Jan 06 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT asText(appendSequence(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{Pose(Point(1 1), 0.2)@2001-01-01, Pose(Point(2 2), 0.4)@2001-01-02}', trgeometry 'Polygon((1 1,2 2,3 1,1 1));{Pose(Point(3 3), 0.6)@2001-01-03}'));
                                                                                         astext                                                                                        
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -674,6 +725,9 @@ SELECT asText(appendSequence(trgeometry 'Polygon((1 1,2 2,3 1,1 1));[Pose(Point(
  POLYGON((1 1,2 2,3 1,1 1));{[Pose(POINT(1 1),0.2)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.4)@Tue Jan 02 00:00:00 2001 PST], [Pose(POINT(1 1),0.6)@Wed Jan 03 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Conversion functions
+-------------------------------------------------------------------------------
 SELECT asText(round(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01'::tpose, 6));
                       astext                       
 ---------------------------------------------------
@@ -755,6 +809,9 @@ SELECT ST_AsText(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.2)@
  POLYGON((1 1,2 2,3 1,1 1))
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Accessor Functions
+-------------------------------------------------------------------------------
 SELECT tempSubtype(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01');
  tempsubtype 
 -------------
@@ -884,49 +941,49 @@ SELECT timeSpan(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.2)@2
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01', true);
  duration 
 ----------
- 00:00:00
+ @ 0
 (1 row)
 
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{Pose(Point(1 1), 0.3)@2001-01-01, Pose(Point(1 1), 0.5)@2001-01-02, Pose(Point(1 1), 0.5)@2001-01-03}', true);
  duration 
 ----------
- 2 days
+ @ 2 days
 (1 row)
 
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));[Pose(Point(1 1), 0.2)@2001-01-01, Pose(Point(1 1), 0.4)@2001-01-02, Pose(Point(1 1), 0.5)@2001-01-03]', true);
  duration 
 ----------
- 2 days
+ @ 2 days
 (1 row)
 
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.2)@2001-01-01, Pose(Point(1 1), 0.4)@2001-01-02, Pose(Point(1 1), 0.5)@2001-01-03], [Pose(Point(2 2), 0.6)@2001-01-04, Pose(Point(2 2), 0.6)@2001-01-05]}', true);
  duration 
 ----------
- 4 days
+ @ 4 days
 (1 row)
 
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01');
  duration 
 ----------
- 00:00:00
+ @ 0
 (1 row)
 
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{Pose(Point(1 1), 0.3)@2001-01-01, Pose(Point(1 1), 0.5)@2001-01-02, Pose(Point(1 1), 0.5)@2001-01-03}');
  duration 
 ----------
- 00:00:00
+ @ 0
 (1 row)
 
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));[Pose(Point(1 1), 0.2)@2001-01-01, Pose(Point(1 1), 0.4)@2001-01-02, Pose(Point(1 1), 0.5)@2001-01-03]');
  duration 
 ----------
- 2 days
+ @ 2 days
 (1 row)
 
 SELECT duration(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.2)@2001-01-01, Pose(Point(1 1), 0.4)@2001-01-02, Pose(Point(1 1), 0.5)@2001-01-03], [Pose(Point(2 2), 0.6)@2001-01-04, Pose(Point(2 2), 0.6)@2001-01-05]}');
  duration 
 ----------
- 3 days
+ @ 3 days
 (1 row)
 
 SELECT getTimestamp(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01');
@@ -935,6 +992,9 @@ SELECT getTimestamp(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)
  Mon Jan 01 00:00:00 2001 PST
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Shift and scale functions
+-------------------------------------------------------------------------------
 SELECT asText(shiftTime(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01', '5 min'));
                                     astext                                    
 ------------------------------------------------------------------------------
@@ -983,6 +1043,9 @@ SELECT asText(scaleTime(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1)
  POLYGON((1 1,2 2,3 1,1 1));{[Pose(POINT(1 1),0.2)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.4)@Mon Jan 01 06:00:00 2001 PST, Pose(POINT(1 1),0.5)@Mon Jan 01 12:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Mon Jan 01 18:00:00 2001 PST, Pose(POINT(2 2),0.6)@Tue Jan 02 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Ever/always comparison functions
+-------------------------------------------------------------------------------
 SELECT trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01' ?= geometry 'Polygon((1 1,2 2,3 1,1 1))';
  ?column? 
 ----------
@@ -1175,6 +1238,8 @@ SELECT yaw(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.2)@2001-0
  {[0.2@Mon Jan 01 00:00:00 2001 PST, 0.4@Tue Jan 02 00:00:00 2001 PST, 0.5@Wed Jan 03 00:00:00 2001 PST], [0.6@Thu Jan 04 00:00:00 2001 PST, 0.6@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-- A 2D rigid geometry yaws by the stored angle of each pose and neither
+-- pitches nor rolls.
 SELECT pitch(trgeometry 'Polygon((1 1,2 2,3 1,1 1));[Pose(Point(1 1), 0.2)@2001-01-01, Pose(Point(1 1), 0.4)@2001-01-02]');
                               pitch                               
 ------------------------------------------------------------------
@@ -1565,6 +1630,9 @@ SELECT timestamps(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.2)
  {"Mon Jan 01 00:00:00 2001 PST","Tue Jan 02 00:00:00 2001 PST","Wed Jan 03 00:00:00 2001 PST","Thu Jan 04 00:00:00 2001 PST","Fri Jan 05 00:00:00 2001 PST"}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Restriction Functions
+-------------------------------------------------------------------------------
 SELECT asText(atValue(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01', pose 'Pose(Point(1 1), 0.5)'));
                                     astext                                    
 ------------------------------------------------------------------------------
@@ -1877,6 +1945,7 @@ SELECT asText(minusTime(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1)
  POLYGON((1 1,2 2,3 1,1 1));{(Pose(POINT(1 1),0.4)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.5)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.6)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT asText(beforeTimestamp(trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01', timestamptz '2001-01-01'));
  astext 
 --------
@@ -1973,6 +2042,9 @@ SELECT asText(afterTimestamp(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point
  POLYGON((1 1,2 2,3 1,1 1));{[Pose(POINT(1 1),0.2)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(1 1),0.4)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.5)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.6)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Modification functions
+-------------------------------------------------------------------------------
 /* insert vs update distinguishing case (disagreeing value at common timestamp):
  * under the pre-fix Temporal_update wiring this would succeed by overwriting,
  * insert() correctly rejects it */
@@ -2076,6 +2148,9 @@ SELECT asText(deleteTime(trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1
  POLYGON((1 1,2 2,3 1,1 1));{(Pose(POINT(1 1),0.4)@Tue Jan 02 00:00:00 2001 PST, Pose(POINT(1 1),0.5)@Wed Jan 03 00:00:00 2001 PST], [Pose(POINT(2 2),0.6)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(2 2),0.6)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Comparison functions and B-tree indexing
+-------------------------------------------------------------------------------
 SELECT trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01' = trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01';
  ?column? 
 ----------
@@ -2652,6 +2727,7 @@ SELECT trgeometry 'Polygon((1 1,2 2,3 1,1 1));{[Pose(Point(1 1), 0.2)@2001-01-01
  t
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT numSequences(trgeometrySeqSetGaps(ARRAY[
   trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.0)@2001-01-01',
   trgeometry 'Polygon((1 1,2 2,3 1,1 1));Pose(Point(2 2), 0.5)@2001-01-02',
@@ -2662,12 +2738,18 @@ SELECT numSequences(trgeometrySeqSetGaps(ARRAY[
             3
 (1 row)
 
+-------------------------------------------------------------------------------/
+-- tprecision (extended-shape seqset)
 SELECT asText(tprecision(trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));{[Pose(Point(0 0),0)@2001-01-01, Pose(Point(4 0),0)@2001-01-01 00:00:04],[Pose(Point(0 0),0)@2001-01-01 00:00:06, Pose(Point(2 0),0)@2001-01-01 00:00:08]}', interval '2 secs'));
                                                                                                                 astext                                                                                                                 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  POLYGON((0 0,1 0,1 1,0 1,0 0));{[Pose(POINT(0 0),0)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(4 0),0)@Mon Jan 01 00:00:04 2001 PST, Pose(POINT(0 0),0)@Mon Jan 01 00:00:06 2001 PST, Pose(POINT(2 0),0)@Mon Jan 01 00:00:08 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-- merge: the answer of merging rigid geometries is a rigid geometry, so it
+-- carries the body its operands share
+-------------------------------------------------------------------------------
 SELECT asText(merge(
   trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(5 0), 0.0)@2001-01-02]',
   trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-04, Pose(Point(5 0), 0.0)@2001-01-05]'));
@@ -2692,10 +2774,18 @@ SELECT asText(merge(ARRAY[
  POLYGON((0 0,1 0,1 1,0 1,0 0));{[Pose(POINT(0 0),0)@Mon Jan 01 00:00:00 2001 PST, Pose(POINT(5 0),0)@Tue Jan 02 00:00:00 2001 PST], [Pose(POINT(0 0),0)@Thu Jan 04 00:00:00 2001 PST, Pose(POINT(5 0),0)@Fri Jan 05 00:00:00 2001 PST]}
 (1 row)
 
+-- two bodies that differ do not merge into one
 SELECT asText(merge(
   trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(5 0), 0.0)@2001-01-02]',
   trgeometry 'Polygon((0 0,2 0,2 2,0 2,0 0));[Pose(Point(0 0), 0.0)@2001-01-04, Pose(Point(5 0), 0.0)@2001-01-05]'));
 ERROR:  Operation on different reference geometries
+-------------------------------------------------------------------------------
+-- unnest: one row per distinct pose
+-- The value of every row is the reference geometry with the pose applied, the
+-- rigid-body transform startValue applies: rotated by the pose's orientation,
+-- then translated to its position. A repeated pose names its placement once,
+-- with both of its times
+-------------------------------------------------------------------------------
 SELECT ST_AsText((rec).value), (rec).time FROM (SELECT unnest(trgeometry
   'Polygon((0 0,1 0,1 1,0 1,0 0));{Pose(Point(0 0), 0.0)@2001-01-01,
   Pose(Point(4 0), 0.0)@2001-01-02, Pose(Point(0 0), 0.0)@2001-01-03}') AS rec) AS t;

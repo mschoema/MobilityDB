@@ -1,3 +1,34 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- eContains
+-------------------------------------------------------------------------------
 SELECT eContains(geometry 'Point(1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  econtains 
 -----------
@@ -77,6 +108,9 @@ SELECT eContains(geometry 'Point(1 1 1)', tgeompoint 'Point(1 1)@2001-01-01');
 ERROR:  The geometry cannot have Z dimension
 SELECT eContains(geometry 'Point(1 1)', tgeompoint 'Point(1 1 1)@2001-01-01');
 ERROR:  The tgeompoint cannot have Z dimension
+-------------------------------------------------------------------------------
+-- eCovers, aCovers
+-------------------------------------------------------------------------------
 SELECT eCovers(geometry 'Point(1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  ecovers 
 ---------
@@ -113,6 +147,10 @@ SELECT eCovers(geometry 'Polygon((1 1,1 3,3 3,3 1,1 1))', tgeompoint '[Point(1 4
  t
 (1 row)
 
+-- The point crosses the polygon between two instants and neither of them is
+-- inside it, so the relationship holds over the segment although it holds at
+-- no instant. It agrees with the ever intersects, a geometry covering a point
+-- exactly when it intersects it
 SELECT eCovers(geometry 'Polygon((-1 -1,-1 1,1 1,1 -1,-1 -1))', tgeompoint '[Point(-5 0)@2001-01-01, Point(5 0)@2001-01-02]');
  ecovers 
 ---------
@@ -125,12 +163,16 @@ SELECT eIntersects(geometry 'Polygon((-1 -1,-1 1,1 1,1 -1,-1 -1))', tgeompoint '
  t
 (1 row)
 
+-- The same crossing under step interpolation, where the point holds the value
+-- of the first instant over the segment and so never enters the polygon
 SELECT eCovers(geometry 'Polygon((-1 -1,-1 1,1 1,1 -1,-1 -1))', tgeompoint 'Interp=Step;[Point(-5 0)@2001-01-01, Point(5 0)@2001-01-02]');
  ecovers 
 ---------
  f
 (1 row)
 
+-- The always semantics over a geometry that is not convex: both instants are
+-- covered and the segment between them leaves through the mouth
 SELECT aCovers(geometry 'Polygon((-5 -5,-5 5,5 5,5 3,-3 3,-3 -3,5 -3,5 -5,-5 -5))', tgeompoint '[Point(4 4)@2001-01-01, Point(4 -4)@2001-01-02]');
  acovers 
 ---------
@@ -152,6 +194,9 @@ SELECT eCovers(geometry 'Point empty', tgeompoint 'Point(1 1)@2001-01-01');
 /* Errors */
 SELECT eCovers(geometry 'SRID=5676;Point(1 1)', tgeompoint 'Point(1 1)@2001-01-01');
 ERROR:  Operation on mixed SRID
+-------------------------------------------------------------------------------
+-- eDisjoint
+-------------------------------------------------------------------------------
 SELECT eDisjoint(geometry 'Point(1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  edisjoint 
 -----------
@@ -368,6 +413,7 @@ SELECT eDisjoint(tgeompoint '{[Point(1 1 1)@2001-01-01, Point(2 2 2)@2001-01-02,
  t
 (1 row)
 
+-- Mixed 2D/3D
 SELECT eDisjoint(geometry 'Point(1 1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  edisjoint 
 -----------
@@ -380,6 +426,7 @@ SELECT eDisjoint(tgeompoint 'Point(1 1 1)@2001-01-01', geometry 'Point(1 1)');
  f
 (1 row)
 
+-- Coverage
 SELECT eDisjoint(geometry 'Polygon((0 0,0 2,2 2,2 0,0 0))', tgeompoint '{Point(0 0)@2001-01-01, Point(0 2)@2001-01-02}');
  edisjoint 
 -----------
@@ -415,6 +462,13 @@ SELECT eDisjoint(geometry 'SRID=5676;Point(1 1)', tgeompoint 'Point(1 1)@2001-01
 ERROR:  Operation on mixed SRID
 SELECT eDisjoint(tgeompoint 'Point(1 1)@2001-01-01', geometry 'SRID=5676;Point(1 1)');
 ERROR:  Operation on mixed SRID
+-------------------------------------------------------------------------------
+-- eIntersects
+-------------------------------------------------------------------------------
+------------------------
+-- Geo x Temporal
+------------------------
+-- 2D
 SELECT eIntersects(geometry 'Point(1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  eintersects 
 -------------
@@ -439,6 +493,7 @@ SELECT eIntersects(geometry 'Point(1 1)', tgeompoint '{[Point(1 1)@2001-01-01, P
  t
 (1 row)
 
+-- A temporal point that stands still meets the point it stands on, and no other
 SELECT eIntersects(geometry 'Point(1 1)', tgeompoint '[Point(1 1)@2001-01-01, Point(1 1)@2001-01-02]');
  eintersects 
 -------------
@@ -469,12 +524,14 @@ SELECT eIntersects(geometry 'Point(2 2)', tgeompoint '[Point(1 1)@2001-01-01, Po
  f
 (1 row)
 
+-- Standing still for one segment and moving on the next
 SELECT eIntersects(geometry 'Point(1 1)', tgeompoint '[Point(1 1)@2001-01-01, Point(1 1)@2001-01-02, Point(3 3)@2001-01-03]');
  eintersects 
 -------------
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(geometry 'Point empty', tgeompoint 'Point(1 1)@2001-01-01');
  eintersects 
 -------------
@@ -499,6 +556,7 @@ SELECT eIntersects(geometry 'Point empty', tgeompoint '{[Point(1 1)@2001-01-01, 
  f
 (1 row)
 
+-- 3D
 SELECT eIntersects(geometry 'Point(1 1 1)', tgeompoint 'Point(1 1 1)@2001-01-01');
  eintersects 
 -------------
@@ -523,6 +581,7 @@ SELECT eIntersects(geometry 'Point(1 1 1)', tgeompoint '{[Point(1 1 1)@2001-01-0
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(geometry 'Point Z empty', tgeompoint 'Point(1 1 1)@2001-01-01');
  eintersects 
 -------------
@@ -547,6 +606,7 @@ SELECT eIntersects(geometry 'Point Z empty', tgeompoint '{[Point(1 1 1)@2001-01-
  f
 (1 row)
 
+-- Geography
 SELECT eIntersects(geography 'Point(1.5 1.5)', tgeogpoint 'Point(1.5 1.5)@2001-01-01');
  eintersects 
 -------------
@@ -571,6 +631,7 @@ SELECT eIntersects(geography 'Point(1.5 1.5)', tgeogpoint '{[Point(1.5 1.5)@2001
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(geography 'Point empty', tgeogpoint 'Point(1.5 1.5)@2001-01-01');
  eintersects 
 -------------
@@ -595,6 +656,7 @@ SELECT eIntersects(geography 'Point empty', tgeogpoint '{[Point(1.5 1.5)@2001-01
  f
 (1 row)
 
+-- 3D
 SELECT eIntersects(geography 'Point(1.5 1.5 1.5)', tgeogpoint 'Point(1.5 1.5 1.5)@2001-01-01');
  eintersects 
 -------------
@@ -619,6 +681,7 @@ SELECT eIntersects(geography 'Point(1.5 1.5 1.5)', tgeogpoint '{[Point(1.5 1.5 1
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(geography 'Point Z empty', tgeogpoint 'Point(1.5 1.5 1.5)@2001-01-01');
  eintersects 
 -------------
@@ -643,6 +706,9 @@ SELECT eIntersects(geography 'Point Z empty', tgeogpoint '{[Point(1.5 1.5 1.5)@2
  f
 (1 row)
 
+------------------------
+-- Temporal x Geo
+------------------------
 SELECT eIntersects(tgeompoint 'Point(1 1)@2001-01-01',  geometry 'Point(1 1)');
  eintersects 
 -------------
@@ -667,6 +733,7 @@ SELECT eIntersects(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, P
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(tgeompoint 'Point(1 1)@2001-01-01',  geometry 'Point empty');
  eintersects 
 -------------
@@ -691,6 +758,7 @@ SELECT eIntersects(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, P
  f
 (1 row)
 
+-- 3D
 SELECT eIntersects(tgeompoint 'Point(1 1 1)@2001-01-01',  geometry 'Point(1 1 1)');
  eintersects 
 -------------
@@ -715,6 +783,7 @@ SELECT eIntersects(tgeompoint '{[Point(1 1 1)@2001-01-01, Point(2 2 2)@2001-01-0
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(tgeompoint 'Point(1 1 1)@2001-01-01',  geometry 'Point Z empty');
  eintersects 
 -------------
@@ -739,6 +808,7 @@ SELECT eIntersects(tgeompoint '{[Point(1 1 1)@2001-01-01, Point(2 2 2)@2001-01-0
  f
 (1 row)
 
+-- Geography
 SELECT eIntersects(tgeogpoint 'Point(1.5 1.5)@2001-01-01',  geography 'Point(1.5 1.5)');
  eintersects 
 -------------
@@ -763,6 +833,7 @@ SELECT eIntersects(tgeogpoint '{[Point(1.5 1.5)@2001-01-01, Point(2.5 2.5)@2001-
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(tgeogpoint 'Point(1.5 1.5)@2001-01-01',  geography 'Point empty');
  eintersects 
 -------------
@@ -787,6 +858,7 @@ SELECT eIntersects(tgeogpoint '{[Point(1.5 1.5)@2001-01-01, Point(2.5 2.5)@2001-
  f
 (1 row)
 
+-- 3D
 SELECT eIntersects(tgeogpoint 'Point(1.5 1.5 1.5)@2001-01-01',  geography 'Point(1.5 1.5 1.5)');
  eintersects 
 -------------
@@ -811,6 +883,7 @@ SELECT eIntersects(tgeogpoint '{[Point(1.5 1.5 1.5)@2001-01-01, Point(2.5 2.5 2.
  t
 (1 row)
 
+-- Empty
 SELECT eIntersects(tgeogpoint 'Point(1.5 1.5 1.5)@2001-01-01',  geography 'Point Z empty');
  eintersects 
 -------------
@@ -835,6 +908,10 @@ SELECT eIntersects(tgeogpoint '{[Point(1.5 1.5 1.5)@2001-01-01, Point(2.5 2.5 2.
  f
 (1 row)
 
+------------------------
+-- Temporal x Temporal
+------------------------
+-- Temporal x Instant
 SELECT eIntersects(tgeompoint 'Point(1 1)@2001-01-01', tgeompoint 'Point(1 1)@2001-01-01');
  eintersects 
 -------------
@@ -859,6 +936,7 @@ SELECT eIntersects(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, P
  t
 (1 row)
 
+-- Temporal x Discrete Sequence
 SELECT eIntersects(tgeompoint 'Point(1 1)@2001-01-01', tgeompoint '{Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Point(1 1)@2001-01-03}');
  eintersects 
 -------------
@@ -883,6 +961,7 @@ SELECT eIntersects(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, P
  t
 (1 row)
 
+-- Temporal x Continuous Sequence
 SELECT eIntersects(tgeompoint 'Point(1 1)@2001-01-01', tgeompoint '[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Point(1 1)@2001-01-03]');
  eintersects 
 -------------
@@ -907,6 +986,7 @@ SELECT eIntersects(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, P
  t
 (1 row)
 
+-- Temporal x SequenceSet
 SELECT eIntersects(tgeompoint 'Point(1 1)@2001-01-01', tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Point(1 1)@2001-01-03],[Point(3 3)@2001-01-04, Point(3 3)@2001-01-05]}');
  eintersects 
 -------------
@@ -931,6 +1011,8 @@ SELECT eIntersects(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, P
  t
 (1 row)
 
+-- A piece lying where the other value has no position decides neither
+-- quantifier: the two never meet, so they are always disjoint
 SELECT aDisjoint(tgeompoint '{[Point(0 0)@2001-01-01, Point(1 0)@2001-01-02], [Point(0 0)@2001-01-05, Point(1 0)@2001-01-06]}', tgeompoint '{[Point(0 5)@2001-01-04, Point(1 5)@2001-01-07]}');
  adisjoint 
 -----------
@@ -943,6 +1025,8 @@ SELECT eIntersects(tgeompoint '{[Point(0 0)@2001-01-01, Point(1 0)@2001-01-02], 
  f
 (1 row)
 
+-- Two discrete values that meet at their second common instant only, and stay apart at their
+-- third: every common instant is read
 SELECT eIntersects(tgeompoint '{Point(9 9)@2001-01-01, Point(0 0)@2001-01-02, Point(9 9)@2001-01-03}', tgeompoint '{Point(0 0)@2001-01-01, Point(0 0)@2001-01-02, Point(0 0)@2001-01-03}');
  eintersects 
 -------------
@@ -967,6 +1051,7 @@ SELECT aDwithin(tgeompoint '{Point(0 0)@2001-01-01, Point(9 9)@2001-01-02}', tge
  f
 (1 row)
 
+-- Mixed 2D/3D
 SELECT eIntersects(geometry 'Point(1 1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  eintersects 
 -------------
@@ -991,6 +1076,7 @@ SELECT eIntersects(tgeogpoint 'Point(1 1 1)@2001-01-01', geography 'Point(1.5 1.
  f
 (1 row)
 
+-- Coverage
 SELECT eIntersects(tgeompoint '{Point(1 1)@2001-01-01, Point(1 1)@2001-01-03}', tgeompoint 'Point(1 1)@2001-01-02');
  eintersects 
 -------------
@@ -1053,6 +1139,10 @@ SELECT eIntersects(tgeogpoint 'Point(1 1)@2001-01-01', geography 'SRID=4283;Poin
 ERROR:  Operation on mixed SRID
 SELECT eIntersects(tgeogpoint 'Point(1 1)@2001-01-01', tgeogpoint 'SRID=4283;Point(1 1)@2001-01-01');
 ERROR:  Operation on mixed SRID
+-------------------------------------------------------------------------------
+-- eTouches, aTouches
+-- The function does not support 3D or geographies
+-------------------------------------------------------------------------------
 SELECT eTouches(geometry 'Point(1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  etouches 
 ----------
@@ -1167,6 +1257,7 @@ SELECT eTouches(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Poin
  f
 (1 row)
 
+-- Coverage: Other geometry types
 SELECT eTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04]', geometry 'Triangle((1 1,1 2,2 1,1 1))');
  etouches 
 ----------
@@ -1179,12 +1270,14 @@ SELECT eTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04]', geo
  t
 (1 row)
 
+-- Notice that the boundary of a closed linear or circular string is empty !
 SELECT eTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(1 1)@2001-01-02]', geometry 'CircularString(1 1,2 2,3 1,2 0,1 1)');
  etouches 
 ----------
  t
 (1 row)
 
+-- The boundary of a compound curve is its two end points, or empty if closed
 SELECT eTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04]', geometry 'CompoundCurve(CircularString(1 1,2 2,3 1),(3 1,4 0))');
  etouches 
 ----------
@@ -1197,6 +1290,7 @@ SELECT eTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04]', geo
  f
 (1 row)
 
+-- The boundary of a multisurface is the union of the boundaries of its surfaces
 SELECT eTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04]', geometry 'MultiSurface(((1 1,3 1,3 3,1 3,1 1)),CurvePolygon(CircularString(5 5,6 6,7 5,6 4,5 5)))');
  etouches 
 ----------
@@ -1210,6 +1304,7 @@ SELECT eTouches(tgeompoint 'Point(1 1)@2001-01-01', geometry 'SRID=5676;Point(1 
 ERROR:  Operation on mixed SRID
 SELECT eTouches(tgeompoint 'Point(1 1 1)@2001-01-01', geometry 'Point(1 1 1)');
 ERROR:  The geometry cannot have Z dimension
+-------------------------------------------------------------------------------
 SELECT aTouches(geometry 'Point(1 1)', tgeompoint 'Point(1 1)@2001-01-01');
  atouches 
 ----------
@@ -1324,6 +1419,7 @@ SELECT aTouches(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Poin
  f
 (1 row)
 
+-- Coverage: Other geometry types
 SELECT aTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04]', geometry 'Triangle((1 1,1 2,2 1,1 1))');
  atouches 
 ----------
@@ -1336,6 +1432,7 @@ SELECT aTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(3 3)@2001-01-04]', geo
  f
 (1 row)
 
+-- Notice that the boundary of a closed linear or circular string is empty !
 SELECT aTouches(tgeompoint '[Point(0 0)@2001-01-01, Point(1 1)@2001-01-02]', geometry 'CircularString(1 1,2 2,3 1,2 0,1 1)');
  atouches 
 ----------
@@ -1349,6 +1446,9 @@ SELECT aTouches(tgeompoint 'Point(1 1)@2001-01-01', geometry 'SRID=5676;Point(1 
 ERROR:  Operation on mixed SRID
 SELECT aTouches(tgeompoint 'Point(1 1 1)@2001-01-01', geometry 'Point(1 1 1)');
 ERROR:  The geometry cannot have Z dimension
+-------------------------------------------------------------------------------
+-- eDwithin
+-------------------------------------------------------------------------------
 SELECT eDwithin(geometry 'Linestring(1 1,2 2)', tgeompoint 'Point(1 1)@2001-01-01', 2);
  edwithin 
 ----------
@@ -1589,6 +1689,8 @@ SELECT eDwithin(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Poin
  f
 (1 row)
 
+-- A point whose distance to another exceeds the bound by less than half a unit in the last
+-- place, so that the distance rounds onto the bound: false at the bound, true at the next double
 SELECT eDwithin(tgeompoint 'Point(3521230.2205715757 3699095.11558644)@2001-01-01', geometry 'Point(3520706.499939835 3700978.1645263466)', 1954.522092531518);
  edwithin 
 ----------
@@ -1763,6 +1865,7 @@ SELECT eDwithin(tgeogpoint '{[Point(1.5 1.5 1.5)@2001-01-01, Point(2.5 2.5 2.5)@
  f
 (1 row)
 
+-- NULL
 SELECT eDwithin(tgeompoint 'Point(1 1)@2001-01-01', tgeompoint 'Point(1 1)@2001-01-02', 2);
  edwithin 
 ----------
@@ -1907,6 +2010,10 @@ SELECT eDwithin(tgeompoint '{[Point(1 1)@2001-01-02, Point(2 2)@2001-01-03],[Poi
  
 (1 row)
 
+-- Two moving points exactly the distance apart, which doubles cannot tell
+-- from one unit in the last place nearer or farther: a point passing 1 from
+-- one at rest, at the origin and among projected coordinates, and a point
+-- whose ends lie on a 3-4-5 triangle 5 from one at rest
 SELECT eDwithin(tgeompoint '[Point(-1000000 1)@2001-01-01, Point(1500000 1)@2001-01-02]', tgeompoint '[Point(0 0)@2001-01-01, Point(0 0)@2001-01-02]', 1);
  edwithin 
 ----------
@@ -2237,12 +2344,14 @@ SELECT eDwithin(tgeompoint '{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02]}', t
  f
 (1 row)
 
+-- Step interpolation
 SELECT eDwithin(tgeompoint 'Interp=Step;{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Point(1 1)@2001-01-03],[Point(3 3)@2001-01-04, Point(3 3)@2001-01-05]}', tgeompoint 'Interp=Step;{[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02, Point(1 1)@2001-01-03],[Point(3 3)@2001-01-04, Point(3 3)@2001-01-05]}', 2);
  edwithin 
 ----------
  t
 (1 row)
 
+-- Mixed 2D/3D
 SELECT eDwithin(geometry 'Point(1 1 1)', tgeompoint 'Point(1 1)@2001-01-01', 2);
  edwithin 
 ----------
@@ -2279,6 +2388,7 @@ SELECT eDwithin(tgeogpoint 'Point(1 1 1)@2001-01-01', tgeogpoint 'Point(1 1)@200
  t
 (1 row)
 
+-- Coverage
 SELECT eDwithin(tgeompoint '[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02]', tgeompoint '[Point(4 4)@2001-01-01, Point(2 1)@2001-01-02]', 1);
  edwithin 
 ----------
@@ -2291,6 +2401,8 @@ SELECT eDwithin(tgeompoint '[Point(1 1)@2001-01-01, Point(2 2)@2001-01-02]', tge
  t
 (1 row)
 
+-- Trajectories far apart at both shared endpoints that meet only strictly
+-- between the vertices
 SELECT eDwithin(tgeompoint '[Point(0 0)@2001-01-01, Point(10 0)@2001-01-02]', tgeompoint '[Point(5 -100)@2001-01-01, Point(5 100)@2001-01-02]', 1);
  edwithin 
 ----------
@@ -2322,6 +2434,10 @@ SELECT eDwithin(tgeogpoint 'Point(1 1)@2001-01-01', geography 'SRID=4283;Point(1
 ERROR:  Operation on mixed SRID
 SELECT eDwithin(tgeogpoint 'SRID=4283;Point(1 1)@2001-01-01', tgeogpoint 'Point(1 1)@2001-01-01', 2);
 ERROR:  Operation on mixed SRID
+-------------------------------------------------------------------------------
+-- Crossing-value synchronization with non-coincident time spans: two trips
+-- that never meet must report eIntersects false / aDisjoint true even when one
+-- time span strictly contains the other
 SELECT eIntersects(
   tgeompoint '[Point(0 0)@2001-01-01, Point(0 10)@2001-01-02]',
   tgeompoint '[Point(100 0)@2001-01-01, Point(100 10)@2001-01-03]');
@@ -2338,6 +2454,7 @@ SELECT aDisjoint(
  t
 (1 row)
 
+-- A genuine coincidence over the common time is still detected
 SELECT eIntersects(
   tgeompoint '[Point(5 5)@2001-01-01, Point(5 5)@2001-01-02]',
   tgeompoint '[Point(0 0)@2001-01-01, Point(10 10)@2001-01-03]');
@@ -2346,6 +2463,8 @@ SELECT eIntersects(
  t
 (1 row)
 
+-- A trajectory that reaches the boundary of a polygon without entering its
+-- interior meets it at that instant alone
 SELECT eIntersects(geometry 'Polygon((-1 -1,-1 1,1 1,1 -1,-1 -1))',
   tgeompoint '[Point(-3 -3)@2001-01-01, Point(-1 -1)@2001-01-02]');
  eintersects 
@@ -2389,6 +2508,8 @@ SELECT atGeometry(
  {[0101000000000000000000F0BF000000000000F0BF@Tue Jan 02 00:00:00 2001 PST]}
 (1 row)
 
+-- A 3D and a 2D temporal point are within a distance in 2D, in either order
+-- and against a geometry, and two 3D temporal points in 3D
 SELECT eDwithin(tgeompoint '[Point(0 0 5)@2001-01-01, Point(2 0 5)@2001-01-03]', tgeompoint '[Point(1 1)@2001-01-01, Point(1 1)@2001-01-03]', 1.2);
  edwithin 
 ----------
@@ -2425,6 +2546,11 @@ SELECT aDwithin(tgeompoint '[Point(0 0 0)@2001-01-01, Point(2 0 0)@2001-01-03]',
  t
 (1 row)
 
+-- Two moving points exactly the distance apart are within it, ever and
+-- always, their boxes meeting once the second is grown by the distance; one
+-- unit in the last place farther apart the grown box misses the first and
+-- they are not; two whose periods interleave without sharing an instant
+-- answer NULL however far apart their boxes are
 SELECT eDwithin(tgeompoint '[Point(0 1)@2001-01-01, Point(10 1)@2001-01-02]', tgeompoint '[Point(0 3)@2001-01-01, Point(10 3)@2001-01-02]', 2);
  edwithin 
 ----------
@@ -2461,6 +2587,8 @@ SELECT aDwithin(tgeompoint '{[Point(0 0)@2001-01-01, Point(1 0)@2001-01-02],[Poi
  
 (1 row)
 
+-------------------------------------------------------------------------------
+-- One degree of meridian near the equator measures about 110575 m on the spheroid and 111195 m on the sphere
 SELECT eDwithin(tgeogpoint '[Point(0 1)@2001-01-01, Point(0 2)@2001-01-02]', geography 'Point(0 0)', 110800);
  edwithin 
 ----------

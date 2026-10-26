@@ -1,3 +1,39 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-- The six shared DGGS operations lifted over a temporal value, plus the token.
+--
+-- Each answer is cross-checked against the static form it lifts: the temporal
+-- operation applied to a one-instant value must equal the static operation
+-- applied to that instant's cell.
+-------------------------------------------------------------------------------
+-- Resolution, validity and area
+-------------------------------------------------------------------------------
 SELECT asText(getResolution(ts2cell '[47c3c3@2001-01-01, 47c3c38705f@2001-01-02]'));
                                astext                               
 --------------------------------------------------------------------
@@ -24,6 +60,9 @@ SELECT round(startValue(cellArea(ts2cell '[47c3c3@2001-01-01]'))::numeric, 6)
  t
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Hierarchy
+-------------------------------------------------------------------------------
 SELECT asText(cellToParent(ts2cell '[47c3c3@2001-01-01, 54b5c9@2001-01-02]', 5));
                                  astext                                 
 ------------------------------------------------------------------------
@@ -37,6 +76,12 @@ SELECT startValue(cellToParent(ts2cell '[47c3c3@2001-01-01]', 5))
  t
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Centre and boundary
+--
+-- An S2 cell is a region of the sphere, so the centre is a tgeogpoint and the
+-- boundary a tgeography, both in SRID 4326.
+-------------------------------------------------------------------------------
 SELECT tempSubtype(cellToPoint(ts2cell '[47c3c3@2001-01-01, 54b5c9@2001-01-02]'));
  tempsubtype 
 -------------
@@ -74,6 +119,9 @@ SELECT ST_SRID(startValue(cellToBoundary(ts2cell '[47c3c3@2001-01-01]'))::geomet
     4326
 (1 row)
 
+-------------------------------------------------------------------------------
+-- The token
+-------------------------------------------------------------------------------
 SELECT asText(ts2CellToToken(ts2cell '[47c3c3@2001-01-01, 54b5c9@2001-01-02]'));
                                      astext                                     
 --------------------------------------------------------------------------------
@@ -87,6 +135,15 @@ SELECT startValue(ts2CellToToken(ts2cell '[47c3c3@2001-01-01]'))
  t
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Conversion from a temporal point: ts2cell(tgeogpoint, integer)
+--
+-- The cell-entry timestamps are interpolated from floating-point crossings
+-- whose low digits vary across build configurations, so the cases below state
+-- the build-stable invariants and print whole values only where every
+-- timestamp is exact.
+-------------------------------------------------------------------------------
+-- An instant yields the cell holding its position
 SELECT ts2cell(tgeogpoint 'Point(4.35 50.85)@2001-01-01', 10);
                ts2cell               
 -------------------------------------
@@ -100,6 +157,7 @@ SELECT startValue(ts2cell(tgeogpoint 'Point(4.35 50.85)@2001-01-01', 10))
  t
 (1 row)
 
+-- A trajectory staying inside one cell holds it over its whole period
 SELECT ts2cell(tgeogpoint
   '[Point(4.3500 50.8500)@2001-01-01, Point(4.3501 50.8501)@2001-01-02]', 10);
                                   ts2cell                                   
@@ -107,6 +165,8 @@ SELECT ts2cell(tgeogpoint
  [47c3c3@Mon Jan 01 00:00:00 2001 PST, 47c3c3@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- A trajectory that states nothing between its instants holds the cells of
+-- those instants, whether discrete or stepwise
 SELECT ts2cell(tgeogpoint '{Point(1 1)@2001-01-01, Point(60 -40)@2001-01-02}', 4);
                                ts2cell                                
 ----------------------------------------------------------------------
@@ -120,6 +180,9 @@ SELECT ts2cell(tgeogpoint
  [101@Mon Jan 01 00:00:00 2001 PST, 209@Tue Jan 02 00:00:00 2001 PST]
 (1 row)
 
+-- A linear trajectory holds every cell it crosses, each entered once, the
+-- first holding the position of its start and the last that of its end. The
+-- segment below passes from cube face 0 to cube face 1
 SELECT numValues(getValues(t)), numInstants(t),
   startValue(t) = geoToS2Cell(geography 'Point(1 1)', 4),
   endValue(t) = geoToS2Cell(geography 'Point(60 -40)', 4)
@@ -130,6 +193,12 @@ FROM (SELECT ts2cell(tgeogpoint
         19 |          20 | t        | t
 (1 row)
 
+-- At every sampled timestamp the value is the cell holding the position of the
+-- trajectory then, over a path from one cube face to the next, a path across
+-- the antimeridian, a path beside the pole, a path along the prime meridian,
+-- which on cube face 2 is the line v = 0, an edge between cells at every level,
+-- so the path meets each next cell at a vertex, and a path along that line over
+-- the pole and down the opposite meridian
 SELECT count(*) AS instants,
   count(*) FILTER (WHERE valueAtTimestamp(c, t) <>
     geoToS2Cell(valueAtTimestamp(p, t), 8)) AS other_cell
@@ -148,6 +217,11 @@ WHERE valueAtTimestamp(p, t) IS NOT NULL;
       343 |          0
 (1 row)
 
+-- A path along the meridian 90, which cube face 2 maps to the line u = 0, an
+-- edge between cells at every level: the path crosses that edge within the
+-- rounding of its own position, so the cells it holds do not change there,
+-- and at level 16 the value at every sampled timestamp is still the cell
+-- holding the position of the trajectory then
 SELECT count(*) AS instants,
   count(*) FILTER (WHERE valueAtTimestamp(c, t) <>
     geoToS2Cell(valueAtTimestamp(p, t), 16)) AS other_cell
@@ -162,6 +236,10 @@ WHERE valueAtTimestamp(p, t) IS NOT NULL;
        76 |          0
 (1 row)
 
+-- A geodetic trajectory starting on a cell edge and heading across it leaves
+-- the cell at once. The trajectory below is cut at every instant its temporal
+-- cell states, where it crosses an edge, and the piece starting at each cut
+-- holds the cell of its own position at every sampled timestamp
 SELECT count(*) AS instants,
   count(*) FILTER (WHERE valueAtTimestamp(c, t) <>
     geoToS2Cell(valueAtTimestamp(p, t), 14)) AS other_cell
@@ -180,6 +258,8 @@ WHERE valueAtTimestamp(p, t) IS NOT NULL;
       330 |          0
 (1 row)
 
+-- The last cell holds to the end of the trajectory, so the temporal cell spans
+-- the period of the trajectory under an inclusive and an exclusive upper bound
 SELECT getTime(ts2cell(p, 10)) = getTime(p) FROM (VALUES
   (tgeogpoint '[Point(4.30 50.80)@2001-01-01, Point(4.40 50.90)@2001-01-02]'),
   (tgeogpoint '[Point(4.30 50.80)@2001-01-01, Point(4.40 50.90)@2001-01-02)'))
@@ -198,6 +278,7 @@ SELECT endValue(ts2cell(tgeogpoint
  t
 (1 row)
 
+-- A sequence set yields one sequence per sequence
 SELECT numSequences(ts2cell(tgeogpoint
   '{[Point(1 1)@2001-01-01, Point(60 -40)@2001-01-02],
   [Point(4.30 50.80)@2001-01-03, Point(4.40 50.90)@2001-01-04]}', 4));
@@ -206,6 +287,10 @@ SELECT numSequences(ts2cell(tgeogpoint
             2
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Conversion from a temporal point: ts2cell(tgeompoint, integer)
+-------------------------------------------------------------------------------
+-- An instant yields the cell holding its position, as for a geodetic point
 SELECT ts2cell(tgeompoint 'SRID=4326;Point(4.35 50.85)@2001-01-01', 10) =
   ts2cell(tgeogpoint 'Point(4.35 50.85)@2001-01-01', 10);
  ?column? 
@@ -213,6 +298,13 @@ SELECT ts2cell(tgeompoint 'SRID=4326;Point(4.35 50.85)@2001-01-01', 10) =
  t
 (1 row)
 
+-- A planar segment follows the straight line in longitude and latitude, which
+-- is no great circle. Cube face 2 holds the positions where the height z is at
+-- least |x| and |y|, so its edge toward face 0 reaches latitude 45 on the
+-- meridian 0 and latitude 44.0 on the meridians -15 and 15. The parallel 44.5
+-- between those meridians starts and ends in face 2 and dips into face 0 on
+-- the way: three instants over two cells and a closing instant, where the
+-- great circle between the same positions bulges north and stays in face 2
 SELECT numInstants(t), numValues(getValues(t)), startValue(t) = endValue(t),
   numValues(getValues(ts2cell(tgeogpoint
     '[Point(-15 44.5)@2001-01-01, Point(15 44.5)@2001-01-02]', 0)))
@@ -224,6 +316,11 @@ FROM (SELECT ts2cell(tgeompoint
            4 |         2 | t        |         1
 (1 row)
 
+-- At every sampled timestamp the value is the cell holding the position of the
+-- planar trajectory then, over a diagonal from one cube face to the next, a
+-- parallel at high latitude, the parallel dipping out of face 2, a path near
+-- the antimeridian and one along a meridian. The samples lie between the
+-- minutes
 SELECT count(*) AS instants,
   count(*) FILTER (WHERE valueAtTimestamp(c, t) <>
     geoToS2Cell(valueAtTimestamp(p, t)::geography, z)) AS other_cell,
@@ -243,6 +340,7 @@ FROM (SELECT p, z, ts2cell(p, z) AS c FROM (VALUES
      7200 |          0 |                   4
 (1 row)
 
+-- A sequence set yields one sequence per sequence, spanning its period
 SELECT numSequences(t), getTime(t) = getTime(p)
 FROM (SELECT p, ts2cell(p, 4) AS t FROM (VALUES (tgeompoint
   'SRID=4326;{[Point(1 1)@2001-01-01, Point(60 -40)@2001-01-02],
@@ -253,6 +351,7 @@ FROM (SELECT p, ts2cell(p, 4) AS t FROM (VALUES (tgeompoint
             2 | t
 (1 row)
 
+-- A level outside 0 to 30, and a planar reference system other than lon/lat
 /* Errors */
 SELECT ts2cell(tgeogpoint 'Point(4.35 50.85)@2001-01-01', 31);
 ERROR:  The resolution must be between 0 and 30
@@ -265,6 +364,11 @@ ERROR:  Only lon/lat coordinate systems are supported
 SELECT ts2cell(tgeompoint
   'SRID=3857;[Point(4.35 50.85)@2001-01-01, Point(4.36 50.86)@2001-01-02]', 10);
 ERROR:  Only lon/lat coordinate systems are supported
+-------------------------------------------------------------------------------
+-- eEqual / ?= -- cell set vs ts2cell prefilter
+-------------------------------------------------------------------------------
+-- A trip read against the cover of a region it crosses, and of one it never
+-- reaches, in both argument orders
 WITH t(trip) AS (VALUES (ts2cell(tgeogpoint
   '[Point(4.35 50.85)@2001-01-01, Point(4.40 50.90)@2001-01-02]', 12)))
 SELECT geoToS2CellSet(geography 'SRID=4326;POLYGON((4.30 50.80, 4.45 50.80,
@@ -281,6 +385,11 @@ FROM t;
  t        | t        | f      | f
 (1 row)
 
+-- The prefilter answers from the instants of every subtype, and stops at the
+-- first instant the set contains. Each subtype is asked for a hit and a miss,
+-- and the sequence forms are asked where the hit sits, so a walk that stopped
+-- at the wrong place or skipped a composing sequence is refused.
+-- Temporal instant
 SELECT s2cellset '{47c3c3, 54b5c9}' ?= ts2cell '47c3c3@2001-01-01';
  ?column? 
 ----------
@@ -293,6 +402,7 @@ SELECT s2cellset '{47c3c3, 54b5c9}' ?= ts2cell '47c3c4@2001-01-01';
  f
 (1 row)
 
+-- Discrete sequence: the hit at the first instant, at the last, and absent
 SELECT s2cellset '{47c3c3, 54b5c9}' ?=
   ts2cell '{47c3c3@2001-01-01, 47c3c4@2001-01-02}';
  ?column? 
@@ -314,6 +424,7 @@ SELECT s2cellset '{47c3c3}' ?=
  f
 (1 row)
 
+-- Step sequence
 SELECT s2cellset '{47c3c3, 54b5c9}' ?=
   ts2cell '[47c3c4@2001-01-01, 54b5c9@2001-01-02]';
  ?column? 
@@ -328,6 +439,7 @@ SELECT s2cellset '{47c3c3}' ?=
  f
 (1 row)
 
+-- Sequence set: the hit in the first composing sequence, in the last, absent
 SELECT s2cellset '{47c3c3, 54b5c9}' ?=
   ts2cell '{[47c3c3@2001-01-01], [47c3c4@2001-01-02]}';
  ?column? 
@@ -349,6 +461,11 @@ SELECT s2cellset '{47c3c3}' ?=
  f
 (1 row)
 
+-------------------------------------------------------------------------------
+-- The cover of a trajectory cut at half-open periods merges into the cover of
+-- the whole trajectory, here for a trajectory ending on a cell boundary: the
+-- cell reached at the last instant is stated there, as the space split states
+-- the tile of the last corner under its default borderInc
 WITH trip(tp) AS (
   SELECT tgeompoint 'SRID=4326;[Point(-135 -10)@2001-01-01, Point(-45 10)@2001-01-03]'
 ), periods(period) AS (VALUES
@@ -374,6 +491,9 @@ FROM trip, unnest(ts2cell(tp, 3)) u;
                    1 |                 10
 (1 row)
 
+-- A trajectory over the pole runs along the edge of a cell, where the closed
+-- form of a crossing reads the position of the trajectory itself: every cell
+-- of the cover is the cell the trajectory holds just after it is entered
 WITH trip(tp) AS (
   SELECT tgeogpoint '[Point(0 89.996498882)@2020-01-01, Point(-180 89.990887383)@2020-01-01 01:00:00]'
 )
@@ -386,6 +506,11 @@ FROM trip, unnest(ts2cell(tp, 16)) u;
     12 |                   12
 (1 row)
 
+-------------------------------------------------------------------------------
+-- Split by the cells of the grid: s2Split(tgeompoint|tgeogpoint, integer)
+-------------------------------------------------------------------------------
+-- The split states the cells of the cover and, beside each, the trajectory
+-- over the periods the cover states for that cell
 WITH trip(tp) AS (
   SELECT tgeompoint 'SRID=4326;[Point(-135 -10)@2001-01-01, Point(-45 10)@2001-01-03]'
 )
@@ -401,6 +526,7 @@ FROM trip, LATERAL s2Split(tp, 3) s;
         11 |                               0 |                                0
 (1 row)
 
+-- Every cell of the split is a cell of the cover
 WITH trip(tp) AS (
   SELECT tgeompoint 'SRID=4326;[Point(-135 -10)@2001-01-01, Point(-45 10)@2001-01-03]'
 )
@@ -411,6 +537,7 @@ FROM trip, LATERAL s2Split(tp, 3) s GROUP BY tp;
  t
 (1 row)
 
+-- The fragments of a split merge into the trajectory
 WITH trip(tp) AS (
   SELECT tgeompoint 'SRID=4326;[Point(-135 -10)@2001-01-01, Point(-45 10)@2001-01-03]'
 )
@@ -421,6 +548,9 @@ FROM trip, LATERAL s2Split(tp, 3) s GROUP BY tp;
  t
 (1 row)
 
+-- An S2 cell is bounded by arcs of great circles, the path a geodetic
+-- trajectory follows, where a planar one follows the straight line in
+-- longitude and latitude
 SELECT count(*) AS fragments
 FROM s2Split(tgeogpoint '[Point(-170 65)@2001-01-01, Point(-100 65)@2001-01-02]', 2);
  fragments 
@@ -436,6 +566,12 @@ FROM s2Split(tgeompoint
          3
 (1 row)
 
+-------------------------------------------------------------------------------
+-- A trip ending on the corner of four level-3 cells, the face-4 centre
+-- (-90 0), enters at its last instant the cell the grid assigns that corner
+-- to. Under borderInc the cover states that cell for the instant; without, the
+-- cover ends on the cell held before it, with an exclusive bound, and so does
+-- the split. A trip ending inside a cell answers alike
 SELECT b, asText(ts2cell(tgeogpoint
   'SRID=4326;[Point(-135 -10)@2001-01-01, Point(-90 0)@2001-01-02]', 3, b))
 FROM (VALUES (true), (false)) t(b);
@@ -463,3 +599,4 @@ FROM (VALUES (true), (false)) t(b);
  f | [9dc@Mon Jan 01 00:00:00 2001 PST, 9d4@Mon Jan 01 04:25:15.722512 2001 PST, 9cc@Mon Jan 01 05:38:43.329076 2001 PST, 9b4@Mon Jan 01 12:06:40.186462 2001 PST, 9ac@Mon Jan 01 18:41:46.827663 2001 PST, 9ac@Tue Jan 02 00:00:00 2001 PST]
 (2 rows)
 
+-------------------------------------------------------------------------------

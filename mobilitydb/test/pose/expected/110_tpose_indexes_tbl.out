@@ -1,16 +1,44 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-- Index correctness tests for tpose on tbl_tpose2d (100 rows, SRID 5676).
+-- Modeled on mobilitydb/test/cbuffer/sql/166_tcbuffer_indexes_tbl.
 ANALYZE tbl_tpose2d;
-ANALYZE
 DROP INDEX IF EXISTS tbl_tpose2d_rtree_idx;
 NOTICE:  index "tbl_tpose2d_rtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_tpose2d_quadtree_idx;
 NOTICE:  index "tbl_tpose2d_quadtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_tpose2d_kdtree_idx;
 NOTICE:  index "tbl_tpose2d_kdtree_idx" does not exist, skipping
-DROP INDEX
+-------------------------------------------------------------------------------
+-- 1. rtree (GIST)
+-------------------------------------------------------------------------------
 CREATE INDEX tbl_tpose2d_rtree_idx ON tbl_tpose2d USING GIST(temp);
-CREATE INDEX
 SELECT COUNT(*) FROM tbl_tpose2d WHERE temp <<# tstzspan '[2001-01-01, 2001-02-01]';
  count 
 -------
@@ -137,10 +165,11 @@ SELECT COUNT(*) FROM tbl_tpose2d WHERE temp |&> tpose 'SRID=3812;[Pose(Point(0 0
     20
 (1 row)
 
+-------------------------------------------------------------------------------
+-- 2. quadtree (SPGIST default)
+-------------------------------------------------------------------------------
 DROP INDEX IF EXISTS tbl_tpose2d_rtree_idx;
-DROP INDEX
 CREATE INDEX tbl_tpose2d_quadtree_idx ON tbl_tpose2d USING SPGIST(temp);
-CREATE INDEX
 SELECT COUNT(*) FROM tbl_tpose2d WHERE temp <<# tstzspan '[2001-01-01, 2001-02-01]';
  count 
 -------
@@ -195,10 +224,11 @@ SELECT COUNT(*) FROM tbl_tpose2d WHERE temp -|- tpose 'SRID=3812;[Pose(Point(0 0
      0
 (1 row)
 
+-------------------------------------------------------------------------------
+-- 3. kdtree (SPGIST tpose_kdtree_ops)
+-------------------------------------------------------------------------------
 DROP INDEX IF EXISTS tbl_tpose2d_quadtree_idx;
-DROP INDEX
 CREATE INDEX tbl_tpose2d_kdtree_idx ON tbl_tpose2d USING SPGIST(temp tpose_kdtree_ops);
-CREATE INDEX
 SELECT COUNT(*) FROM tbl_tpose2d WHERE temp && tpose 'SRID=3812;[Pose(Point(0 0), 0.1)@2001-01-01, Pose(Point(50 50), 0.5)@2001-12-31]';
  count 
 -------
@@ -223,10 +253,11 @@ SELECT COUNT(*) FROM tbl_tpose2d WHERE temp ~= tpose 'SRID=3812;[Pose(Point(0 0)
      0
 (1 row)
 
+-------------------------------------------------------------------------------
+-- 4. KNN ordered-search via |=| (rtree + quadtree, on tbl_tpose2d)
+-------------------------------------------------------------------------------
 DROP INDEX IF EXISTS tbl_tpose2d_kdtree_idx;
-DROP INDEX
 CREATE INDEX tbl_tpose2d_rtree_idx ON tbl_tpose2d USING GIST(temp);
-CREATE INDEX
 WITH test AS (
   SELECT temp |=| tpose 'SRID=3812;[Pose(Point(0 0), 0.1)@2001-06-01, Pose(Point(50 50), 0.5)@2001-07-01]' AS distance
   FROM tbl_tpose2d ORDER BY 1 LIMIT 3 )
@@ -272,9 +303,7 @@ SELECT round(distance, 6) FROM test;
 (3 rows)
 
 DROP INDEX tbl_tpose2d_rtree_idx;
-DROP INDEX
 CREATE INDEX tbl_tpose2d_quadtree_idx ON tbl_tpose2d USING SPGIST(temp);
-CREATE INDEX
 WITH test AS (
   SELECT temp |=| tpose 'SRID=3812;[Pose(Point(0 0), 0.1)@2001-06-01, Pose(Point(50 50), 0.5)@2001-07-01]' AS distance
   FROM tbl_tpose2d ORDER BY 1 LIMIT 3 )
@@ -320,21 +349,19 @@ SELECT round(distance, 6) FROM test;
 (3 rows)
 
 DROP INDEX tbl_tpose2d_quadtree_idx;
-DROP INDEX
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- 5. Z-axis position operators on tbl_tpose3d
+-------------------------------------------------------------------------------
 ANALYZE tbl_tpose3d;
-ANALYZE
 DROP INDEX IF EXISTS tbl_tpose3d_rtree_idx;
 NOTICE:  index "tbl_tpose3d_rtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_tpose3d_quadtree_idx;
 NOTICE:  index "tbl_tpose3d_quadtree_idx" does not exist, skipping
-DROP INDEX
 DROP INDEX IF EXISTS tbl_tpose3d_kdtree_idx;
 NOTICE:  index "tbl_tpose3d_kdtree_idx" does not exist, skipping
-DROP INDEX
 DROP TABLE IF EXISTS test_zaxis;
 NOTICE:  table "test_zaxis" does not exist, skipping
-DROP TABLE
 CREATE TABLE test_zaxis(
   op TEXT,
   no_idx BIGINT,
@@ -342,79 +369,58 @@ CREATE TABLE test_zaxis(
   quadtree_idx BIGINT,
   kdtree_idx BIGINT
 );
-CREATE TABLE
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '<</', COUNT(*) FROM tbl_tpose3d WHERE temp <</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '&</', COUNT(*) FROM tbl_tpose3d WHERE temp &</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '/>>', COUNT(*) FROM tbl_tpose3d WHERE temp />> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 INSERT INTO test_zaxis(op, no_idx)
 SELECT '/&>', COUNT(*) FROM tbl_tpose3d WHERE temp /&> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))';
-INSERT 0 1
 CREATE INDEX tbl_tpose3d_rtree_idx ON tbl_tpose3d USING GIST(temp);
-CREATE INDEX
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp <</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '<</';
-UPDATE 1
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp &</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '&</';
-UPDATE 1
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp />> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/>>';
-UPDATE 1
 UPDATE test_zaxis
 SET rtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp /&> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/&>';
-UPDATE 1
 DROP INDEX tbl_tpose3d_rtree_idx;
-DROP INDEX
 CREATE INDEX tbl_tpose3d_quadtree_idx ON tbl_tpose3d USING SPGIST(temp);
-CREATE INDEX
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp <</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '<</';
-UPDATE 1
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp &</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '&</';
-UPDATE 1
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp />> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/>>';
-UPDATE 1
 UPDATE test_zaxis
 SET quadtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp /&> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/&>';
-UPDATE 1
 DROP INDEX tbl_tpose3d_quadtree_idx;
-DROP INDEX
 CREATE INDEX tbl_tpose3d_kdtree_idx ON tbl_tpose3d USING SPGIST(temp tpose_kdtree_ops);
-CREATE INDEX
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp <</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '<</';
-UPDATE 1
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp &</ stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '&</';
-UPDATE 1
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp />> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/>>';
-UPDATE 1
 UPDATE test_zaxis
 SET kdtree_idx = ( SELECT COUNT(*) FROM tbl_tpose3d WHERE temp /&> stbox 'SRID=3812;STBOX Z((-50,-50,-50),(50,50,50))' )
 WHERE op = '/&>';
-UPDATE 1
 DROP INDEX tbl_tpose3d_kdtree_idx;
-DROP INDEX
+-- the operators that match at least one row: a mismatch test over
+-- predicates that match nothing would hold vacuously
 SELECT count(*) FILTER (WHERE no_idx > 0) AS matching, count(*) AS ops
 FROM test_zaxis;
  matching | ops 
@@ -431,4 +437,4 @@ ORDER BY op;
 (0 rows)
 
 DROP TABLE test_zaxis;
-DROP TABLE
+-------------------------------------------------------------------------------

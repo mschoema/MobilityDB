@@ -1,3 +1,33 @@
+-------------------------------------------------------------------------------
+--
+-- This MobilityDB code is provided under The PostgreSQL License.
+-- Copyright (c) 2016-2026, Université libre de Bruxelles and MobilityDB
+-- contributors
+--
+-- MobilityDB includes portions of PostGIS version 3 source code released
+-- under the GNU General Public License (GPLv2 or later).
+-- Copyright (c) 2001-2026, PostGIS contributors
+--
+-- Permission to use, copy, modify, and distribute this software and its
+-- documentation for any purpose, without fee, and without a written
+-- agreement is hereby granted, provided that the above copyright notice and
+-- this paragraph and the following two paragraphs appear in all copies.
+--
+-- IN NO EVENT SHALL UNIVERSITE LIBRE DE BRUXELLES BE LIABLE TO ANY PARTY FOR
+-- DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING
+-- LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION,
+-- EVEN IF UNIVERSITE LIBRE DE BRUXELLES HAS BEEN ADVISED OF THE POSSIBILITY
+-- OF SUCH DAMAGE.
+--
+-- UNIVERSITE LIBRE DE BRUXELLES SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+-- INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON
+-- AN "AS IS" BASIS, AND UNIVERSITE LIBRE DE BRUXELLES HAS NO OBLIGATIONS TO
+-- PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+--
+-------------------------------------------------------------------------------
+-- extent(th3index): mixed temporal subtypes folded together, NULLs filtered
+-- round to 10 decimal places to suppress platform floating-point ULP differences
 SELECT round(extent(temp), 6) FROM ( VALUES
   (NULL::th3index),
   (th3index '831c02fffffffff@2001-01-01'),
@@ -16,6 +46,7 @@ SELECT round(extent(temp), 6) FROM ( VALUES
  SRID=4326;GEODSTBOX XT(((-145.20901,49.268689),(-142.844448,50.533827)),[Mon Jan 01 00:00:00 2001 PST, Tue Jan 02 00:00:00 2001 PST])
 (1 row)
 
+-- extent(th3index): linear sequence + step sequenceset over disjoint footprints
 SELECT round(extent(temp), 6) FROM ( VALUES
   (th3index '[831c02fffffffff@2001-01-01, 831c00fffffffff@2001-01-02]'),
   ('{[831c02fffffffff@2001-01-01, 831c00fffffffff@2001-01-02], [871fa44a8ffffff@2001-01-03, 880326b885fffff@2001-01-04]}')) t(temp);
@@ -24,6 +55,7 @@ SELECT round(extent(temp), 6) FROM ( VALUES
  SRID=4326;GEODSTBOX XT(((-145.20901,49.268689),(65.602001,89.583016)),[Mon Jan 01 00:00:00 2001 PST, Thu Jan 04 00:00:00 2001 PST])
 (1 row)
 
+-- extent(th3index): single row degenerate cases
 SELECT round(extent(temp), 6) FROM ( VALUES (th3index '831c02fffffffff@2001-01-01')) t(temp);
                                                                  round                                                                 
 ---------------------------------------------------------------------------------------------------------------------------------------
@@ -36,6 +68,7 @@ SELECT round(extent(temp), 6) FROM ( VALUES (NULL::th3index)) t(temp);
  
 (1 row)
 
+-------------------------------------------------------------------------------
 WITH Temp(temp) AS (
   SELECT th3index '[831c02fffffffff@2001-01-01, 831c02fffffffff@2001-01-03]' UNION
   SELECT th3index '[831c00fffffffff@2001-01-02, 831c00fffffffff@2001-01-04]' )
@@ -54,6 +87,7 @@ SELECT wCount(Temp, interval '2 days') FROM Temp;
  {[1@Mon Jan 01 00:00:00 2001 PST, 2@Tue Jan 02 00:00:00 2001 PST, 2@Fri Jan 05 00:00:00 2001 PST], (1@Fri Jan 05 00:00:00 2001 PST, 1@Sat Jan 06 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
 SELECT merge(temp) FROM (VALUES
   (th3index '831c02fffffffff@2001-01-01'),
   (th3index '831c00fffffffff@2001-01-02')) t(temp);
@@ -70,6 +104,7 @@ SELECT merge(temp) FROM (VALUES
  {831c02fffffffff@Mon Jan 01 00:00:00 2001 PST, 831c00fffffffff@Tue Jan 02 00:00:00 2001 PST}
 (1 row)
 
+-------------------------------------------------------------------------------
 WITH temp(inst) AS (
   SELECT th3index '831c02fffffffff@2001-01-01' UNION
   SELECT th3index '831c00fffffffff@2001-01-02' UNION
@@ -130,6 +165,7 @@ WITH temp(inst) AS (
   SELECT th3index '831c00fffffffff@2001-01-01' )
 SELECT asText(appendInstant(inst ORDER BY inst)) FROM temp;
 ERROR:  The temporal values have different value at their common timestamp Mon Jan 01 00:00:00 2001 PST
+-------------------------------------------------------------------------------
 WITH temp1(k, inst) AS (
   SELECT 1, th3index '831c02fffffffff@2001-01-01' UNION
   SELECT 2, th3index '831c00fffffffff@2001-01-02' UNION
@@ -164,3 +200,13 @@ SELECT asText(appendSequence(seq ORDER BY seq)) FROM temp2;
  {[831c02fffffffff@Mon Jan 01 00:00:00 2001 PST, 831c00fffffffff@Tue Jan 02 00:00:00 2001 PST], [871fa44a8ffffff@Wed Jan 03 00:00:00 2001 PST, 880326b885fffff@Thu Jan 04 00:00:00 2001 PST], [880326b88dfffff@Fri Jan 05 00:00:00 2001 PST, 8a2a100d645ffff@Sat Jan 06 00:00:00 2001 PST]}
 (1 row)
 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- The bare aggregate and its Agg twin in ONE query
+--
+-- The two carry identical transition machinery, so PostgreSQL shares one
+-- transition state between them unless each declares FINALFUNC_MODIFY. Their
+-- finalfn frees the state, so a shared one is finalized twice. Asking for both
+-- at once is what exercises that, and the two must agree.
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------

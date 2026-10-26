@@ -85,8 +85,8 @@ def body_lines():
 def style_of(path):
     """Return the comment style of the banner of a file: "hash" for Python,
     "sql" for a SQL test, "c" for every other source"""
-    # psql -e echoes a C comment into the output a test compares, never a
-    # "--" line, so a SQL test carries the banner as "--" lines
+    # A SQL test carries the banner as "--" lines, the style of the comments
+    # of the tests
     if path.startswith("mobilitydb/test/") and path.endswith(".sql"):
         return "sql"
     base = path.rsplit("/", 1)[-1]
