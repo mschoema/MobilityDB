@@ -926,8 +926,8 @@ TPOSE_CONFIG = dict(
         "tposechain_from_geopose":    {0: "tposechain_geopose1"},
         # A GeoPose chain document carries ONE valid time, so it is written
         # from an INSTANT whose outer link is geodetic -- a sequence is the
-        # documented error (mobilitydb/test/posechain/queries/
-        # 555_tposechain_geopose.test.sql: "A chain document carries one valid
+        # documented error (mobilitydb/test/posechain/sql/
+        # 555_tposechain_geopose.sql: "A chain document carries one valid
         # time, so it is written from an instant").
         "tposechain_as_geopose":      {0: "tposechain_geod1"},
         # The value of a temporal is read off an instant.
@@ -972,7 +972,7 @@ TPOSE_CONFIG = dict(
   Pose *pose_srid1 = pose_in("SRID=4326;Pose(Point(1 2), 0.5)");
   /* GeoPose is defined against a geodetic frame, so the writers take a GEODETIC
    * pose; pose1 is planar and draws "GeoPose JSON requires a geodetic pose, got
-   * a planar one". The value is the one 103_pose_geopose.test.sql uses. */
+   * a planar one". The value is the one 103_pose_geopose.sql uses. */
   Pose *pose_geod1 =
     pose_in("SRID=4326;Geodpose(Point(8 47 1500), 0.707107, 0, 0, 0.707107)");
   /* An elevation is a range of Z, so the span these two restrict by is a
@@ -980,7 +980,7 @@ TPOSE_CONFIG = dict(
   Span *floatspan1 = floatspan_in("[1, 2]");
   Pose *pose_out_param = NULL;
   /* The pose chain family, the second family this header publishes. The WKT
-   * values are those of mobilitydb/test/posechain/queries/550_posechain and
+   * values are those of mobilitydb/test/posechain/sql/550_posechain and
    * 551_posechainset rather than invented ones. */
   PoseChain *posechain1 =
     posechain_in("PoseChain(Pose(Point(0 0), 0), Pose(Point(1 0), 0))");
@@ -1102,7 +1102,7 @@ TPOSE_CONFIG = dict(
   /* A GeoPose Graph is the several limbs hanging off ONE topocentric frame,
    * so the second chain of the array shares the first's outer link and its
    * instant and differs only in the link below -- the two-limb shape of
-   * 555_tposechain_geopose.test.sql. */
+   * 555_tposechain_geopose.sql. */
   Temporal *tposechain_geod2 = tposechain_in(
     "SRID=4326;PoseChain(GeodPose(Point Z(-122.3 47.7 11), 1, 0, 0, 0),"
     " Pose(Point Z(0 3 0), 1, 0, 0, 0))@2001-01-02");

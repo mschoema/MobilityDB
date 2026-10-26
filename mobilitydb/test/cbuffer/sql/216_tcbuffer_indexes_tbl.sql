@@ -28,7 +28,7 @@
 -------------------------------------------------------------------------------
 
 -- Index correctness tests for tcbuffer on tbl_tcbuffer_big (1 000 rows,
--- SRID 3812). Modeled on mobilitydb/test/geo/queries/074_tpoint_indexes_tbl
+-- SRID 3812). Modeled on mobilitydb/test/geo/sql/074_tpoint_indexes_tbl
 -- — same structure, restricted to the 2D operator surface that tcbuffer
 -- supports (no Z-axis position operators; no btree comparators since
 -- tcbuffer has no total-order opclass).

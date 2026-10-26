@@ -28,7 +28,7 @@
 -------------------------------------------------------------------------------
 
 -- Index correctness tests for tpose on tbl_tpose2d (100 rows, SRID 5676).
--- Modeled on mobilitydb/test/cbuffer/queries/166_tcbuffer_indexes_tbl.
+-- Modeled on mobilitydb/test/cbuffer/sql/166_tcbuffer_indexes_tbl.
 
 ANALYZE tbl_tpose2d;
 

@@ -28,7 +28,7 @@
 -------------------------------------------------------------------------------
 
 -- Index correctness tests for tnpoint on tbl_tnpoint_big (1 000 rows).
--- Modeled on mobilitydb/test/cbuffer/queries/166_tcbuffer_indexes_tbl.
+-- Modeled on mobilitydb/test/cbuffer/sql/166_tcbuffer_indexes_tbl.
 
 ANALYZE tbl_tnpoint_big;
 
