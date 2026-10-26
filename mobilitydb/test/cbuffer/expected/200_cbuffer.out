@@ -1,0 +1,479 @@
+-------------------------------------------------------------------------------
+-- Input
+-------------------------------------------------------------------------------
+SELECT asText(cbuffer 'Cbuffer(Point(1 1),0.5)');
+         astext          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asText(cbuffer ' cbuffer   (  Point  ( 1  1  ) ,	0.5   )   ');
+         astext          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+/* Errors */
+SELECT cbuffer 'point(1,0.5)';
+ERROR:  Could not parse cbuffer value: Missing prefix 'Cbuffer'
+LINE 2: SELECT cbuffer 'point(1,0.5)';
+                       ^
+SELECT cbuffer 'cbuffer 1,0.5)';
+ERROR:  Could not parse cbuffer value: Missing opening parenthesis
+LINE 1: SELECT cbuffer 'cbuffer 1,0.5)';
+                       ^
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5';
+ERROR:  Missing delimeter character ')': 0.5
+LINE 1: SELECT cbuffer 'Cbuffer(Point(1 1),0.5';
+                       ^
+SELECT cbuffer 'Cbuffer(Point(1 1) 0.5)';
+ERROR:  Missing delimeter character ',': Point(1 1) 0.5)
+LINE 1: SELECT cbuffer 'Cbuffer(Point(1 1) 0.5)';
+                       ^
+SELECT cbuffer 'Cbuffer(Point(1 1)000,0.5)';
+ERROR:  parse error - invalid geometry
+LINE 1: SELECT cbuffer 'Cbuffer(Point(1 1)000,0.5)';
+                       ^
+HINT:  "Point(1 1)000" <-- parse error at position 14 within geometry
+SELECT cbuffer 'Cbuffer(Point(1 1),-1.5)';
+ERROR:  The radius must be a real number greater than or equal to 0
+LINE 1: SELECT cbuffer 'Cbuffer(Point(1 1),-1.5)';
+                       ^
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)xxx';
+ERROR:  Could not parse cbuffer value: Extraneous characters at the end
+LINE 1: SELECT cbuffer 'Cbuffer(Point(1 1),0.5)xxx';
+                       ^
+-------------------------------------------------------------------------------
+-- Input/output in WKT, WKB and HexWKB representation
+-------------------------------------------------------------------------------
+SELECT asEWKT(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)');
+              asewkt               
+-----------------------------------
+ SRID=5676;Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asBinary(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)');
+                        asbinary                        
+--------------------------------------------------------
+ \x0100000000000000f03f000000000000f03f000000000000e03f
+(1 row)
+
+SELECT asEWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)');
+                             asewkb                             
+----------------------------------------------------------------
+ \x01402c160000000000000000f03f000000000000f03f000000000000e03f
+(1 row)
+
+SELECT asHexWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)');
+                       ashexwkb                       
+------------------------------------------------------
+ 0100000000000000F03F000000000000F03F000000000000E03F
+(1 row)
+
+SELECT asHexEWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)');
+                          ashexewkb                           
+--------------------------------------------------------------
+ 01402C160000000000000000F03F000000000000F03F000000000000E03F
+(1 row)
+
+SELECT asText(cbufferFromText(asText(cbuffer 'Cbuffer(Point(1 1),0.5)')));
+         astext          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asEWKT(cbufferFromEWKT(asEWKT(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)')));
+              asewkt               
+-----------------------------------
+ SRID=5676;Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asEWKT(cbufferFromBinary(asBinary(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)')));
+         asewkt          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asEWKT(cbufferFromEWKB(asEWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)')));
+              asewkt               
+-----------------------------------
+ SRID=5676;Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asEWKT(cbufferFromHexEWKB(asHexWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)')));
+         asewkt          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asEWKT(cbufferFromHexWKB(asHexWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)')));
+         asewkt          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asEWKT(cbufferFromHexEWKB(asHexEWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)')));
+              asewkt               
+-----------------------------------
+ SRID=5676;Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asHexWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)')
+     = asHexEWKB(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)') AS hexwkb_eq_hexewkb;
+ hexwkb_eq_hexewkb 
+-------------------
+ f
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Constructors
+-------------------------------------------------------------------------------
+SELECT asText(cbuffer('Point(1 1)', 0.5));
+         astext          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+SELECT asText(cbuffer(ST_Point(1,1), 0.5));
+         astext          
+-------------------------
+ Cbuffer(POINT(1 1),0.5)
+(1 row)
+
+/* Errors */
+\set VERBOSITY terse
+SELECT cbuffer(1000,0.5);
+ERROR:  function cbuffer(integer, numeric) does not exist at character 21
+\set VERBOSITY default
+SELECT cbuffer('Linestring(1 1,2 2)',1.5);
+ERROR:  Only point geometries accepted
+SELECT cbuffer('Point Z(1 1 1)',1.5);
+ERROR:  The geometry cannot have Z dimension
+SELECT cbuffer('Point M(1 1 1)',1.5);
+ERROR:  The geometry cannot have M dimension
+\set VERBOSITY terse
+SELECT cbuffer(geography 'Point(1 1)',1.5);
+ERROR:  function cbuffer(geography, numeric) does not exist at character 8
+\set VERBOSITY default
+SELECT cbuffer('Point(1 1)',-1.5);
+ERROR:  The value cannot be negative: -1.500000
+-------------------------------------------------------------------------------
+-- Accessing values
+-------------------------------------------------------------------------------
+SELECT ST_AsText(point(cbuffer 'Cbuffer(Point(1 1),0.5)'));
+ st_astext  
+------------
+ POINT(1 1)
+(1 row)
+
+SELECT radius(cbuffer 'Cbuffer(Point(1 1),0.5)');
+ radius 
+--------
+    0.5
+(1 row)
+
+SELECT srid(cbuffer 'Cbuffer(SRID=5676;Point(1 1),0.5)');
+ srid 
+------
+ 5676
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Modification functions
+-------------------------------------------------------------------------------
+SELECT asText(round(cbuffer 'Cbuffer(Point(1.123456789 1.123456789), 0.123456789)', 6));
+                   astext                   
+--------------------------------------------
+ Cbuffer(POINT(1.123457 1.123457),0.123457)
+(1 row)
+
+SELECT asText(round(ARRAY[cbuffer 'Cbuffer(Point(1.123456789 1.123456789), 0.123456789)',
+  cbuffer 'Cbuffer(Point(2.987654321 2.987654321), 0.987654321)'], 6));
+                                           astext                                            
+---------------------------------------------------------------------------------------------
+ {"Cbuffer(POINT(1.123457 1.123457),0.123457)","Cbuffer(POINT(2.987654 2.987654),0.987654)"}
+(1 row)
+
+SELECT round(ARRAY[]::cbuffer[], 6);
+ round 
+-------
+ 
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Cast functions 
+-------------------------------------------------------------------------------
+SELECT ST_AsText(round(cbuffer 'Cbuffer(Point(1 1),0.2)'::geometry, 6));
+                    st_astext                    
+-------------------------------------------------
+ CURVEPOLYGON(CIRCULARSTRING(0.8 1,1.2 1,0.8 1))
+(1 row)
+
+SELECT asText(round((cbuffer 'Cbuffer(Point(1 1),0.2)'::geometry)::cbuffer, 6));
+         astext          
+-------------------------
+ Cbuffer(POINT(1 1),0.2)
+(1 row)
+
+-- A circular-arc CURVEPOLYGON converts to the buffer of its centre and radius
+SELECT asText(round(cbuffer(geometry 'CurvePolygon(CircularString(2 5, 8 5, 2 5))'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(5 5),3)
+(1 row)
+
+SELECT ST_AsText(round(cbuffer(geometry 'CurvePolygon(CircularString(2 5, 8 5, 2 5))')::geometry, 6));
+                 st_astext                 
+-------------------------------------------
+ CURVEPOLYGON(CIRCULARSTRING(2 5,8 5,2 5))
+(1 row)
+
+-- A circle stands the same way whichever pair of opposite points its ring
+-- names, and a curve polygon that is not a circle converts by the circle that
+-- encloses it
+SELECT asText(round(cbuffer(geometry 'CurvePolygon(CircularString(0 -1, 0 1, 0 -1))'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(0 0),1)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'CurvePolygon(CircularString(0 0, 2 2, 4 0, 2 -2, 0 0))'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(2 0),2)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'CurvePolygon(CompoundCurve(CircularString(0 0, 2 2, 4 0),(4 0, 0 0)))'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(2 0),2)
+(1 row)
+
+-- SELECT geometry 'SRID=5676;Point(610.455019399524 528.508247341961)'::cbuffer;
+-- Minimum Enclosing Circle (via geometry::cbuffer cast for non-point geometries)
+SELECT asText(round(cbuffer(geometry 'Linestring(0 0, 10 0)'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(5 0),5)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'Linestring(0 0, 10 0, 5 5)'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(5 0),5)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'Polygon((0 0, 10 0, 10 10, 0 10, 0 0))'), 6));
+            astext            
+------------------------------
+ Cbuffer(POINT(5 5),7.071068)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'Triangle((0 0, 10 0, 5 8.66, 0 0))'), 6));
+               astext                
+-------------------------------------
+ Cbuffer(POINT(5 2.886582),5.773418)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'Multipoint(0 0, 10 0, 5 5)'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(5 0),5)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'Multipoint(0 0, 5 0, 10 0)'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(5 0),5)
+(1 row)
+
+-- The same geometry gives the same circle at every call
+SELECT bool_and(cbuffer(g) = cbuffer(g))
+FROM generate_series(1, 100) i, (SELECT geometry 'Linestring(977324.824632094 816077.4008114797,978502.4623335586 814788.2112418192,978428.8746027988 815173.1759791808,979029.8688320734 815343.7421661003)' AS g) t;
+ bool_and 
+----------
+ t
+(1 row)
+
+-- The circle is the smallest one enclosing the points at projected coordinates
+SELECT asText(round(cbuffer(geometry 'Polygon((924926.0016925865 150025.0157577216,924704.2492433727 150563.54842286455,924631.0073948626 151252.20090976532,924634.1704446648 151480.07991522603,924716.09974483 151964.6350664392,924934.3234600108 152221.6990114015,925462.6937797625 152278.8561713704,925724.3777322011 152243.21183087793,926541.2523121694 152122.83249316178,926730.8966624482 151963.11969917783,926901.408707937 151665.93388439532,926926.9136187005 151050.33582644386,926928.96535434 150694.51011822972,926805.1700612403 150428.00402432878,926562.360224652 150239.69124048052,925314.1451701474 150028.80809710562,924926.0016925865 150025.0157577216))'), 3));
+                     astext                     
+------------------------------------------------
+ Cbuffer(POINT(925692.719 151120.469),1337.114)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'Multilinestring((0 0, 5 0),(5 5, 10 0))'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(5 0),5)
+(1 row)
+
+SELECT asText(round(cbuffer(geometry 'GeometryCollection(Point(0 0),Linestring(5 0, 10 0))'), 6));
+        astext         
+-----------------------
+ Cbuffer(POINT(5 0),5)
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Comparisons
+-------------------------------------------------------------------------------
+-- true
+SELECT cbuffer 'Cbuffer(Point(1.000001 1),0.5)' ~= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1.000001),0.5)' ~= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5000001)' ~= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+-- false
+SELECT cbuffer 'Cbuffer(Point(1.00001 1),0.5)' ~= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1.00001),0.5)' ~= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.500001)' ~= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbufferSame(cbuffer 'Cbuffer(Point(1.000001 1),0.5)', cbuffer 'Cbuffer(Point(1 1),0.5)');
+ cbuffersame 
+-------------
+ t
+(1 row)
+
+SELECT cbufferSame(cbuffer 'Cbuffer(Point(1.00001 1),0.5)', cbuffer 'Cbuffer(Point(1 1),0.5)');
+ cbuffersame 
+-------------
+ f
+(1 row)
+
+-------------------------------------------------------------------------------
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' = cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' = cbuffer 'Cbuffer(Point(1 1),0.7)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' = cbuffer 'Cbuffer(Point(2 2),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' != cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' != cbuffer 'Cbuffer(Point(1 1),0.7)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' != cbuffer 'Cbuffer(Point(2 2),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' < cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' < cbuffer 'Cbuffer(Point(1 1),0.7)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' < cbuffer 'Cbuffer(Point(2 2),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' <= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' <= cbuffer 'Cbuffer(Point(1 1),0.7)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' <= cbuffer 'Cbuffer(Point(2 2),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' > cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' > cbuffer 'Cbuffer(Point(1 1),0.7)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' > cbuffer 'Cbuffer(Point(2 2),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' >= cbuffer 'Cbuffer(Point(1 1),0.5)';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' >= cbuffer 'Cbuffer(Point(1 1),0.7)';
+ ?column? 
+----------
+ f
+(1 row)
+
+SELECT cbuffer 'Cbuffer(Point(1 1),0.5)' >= cbuffer 'Cbuffer(Point(2 2),0.5)';
+ ?column? 
+----------
+ f
+(1 row)
+
+-------------------------------------------------------------------------------/

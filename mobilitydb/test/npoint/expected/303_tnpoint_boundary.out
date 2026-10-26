@@ -1,0 +1,99 @@
+-------------------------------------------------------------------------------
+-- Boundary-condition coverage for npoint position clamping at [0, 1].
+-- Documented contract: 0.0 (start of route) and 1.0 (end of route) are
+-- valid; values outside [0, 1] are rejected at the constructor.
+-------------------------------------------------------------------------------
+-- Endpoints are valid
+SELECT npoint(1, 0.0);
+   npoint    
+-------------
+ NPoint(1,0)
+(1 row)
+
+SELECT npoint(1, 1.0);
+   npoint    
+-------------
+ NPoint(1,1)
+(1 row)
+
+-- Just-inside values are valid
+SELECT npoint(1, 0.0001);
+      npoint      
+------------------
+ NPoint(1,0.0001)
+(1 row)
+
+SELECT npoint(1, 0.9999);
+      npoint      
+------------------
+ NPoint(1,0.9999)
+(1 row)
+
+-- Interpolating to geometry at the endpoints lands on the route's start
+-- and end points respectively; both are well-defined.
+SELECT round(geometry(npoint(1, 0.0))::geometry, 6);
+                       round                        
+----------------------------------------------------
+ 01010000202C160000734C16F71FD254401172DEFFC7855540
+(1 row)
+
+SELECT round(geometry(npoint(1, 1.0))::geometry, 6);
+                       round                        
+----------------------------------------------------
+ 01010000202C160000D6355A0EF4182B403BA6EECA2EF45140
+(1 row)
+
+-- Position parameter outside [0, 1] is rejected at construction
+/* Errors */
+SELECT npoint(1, -0.0001);
+ERROR:  The relative position must be a real number between 0 and 1
+SELECT npoint(1, 1.0001);
+ERROR:  The relative position must be a real number between 0 and 1
+SELECT npoint(1, -1);
+ERROR:  The relative position must be a real number between 0 and 1
+SELECT npoint(1, 2);
+ERROR:  The relative position must be a real number between 0 and 1
+-- Same boundary contract on the WKT input path
+SELECT npoint 'Npoint(1, 0.0)';
+   npoint    
+-------------
+ NPoint(1,0)
+(1 row)
+
+SELECT npoint 'Npoint(1, 1.0)';
+   npoint    
+-------------
+ NPoint(1,1)
+(1 row)
+
+/* Errors */
+SELECT npoint 'Npoint(1, -0.0001)';
+ERROR:  The relative position must be a real number between 0 and 1
+LINE 2: SELECT npoint 'Npoint(1, -0.0001)';
+                      ^
+SELECT npoint 'Npoint(1, 1.0001)';
+ERROR:  The relative position must be a real number between 0 and 1
+LINE 1: SELECT npoint 'Npoint(1, 1.0001)';
+                      ^
+-- nsegment endpoints: nsegment_set normalises (pos1, pos2) via Min / Max,
+-- so a constructor call with the positions reversed returns a normalised
+-- segment rather than an error.
+SELECT nsegment(1, 1.0, 0.0);
+    nsegment     
+-----------------
+ NSegment(1,0,1)
+(1 row)
+
+SELECT nsegment(1, 0.0, 1.0);
+    nsegment     
+-----------------
+ NSegment(1,0,1)
+(1 row)
+
+-- nsegment also rejects out-of-range positions at construction
+/* Errors */
+SELECT nsegment(1, -0.0001, 1.0);
+ERROR:  The relative position must be a real number between 0 and 1
+SELECT nsegment(1, 0.0, 1.0001);
+ERROR:  The relative position must be a real number between 0 and 1
+-------------------------------------------------------------------------------

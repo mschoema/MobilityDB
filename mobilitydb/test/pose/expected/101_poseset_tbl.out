@@ -1,0 +1,224 @@
+-------------------------------------------------------------------------------
+-- Tests for the set data type
+-- File set.c
+-------------------------------------------------------------------------------
+-- Send/receive functions
+\copy tbl_poseset2d TO 'tbl_poseset2d' (FORMAT BINARY);
+DROP TABLE IF EXISTS tbl_poseset2d_tmp;
+NOTICE:  table "tbl_poseset2d_tmp" does not exist, skipping
+CREATE TEMP TABLE tbl_poseset2d_tmp AS TABLE tbl_poseset2d WITH NO DATA;
+\copy tbl_poseset2d_tmp FROM 'tbl_poseset2d' (FORMAT BINARY);
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d_tmp t2 WHERE t1.k = t2.k AND t1.s <> t2.s;
+ count 
+-------
+     0
+(1 row)
+
+DROP TABLE tbl_poseset2d_tmp;
+-- Input/output from/to WKB and HexWKB
+-- asBinary emits plain WKB (no SRID); setSRID reapplies it before comparing
+SELECT COUNT(*) FROM tbl_poseset2d WHERE setSRID(posesetFromBinary(asBinary(s)), 3812) <> s;
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d WHERE SRID(posesetFromBinary(asBinary(s))) <> 0;
+ count 
+-------
+     0
+(1 row)
+
+-- asEWKB preserves the SRID
+SELECT COUNT(*) FROM tbl_poseset2d WHERE posesetFromBinary(asEWKB(s)) <> s;
+ count 
+-------
+     0
+(1 row)
+
+-- asHexWKB emits plain WKB (no SRID); setSRID reapplies it before comparing
+SELECT COUNT(*) FROM tbl_poseset2d WHERE setSRID(posesetFromHexWKB(asHexWKB(s)), 3812) <> s;
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d WHERE posesetFromHexWKB(asHexEWKB(s)) <> s;
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d WHERE posesetFromHexEWKB(asHexEWKB(s)) <> s;
+ count 
+-------
+     0
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Constructor
+SELECT numValues(set(array_agg(DISTINCT pose ORDER BY pose))) FROM tbl_pose2d WHERE pose IS NOT NULL;
+ numvalues 
+-----------
+       100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Cast
+SELECT round(poseset '{"Pose(Point(1 1),0.5)", "Pose(Point(2 2),0.5)", "Pose(Point(3 3),0.5)"}'::stbox, 6);
+        round         
+----------------------
+ STBOX X((1,1),(3,3))
+(1 row)
+
+SELECT COUNT(*) FROM tbl_pose2d WHERE pose::poseset IS NOT NULL;
+ count 
+-------
+   100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Transformation functions
+SELECT MIN(yaw(startValue(round(s, 3)))) FROM tbl_poseset2d;
+  min   
+--------
+ -0.054
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Accessor functions
+SELECT MAX(memSize(s)) FROM tbl_poseset2d;
+ max 
+-----
+ 504
+(1 row)
+
+SELECT MIN(numValues(s)) FROM tbl_poseset2d;
+ min 
+-----
+   1
+(1 row)
+
+SELECT round(MIN(yaw(startValue(s))), 6) FROM tbl_poseset2d;
+   round   
+-----------
+ -0.054279
+(1 row)
+
+SELECT round(MIN(yaw(endValue(s))), 6) FROM tbl_poseset2d;
+   round   
+-----------
+ -0.054648
+(1 row)
+
+SELECT round(MIN(yaw(valueN(s, 1))), 6) FROM tbl_poseset2d;
+   round   
+-----------
+ -0.054279
+(1 row)
+
+SELECT MIN(array_length(getValues(s), 1)) FROM tbl_poseset2d;
+ min 
+-----
+   1
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Set_union and unnest functions
+SELECT numValues(setUnion(pose)) FROM tbl_pose2d;
+ numvalues 
+-----------
+       100
+(1 row)
+
+WITH test1(k, s) AS (
+  SELECT k, unnest(s) FROM tbl_poseset2d ),
+test2 (k, s) AS (
+  SELECT k, setUnion(s) FROM test1 GROUP BY k )
+SELECT COUNT(*) FROM test2 t1, tbl_poseset2d t2 WHERE t1.k = t2.k AND t1.s <> t2.s;
+ count 
+-------
+     0
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Comparison functions
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d t2 WHERE cmp(t1.s, t2.s) = -1;
+ count 
+-------
+  4851
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d t2 WHERE t1.s = t2.s;
+ count 
+-------
+    99
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d t2 WHERE t1.s <> t2.s;
+ count 
+-------
+  9702
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d t2 WHERE t1.s < t2.s;
+ count 
+-------
+  4851
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d t2 WHERE t1.s <= t2.s;
+ count 
+-------
+  4950
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d t2 WHERE t1.s > t2.s;
+ count 
+-------
+  4851
+(1 row)
+
+SELECT COUNT(*) FROM tbl_poseset2d t1, tbl_poseset2d t2 WHERE t1.s >= t2.s;
+ count 
+-------
+  4950
+(1 row)
+
+SELECT MAX(hash(s)) FROM tbl_poseset2d;
+    max     
+------------
+ 2081505284
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Aggregation functions
+SELECT numValues(setUnion(pose)) FROM tbl_pose2d;
+ numvalues 
+-----------
+       100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- The value-and-set directions of the difference and the intersection return
+-- a set, which is what the functions behind them build
+-------------------------------------------------------------------------------
+SELECT asText(setMinus(pose 'Pose(Point(1 1),0.5)', poseset '{"Pose(Point(2 2),0.5)"}'));
+          astext          
+--------------------------
+ {"Pose(POINT(1 1),0.5)"}
+(1 row)
+
+SELECT asText(setIntersection(pose 'Pose(Point(1 1),0.5)', poseset '{"Pose(Point(1 1),0.5)", "Pose(Point(2 2),0.5)"}'));
+          astext          
+--------------------------
+ {"Pose(POINT(1 1),0.5)"}
+(1 row)
+
+SELECT asText(setIntersection(poseset '{"Pose(Point(1 1),0.5)", "Pose(Point(2 2),0.5)"}', pose 'Pose(Point(1 1),0.5)'));
+          astext          
+--------------------------
+ {"Pose(POINT(1 1),0.5)"}
+(1 row)
+
+-------------------------------------------------------------------------------

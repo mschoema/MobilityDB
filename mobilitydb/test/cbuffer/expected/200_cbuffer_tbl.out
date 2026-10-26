@@ -1,0 +1,94 @@
+-------------------------------------------------------------------------------
+-- Send/receive functions
+-------------------------------------------------------------------------------
+\copy tbl_cbuffer TO 'tbl_cbuffer' (FORMAT BINARY);
+DROP TABLE IF EXISTS tbl_cbuffer_tmp;
+NOTICE:  table "tbl_cbuffer_tmp" does not exist, skipping
+CREATE TEMP TABLE tbl_cbuffer_tmp AS TABLE tbl_cbuffer WITH NO DATA;
+\copy tbl_cbuffer_tmp FROM 'tbl_cbuffer' (FORMAT BINARY);
+SELECT COUNT(*) FROM tbl_cbuffer t1, tbl_cbuffer_tmp t2 WHERE t1.k = t2.k AND t1.cb <> t2.cb;
+ count 
+-------
+     0
+(1 row)
+
+DROP TABLE tbl_cbuffer_tmp;
+-------------------------------------------------------------------------------
+-- Accessing values
+-------------------------------------------------------------------------------
+SELECT MAX(ST_X(point(cb))) FROM tbl_cbuffer;
+        max        
+-------------------
+ 99.09629227730261
+(1 row)
+
+SELECT MAX(radius(cb)) FROM tbl_cbuffer;
+        max        
+-------------------
+ 9.928276062012003
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Cast functions
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_cbuffer WHERE cb::geometry IS NOT NULL;
+ count 
+-------
+   100
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer WHERE cb ~= (cb::geometry)::cbuffer;
+ count 
+-------
+   100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Transformations
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_tcbuffer WHERE expand(temp, 1) IS NOT NULL;
+ count 
+-------
+   100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- Comparisons
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_cbuffer t1, tbl_cbuffer t2 WHERE t1.cb = t2.cb;
+ count 
+-------
+   100
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer t1, tbl_cbuffer t2 WHERE t1.cb != t2.cb;
+ count 
+-------
+  9900
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer t1, tbl_cbuffer t2 WHERE t1.cb < t2.cb;
+ count 
+-------
+  4950
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer t1, tbl_cbuffer t2 WHERE t1.cb <= t2.cb;
+ count 
+-------
+  5050
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer t1, tbl_cbuffer t2 WHERE t1.cb > t2.cb;
+ count 
+-------
+  4950
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer t1, tbl_cbuffer t2 WHERE t1.cb >= t2.cb;
+ count 
+-------
+  5050
+(1 row)
+
+-------------------------------------------------------------------------------/

@@ -1,0 +1,105 @@
+-- GeoPose v1.0 frame metadata registry — exercise the seeded rows and the
+-- accessors that answer for the frames MEOS registers.
+-------------------------------------------------------------------------------
+-- The registry is seeded with the four well-known frames.
+SELECT count(*) FROM geopose_frames;
+ count 
+-------
+     8
+(1 row)
+
+-- WGS-84 geographic is frame_id 1; SRID maps to PostGIS 4326.
+SELECT geoPoseFrameSRID(1), geoPoseFrameIsGeographic(1);
+ geoposeframesrid | geoposeframeisgeographic 
+------------------+--------------------------
+             4326 | t
+(1 row)
+
+-- WGS-84 ECEF (frame_id 2) is Cartesian.
+SELECT geoPoseFrameName(2), geoPoseFrameIsGeographic(2);
+            geoposeframename             | geoposeframeisgeographic 
+-----------------------------------------+--------------------------
+ WGS-84 ECEF (Earth-Centred Earth-Fixed) | f
+(1 row)
+
+-- The parametric frames (LTP, BODY) have no static SRID.
+SELECT geoPoseFrameSRID(3) IS NULL AS ltp_srid_null,
+       geoPoseFrameSRID(4) IS NULL AS body_srid_null;
+ ltp_srid_null | body_srid_null 
+---------------+----------------
+ t             | t
+(1 row)
+
+-- The three accessors answer, for every frame MEOS registers, what its row of
+-- geoPoseFrames() states.
+SELECT frame_id, geoPoseFrameSRID(frame_id), geoPoseFrameName(frame_id),
+  geoPoseFrameIsGeographic(frame_id)
+FROM geoPoseFrames() ORDER BY frame_id;
+ frame_id | geoposeframesrid |                  geoposeframename                  | geoposeframeisgeographic 
+----------+------------------+----------------------------------------------------+--------------------------
+        1 |             4326 | WGS-84 geographic (lat/lon/h)                      | t
+        2 |             4978 | WGS-84 ECEF (Earth-Centred Earth-Fixed)            | f
+        3 |                  | Local Tangent Plane (East-North-Up)                | f
+        4 |                  | Right-handed body axes (default inner frame)       | f
+        5 |                  | GeoPose outer frame of a Composite Sequence Series | f
+        6 |                  | GeoPose inner frame of a Composite Sequence Series | f
+        7 |                  | GeoPose outer frame of a Chain                     | f
+        8 |                  | GeoPose inner frame of a Chain                     | f
+(8 rows)
+
+SELECT count(*) AS accessors_disagreeing_with_the_registry
+FROM geoPoseFrames() f
+WHERE geoPoseFrameSRID(f.frame_id) IS DISTINCT FROM f.srid
+   OR geoPoseFrameName(f.frame_id) IS DISTINCT FROM f.name
+   OR geoPoseFrameIsGeographic(f.frame_id) IS DISTINCT FROM f.is_geographic;
+ accessors_disagreeing_with_the_registry 
+-----------------------------------------
+                                       0
+(1 row)
+
+-- A frame MEOS does not register raises an error.
+SELECT geoPoseFrameSRID(999);
+ERROR:  The GeoPose frame registry states no frame 999
+SELECT geoPoseFrameName(999);
+ERROR:  The GeoPose frame registry states no frame 999
+SELECT geoPoseFrameIsGeographic(999);
+ERROR:  The GeoPose frame registry states no frame 999
+-- A user can register a custom frame, which is read from the table.
+INSERT INTO geopose_frames(frame_id, authority, code, name, srid, is_geographic, description)
+VALUES (1000, 'CUSTOM', 'EXAMPLE', 'Example custom outer frame', 3857, false,
+        'Web Mercator projection used for tile-aligned visualisation.');
+SELECT srid, name, is_geographic FROM geopose_frames WHERE frame_id = 1000;
+ srid |            name            | is_geographic 
+------+----------------------------+---------------
+ 3857 | Example custom outer frame | f
+(1 row)
+
+SELECT geoPoseFrameName(1000);
+ERROR:  The GeoPose frame registry states no frame 1000
+-- Cleanup the user-added row so the test doesn't leave state behind.
+DELETE FROM geopose_frames WHERE frame_id = 1000;
+SELECT count(*) FROM geopose_frames;
+ count 
+-------
+     8
+(1 row)
+
+-- Every frame MEOS states is in the table, so a host that materialises the
+-- registry from geoPoseFrames() states what this database states. The reverse
+-- direction is deliberately not asserted: a user registers further frames.
+SELECT count(*) AS meos_frames_absent_from_the_table FROM (
+  SELECT frame_id, authority, code, name, srid, is_geographic
+  FROM geoPoseFrames()
+  EXCEPT
+  SELECT frame_id, authority, code, name, srid, is_geographic
+  FROM geopose_frames) d;
+ meos_frames_absent_from_the_table 
+-----------------------------------
+                                 0
+(1 row)
+
+-- A frame is stated from one. (103_pose_geopose asserts that the registry
+-- states every authority and id pair the encoder emits.)
+INSERT INTO geopose_frames(frame_id, authority, name) VALUES (0, 'CUSTOM', 'Zero');
+ERROR:  new row for relation "geopose_frames" violates check constraint "geopose_frames_frame_id_check"
+DETAIL:  Failing row contains (0, CUSTOM, null, Zero, null, f, null).

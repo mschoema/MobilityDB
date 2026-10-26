@@ -1,0 +1,85 @@
+-- SRID functions
+-------------------------------------------------------------------------------
+
+SELECT SRID(trgeometry
+  'SRID=4326;Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01');
+
+-- A reference geometry accompanies the poses and shares their frame, so a
+-- transformation to another SRID is not supported
+SELECT transform(trgeometry
+  'SRID=4326;Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01',
+  3812);
+SELECT transformPipeline(trgeometry
+  'SRID=4326;Polygon((1 1,2 2,3 1,1 1));Pose(Point(1 1), 0.5)@2001-01-01',
+  'urn:ogc:def:coordinateOperation:EPSG::16031', 4326);
+
+-------------------------------------------------------------------------------
+-- atGeometry / minusGeometry — restriction by a geometry on the centroid path
+-------------------------------------------------------------------------------
+
+-- TINSTANT entirely inside the geometry — passes through unchanged
+SELECT asText(atGeometry(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));Pose(Point(2 0), 0.0)@2001-01-01',
+  geometry 'Polygon((1 -1,3 -1,3 1,1 1,1 -1))'));
+
+-- TINSTANT outside the geometry — NULL
+SELECT atGeometry(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));Pose(Point(10 0), 0.0)@2001-01-01',
+  geometry 'Polygon((1 -1,3 -1,3 1,1 1,1 -1))');
+
+-- TSEQUENCE crossing a band — restriction span computed from the centroid
+SELECT getTime(atGeometry(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(4 0), 0.0)@2001-01-05]',
+  geometry 'Polygon((1 -1,3 -1,3 1,1 1,1 -1))'));
+
+-- minusGeometry returns the complement (everything outside the band)
+SELECT getTime(minusGeometry(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(4 0), 0.0)@2001-01-05]',
+  geometry 'Polygon((1 -1,3 -1,3 1,1 1,1 -1))'));
+
+-- atGeometry against an EMPTY geometry → NULL (no points satisfy)
+SELECT atGeometry(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(4 0), 0.0)@2001-01-05]',
+  geometry 'Point empty');
+
+-- minusGeometry against an EMPTY geometry → original (nothing to subtract)
+SELECT getTime(minusGeometry(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(4 0), 0.0)@2001-01-05]',
+  geometry 'Point empty'));
+
+-------------------------------------------------------------------------------
+-- atStbox / minusStbox — restriction by a spatiotemporal box
+-------------------------------------------------------------------------------
+
+-- atStbox with a spatial box covering x ∈ [1,3]
+SELECT getTime(atStbox(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(4 0), 0.0)@2001-01-05]',
+  stbox 'STBOX X((1, -1), (3, 1))'));
+
+-- minusStbox returns the complement
+SELECT getTime(minusStbox(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(4 0), 0.0)@2001-01-05]',
+  stbox 'STBOX X((1, -1), (3, 1))'));
+
+-- atStbox with a temporal-only box restricts the time domain
+SELECT getTime(atStbox(
+  trgeometry 'Polygon((0 0,1 0,1 1,0 1,0 0));[Pose(Point(0 0), 0.0)@2001-01-01, Pose(Point(4 0), 0.0)@2001-01-05]',
+  stbox 'STBOX T([2001-01-02, 2001-01-04])'));
+
+-------------------------------------------------------------------------------
+-- Rigid motions: the geometry a rigid geometry places moves as the temporal geometry does
+SELECT asText(translate(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]', 1, 2), 6);
+SELECT asText(rotateX(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]', 0.7), 6);
+SELECT asText(rotate(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]', 0.7, 1, 1), 6);
+SELECT asText(tgeometry(translate(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]', 1, 2)), 6) =
+  asText(translate(tgeometry(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]'), 1, 2), 6);
+SELECT asText(tgeometry(rotate(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]', 0.7, 1, 1)), 6) =
+  asText(rotate(tgeometry(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]'), 0.7, 1, 1), 6);
+SELECT asText(tgeometry(rotateX(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]', 0.7)), 6) =
+  asText(rotateX(tgeometry(trgeometry 'Polygon Z((0 0 0,2 0 0,2 1 0,0 1 0,0 0 0));[Pose(Point Z(1 1 0),0.988771077936042,0,0,0.149438132473599)@2001-01-01, Pose(Point Z(3 2 0),0.852524522059506,0,0,0.522687228930659)@2001-01-02]'), 0.7), 6);
+SELECT asText(tgeometry(rotateY(trgeometry 'Polygon((0 0,2 0,2 1,0 1,0 0));[Pose(Point(1 1),0.3)@2001-01-01, Pose(Point(3 2),1.1)@2001-01-02]', 0.7)), 6) =
+  asText(rotateY(tgeometry(trgeometry 'Polygon Z((0 0 0,2 0 0,2 1 0,0 1 0,0 0 0));[Pose(Point Z(1 1 0),0.988771077936042,0,0,0.149438132473599)@2001-01-01, Pose(Point Z(3 2 0),0.852524522059506,0,0,0.522687228930659)@2001-01-02]'), 0.7), 6);
+SELECT asText(tgeometry(rotateZ(trgeometry 'Polygon Z((0 0 0,2 0 0,2 1 0,0 1 0,0 0 0));[Pose(Point Z(1 1 0),0.988771077936042,0,0,0.149438132473599)@2001-01-01, Pose(Point Z(3 2 0),0.852524522059506,0,0,0.522687228930659)@2001-01-02]', 0.7)), 6) =
+  asText(rotateZ(tgeometry(trgeometry 'Polygon Z((0 0 0,2 0 0,2 1 0,0 1 0,0 0 0));[Pose(Point Z(1 1 0),0.988771077936042,0,0,0.149438132473599)@2001-01-01, Pose(Point Z(3 2 0),0.852524522059506,0,0,0.522687228930659)@2001-01-02]'), 0.7), 6);
+
+-------------------------------------------------------------------------------

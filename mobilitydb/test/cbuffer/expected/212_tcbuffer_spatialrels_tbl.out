@@ -1,0 +1,440 @@
+-------------------------------------------------------------------------------
+-- eContains, aContains
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE aContains(g, temp);
+ count 
+-------
+    16
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE eContains(temp, g);
+ count 
+-------
+  5153
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE aContains(temp, g);
+ count 
+-------
+     3
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE eContains(cb, temp);
+ count 
+-------
+   411
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE aContains(cb, temp);
+ count 
+-------
+     2
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE eContains(temp, cb);
+ count 
+-------
+   493
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE aContains(temp, cb);
+ count 
+-------
+     1
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE eContains(t1.temp, t2.temp);
+ count 
+-------
+   100
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE aContains(t1.temp, t2.temp);
+ count 
+-------
+   100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- eCovers, aCovers
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE aCovers(g, temp);
+ count 
+-------
+    16
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE eCovers(temp, g);
+ count 
+-------
+   240
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE aCovers(temp, g);
+ count 
+-------
+     3
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE eCovers(cb, temp);
+ count 
+-------
+   411
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE aCovers(cb, temp);
+ count 
+-------
+     2
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE eCovers(temp, cb);
+ count 
+-------
+   493
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE aCovers(temp, cb);
+ count 
+-------
+     1
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE eCovers(t1.temp, t2.temp);
+ count 
+-------
+   100
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE aCovers(t1.temp, t2.temp);
+ count 
+-------
+   100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- eDisjoint, aDisjoint
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE eDisjoint(g, temp);
+ count 
+-------
+ 15921
+(1 row)
+
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE aDisjoint(g, temp);
+ count 
+-------
+ 10781
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE eDisjoint(temp, g);
+ count 
+-------
+ 15921
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE aDisjoint(temp, g);
+ count 
+-------
+ 10781
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE eDisjoint(cb, temp);
+ count 
+-------
+  9942
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE aDisjoint(cb, temp);
+ count 
+-------
+  8087
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE eDisjoint(temp, cb);
+ count 
+-------
+  9942
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE aDisjoint(temp, cb);
+ count 
+-------
+  8087
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE eDisjoint(t1.temp, t2.temp);
+ count 
+-------
+     2
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE aDisjoint(t1.temp, t2.temp);
+ count 
+-------
+     2
+(1 row)
+
+-------------------------------------------------------------------------------
+-- eIntersects, aIntersects
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE eIntersects(g, temp);
+ count 
+-------
+  5219
+(1 row)
+
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE aIntersects(g, temp);
+ count 
+-------
+    79
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE eIntersects(temp, g);
+ count 
+-------
+  5219
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE aIntersects(temp, g);
+ count 
+-------
+    79
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE eIntersects(cb, temp);
+ count 
+-------
+  1913
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE aIntersects(cb, temp);
+ count 
+-------
+    58
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE eIntersects(temp, cb);
+ count 
+-------
+  1913
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE aIntersects(temp, cb);
+ count 
+-------
+    58
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE eIntersects(t1.temp, t2.temp);
+ count 
+-------
+   100
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE aIntersects(t1.temp, t2.temp);
+ count 
+-------
+   100
+(1 row)
+
+-------------------------------------------------------------------------------
+-- eTouches, aTouches
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE eTouches(g, temp);
+ count 
+-------
+  4542
+(1 row)
+
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE aTouches(g, temp);
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE eTouches(temp, g);
+ count 
+-------
+  4542
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE aTouches(temp, g);
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE eTouches(cb, temp);
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE aTouches(cb, temp);
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE eTouches(temp, cb);
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE aTouches(temp, cb);
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE eTouches(t1.temp, t2.temp);
+ count 
+-------
+     0
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE aTouches(t1.temp, t2.temp);
+ count 
+-------
+     0
+(1 row)
+
+-------------------------------------------------------------------------------
+-- eDwithin, aDwithin
+-------------------------------------------------------------------------------
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE eDwithin(g, temp, 10);
+ count 
+-------
+  6885
+(1 row)
+
+SELECT COUNT(*) FROM tbl_geometry, tbl_tcbuffer WHERE aDwithin(g, temp, 10);
+ count 
+-------
+   311
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE eDwithin(temp, g, 10);
+ count 
+-------
+  6885
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_geometry WHERE aDwithin(temp, g, 10);
+ count 
+-------
+   311
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE eDwithin(cb, temp, 10);
+ count 
+-------
+  2985
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer WHERE aDwithin(cb, temp, 10);
+ count 
+-------
+    76
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE eDwithin(temp, cb, 10);
+ count 
+-------
+  2985
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer, tbl_cbuffer WHERE aDwithin(temp, cb, 10);
+ count 
+-------
+    76
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE eDwithin(t1.temp, t2.temp, 10);
+ count 
+-------
+   100
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer t1, tbl_tcbuffer t2 WHERE aDwithin(t1.temp, t2.temp, 10);
+ count 
+-------
+   100
+(1 row)
+
+-- Step interpolation
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seq WHERE eDwithin(cb, seq, 10);
+ count 
+-------
+  2926
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seqset WHERE eDwithin(cb, ss, 10);
+ count 
+-------
+  7162
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seq WHERE aDwithin(cb, seq, 10);
+ count 
+-------
+    57
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seqset WHERE aDwithin(cb, ss, 10);
+ count 
+-------
+     2
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seq WHERE eDwithin(seq, cb, 10);
+ count 
+-------
+  2926
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seqset WHERE eDwithin(ss, cb, 10);
+ count 
+-------
+  7162
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seq WHERE aDwithin(seq, cb, 10);
+ count 
+-------
+    57
+(1 row)
+
+SELECT COUNT(*) FROM tbl_cbuffer, tbl_tcbuffer_seqset WHERE aDwithin(ss, cb, 10);
+ count 
+-------
+     2
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer_seq t1, tbl_tcbuffer t2 WHERE eDwithin(t1.seq, t2.temp, 10);
+ count 
+-------
+    25
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer_seqset t1, tbl_tcbuffer t2 WHERE eDwithin(t1.ss, t2.temp, 10);
+ count 
+-------
+    25
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer_seq t1, tbl_tcbuffer t2 WHERE aDwithin(t1.seq, t2.temp, 10);
+ count 
+-------
+    25
+(1 row)
+
+SELECT COUNT(*) FROM tbl_tcbuffer_seqset t1, tbl_tcbuffer t2 WHERE aDwithin(t1.ss, t2.temp, 10);
+ count 
+-------
+    25
+(1 row)
+
+-------------------------------------------------------------------------------

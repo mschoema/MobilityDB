@@ -1,0 +1,17 @@
+-------------------------------------------------------------------------------
+-- Temporal equal
+-------------------------------------------------------------------------------
+
+SELECT COUNT(*) FROM tbl_pose2d t1, tbl_tpose2d t2 WHERE t1.pose #= t2.temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tpose2d t1, tbl_pose2d t2 WHERE t1.temp #= t2.pose IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tpose2d t1, tbl_tpose2d t2 WHERE t1.temp #= t2.temp IS NOT NULL;
+
+-------------------------------------------------------------------------------
+-- Temporal not equal
+-------------------------------------------------------------------------------
+
+SELECT COUNT(*) FROM tbl_pose2d t1, tbl_tpose2d t2 WHERE t1.pose #<> t2.temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tpose2d t1, tbl_pose2d t2 WHERE t1.temp #<> t2.pose IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tpose2d t1, tbl_tpose2d t2 WHERE t1.temp #<> t2.temp IS NOT NULL;
+
+-------------------------------------------------------------------------------

@@ -1,0 +1,35 @@
+-- The two index classes of a ts2cell. The key is the stbox, as it is for every
+-- cell index, so a table indexed either way answers a bounding-box query with
+-- the rows a sequential scan gives.
+CREATE TEMP TABLE tbl_ts2cell_idx AS
+SELECT k, ts2cell(geoToS2Cell(geography(ST_SetSRID(ST_MakePoint(
+    4.0 + k * 0.01, 50.0 + k * 0.01), 4326)), 12),
+  timestamptz '2001-01-01' + k * interval '1 hour') AS temp
+FROM generate_series(1, 200) k;
+SELECT COUNT(*) FROM tbl_ts2cell_idx
+WHERE temp && stbox 'SRID=4326;GEODSTBOX X((4.0,50.0),(4.5,50.5))';
+ count 
+-------
+    50
+(1 row)
+
+CREATE INDEX tbl_ts2cell_rtree_idx ON tbl_ts2cell_idx USING gist(temp);
+SELECT COUNT(*) FROM tbl_ts2cell_idx
+WHERE temp && stbox 'SRID=4326;GEODSTBOX X((4.0,50.0),(4.5,50.5))';
+ count 
+-------
+    50
+(1 row)
+
+DROP INDEX tbl_ts2cell_rtree_idx;
+CREATE INDEX tbl_ts2cell_quadtree_idx ON tbl_ts2cell_idx USING spgist(temp);
+SELECT COUNT(*) FROM tbl_ts2cell_idx
+WHERE temp && stbox 'SRID=4326;GEODSTBOX X((4.0,50.0),(4.5,50.5))';
+ count 
+-------
+    50
+(1 row)
+
+DROP INDEX tbl_ts2cell_quadtree_idx;
+DROP TABLE tbl_ts2cell_idx;
+-------------------------------------------------------------------------------

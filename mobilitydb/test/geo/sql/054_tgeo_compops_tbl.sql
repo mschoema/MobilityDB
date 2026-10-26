@@ -1,0 +1,29 @@
+-------------------------------------------------------------------------------
+
+SELECT COUNT(*) FROM tbl_tgeometry, tbl_geometry WHERE g #= temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography, tbl_geography WHERE g #= temp IS NOT NULL;
+
+SELECT COUNT(*) FROM tbl_tgeometry t1, tbl_tgeometry t2 WHERE t1.temp #= t2.temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography t1, tbl_tgeography t2 WHERE t1.temp #= t2.temp IS NOT NULL;
+
+SELECT COUNT(*) FROM tbl_tgeometry3D, tbl_geometry3D WHERE g #= temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography3D, tbl_geography3D WHERE g #= temp IS NOT NULL;
+
+SELECT COUNT(*) FROM tbl_tgeometry3D t1, tbl_tgeometry3D t2 WHERE t1.temp #= t2.temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography3D t1, tbl_tgeography3D t2 WHERE t1.temp #= t2.temp IS NOT NULL;
+
+-------------------------------------------------------------------------------
+
+SELECT COUNT(*) FROM tbl_tgeometry, tbl_geometry WHERE g #<> temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography, tbl_geography WHERE g #<> temp IS NOT NULL;
+
+SELECT COUNT(*) FROM tbl_tgeometry t1, tbl_tgeometry t2 WHERE t1.temp #<> t2.temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography t1, tbl_tgeography t2 WHERE t1.temp #<> t2.temp IS NOT NULL;
+
+SELECT COUNT(*) FROM tbl_tgeometry3D, tbl_geometry3D WHERE g #<> temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography3D, tbl_geography3D WHERE g #<> temp IS NOT NULL;
+
+SELECT COUNT(*) FROM tbl_tgeometry3D t1, tbl_tgeometry3D t2 WHERE t1.temp #<> t2.temp IS NOT NULL;
+SELECT COUNT(*) FROM tbl_tgeography3D t1, tbl_tgeography3D t2 WHERE t1.temp #<> t2.temp IS NOT NULL;
+
+-------------------------------------------------------------------------------

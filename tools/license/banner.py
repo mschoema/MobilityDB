@@ -44,6 +44,7 @@ usage: python3 tools/license/banner.py [--check | --list] [file ...]
   --list writes nothing and lists the files that carry the banner.
 """
 
+import fnmatch
 import os
 import re
 import subprocess
@@ -84,9 +85,9 @@ def body_lines():
 
 def style_of(path):
     """Return the comment style of the banner of a file: "hash" for Python,
-    "sql" for a SQL test, "c" for every other source"""
-    # psql -e echoes a C comment into the output a test compares, never a
-    # "--" line, so a SQL test carries the banner as "--" lines
+    "sql" for a SQL script of the tests, "c" for every other source"""
+    # A SQL script of the tests carries the banner as "--" lines, the style of
+    # the comments of the tests
     if path.startswith("mobilitydb/test/") and path.endswith(".sql"):
         return "sql"
     base = path.rsplit("/", 1)[-1]
@@ -235,6 +236,17 @@ def other_projects():
         return {l.strip() for l in fh if l.strip() and not l.startswith("#")}
 
 
+def test(path):
+    """Return true for a test of pg_regress, which carries no banner
+
+    pg_regress echoes every line of a test into its output, so a banner would
+    be copied into each expected file, and a change of its year would make
+    every test fail until those files were regenerated. As in PostgreSQL and
+    PostGIS, the licence of the repository covers the tests.
+    """
+    return fnmatch.fnmatch(path, "mobilitydb/test/*/sql/*.sql")
+
+
 def tracked(root):
     """Return the tracked source files that carry the banner"""
     out = subprocess.run(["git", "-C", root, "ls-files"],
@@ -256,7 +268,7 @@ def tracked(root):
                 return KEY in fh.read(4000)
         except OSError:
             return False
-    return [f for f in out if f not in other and
+    return [f for f in out if f not in other and not test(f) and
             (f.endswith(EXTENSIONS) or f.rsplit("/", 1)[-1] in NAMES or script(f)) and
             (not f.startswith(VENDORED) or ours(f))]
 

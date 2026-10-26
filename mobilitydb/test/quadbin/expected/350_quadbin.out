@@ -1,0 +1,300 @@
+-- Static quadbin SQL type: parser, output, comparison operators, btree +
+-- hash opclasses, ASSIGNMENT casts to/from bigint, validity predicates.
+-------------------------------------------------------------------------------
+-- Input parser: lowercase hex (canonical), optional 0x prefix
+--
+-- The parser accepts only the hexadecimal encoding of a valid quadbin cell
+-- (mode 1). The z0 world cell 480fffffffffffff is the decimal value
+-- 5192650370358181887 = quadbinTileToCell(0, 0, 0).
+-------------------------------------------------------------------------------
+SELECT quadbin '480fffffffffffff';
+     quadbin      
+------------------
+ 480fffffffffffff
+(1 row)
+
+SELECT quadbin '0x480fffffffffffff';
+     quadbin      
+------------------
+ 480fffffffffffff
+(1 row)
+
+SELECT quadbin '48427fffffffffff';
+     quadbin      
+------------------
+ 48427fffffffffff
+(1 row)
+
+-- Round trip via the bigint casts
+SELECT (5192650370358181887::bigint::quadbin)::bigint = 5192650370358181887;
+ ?column? 
+----------
+ t
+(1 row)
+
+/* Errors */
+SELECT quadbin '0';
+ERROR:  quadbin value "0" does not encode a valid quadbin index
+LINE 2: SELECT quadbin '0';
+                       ^
+SELECT quadbin 'not-a-hex-cell';
+ERROR:  quadbin value "not-a-hex-cell" does not encode a valid quadbin index
+LINE 1: SELECT quadbin 'not-a-hex-cell';
+                       ^
+SELECT quadbin '12345';   -- not a valid quadbin cell
+ERROR:  quadbin value "12345" does not encode a valid quadbin index
+LINE 1: SELECT quadbin '12345';
+                       ^
+-------------------------------------------------------------------------------
+-- Output: canonical zero-padded lowercase hex
+-------------------------------------------------------------------------------
+SELECT quadbin '0x480fffffffffffff' = quadbin '480fffffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+-------------------------------------------------------------------------------
+-- (Hex)WKB round trip
+--
+-- The base WKB carries no SRID: the WGS84 (4326) the grid fixes is implied,
+-- as for an h3index. An EWKB stating 4326 is read, one stating another SRID
+-- is refused, and so is an integer that encodes no cell.
+-------------------------------------------------------------------------------
+SELECT asBinary(quadbin '48427fffffffffff');
+        asbinary        
+------------------------
+ \x0100ffffffffff7f4248
+(1 row)
+
+SELECT asBinary(quadbin '48427fffffffffff', 'XDR');
+        asbinary        
+------------------------
+ \x000048427fffffffffff
+(1 row)
+
+SELECT asHexWKB(quadbin '48427fffffffffff');
+       ashexwkb       
+----------------------
+ 0100FFFFFFFFFF7F4248
+(1 row)
+
+SELECT asHexWKB(quadbin '48427fffffffffff', 'XDR');
+       ashexwkb       
+----------------------
+ 000048427FFFFFFFFFFF
+(1 row)
+
+SELECT quadbinFromBinary(asBinary(quadbin '48427fffffffffff'))
+       = quadbin '48427fffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbinFromBinary(asBinary(quadbin '480fffffffffffff', 'XDR'))
+       = quadbin '480fffffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbinFromHexWKB(asHexWKB(quadbin '48427fffffffffff'))
+       = quadbin '48427fffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbinFromHexWKB(asHexWKB(quadbin '480fffffffffffff', 'XDR'))
+       = quadbin '480fffffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbinFromHexWKB('0140E6100000FFFFFFFFFF7F4248');
+ quadbinfromhexwkb 
+-------------------
+ 48427fffffffffff
+(1 row)
+
+/* Errors */
+SELECT quadbinFromHexWKB('0140110F0000FFFFFFFFFF7F4248');
+ERROR:  Only SRID 4326 (WGS84) is accepted for the type quadbin, received 3857
+SELECT quadbinFromHexWKB('01003930000000000000');
+ERROR:  The value 12345 does not encode a valid quadbin index
+-------------------------------------------------------------------------------
+-- Text round trip
+-------------------------------------------------------------------------------
+SELECT asText(quadbin '48427fffffffffff');
+      astext      
+------------------
+ 48427fffffffffff
+(1 row)
+
+SELECT quadbinFromText(asText(quadbin '48427fffffffffff'))
+       = quadbin '48427fffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbinFromText('0x480fffffffffffff') = quadbin '480fffffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+/* Errors */
+SELECT quadbinFromText('48427xyz');
+ERROR:  quadbin value "48427xyz" does not encode a valid quadbin index
+-------------------------------------------------------------------------------
+-- Comparison operators
+-------------------------------------------------------------------------------
+SELECT quadbin '480fffffffffffff' = quadbin '480fffffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbin '480fffffffffffff' <> quadbin '48427fffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbin '480fffffffffffff' < quadbin '48427fffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+SELECT quadbin '48427fffffffffff' >= quadbin '480fffffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+-- The <> can derive from = via NEGATOR
+SELECT NOT (quadbin '480fffffffffffff' = quadbin '48427fffffffffff');
+ ?column? 
+----------
+ t
+(1 row)
+
+-------------------------------------------------------------------------------
+-- ASSIGNMENT cast: explicit `::` works
+-------------------------------------------------------------------------------
+SELECT 5192650370358181887::bigint::quadbin;
+     quadbin      
+------------------
+ 480fffffffffffff
+(1 row)
+
+SELECT (quadbin '480fffffffffffff')::bigint;
+        int8         
+---------------------
+ 5192650370358181887
+(1 row)
+
+-- Not every integer is a cell: the cast into quadbin checks the value, as the
+-- text input does, explicitly and in an assignment
+/* Errors */
+SELECT 42::bigint::quadbin;
+ERROR:  The value 42 does not encode a valid quadbin index
+CREATE TEMP TABLE tbl_quadbin_assign(cell quadbin);
+INSERT INTO tbl_quadbin_assign VALUES (42::bigint);
+ERROR:  The value 42 does not encode a valid quadbin index
+INSERT INTO tbl_quadbin_assign VALUES (5192650370358181887::bigint);
+SELECT cell FROM tbl_quadbin_assign;
+       cell       
+------------------
+ 480fffffffffffff
+(1 row)
+
+DROP TABLE tbl_quadbin_assign;
+-- The type holds a well-formed index of any mode, as its text input does
+SELECT 5785823699403800575::bigint::quadbin = quadbin '504b5fffffffffff';
+ ?column? 
+----------
+ t
+(1 row)
+
+-- The cast is NOT implicit — direct comparison without `::` must error
+/* Errors */
+\set VERBOSITY terse
+SELECT 5192650370358181887::bigint = quadbin '480fffffffffffff';
+ERROR:  operator does not exist: bigint = quadbin at character 49
+\set VERBOSITY default
+-------------------------------------------------------------------------------
+-- Validity predicates
+-------------------------------------------------------------------------------
+SELECT isValidIndex(quadbin '480fffffffffffff');
+ isvalidindex 
+--------------
+ t
+(1 row)
+
+SELECT isValidCell(quadbin '480fffffffffffff');
+ isvalidcell 
+-------------
+ t
+(1 row)
+
+SELECT isValidCell(quadbin '48427fffffffffff');
+ isvalidcell 
+-------------
+ t
+(1 row)
+
+-- A well-formed index whose mode is not the data-cell mode is a value of the
+-- type, so isValidCell is the question that answers whether the value at hand
+-- is a cell. 504b5fffffffffff carries mode 2, 484b5fffffffffff mode 1.
+SELECT isValidIndex(quadbin '504b5fffffffffff');
+ isvalidindex 
+--------------
+ t
+(1 row)
+
+SELECT isValidCell(quadbin '504b5fffffffffff');
+ isvalidcell 
+-------------
+ f
+(1 row)
+
+SELECT isValidCell(quadbin '484b5fffffffffff');
+ isvalidcell 
+-------------
+ t
+(1 row)
+
+-------------------------------------------------------------------------------
+-- btree opclass: ORDER BY, DISTINCT, GROUP BY
+-------------------------------------------------------------------------------
+DROP TABLE IF EXISTS tbl_quadbin_test;
+NOTICE:  table "tbl_quadbin_test" does not exist, skipping
+CREATE TEMP TABLE tbl_quadbin_test(k int, c quadbin);
+INSERT INTO tbl_quadbin_test VALUES
+  (1, quadbin '480fffffffffffff'),
+  (2, quadbin '48427fffffffffff'),
+  (3, quadbin '480fffffffffffff'),  -- duplicate of row 1
+  (4, quadbin '48a6227affffffff');
+-- Sort + distinct exercise the btree opclass
+SELECT COUNT(DISTINCT c) FROM tbl_quadbin_test;
+ count 
+-------
+     3
+(1 row)
+
+-- expect: 3
+-- GROUP BY exercises the hash opclass
+SELECT (SELECT MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM tbl_quadbin_test GROUP BY c) sub);
+ max 
+-----
+   2
+(1 row)
+
+-- expect: 2 (the cell with 2 occurrences)
+DROP TABLE tbl_quadbin_test;
+-------------------------------------------------------------------------------
