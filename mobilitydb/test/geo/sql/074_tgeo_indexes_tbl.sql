@@ -4,10 +4,6 @@ ANALYZE test;
 DROP TABLE test;
 
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tgeometry3D_big;
-ANALYZE tbl_tgeography3D_big;
-
 DROP INDEX IF EXISTS tbl_tgeometry3D_big_rtree_idx;
 DROP INDEX IF EXISTS tbl_tgeography3D_big_rtree_idx;
 
@@ -254,10 +250,6 @@ DROP INDEX IF EXISTS tbl_tgeometry3D_big_kdtree_idx;
 DROP INDEX IF EXISTS tbl_tgeography3D_big_kdtree_idx;
 
 -------------------------------------------------------------------------------
-
-ANALYZE tbl_tgeometry;
-ANALYZE tbl_tgeometry3D;
-
 -------------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS tbl_tgeometry_rtree_idx;
