@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>MobilityDB: trgeometry_out</title>
+<title>MobilityDB: add_test</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,7 +70,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="group__meos__rgeo__inout.html">Input and output functions</a></li>  </ul>
+<li class="navelem"><a class="el" href="mobilitydb_2test_2npoint_2CMakeLists_8txt.html">CMakeLists.txt</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="contents">
@@ -79,49 +79,30 @@ $(function() {
    <td valign="top">
       <div class="navtab">
         <table>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__rgeo__inout_ga464fdbbcc33e5614601fd2527bc2400f.html#ga464fdbbcc33e5614601fd2527bc2400f">trgeometry_as_ewkt</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__rgeo__inout_gafcc9a247d42cdff9c5dd996dea9cd707.html#gafcc9a247d42cdff9c5dd996dea9cd707">trgeometry_as_text</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__rgeo__inout_ga467ba6a9fc3307dd5a912afac87942d4.html#ga467ba6a9fc3307dd5a912afac87942d4">trgeometry_from_mfjson</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__rgeo__inout_gaf989a8a787c01476f3986e62a41459ad.html#gaf989a8a787c01476f3986e62a41459ad">trgeometry_in</a></td></tr>
-          <tr><td class="navtabHL"><a class="navtab" href="group__meos__rgeo__inout_gad14e0e46984deb2e153abe6187471482.html#gad14e0e46984deb2e153abe6187471482">trgeometry_out</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="mobilitydb_2test_2npoint_2CMakeLists_8txt_a264f966c962def3390f3f6e54eb68923.html#a264f966c962def3390f3f6e54eb68923">_pg</a></td></tr>
+          <tr><td class="navtabHL"><a class="navtab" href="mobilitydb_2test_2npoint_2CMakeLists_8txt_ae239c874e56f42f5252b34fc8d32a46b.html#ae239c874e56f42f5252b34fc8d32a46b">add_test</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="mobilitydb_2test_2npoint_2CMakeLists_8txt_a36df77ddd36ee79d48cb286138cb84d6.html#a36df77ddd36ee79d48cb286138cb84d6">DBGEO</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="mobilitydb_2test_2npoint_2CMakeLists_8txt_a7708aadea9f91ed0e865b3f59acc2f7f.html#a7708aadea9f91ed0e865b3f59acc2f7f">file</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="mobilitydb_2test_2npoint_2CMakeLists_8txt_ac7dcd4d2e4ea46d9061b41b6915da7e7.html#ac7dcd4d2e4ea46d9061b41b6915da7e7">get_filename_component</a></td></tr>
         </table>
       </div>
    </td>
    <td valign="top" class="mempage">
-<a id="gad14e0e46984deb2e153abe6187471482" name="gad14e0e46984deb2e153abe6187471482"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gad14e0e46984deb2e153abe6187471482">&#9670;&#160;</a></span>trgeometry_out()</h2>
+<a id="ae239c874e56f42f5252b34fc8d32a46b" name="ae239c874e56f42f5252b34fc8d32a46b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae239c874e56f42f5252b34fc8d32a46b">&#9670;&#160;</a></span>add_test()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char * trgeometry_out </td>
+          <td class="memname">add_test </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structTemporal.html">Temporal</a> *&#160;</td>
-          <td class="paramname"><em>temp</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">NAME load_npoint_tables WORKING_DIRECTORY ${CMAKE_BINARY_DIR} COMMAND ${CMAKE_COMMAND} -D&#160;</td>
+          <td class="paramname"><em>TEST_OPER</em> = <code>run_passfail&#160;-D&#160;TEST_NAME=load_npoint_tables&#160;-D&#160;TEST_FILE=${CMAKE_CURRENT_SOURCE_DIR}/sql/load_npoint.sql&#160;-<a class="el" href="index__structure__test_8c_afcb6af1fe1e462eee771edc1ada9a6bf.html#afcb6af1fe1e462eee771edc1ada9a6bf">P</a>&#160;${CMAKE_BINARY_DIR}/mobilitydb/test/scripts/test.cmake</code></td><td>)</td>
           <td></td>
-          <td class="paramtype">size_t *&#160;</td>
-          <td class="paramname"><em>size_out</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Return the Well-Known Text (WKT) representation of a temporal rigid geometry. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">temp</td><td><a class="el" href="structTemporal.html" title="Structure to represent the common structure of temporal values of any temporal subtype.">Temporal</a> rigid geometry </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">size_out</td><td>Size of the result, the terminating null character included @csqlfn <a class="el" href="group__mobilitydb__rgeo__inout_gad05e32cae846d08ba11eeffabdeac697.html#gad05e32cae846d08ba11eeffabdeac697" title="Generic output function for temporal rigid geometries @sqlfn trgeometry_out()">Trgeometry_out()</a> </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
