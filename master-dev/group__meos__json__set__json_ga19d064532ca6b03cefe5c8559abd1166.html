@@ -79,7 +79,8 @@ $(function() {
    <td valign="top">
       <div class="navtab">
         <table>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga8be2f7966130ea9cff2c0b5d4a1c3aa3.html#ga8be2f7966130ea9cff2c0b5d4a1c3aa3">concat_jsonbset_jsonb</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga698f32deaa6e4d985a95b78a2b18348a.html#ga698f32deaa6e4d985a95b78a2b18348a">concat_jsonb_jsonbset</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_gad3d5d6a05a7ef9e3a5d185e974beb78e.html#gad3d5d6a05a7ef9e3a5d185e974beb78e">concat_jsonbset_jsonb</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_gad55f17736d8f2221e3e5628f635cc692.html#gad55f17736d8f2221e3e5628f635cc692">contained_jsonb_set</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga28188384c09d770c200d014c62b37058.html#ga28188384c09d770c200d014c62b37058">contains_set_jsonb</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga88c5e2f932f766360eff95cc6085c13c.html#ga88c5e2f932f766360eff95cc6085c13c">intersection_jsonb_set</a></td></tr>
@@ -104,7 +105,8 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga7a7bc7f3d103320bdbc9e4f092d988ec.html#ga7a7bc7f3d103320bdbc9e4f092d988ec">jsonbset_path_query_array</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga01794916ce882e95ab6b3a4bebb9ab9c.html#ga01794916ce882e95ab6b3a4bebb9ab9c">jsonbset_path_query_first</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_gac20219e3e622be2d18293e15eaf882b0.html#gac20219e3e622be2d18293e15eaf882b0">jsonbset_pretty</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga8f5d6ae2fa58b8f5575092148807a742.html#ga8f5d6ae2fa58b8f5575092148807a742">jsonbset_set</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga4e0b1f5bf78bd595bb0b1107a0bd0a14.html#ga4e0b1f5bf78bd595bb0b1107a0bd0a14">jsonbset_set</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_gaddbb923c7e3b3e3cd31e3cf4452a4983.html#gaddbb923c7e3b3e3cd31e3cf4452a4983">jsonbset_set_lax</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_ga65a9864a4028e1b05c17e0370e68aadb.html#ga65a9864a4028e1b05c17e0370e68aadb">jsonbset_strip_nulls</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_gaef69569af0ba6456826a9f427ab3f941.html#gaef69569af0ba6456826a9f427ab3f941">jsonbset_to_bigintset</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__json__set__json_gaf3a6d7e5d1138ac50322fb2d8ec307b1.html#gaf3a6d7e5d1138ac50322fb2d8ec307b1">jsonbset_to_floatset</a></td></tr>
@@ -147,7 +149,7 @@ $(function() {
 <p>Transition function for set union aggregate of JSONB values. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">state</td><td>Current aggregate state, may be <code>NULL</code> </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">state</td><td>Current aggregate state (accepts <code>NULL</code>) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">jb</td><td>Value @csqlfn <a class="el" href="group__mobilitydb__setspan__agg_ga03b02b8b5765165d4f32639ae5c15ceb.html#ga03b02b8b5765165d4f32639ae5c15ceb" title="Transition function for union aggregation of values @sqlfn setUnionTransition() @sqlaggfn setUnion() ...">Value_union_transfn()</a> @csqlaggfn #setUnionTransition() </td></tr>
   </table>
   </dd>

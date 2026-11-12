@@ -156,7 +156,7 @@ $(function() {
     <tr><td class="paramdir">[in,out]</td><td class="paramname">seq</td><td><a class="el" href="structTemporal.html" title="Structure to represent the common structure of temporal values of any temporal subtype.">Temporal</a> sequence </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">inst</td><td><a class="el" href="structTemporal.html" title="Structure to represent the common structure of temporal values of any temporal subtype.">Temporal</a> instant </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">maxdist</td><td>Maximum distance for defining a gap </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">maxt</td><td>Maximum time interval for defining a gap, may be <code>NULL</code> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">maxt</td><td>Maximum time interval for defining a gap (accepts <code>NULL</code>) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">expand</td><td>True when reserving space for additional instants @csqlfn <a class="el" href="group__mobilitydb__temporal__modif_gab35b45ad6782583246d1071a524fdc3e.html#gab35b45ad6782583246d1071a524fdc3e" title="Append an instant to a temporal value @sqlfn appendInstant()">Temporal_append_tinstant()</a> </td></tr>
   </table>
   </dd>
@@ -165,7 +165,7 @@ $(function() {
 <dl class="section note"><dt>Note</dt><dd>The input sequence is consumed exactly when expandable mode is requested, so that the calling function must never free it in that mode. In the PostgreSQL build the input sequence is freed by the calling context instead </dd>
 <dd>
 Always use the function to overwrite the existing sequence as in: <div class="fragment"><div class="line">seq = <a class="code hl_function" href="group__meos__internal__temporal__modif_gae589b7e63d858275b5f63a1e7942c424.html#gae589b7e63d858275b5f63a1e7942c424">tsequence_append_tinstant</a>(seq, inst, ...);</div>
-<div class="ttc" id="agroup__meos__internal__temporal__modif_gae589b7e63d858275b5f63a1e7942c424_html_gae589b7e63d858275b5f63a1e7942c424"><div class="ttname"><a href="group__meos__internal__temporal__modif_gae589b7e63d858275b5f63a1e7942c424.html#gae589b7e63d858275b5f63a1e7942c424">tsequence_append_tinstant</a></div><div class="ttdeci">Temporal * tsequence_append_tinstant(TSequence *seq, const TInstant *inst, double maxdist, const Interval *maxt, bool expand)</div><div class="ttdoc">Append an instant to a temporal sequence accounting for potential gaps.</div><div class="ttdef"><b>Definition:</b> temporal_modif.c:2122</div></div>
+<div class="ttc" id="agroup__meos__internal__temporal__modif_gae589b7e63d858275b5f63a1e7942c424_html_gae589b7e63d858275b5f63a1e7942c424"><div class="ttname"><a href="group__meos__internal__temporal__modif_gae589b7e63d858275b5f63a1e7942c424.html#gae589b7e63d858275b5f63a1e7942c424">tsequence_append_tinstant</a></div><div class="ttdeci">Temporal * tsequence_append_tinstant(TSequence *seq, const TInstant *inst, double maxdist, const Interval *maxt, bool expand)</div><div class="ttdoc">Append an instant to a temporal sequence accounting for potential gaps.</div><div class="ttdef"><b>Definition:</b> temporal_modif.c:2120</div></div>
 </div><!-- fragment --> </dd></dl>
 
 </div>

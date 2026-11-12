@@ -79,6 +79,7 @@ $(function() {
    <td valign="top">
       <div class="navtab">
         <table>
+          <tr><td class="navtab"><a class="navtab" href="tspatial__gist_8c_ac5f1547e437ca8d31b9290fbafb0ffe3.html#ac5f1547e437ca8d31b9290fbafb0ffe3">Spatialset_gist_compress</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tspatial__gist_8c_a882ab0ffc8dcb041183218de89380470.html#a882ab0ffc8dcb041183218de89380470">Stbox_abbrev_convert</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tspatial__gist_8c_a7c606fbf26f80431f1b6b25eadce2c9c.html#a7c606fbf26f80431f1b6b25eadce2c9c">Stbox_cmp_full</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="tspatial__gist_8c_a48e300cd6568018f3344c8c66604af47.html#a48e300cd6568018f3344c8c66604af47">Stbox_gist_consistent</a></td></tr>
@@ -113,8 +114,8 @@ $(function() {
       </table>
 </div><div class="memdoc">
 
-<p>GiST same method for spatiotemporal values. </p>
-<p >Return true only when boxes are exactly the same. We can't use fuzzy comparisons here without breaking index consistency; therefore, this isn't equivalent to <a class="el" href="group__meos__geo__box__topo_gadcec1437c602783add265ff26b835635.html#gadcec1437c602783add265ff26b835635" title="Return true if the spatiotemporal boxes are equal in the common dimensions.">same_stbox_stbox()</a>. </p>
+<p>GiST same method for spatiotemporal boxes. </p>
+<p >Return true only when the boxes are exactly the same. Fuzzy comparisons cannot be used here without breaking index consistency, and an index method answers where the operator <code>~=</code> refuses its arguments, so this is not that operator </p>
 
 </div>
 </div>

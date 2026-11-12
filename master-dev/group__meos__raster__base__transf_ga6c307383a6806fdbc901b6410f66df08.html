@@ -88,7 +88,7 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_gae4011172b4fb2e5a6d65cb369057e215.html#gae4011172b4fb2e5a6d65cb369057e215">raster_pixel_as_points</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga7d44320a848e01f51c87fa44b61ad6d8.html#ga7d44320a848e01f51c87fa44b61ad6d8">raster_reclass</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_gafd2cec94ee537a558d6d41e88b060a7d.html#gafd2cec94ee537a558d6d41e88b060a7d">raster_rescale</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_gab74f3415bd4b163412d8367a9bca124f.html#gab74f3415bd4b163412d8367a9bca124f">raster_set_values</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga62133a40bbc57e2bf984eb0d1007912c.html#ga62133a40bbc57e2bf984eb0d1007912c">raster_set_values</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga70a4d2996bcfdc842fb96dc74738a90d.html#ga70a4d2996bcfdc842fb96dc74738a90d">raster_slope</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga47c6014cc5f1ef212826a0f28d6621ab.html#ga47c6014cc5f1ef212826a0f28d6621ab">raster_tpi</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga073ce84427035da023b1413c56deac49.html#ga073ce84427035da023b1413c56deac49">raster_transform</a></td></tr>
@@ -165,10 +165,10 @@ $(function() {
 <p >The bands kept are read in turn against a mask the geometry is burnt into, as the PostGIS <code>ST_Clip</code> reads them. A pixel the geometry does not cover answers the nodata value of its band: the value <code>nodata</code> states, one for every band or one per band with the last standing for the bands after it, or otherwise the nodata value of the band, and the smallest value its pixel type holds where the band states none. When <code>crop</code> is true the result carries the extent the two share, and otherwise it carries the extent of the subject </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">rast</td><td>Raster to clip </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">bands</td><td>Numbers of the bands to keep, starting at 1, in the order of the result, or NULL for every band </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">bands</td><td>Numbers of the bands to keep, starting at 1, in the order of the result, or NULL for every band (accepts <code>NULL</code>) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nbands</td><td>Number of elements of <code>bands</code> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">gs</td><td>Geometry to clip it to </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">nodata</td><td>Nodata values of the bands of the result, or NULL for the nodata value of each band </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nodata</td><td>Nodata values of the bands of the result, or NULL for the nodata value of each band (accepts <code>NULL</code>) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">nnodata</td><td>Number of elements of <code>nodata</code> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">crop</td><td>True to reduce the result to the extent the raster and the geometry share </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">touched</td><td>True to keep every pixel the geometry touches, false to keep the pixels whose centre it covers </td></tr>

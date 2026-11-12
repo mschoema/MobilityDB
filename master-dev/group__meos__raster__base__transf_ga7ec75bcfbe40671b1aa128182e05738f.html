@@ -88,7 +88,7 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_gae4011172b4fb2e5a6d65cb369057e215.html#gae4011172b4fb2e5a6d65cb369057e215">raster_pixel_as_points</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga7d44320a848e01f51c87fa44b61ad6d8.html#ga7d44320a848e01f51c87fa44b61ad6d8">raster_reclass</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_gafd2cec94ee537a558d6d41e88b060a7d.html#gafd2cec94ee537a558d6d41e88b060a7d">raster_rescale</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_gab74f3415bd4b163412d8367a9bca124f.html#gab74f3415bd4b163412d8367a9bca124f">raster_set_values</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga62133a40bbc57e2bf984eb0d1007912c.html#ga62133a40bbc57e2bf984eb0d1007912c">raster_set_values</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga70a4d2996bcfdc842fb96dc74738a90d.html#ga70a4d2996bcfdc842fb96dc74738a90d">raster_slope</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga47c6014cc5f1ef212826a0f28d6621ab.html#ga47c6014cc5f1ef212826a0f28d6621ab">raster_tpi</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__raster__base__transf_ga073ce84427035da023b1413c56deac49.html#ga073ce84427035da023b1413c56deac49">raster_transform</a></td></tr>
@@ -168,9 +168,9 @@ $(function() {
     <tr><td class="paramdir">[in]</td><td class="paramname">rast</td><td>Raster </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">band</td><td>Number of the band, starting at 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">stat</td><td>Statistic: <code>MIN</code>, <code>MAX</code>, <code>SUM</code>, <code>MEAN</code>, <code>RANGE</code> or <code>STDDEV</code>, regardless of case </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">pixeltype</td><td>Name of the pixel type of the result, or NULL for the pixel type of the band </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">extenttype</td><td>Extent of the result: <code>INTERSECTION</code>, <code>UNION</code>, <code>FIRST</code>, <code>SECOND</code>, <code>LAST</code> or <code>CUSTOM</code>, regardless of case, or NULL for <code>FIRST</code> </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">customextent</td><td>Raster whose extent the result takes where <code>extenttype</code> is <code>CUSTOM</code> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">pixeltype</td><td>Name of the pixel type of the result, or NULL for the pixel type of the band (accepts <code>NULL</code>) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">extenttype</td><td>Extent of the result: <code>INTERSECTION</code>, <code>UNION</code>, <code>FIRST</code>, <code>SECOND</code>, <code>LAST</code> or <code>CUSTOM</code>, regardless of case, or NULL for <code>FIRST</code> (accepts <code>NULL</code>) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">customextent</td><td>Raster whose extent the result takes where (accepts <code>NULL</code>) <code>extenttype</code> is <code>CUSTOM</code> </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">distancex</td><td>Number of pixels of the neighbourhood on each side of a pixel along X </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">distancey</td><td>Number of pixels of the neighbourhood on each side of a pixel along Y </td></tr>
   </table>
