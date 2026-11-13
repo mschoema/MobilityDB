@@ -76,7 +76,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Table of static-cell operations and catalog identity for one DGGS.  
+<p><a class="el" href="structTable.html">Table</a> of static-cell operations and catalog identity for one DGGS.  
  <a href="structDggsCellOps.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="tcellindex_8h_source.html">tcellindex.h</a>&gt;</code></p>
@@ -86,6 +86,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:aa0e480c474a1621b1ffbc54ef1bff05d"><td class="memItemLeft" align="right" valign="top">Datum(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDggsCellOps_aa0e480c474a1621b1ffbc54ef1bff05d.html#aa0e480c474a1621b1ffbc54ef1bff05d">cell_area</a> )(Datum cell)</td></tr>
 <tr class="memdesc:aa0e480c474a1621b1ffbc54ef1bff05d"><td class="mdescLeft">&#160;</td><td class="mdescRight">-&gt; Float8 (m^2)  <a href="structDggsCellOps_aa0e480c474a1621b1ffbc54ef1bff05d.html#aa0e480c474a1621b1ffbc54ef1bff05d">More...</a><br /></td></tr>
 <tr class="separator:aa0e480c474a1621b1ffbc54ef1bff05d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47fac436caa8e4fc607c596c3dab7d8e"><td class="memItemLeft" align="right" valign="top">Datum(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDggsCellOps_a47fac436caa8e4fc607c596c3dab7d8e.html#a47fac436caa8e4fc607c596c3dab7d8e">cell_meets_box</a> )(Datum cell, Datum box, Datum border_inc)</td></tr>
+<tr class="memdesc:a47fac436caa8e4fc607c596c3dab7d8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">-&gt; Bool: whether the region of the cell, with the boundary points it owns, shares a point with a box (an <a class="el" href="structSTBox.html" title="Structure to represent spatiotemporal boxes.">STBox</a> pointer), whose upper borders are held where the third argument is true.  <a href="structDggsCellOps_a47fac436caa8e4fc607c596c3dab7d8e.html#a47fac436caa8e4fc607c596c3dab7d8e">More...</a><br /></td></tr>
+<tr class="separator:a47fac436caa8e4fc607c596c3dab7d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a280a4f0ca18bf507913248fca34a8a29"><td class="memItemLeft" align="right" valign="top">Datum(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDggsCellOps_a280a4f0ca18bf507913248fca34a8a29.html#a280a4f0ca18bf507913248fca34a8a29">cell_to_boundary</a> )(Datum cell)</td></tr>
 <tr class="memdesc:a280a4f0ca18bf507913248fca34a8a29"><td class="mdescLeft">&#160;</td><td class="mdescRight">-&gt; <a class="el" href="structGSERIALIZED.html">GSERIALIZED</a> polygon  <a href="structDggsCellOps_a280a4f0ca18bf507913248fca34a8a29.html#a280a4f0ca18bf507913248fca34a8a29">More...</a><br /></td></tr>
 <tr class="separator:a280a4f0ca18bf507913248fca34a8a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -127,7 +130,7 @@ Data Fields</h2></td></tr>
 <tr class="separator:a2fd709edaf1d37753842ff1866d942e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >Table of static-cell operations and catalog identity for one DGGS. </p>
+<div class="textblock"><p ><a class="el" href="structTable.html">Table</a> of static-cell operations and catalog identity for one DGGS. </p>
 <p >The function pointers use the Datum calling convention so the generic temporal entry points can pass them straight to <code><a class="el" href="structLiftedFunctionInfo_aaaefdd82e839f0c0aa1b352911d50f19.html#aaaefdd82e839f0c0aa1b352911d50f19" title="Variadic function that is lifted.">LiftedFunctionInfo.func</a></code>. A NULL pointer means the DGGS does not offer that operation; the generic wrapper then raises a not-implemented error rather than dereferencing it. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>meos/include/temporal/<a class="el" href="tcellindex_8h_source.html">tcellindex.h</a></li>
