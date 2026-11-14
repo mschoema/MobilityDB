@@ -119,7 +119,7 @@ $(function() {
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__math_ga34bc82d22c39495d0be3e71ec099b08a.html#ga34bc82d22c39495d0be3e71ec099b08a">sub_tfloat_float</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__math_gae90d95a52c270b11eccf4b7a9e2f6331.html#gae90d95a52c270b11eccf4b7a9e2f6331">sub_tint_int</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__math_ga31e286b9c53277dc0e7a9a88bc84d0a9.html#ga31e286b9c53277dc0e7a9a88bc84d0a9">sub_tnumber_tnumber</a></td></tr>
-          <tr><td class="navtab"><a class="navtab" href="meos_2src_2temporal_2tnumber__mathfuncs_8c_add291f3cdd9a2cfff907184bc27ad91f.html#add291f3cdd9a2cfff907184bc27ad91f">tfloat_arithop_turnpt</a></td></tr>
+          <tr><td class="navtab"><a class="navtab" href="meos_2src_2temporal_2tnumber__mathfuncs_8c_a61c687f645b791999f134779e645dfcf.html#a61c687f645b791999f134779e645dfcf">tfloat_arithop_turnpt</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__math_ga33fab1b13628eeb915cf93d14d015d76.html#ga33fab1b13628eeb915cf93d14d015d76">tfloat_cos</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="group__meos__temporal__math_ga6da0f5fbc70f5ba8e55f2b6fd5017a2c.html#ga6da0f5fbc70f5ba8e55f2b6fd5017a2c">tfloat_exp</a></td></tr>
           <tr><td class="navtab"><a class="navtab" href="meos_2src_2temporal_2tnumber__mathfuncs_8c_aeac424cdcb9f5707fbe9b7a8a9efa303.html#aeac424cdcb9f5707fbe9b7a8a9efa303">tfloat_exp_turnpt</a></td></tr>
@@ -218,7 +218,7 @@ $(function() {
 </div><div class="memdoc">
 
 <p><a class="el" href="structExact.html">Exact</a> turning points of an oscillatory trigonometric lift over a linear float segment. </p>
-<p >The argument theta(t) varies linearly from <code>v1</code> (at <code>lower</code>) to <code>v2</code> (at <code>upper</code>). sin/cos have a local extremum wherever their derivative vanishes, i.e. at theta = (k + <code>offset</code>) * pi: offset 1/2 for sin (where cos(theta) = 0) and offset 0 for cos (where sin(theta) = 0). This writes in <code>tps</code>, in ascending time order and up to <code>cap</code> of them, the timestamps of every such extremum STRICTLY inside the segment, and returns their count, which may exceed <code>cap</code>. The locations are analytic, so the result is EXACT rather than adaptively approximated. </p>
+<p >The argument theta(t) varies linearly from <code>v1</code> (at <code>lower</code>) to <code>v2</code> (at <code>upper</code>). sin/cos have a local extremum wherever their derivative vanishes, i.e. at theta = (k + <code>offset</code>) * pi: offset 1/2 for sin (where cos(theta) = 0) and offset 0 for cos (where sin(theta) = 0). This writes in <code>tps</code>, in ascending time order and up to <code>cap</code> of them, the timestamps of every such extremum STRICTLY inside the segment, and returns their count, which may exceed <code>cap</code>. Each extremum is the crossing of the segment with the double nearest to (k + <code>offset</code>) * pi, dated by the microsecond nearest to it, which <a class="el" href="tsequence_8h_a5541bac8156028283933791e299114cc.html#a5541bac8156028283933791e299114cc" title="Return true if a float segment crosses a value strictly inside its period, dated in the output argume...">tfloatsegm_crossing</a> decides exactly. </p>
 
 </div>
 </div>
