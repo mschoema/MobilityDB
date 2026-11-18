@@ -118,8 +118,8 @@ MOBILITYDB_TESTS=foo ctest --test-dir build -R regress --output-on-failure   # r
 
 The suite is one ctest test, `regress`, which runs pg_regress. The regular
 expression in `MOBILITYDB_TESTS` limits it to the tests whose names match,
-`'^NN0_foo$'` for a single one; the setup scripts that load the tables always
-run first. pg_regress writes the output of each test to
+`'^NN0_foo$'` for a single one; the setup scripts that load the tables they
+read run first. pg_regress writes the output of each test to
 `build/mobilitydb/test/regress/results/<name>.out` and the differences to
 `build/mobilitydb/test/regress/regression.diffs`.
 
@@ -289,7 +289,7 @@ Wired in `mobilitydb/datagen/CMakeLists.txt::DATAGEN_FILES` under an `if(FOO)` b
 ### 3.9 Tests (`mobilitydb/test/foo/`)
 
 Layout:
-- `CMakeLists.txt` — `mobilitydb_add_tests(SETUP load_foo)`, which registers the setup script and every other file of `sql/`. Add `if(FOO) add_subdirectory(foo) endif()` to `mobilitydb/test/CMakeLists.txt`.
+- `CMakeLists.txt` — `mobilitydb_add_tests(SETUP load_foo USES load_temporal)`, which registers the setup script and every other file of `sql/`. `USES` names the setup scripts of other modules whose tables the tests read, so that a run of some of the tests runs only the setup scripts they need. Add `if(FOO) add_subdirectory(foo) endif()` to `mobilitydb/test/CMakeLists.txt`.
 - `sql/load_foo.sql` and `data/<table>.data` — the setup script that creates the standard fixture tables and loads them from the data files (see §3.9.1).
 - `sql/NN0_foo.sql` (value-level) and `sql/NN0_foo_tbl.sql` (table-level).
 - `expected/<name>.out` — the output of the test, see "Regenerating expected output" below.

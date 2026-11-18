@@ -25,4 +25,5 @@
 # PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #
 
-mobilitydb_add_tests(SETUP load_geo load_point load_ais)
+mobilitydb_add_tests(SETUP load_geo load_point load_ais
+  USES load_temporal)

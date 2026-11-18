@@ -28,4 +28,9 @@
 # The input and output test of every type reads the tables of every module,
 # whose setup scripts all run before the tests. It repeats the statements of
 # the point cloud tests that register schemas, so it runs alone as they do.
-mobilitydb_add_tests(ALONE 700_io_every_type_tbl)
+mobilitydb_add_tests(
+  USES
+    load_temporal load_geo load_point load_ais load_cbuffer load_h3
+    load_jsonb load_npoint load_pointcloud load_pose load_posechain
+    load_quadbin load_rgeo load_rgeo_ais load_s2cell
+  ALONE 700_io_every_type_tbl)

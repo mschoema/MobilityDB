@@ -25,4 +25,5 @@
 # PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #
 
-mobilitydb_add_tests(SETUP load_quadbin)
+mobilitydb_add_tests(SETUP load_quadbin
+  USES load_temporal)

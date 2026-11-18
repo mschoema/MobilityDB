@@ -25,4 +25,5 @@
 # PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #
 
-mobilitydb_add_tests(SETUP load_s2cell)
+mobilitydb_add_tests(SETUP load_s2cell
+  USES load_temporal)

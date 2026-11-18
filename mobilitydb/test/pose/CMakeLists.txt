@@ -28,5 +28,6 @@
 # This test registers and removes GeoPose frames, which the other pose tests
 # read
 mobilitydb_add_tests(SETUP load_pose
+  USES load_temporal load_point load_ais
   ALONE
     107_geopose_frames)

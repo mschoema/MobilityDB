@@ -25,4 +25,5 @@
 # PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #
 
-mobilitydb_add_tests(SETUP load_h3)
+mobilitydb_add_tests(SETUP load_h3
+  USES load_temporal load_ais)

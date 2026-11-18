@@ -62,16 +62,20 @@ get_filename_component(PG_REGRESS
 
 # Register the tests of the module of the current directory: its setup
 # scripts, which run first in the order given, and every other file of its
-# sql directory. The tests after ALONE run by themselves. A test whose name
-# ends in _pg<N> or _pgis<N> runs only with PostgreSQL or PostGIS <N> or later.
+# sql directory. USES names the setup scripts of other modules whose tables the
+# tests read, so that a run of some of the tests runs only the setup scripts
+# they need. The tests after ALONE run by themselves. A test whose name ends in
+# _pg<N> or _pgis<N> runs only with PostgreSQL or PostGIS <N> or later.
 function(mobilitydb_add_tests)
-  cmake_parse_arguments(ARG "" "" "SETUP;ALONE" ${ARGN})
+  cmake_parse_arguments(ARG "" "" "SETUP;USES;ALONE" ${ARGN})
   foreach(_name ${ARG_SETUP} ${ARG_ALONE})
     if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/sql/${_name}.sql")
       message(FATAL_ERROR "mobilitydb_add_tests: there is no test "
         "${CMAKE_CURRENT_SOURCE_DIR}/sql/${_name}.sql")
     endif()
   endforeach()
+  set(_needs ${ARG_SETUP} ${ARG_USES})
+  list(JOIN _needs " " _needs)
   file(GLOB _files "${CMAKE_CURRENT_SOURCE_DIR}/sql/*.sql")
   list(SORT _files)
   foreach(_file ${_files})
@@ -90,11 +94,14 @@ function(mobilitydb_add_tests)
       continue()
     endif()
     set_property(GLOBAL APPEND PROPERTY MOBILITYDB_TESTS ${_name})
+    set_property(GLOBAL APPEND_STRING PROPERTY MOBILITYDB_TEST_NEEDS
+      "${_name}: ${_needs}\n")
     if(_name IN_LIST ARG_ALONE)
       set_property(GLOBAL APPEND PROPERTY MOBILITYDB_TESTS_ALONE ${_name})
     endif()
   endforeach()
   set_property(GLOBAL APPEND PROPERTY MOBILITYDB_TEST_SETUPS ${ARG_SETUP})
+  set_property(GLOBAL APPEND PROPERTY MOBILITYDB_TEST_USES ${ARG_USES})
   set_property(GLOBAL APPEND PROPERTY MOBILITYDB_TEST_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR})
 endfunction()
@@ -144,6 +151,20 @@ get_property(_tests GLOBAL PROPERTY MOBILITYDB_TESTS)
 get_property(MOBILITYDB_TEST_DIRS GLOBAL PROPERTY MOBILITYDB_TEST_DIRS)
 
 get_property(_alone GLOBAL PROPERTY MOBILITYDB_TESTS_ALONE)
+
+# The setup scripts of other modules a module uses are registered by the time
+# every module is
+get_property(_uses GLOBAL PROPERTY MOBILITYDB_TEST_USES)
+foreach(_name ${_uses})
+  if(NOT _name IN_LIST MOBILITYDB_TEST_SETUPS)
+    message(FATAL_ERROR "mobilitydb_add_tests: USES ${_name}, which is not "
+      "a setup script of a module of the build")
+  endif()
+endforeach()
+
+# The setup scripts each test needs, which a run of some of the tests reads
+get_property(_needs GLOBAL PROPERTY MOBILITYDB_TEST_NEEDS)
+file(WRITE ${MOBILITYDB_REGRESS_DIR}/needs "${_needs}")
 
 # A line of the schedule is a group of tests pg_regress runs at the same time,
 # each line after the one before. The setup scripts run one after the other.

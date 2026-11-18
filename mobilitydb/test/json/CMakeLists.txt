@@ -25,4 +25,5 @@
 # PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #
 
-mobilitydb_add_tests(SETUP load_jsonb)
+mobilitydb_add_tests(SETUP load_jsonb
+  USES load_temporal)
